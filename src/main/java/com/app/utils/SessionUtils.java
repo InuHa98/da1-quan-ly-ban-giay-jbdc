@@ -8,7 +8,7 @@ package com.app.utils;
 import com.app.common.helper.MailerHelper;
 import com.app.common.infrastructure.session.AvatarUpload;
 import com.app.common.infrastructure.session.SessionLogin;
-import com.app.models.responseDTO.INhanVienDTO;
+import com.app.models.INhanVienDTO;
 
 import javax.swing.*;
 import java.io.BufferedReader;

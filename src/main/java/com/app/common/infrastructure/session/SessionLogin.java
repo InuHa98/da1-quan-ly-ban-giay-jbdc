@@ -3,13 +3,12 @@ package com.app.common.infrastructure.session;
 import com.app.common.controller.ApplicationController;
 import com.app.common.helper.MessageModal;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
-import com.app.models.responseDTO.INhanVienDTO;
+import com.app.models.INhanVienDTO;
 import com.app.services.NhanVienService;
 import com.app.utils.ContextUtils;
 import com.app.views.common.LoginView;
 import lombok.Getter;
 
-import java.awt.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 

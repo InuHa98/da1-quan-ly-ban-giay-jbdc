@@ -27,7 +27,7 @@ public class ColorUtils {
 
     public static Color BACKGROUND_PRIMARY = new Color(43, 43, 43);
 
-    public static Color BACKGROUND_HOVER = new Color(65, 65, 65);
+    public static Color BACKGROUND_HOVER = new Color(65, 69, 89);
 
     public static Color BACKGROUND_DASHBOARD = new Color(32, 33, 37);
 	
@@ -58,6 +58,52 @@ public class ColorUtils {
         } else {
             throw new IllegalArgumentException("Địng dạng hex không hợp lệ: " + hex);
         }
+    }
+
+    /**
+     * Làm tối màu từ màu chỉ định
+     * @param color VD: new Color(250, 250, 250)
+     * @param factor càng thấp càng tối (từ 0.0f -> 1.0f) VD: 0.3f
+     * @return java.awt.Color
+     */
+    public static Color darken(Color color, float factor) {
+        int r = Math.max((int)(color.getRed() * factor), 0);
+        int g = Math.max((int)(color.getGreen() * factor), 0);
+        int b = Math.max((int)(color.getBlue() * factor), 0);
+        return new Color(r, g, b, color.getAlpha());
+    }
+
+    /**
+     * Làm sáng màu từ màu chỉ định
+     * @param color VD: new Color(0, 0, 0)
+     * @param factor càng cao càng sáng (từ 0.0f -> 1.0f) VD: 0.3f
+     * @return java.awt.Color
+     */
+    public static Color lighten(Color color, float factor) {
+        int r = Math.min((int)(color.getRed() + (255 - color.getRed()) * factor), 255);
+        int g = Math.min((int)(color.getGreen() + (255 - color.getGreen()) * factor), 255);
+        int b = Math.min((int)(color.getBlue() + (255 - color.getBlue()) * factor), 255);
+        return new Color(r, g, b, color.getAlpha());
+    }
+
+    /**
+     * Làm tối màu từ màu chỉ định
+     * @param hex VD: #ffffff
+     * @param factor càng thấp càng tối (từ 0.0f -> 1.0f) VD: 0.3f
+     * @return java.awt.Color
+     */
+    public static Color darken(String hex, float factor) {
+        return darken(hexToColor(hex), factor);
+    }
+
+    /**
+     * Làm sáng màu từ màu chỉ định
+     * @param hex VD: #000000
+     * @param factor càng cao càng sáng (từ 0.0f -> 1.0f) VD: 0.3f
+     * @return java.awt.Color
+     */
+    public static Color lighten(String hex, float factor) {
+        return lighten(hexToColor(hex), factor);
     }
 
 }

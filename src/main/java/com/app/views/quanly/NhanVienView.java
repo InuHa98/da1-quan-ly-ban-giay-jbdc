@@ -5,15 +5,25 @@
 
 package com.app.views.quanly;
 
+import com.app.utils.ColorUtils;
+import com.app.views.UI.panel.RoundPanel;
+import com.app.views.UI.table.TableCustomUI;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author inuHa
  */
-public class NhanVienView extends javax.swing.JPanel {
+public class NhanVienView extends RoundPanel {
 
     /** Creates new form NhanVienView */
     public NhanVienView() {
-	initComponents();
+        initComponents();
+        setBackground(ColorUtils.BACKGROUND_TABLE);
+        TableCustomUI.apply(jScrollPane, TableCustomUI.TableType.MULTI_LINE);
+        fillDataTable();
     }
 
     /**
@@ -25,85 +35,31 @@ public class NhanVienView extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        jScrollPane3 = new javax.swing.JScrollPane();
-        tableCustom1 = new com.app.views.UI.TableCustom();
+        jScrollPane = new javax.swing.JScrollPane();
+        jTable2 = new javax.swing.JTable();
 
         setBackground(new java.awt.Color(51, 51, 51));
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        jTable2.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        jScrollPane1.setViewportView(jTable1);
 
-        tableCustom1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "ID", "Name", "Category", "Price", "Stock"
             }
-        ));
-        jScrollPane3.setViewportView(tableCustom1);
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane.setViewportView(jTable2);
+        if (jTable2.getColumnModel().getColumnCount() > 0) {
+            jTable2.getColumnModel().getColumn(0).setPreferredWidth(30);
+        }
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -111,27 +67,68 @@ public class NhanVienView extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 790, Short.MAX_VALUE)
-                    .addComponent(jScrollPane3))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 790, Short.MAX_VALUE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 207, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jScrollPane)
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JTable jTable1;
-    private com.app.views.UI.TableCustom tableCustom1;
+    private javax.swing.JScrollPane jScrollPane;
+    private javax.swing.JTable jTable2;
     // End of variables declaration//GEN-END:variables
+
+    private void fillDataTable() {
+        DefaultTableModel model = (DefaultTableModel) jTable2.getModel();
+        model.addRow(new Object[]{1, "Chai", "Beverages", 18, true});
+        model.addRow(new Object[]{2, "Chang", "Beverages", 19, false});
+        model.addRow(new Object[]{3, "Aniseed Syrup", "Beverages", 18, 39});
+        model.addRow(new Object[]{4, "Chef Anton's Cajun Seasoning", "Beverages", 19, 39});
+        model.addRow(new Object[]{5, "Chef Anton's Gumbo Mix", "Beverages", 18, 39});
+        model.addRow(new Object[]{6, "Grandma's Boysenberry Spread", "Beverages", 19, 39});
+        model.addRow(new Object[]{7, "Uncle Bob's Organic Dried Pears", "Beverages", 18, 39});
+        model.addRow(new Object[]{8, "Northwoods Cranberry Sauce", "Beverages", 19, 39});
+        model.addRow(new Object[]{9, "Mishi Kobe Niku", "Beverages", 18, 39});
+        model.addRow(new Object[]{10, "Ikura", "Beverages", 19, 39});
+        model.addRow(new Object[]{11, "Queso Cabrales", "Beverages", 18, 39});
+        model.addRow(new Object[]{12, "Queso Manchego La Pastora", "Beverages", 19, 39});
+        model.addRow(new Object[]{13, "Konbu", "Beverages", 18, 39});
+        model.addRow(new Object[]{14, "Tofu", "Seafood", 19, 39});
+        model.addRow(new Object[]{15, "Genen Shouyu", "Seafood", 18, 39});
+        model.addRow(new Object[]{16, "Pavlova", "Seafood", 19, 39});
+        model.addRow(new Object[]{17, "Alice Mutton", "Seafood", 18, 39});
+        model.addRow(new Object[]{18, "Carnarvon Tigers", "Seafood", 19, 39});
+        model.addRow(new Object[]{19, "Teatime Chocolate Biscuits", "Seafood", 19, 39});
+        model.addRow(new Object[]{20, "Sir Rodney's Marmalade", "Seafood", 19, 39});
+        model.addRow(new Object[]{21, "Sir Rodney's Scones", "Seafood", 19, 39});
+        model.addRow(new Object[]{22, "Gustaf's Knäckebröd", "Seafood", 19, 39});
+        model.addRow(new Object[]{23, "Tunnbröd", "Seafood", 19, 39});
+        model.addRow(new Object[]{24, "Guaraná Fantástica", "Seafood", 19, 39});
+        model.addRow(new Object[]{25, "NuNuCa Nuß-Nougat-Creme", "Seafood", 19, 39});
+        model.addRow(new Object[]{26, "Gumbär Gummibärchen", "Seafood", 19, 39});
+        model.addRow(new Object[]{27, "Schoggi Schokolade", "Seafood", 19, 39});
+        model.addRow(new Object[]{28, "Rössle Sauerkraut", "Seafood", 19, 39});
+        model.addRow(new Object[]{29, "Thüringer Rostbratwurst", "Seafood", 19, 39});
+        model.addRow(new Object[]{30, "Nord-Ost Matjeshering", "Seafood", 19, 39});
+        model.addRow(new Object[]{31, "Gorgonzola Telino", "Seafood", 19, 39});
+        model.addRow(new Object[]{32, "Mascarpone Fabioli", "Seafood", 19, 39});
+        model.addRow(new Object[]{33, "Geitost", "Seafood", 19, 39});
+        model.addRow(new Object[]{34, "Sasquatch Ale", "Seafood", 19, 39});
+        model.addRow(new Object[]{35, "Steeleye Stout", "Seafood", 19, 39});
+        model.addRow(new Object[]{36, "Inlagd Sill", "Seafood", 19, 39});
+        model.addRow(new Object[]{37, "Gravad lax", "Seafood", 19, 39});
+        model.addRow(new Object[]{38, "Côte de Blaye", "Seafood", 19, 39});
+        model.addRow(new Object[]{39, "Chartreuse verte", "Seafood", 19, 39});
+        model.addRow(new Object[]{40, "Boston Crab Meat", "Seafood", 19, 39});
+        model.addRow(new Object[]{41, "Jack's New England Clam Chowder", "Seafood", 19, 39});
+        model.addRow(new Object[]{42, "Singaporean Hokkien Fried Mee", "Seafood", 19, 39});
+        model.addRow(new Object[]{43, "Ipoh Coffee", "Seafood", 19, 39});
+    }
 
 }

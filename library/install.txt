@@ -13,7 +13,7 @@
 
 
 
-- Sau đó chạy lệnh sau:
+- Sau đó chạy lệnh sau tại thư mục library:
 
 mvn install:install-file -Dfile=swing-glasspane-popup-1.5.1.jar -DgroupId=raven.popup -DartifactId=swing-glasspane-popup -Dversion=1.5.1 -Dpackaging=jar
 

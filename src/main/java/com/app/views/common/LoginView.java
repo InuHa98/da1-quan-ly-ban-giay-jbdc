@@ -10,7 +10,7 @@ import com.app.common.helper.MessageModal;
 import com.app.common.infrastructure.session.SessionLogin;
 import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
-import com.app.models.responseDTO.INhanVienDTO;
+import com.app.models.INhanVienDTO;
 import com.app.services.NhanVienService;
 import com.app.utils.ColorUtils;
 import com.app.utils.ComponentUtils;
@@ -26,7 +26,6 @@ import java.awt.event.MouseEvent;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import javax.swing.ImageIcon;
-import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import net.miginfocom.swing.MigLayout;
 
@@ -57,6 +56,7 @@ public class LoginView extends javax.swing.JPanel {
         initComponents();
         setLayout(new MigLayout("fill, insets 20", "[center]", "[center]"));
         pnlLogin.setBackground(ColorUtils.BACKGROUND_PRIMARY);
+        lbForgotPassword.setForeground(ColorUtils.PRIMARY_COLOR);
 
         txtUsername.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Vui lòng nhập email hoặc tên người dùng");
         txtPassword.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Vui lòng nhập mật khẩu");

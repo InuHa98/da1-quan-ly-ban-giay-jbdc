@@ -1,6 +1,5 @@
 package com.app.views.components.sidebarmenu;
 
-import com.app.Application;
 import com.app.common.controller.DashboardController;
 import com.app.common.helper.MessageModal;
 import com.app.common.helper.MessageToast;
@@ -10,12 +9,12 @@ import com.app.common.infrastructure.router.NhanVienRoute;
 import com.app.common.infrastructure.router.QuanLyRoute;
 import com.app.common.infrastructure.session.AvatarUpload;
 import com.app.common.infrastructure.session.SessionLogin;
-import com.app.models.responseDTO.INhanVienDTO;
+import com.app.models.INhanVienDTO;
 import com.app.services.NhanVienService;
 import com.app.utils.*;
 import com.app.views.UI.ImageRound;
 import com.app.views.UI.dialog.LoadingDialog;
-import com.app.views.UI.scroll.ScrollBarCustom;
+import com.app.views.UI.scroll.ScrollBarCustomUI;
 import com.app.views.common.DashboardView;
 import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.util.Animator;
@@ -93,7 +92,7 @@ public class SidebarMenu extends JPanel {
         scroll.setViewportBorder(null);
         scroll.setBorder(null);
         scroll.getViewport().setOpaque(false);
-        scroll.setVerticalScrollBar(new ScrollBarCustom());
+        scroll.getVerticalScrollBar().setUI(new ScrollBarCustomUI());
 
         plMenu = new JPanel(new MigLayout("wrap 1, insets 0 0 10 10, fill", "fill"));
         plMenu.setOpaque(false);

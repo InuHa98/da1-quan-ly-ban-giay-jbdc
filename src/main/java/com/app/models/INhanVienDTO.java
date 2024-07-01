@@ -3,7 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 
-package com.app.models.responseDTO;
+package com.app.models;
 
 import org.springframework.beans.factory.annotation.Value;
 

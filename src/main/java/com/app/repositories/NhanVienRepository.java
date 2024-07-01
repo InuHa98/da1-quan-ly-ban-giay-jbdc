@@ -1,7 +1,7 @@
 package com.app.repositories;
 
 import com.app.entities.NhanVien;
-import com.app.models.responseDTO.INhanVienDTO;
+import com.app.models.INhanVienDTO;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

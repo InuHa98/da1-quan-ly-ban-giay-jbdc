@@ -51,6 +51,7 @@ public class ForgotPasswordView extends javax.swing.JPanel {
         initComponents();
         setLayout(new MigLayout("fill, insets 20", "[center]", "[center]"));
         pnlForgotPassword.setBackground(ColorUtils.BACKGROUND_PRIMARY);
+        lbLogin.setForeground(ColorUtils.PRIMARY_COLOR);
 
         txtEmail.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Vui lòng nhập email đã đăng ký tài khoản");
 

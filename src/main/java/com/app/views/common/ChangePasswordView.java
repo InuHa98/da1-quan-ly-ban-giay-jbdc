@@ -59,6 +59,7 @@ public class ChangePasswordView extends javax.swing.JPanel {
     private void setupComponents() {
         setLayout(new MigLayout("fill, insets 20", "[center]", "[center]"));
         pnlLogin.setBackground(ColorUtils.BACKGROUND_PRIMARY);
+        lbLogin.setForeground(ColorUtils.PRIMARY_COLOR);
 
         txtPassword.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Vui lòng nhập mật khẩu mới");
         txtConfirmPassword.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Vui lòng xác nhận mật khẩu mới");

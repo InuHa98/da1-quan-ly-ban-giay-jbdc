@@ -14,15 +14,14 @@ import raven.toast.Notifications;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Map;
 
 public class Application extends JFrame {
 
     public static Application app;
 
-    private final static int MIN_WIDTH = 1200;
+    private final static int MIN_WIDTH = 1000;
 
-    private final static int MIN_HEIGHT = 700;
+    private final static int MIN_HEIGHT = 500;
     
     public static void main(String[] args) {
 
