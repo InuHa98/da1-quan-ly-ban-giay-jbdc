@@ -1,0 +1,20 @@
+
+- Tải về của Maven: https://dlcdn.apache.org/maven/maven-3/3.9.8/binaries/apache-maven-3.9.8-bin.tar.gz
+
+- Giải nén file ZIP vào một thư mục, ví dụ C:\Program Files\Apache\maven (không có thì tạo mới)
+
+- Thiết lập biến môi trường: 
+	Mở Control Panel -> System -> Advanced system settings.
+	Trong tab Advanced, nhấn vào nút Environment Variables.
+	Tạo một biến hệ thống mới với tên MAVEN_HOME và giá trị là đường dẫn đến thư mục Maven bạn vừa giải nén, ví dụ C:\Program Files\Apache\maven\apache-maven-3.8.1.
+	Sửa biến Path, thêm ;%MAVEN_HOME%\bin vào cuối giá trị của biến Path.
+
+- Kiểm tra cài đặt: Mở Command Prompt và gõ mvn -version để kiểm tra cài đặt.
+
+
+
+- Sau đó chạy lệnh sau:
+
+mvn install:install-file -Dfile=swing-glasspane-popup-1.5.1.jar -DgroupId=raven.popup -DartifactId=swing-glasspane-popup -Dversion=1.5.1 -Dpackaging=jar
+
+mvn install:install-file -Dfile=swing-toast-notifications-1.0.3.jar -DgroupId=raven.toast -DartifactId=swing-toast-notifications -Dversion=1.0.3 -Dpackaging=jar
