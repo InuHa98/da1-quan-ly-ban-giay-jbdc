@@ -1,78 +1,72 @@
 package com.app.entities;
 
-
-import javax.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Nationalized;
 
-import java.io.Serializable;
-import java.time.LocalDateTime;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import java.time.Instant;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
-
-@Entity
-@Setter
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
+@Setter
+@Entity
 @Table(name = "NhanVien", schema = "dbo")
-public class NhanVien implements Serializable {
-
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class NhanVien {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    private int id;
+    private Integer id;
 
-    @Basic
-    @Column(name = "id_nguoi_tao")
-    private String idNguoiTao;
+    @Nationalized
+    @Column(name = "avatar", length = 250)
+    private String avatar;
 
-    @Basic
-    @Column(name = "username", nullable = false, columnDefinition = "varchar(25)")
-    private String username;
+    @Column(name = "created_at", nullable = false)
+    private Instant createdAt;
 
-    @Basic
-    @Column(name = "password", nullable = false, columnDefinition = "varchar(255)")
-    private String password;
-	
-    @Basic
-    @Column(name = "ho_ten", nullable = false, columnDefinition = "nvarchar(255)")
-    private String hoTen;
+    @Nationalized
+    @Column(name = "dia_chi", length = 250)
+    private String diaChi;
 
-    @Basic
-    @Column(name = "email", nullable = false, length = 255)
+    @Nationalized
+    @Column(name = "email", nullable = false, length = 250, unique = true)
     private String email;
 
-    @Basic
-    @Column(name = "so_dien_thoai", nullable = false)
-    private String soDienThoai;
-
-    @Basic
     @Column(name = "gioi_tinh")
     private Boolean gioiTinh;
 
-    @Basic
-    @Column(name = "avatar", columnDefinition = "nvarchar(255)")
-    private String avatar;
+    @Nationalized
+    @Column(name = "ho_ten", length = 250)
+    private String hoTen;
 
-    @Basic
-    @Column(name = "otp", columnDefinition = "varchar(6)")
+    @Column(name = "is_admin")
+    private Boolean isAdmin;
+
+    @Column(name = "otp", length = 6)
     private String otp;
 
-    @Basic
-    @Column(name = "chuc_vu", nullable = false, columnDefinition = "varchar(10)")
-    private String chucVu;
+    @Nationalized
+    @Column(name = "password", nullable = false, length = 50)
+    private String password;
 
-    @Basic
-    @Column(name = "trang_thai", nullable = false)
+    @Column(name = "sdt", nullable = false, length = 13, unique = true)
+    private String sdt;
+
+    @Column(name = "trang_thai")
     private Boolean trangThai;
 
-    @Basic
-    @Column(name = "ngay_tao")
-    private LocalDateTime ngayTao;
+    @Column(name = "username", nullable = false, length = 25, unique = true)
+    private String username;
 
-    @Basic
-    @Column(name = "ngay_cap_nhat")
-    private LocalDateTime ngayCapNhat;
+    @OneToMany(mappedBy = "idNhanVien")
+    private Set<HoaDon> hoaDons = new LinkedHashSet<>();
+
 }

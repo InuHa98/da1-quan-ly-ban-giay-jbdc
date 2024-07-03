@@ -125,10 +125,6 @@ public class NhanVienService implements IDAOService<INhanVienDTO, Integer> {
             throw new ServiceResponseException("Mật khẩu không hợp lệ");
         }
 
-        if (!ValidateUtils.isPassword(password)) {
-            throw new ServiceResponseException("Mật khẩu không hợp lệ");
-        }
-
         if (!password.equals(confirmPassword)) {
             throw new ServiceResponseException("Mật khẩu nhập lại không chính xác");
         }
@@ -139,6 +135,31 @@ public class NhanVienService implements IDAOService<INhanVienDTO, Integer> {
 
     }
 
+    @Transactional
+    public void changePassword(String oldPassword, String newPassword, String confirmPassword) {
+
+        if (!oldPassword.equals(SessionLogin.getInstance().getData().getPassword())) {
+            throw new ServiceResponseException("Mật khẩu cũ không chính xác");
+        }
+
+        if (!ValidateUtils.isPassword(newPassword)) {
+            throw new ServiceResponseException("Mật khẩu mới không hợp lệ");
+        }
+
+        if (!newPassword.equals(confirmPassword)) {
+            throw new ServiceResponseException("Mật khẩu nhập lại không chính xác");
+        }
+
+        int id = SessionLogin.getInstance().getData().getId();
+        if (nhanVienRepository.updatePassword(id, oldPassword, newPassword) < 1) {
+            throw new ServiceResponseException("Không thể đổi mật khẩu. Vui lòng thử lại");
+        }
+
+        String username = SessionLogin.getInstance().getData().getUsername();
+        INhanVienDTO data = login(username, newPassword);
+        SessionLogin.getInstance().create(username, newPassword, data);
+    }
+    
     @Transactional
     public void changeAvatar(String avatar) {
 

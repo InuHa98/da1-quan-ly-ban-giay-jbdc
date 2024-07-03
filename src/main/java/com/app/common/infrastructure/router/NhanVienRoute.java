@@ -30,7 +30,10 @@ public class NhanVienRoute {
         itemSideMenu.add(new SidebarMenuItem(1, "sell", "Bán hàng", new JLabel("Giáp ăn lozzzzzzzzz 1")));
         itemSideMenu.add(new SidebarMenuItem(2, "receipt", "Hoá đơn", new JLabel("Giáp ăn lozzzzzzzzz 2")));
         itemSideMenu.add(new SidebarMenuItem(3, "customer", "Khách hàng", new JLabel("Giáp ăn lozzzzzzzzz 3")));
-        itemSideMenu.add(new SidebarMenuItem(4, "logout", "Đăng xuất", (button) -> {
+        itemSideMenu.add(new SidebarMenuItem(4, "password", "Đổi mật khẩu", (button) -> {
+            SessionLogin.getInstance().changePassword();
+        }));
+        itemSideMenu.add(new SidebarMenuItem(5, "logout", "Đăng xuất", (button) -> {
             SessionLogin.getInstance().logout();
         }));
     }

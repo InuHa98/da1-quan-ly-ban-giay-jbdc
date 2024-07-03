@@ -6,9 +6,13 @@ import com.app.common.infrastructure.exceptions.ServiceResponseException;
 import com.app.models.INhanVienDTO;
 import com.app.services.NhanVienService;
 import com.app.utils.ContextUtils;
-import com.app.views.common.LoginView;
+import com.app.views.UI.dialog.ModalDialog;
+import com.app.views.common.ChangePasswordView;
+import com.app.views.common.DashboardView;
+import com.app.views.guest.LoginView;
 import lombok.Getter;
 
+import javax.swing.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -79,4 +83,10 @@ public class SessionLogin {
         executorService.shutdown();
     }
 
+    public void changePassword() {
+        SwingUtilities.invokeLater(() -> {
+            ModalDialog modalDialog = new ModalDialog("Đổi mật khẩu", new ChangePasswordView());
+            modalDialog.setVisible(true);
+        });
+    }
 }

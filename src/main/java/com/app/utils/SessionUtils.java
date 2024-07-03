@@ -79,11 +79,11 @@ public class SessionUtils {
     }
 
     public static boolean isManager() {
-        return SessionLogin.getInstance().getData().getChucVu().equals("MANAGER");
+        return SessionLogin.getInstance().getData().isAdmin();
     }
 
     public static boolean isStaff() {
-        return SessionLogin.getInstance().getData().getChucVu().equals("STAFF");
+        return !SessionLogin.getInstance().getData().isAdmin();
     }
 
 }

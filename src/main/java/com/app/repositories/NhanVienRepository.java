@@ -19,9 +19,9 @@ public interface NhanVienRepository extends JpaRepository<NhanVien, Integer> {
 	    nv.password,
 	    nv.ho_ten,
 	    nv.email,
-	    nv.so_dien_thoai,
+	    nv.sdt,
 	    nv.avatar,
-	    nv.chuc_vu
+	    nv.is_admin
 	FROM NhanVien AS nv
 	WHERE nv.id = :id
     """, nativeQuery = true)
@@ -34,9 +34,9 @@ public interface NhanVienRepository extends JpaRepository<NhanVien, Integer> {
 	    nv.password,
 	    nv.ho_ten,
 	    nv.email,
-	    nv.so_dien_thoai,
+	    nv.sdt,
 	    nv.avatar,
-	    nv.chuc_vu
+	    nv.is_admin
 	FROM NhanVien AS nv
 	WHERE nv.email LIKE :email
     """, nativeQuery = true)
@@ -49,9 +49,9 @@ public interface NhanVienRepository extends JpaRepository<NhanVien, Integer> {
 	    nv.password,
 	    nv.ho_ten,
 	    nv.email,
-	    nv.so_dien_thoai,
+	    nv.sdt,
 	    nv.avatar,
-	    nv.chuc_vu
+	    nv.is_admin
 	FROM NhanVien AS nv
 	WHERE nv.username LIKE :username
     """, nativeQuery = true)
@@ -80,6 +80,13 @@ public interface NhanVienRepository extends JpaRepository<NhanVien, Integer> {
     """, nativeQuery = true)
 	Integer updateForgotPassword(@Param("password") String password, @Param("email") String email, @Param("otp") String otp);
 
+        @Modifying
+	@Query(value = """
+    UPDATE NhanVien SET password = :newPassword WHERE id = :id AND password = :oldPassword
+    """, nativeQuery = true)
+	Integer updatePassword(@Param("id") int id, @Param("oldPassword") String oldPassword, @Param("newPassword") String newPassword);
+
+        
 	@Modifying
 	@Query(value = """
     UPDATE NhanVien SET avatar = :avatar WHERE id = :id

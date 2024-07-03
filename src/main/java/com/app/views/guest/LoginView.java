@@ -3,7 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
 
-package com.app.views.common;
+package com.app.views.guest;
 
 import com.app.common.controller.ApplicationController;
 import com.app.common.helper.MessageModal;
@@ -17,6 +17,7 @@ import com.app.utils.ComponentUtils;
 import com.app.utils.ContextUtils;
 import com.app.utils.ResourceUtils;
 import com.app.views.UI.dialog.LoadingDialog;
+import com.app.views.common.DashboardView;
 import com.formdev.flatlaf.FlatClientProperties;
 import java.awt.Graphics;
 import java.awt.event.KeyAdapter;
@@ -60,6 +61,9 @@ public class LoginView extends javax.swing.JPanel {
 
         txtUsername.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Vui lòng nhập email hoặc tên người dùng");
         txtPassword.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Vui lòng nhập mật khẩu");
+
+        txtUsername.setText("admin");
+        txtPassword.setText("123");
 
         SwingUtilities.invokeLater(() -> txtUsername.requestFocus());
 

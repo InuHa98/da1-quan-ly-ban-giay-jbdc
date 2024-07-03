@@ -4,7 +4,9 @@ import com.app.common.controller.ApplicationController;
 import com.app.common.helper.TestConnection;
 import com.app.utils.ContextUtils;
 import com.app.utils.ResourceUtils;
-import com.app.views.common.LoginView;
+import com.app.views.UI.dialog.ModalDialog;
+import com.app.views.guest.ChangePasswordView;
+import com.app.views.guest.LoginView;
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.fonts.roboto.FlatRobotoFont;
 import com.formdev.flatlaf.themes.FlatMacDarkLaf;
@@ -19,9 +21,9 @@ public class Application extends JFrame {
 
     public static Application app;
 
-    private final static int MIN_WIDTH = 1000;
+    private final static int MIN_WIDTH = 1400;
 
-    private final static int MIN_HEIGHT = 500;
+    private final static int MIN_HEIGHT = 800;
     
     public static void main(String[] args) {
 

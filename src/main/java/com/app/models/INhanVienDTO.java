@@ -29,14 +29,14 @@ public interface INhanVienDTO {
     @Value("#{target.email}")
     String getEmail();
     
-    @Value("#{target.so_dien_thoai}")
+    @Value("#{target.sdt}")
     String getSdt();
 
     @Value("#{target.avatar}")
     String getAvatar();
 
-    @Value("#{target.chuc_vu}")
-    String getChucVu();
+    @Value("#{target.is_admin}")
+    boolean isAdmin();
 
 
 }

@@ -161,10 +161,9 @@ public class SidebarMenu extends JPanel {
                             nhanVienService.changeAvatar(avatarUpload.getFileName());
                             loading.dispose();
 
-                            SwingUtilities.invokeLater(() -> {
-                                lbAvatar.setImage(avatarUpload.getDataImage());
-                                MessageToast.success("Cập nhật ảnh đại diện thành công.");
-                            });
+                            lbAvatar.setImage(avatarUpload.getDataImage());
+                            MessageToast.success("Cập nhật ảnh đại diện thành công.");
+
                         } catch (ServiceResponseException e) {
                             loading.dispose();
                             MessageToast.error(e.getMessage());

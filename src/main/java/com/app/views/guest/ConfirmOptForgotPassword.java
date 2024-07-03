@@ -3,7 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
 
-package com.app.views.common;
+package com.app.views.guest;
 
 import com.app.common.controller.ApplicationController;
 import com.app.common.helper.MessageModal;
@@ -11,11 +11,10 @@ import com.app.common.helper.MessageToast;
 import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
 import com.app.services.NhanVienService;
-import com.app.utils.ColorUtils;
 import com.app.utils.ContextUtils;
 import com.app.views.UI.dialog.LoadingDialog;
 import com.formdev.flatlaf.FlatClientProperties;
-import java.awt.event.ActionEvent;
+
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;

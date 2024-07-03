@@ -35,7 +35,10 @@ public class QuanLyRoute {
         itemSideMenu.add(new SidebarMenuItem(5, "receipt", "Hoá đơn", new JLabel("Giáp ăn lozzzzzzzzz 5")));
         itemSideMenu.add(new SidebarMenuItem(6, "customer", "Khách hàng", new JLabel("Giáp ăn lozzzzzzzzz 6")));
         itemSideMenu.add(new SidebarMenuItem(7, "users", "Nhân viên", new NhanVienView()));
-        itemSideMenu.add(new SidebarMenuItem(8, "logout", "Đăng xuất", (button) -> {
+        itemSideMenu.add(new SidebarMenuItem(8, "password", "Đổi mật khẩu", (button) -> {
+            SessionLogin.getInstance().changePassword();
+        }));
+        itemSideMenu.add(new SidebarMenuItem(9, "logout", "Đăng xuất", (button) -> {
             SessionLogin.getInstance().logout();
         }));
     }
