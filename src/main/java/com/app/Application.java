@@ -1,12 +1,9 @@
 package com.app;
 
 import com.app.common.controller.ApplicationController;
-import com.app.common.helper.Pagination;
 import com.app.common.helper.TestConnection;
 import com.app.utils.ContextUtils;
 import com.app.utils.ResourceUtils;
-import com.app.views.UI.dialog.ModalDialog;
-import com.app.views.guest.ChangePasswordView;
 import com.app.views.guest.LoginView;
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.fonts.roboto.FlatRobotoFont;
@@ -17,7 +14,6 @@ import raven.toast.Notifications;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 
 public class Application extends JFrame {
 

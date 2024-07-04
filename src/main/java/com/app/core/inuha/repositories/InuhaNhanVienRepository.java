@@ -1,16 +1,32 @@
-package com.app.repositories;
+package com.app.core.inuha.repositories;
 
+import com.app.core.inuha.models.InuhaNhanVienModel;
 import com.app.entities.NhanVien;
-import com.app.models.NhanVienModel;
-import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public interface NhanVienRepository extends JpaRepository<NhanVien, Integer> {
+import java.util.Optional;
+
+@Repository("inuha_NhanVienRepository")
+public interface InuhaNhanVienRepository extends JpaRepository<NhanVien, Integer> {
+
+    @Query(value = """
+	SELECT
+	    nv.id,
+	    nv.username,
+	    nv.password,
+	    nv.ho_ten,
+	    nv.email,
+	    nv.sdt,
+	    nv.avatar,
+	    nv.is_admin
+	FROM NhanVien AS nv
+	WHERE nv.id = :id
+    """, nativeQuery = true)
+    Optional<InuhaNhanVienModel> findNhanVienById(@Param("id") int id);
 
 	@Query(value = """
 	SELECT
@@ -25,7 +41,7 @@ public interface NhanVienRepository extends JpaRepository<NhanVien, Integer> {
 	FROM NhanVien AS nv
 	WHERE nv.email LIKE :email
     """, nativeQuery = true)
-	Optional<NhanVienModel> findNhanVienByEmail(@Param("email") String email);
+	Optional<InuhaNhanVienModel> findNhanVienByEmail(@Param("email") String email);
 
 	@Query(value = """
 	SELECT
@@ -40,7 +56,7 @@ public interface NhanVienRepository extends JpaRepository<NhanVien, Integer> {
 	FROM NhanVien AS nv
 	WHERE nv.username LIKE :username
     """, nativeQuery = true)
-	Optional<NhanVienModel> findNhanVienByUsername(@Param("username") String username);
+	Optional<InuhaNhanVienModel> findNhanVienByUsername(@Param("username") String username);
 
     @Modifying
     @Query(value = """
@@ -64,6 +80,13 @@ public interface NhanVienRepository extends JpaRepository<NhanVien, Integer> {
     UPDATE NhanVien SET password = :password, otp = NULL WHERE email LIKE :email AND otp = :otp
     """, nativeQuery = true)
 	Integer updateForgotPassword(@Param("password") String password, @Param("email") String email, @Param("otp") String otp);
+
+        @Modifying
+	@Query(value = """
+    UPDATE NhanVien SET password = :newPassword WHERE id = :id AND password = :oldPassword
+    """, nativeQuery = true)
+	Integer updatePassword(@Param("id") int id, @Param("oldPassword") String oldPassword, @Param("newPassword") String newPassword);
+
         
 	@Modifying
 	@Query(value = """

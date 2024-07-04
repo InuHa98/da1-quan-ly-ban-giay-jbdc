@@ -20,7 +20,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import javax.swing.SwingUtilities;
 
 /**
  *
@@ -177,7 +176,7 @@ public class ConfirmOptForgotPassword extends javax.swing.JPanel {
                 MessageModal.closeAll();
                 MessageToast.clearAll();
                 MessageToast.success("Xác nhận mã OTP thành công. Vui lòng xác nhận mật khẩu mới");
-                ApplicationController.getInstance().show(new ChangePasswordView(this.email, otp));
+                ApplicationController.getInstance().show(new ChangePasswordForgotPasswordView(this.email, otp));
             } catch(ServiceResponseException e) {
                 loading.dispose();
                 MessageModal.error(e.getMessage());

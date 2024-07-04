@@ -1,7 +1,7 @@
 package com.app.common.infrastructure.router;
 
 import com.app.common.infrastructure.session.SessionLogin;
-import com.app.views.components.sidebarmenu.SidebarMenuItem;
+import com.app.views.UI.sidebarmenu.SidebarMenuItem;
 import lombok.Getter;
 
 import javax.swing.*;

@@ -1,8 +1,8 @@
 package com.app.common.infrastructure.router;
 
 import com.app.common.infrastructure.session.SessionLogin;
-import com.app.views.components.sidebarmenu.SidebarMenuItem;
-import com.app.views.quanly.NhanVienView;
+import com.app.core.inuha.views.quanly.InuhaNhanVienView;
+import com.app.views.UI.sidebarmenu.SidebarMenuItem;
 import lombok.Getter;
 
 import javax.swing.*;
@@ -34,7 +34,7 @@ public class QuanLyRoute {
         itemSideMenu.add(new SidebarMenuItem(4, "voucher", "Mã giảm giá", new JLabel("Giáp ăn lozzzzzzzzz 4")));
         itemSideMenu.add(new SidebarMenuItem(5, "receipt", "Hoá đơn", new JLabel("Giáp ăn lozzzzzzzzz 5")));
         itemSideMenu.add(new SidebarMenuItem(6, "customer", "Khách hàng", new JLabel("Giáp ăn lozzzzzzzzz 6")));
-        itemSideMenu.add(new SidebarMenuItem(7, "users", "Nhân viên", new NhanVienView()));
+        itemSideMenu.add(new SidebarMenuItem(7, "users", "Nhân viên", new InuhaNhanVienView()));
         itemSideMenu.add(new SidebarMenuItem(8, "password", "Đổi mật khẩu", (button) -> {
             SessionLogin.getInstance().changePassword();
         }));

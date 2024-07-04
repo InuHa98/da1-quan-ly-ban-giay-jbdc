@@ -10,14 +10,14 @@ import com.app.common.helper.MessageModal;
 import com.app.common.infrastructure.session.SessionLogin;
 import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
-import com.app.models.INhanVienDTO;
+import com.app.models.NhanVienModel;
 import com.app.services.NhanVienService;
 import com.app.utils.ColorUtils;
 import com.app.utils.ComponentUtils;
 import com.app.utils.ContextUtils;
 import com.app.utils.ResourceUtils;
 import com.app.views.UI.dialog.LoadingDialog;
-import com.app.views.common.DashboardView;
+import com.app.views.DashboardView;
 import com.formdev.flatlaf.FlatClientProperties;
 import java.awt.Graphics;
 import java.awt.event.KeyAdapter;
@@ -257,7 +257,7 @@ public class LoginView extends javax.swing.JPanel {
 
         executorService.submit(() -> {
             try {
-                INhanVienDTO user = nhanVienService.login(username, password);
+                NhanVienModel user = nhanVienService.login(username, password);
                 SessionLogin.getInstance().create(username, password, user);
                 loadingDialog.dispose();
                 ApplicationController.getInstance().show(new DashboardView());

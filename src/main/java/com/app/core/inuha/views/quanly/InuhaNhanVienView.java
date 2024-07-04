@@ -3,7 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
 
-package com.app.views.quanly;
+package com.app.core.inuha.views.quanly;
 
 import com.app.common.helper.Pagination;
 import com.app.utils.ColorUtils;
@@ -17,11 +17,11 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author inuHa
  */
-public class NhanVienView extends RoundPanel {
+public class InuhaNhanVienView extends RoundPanel {
 
 
     /** Creates new form NhanVienView */
-    public NhanVienView() {
+    public InuhaNhanVienView() {
         initComponents();
         setBackground(ColorUtils.BACKGROUND_TABLE);
         TableCustomUI.apply(jScrollPane, TableCustomUI.TableType.MULTI_LINE);

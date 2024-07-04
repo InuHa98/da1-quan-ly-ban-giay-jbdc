@@ -1,4 +1,4 @@
-package com.app.views.components.sidebarmenu;
+package com.app.views.UI.sidebarmenu;
 
 import com.app.common.controller.DashboardController;
 import com.app.common.helper.MessageModal;
@@ -9,13 +9,13 @@ import com.app.common.infrastructure.router.NhanVienRoute;
 import com.app.common.infrastructure.router.QuanLyRoute;
 import com.app.common.infrastructure.session.AvatarUpload;
 import com.app.common.infrastructure.session.SessionLogin;
-import com.app.models.INhanVienDTO;
+import com.app.models.NhanVienModel;
 import com.app.services.NhanVienService;
 import com.app.utils.*;
 import com.app.views.UI.ImageRound;
 import com.app.views.UI.dialog.LoadingDialog;
 import com.app.views.UI.scroll.ScrollBarCustomUI;
-import com.app.views.common.DashboardView;
+import com.app.views.DashboardView;
 import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.util.Animator;
 import net.miginfocom.swing.MigLayout;
@@ -71,7 +71,7 @@ public class SidebarMenu extends JPanel {
 
         int maxLengthText = 23;
 
-        INhanVienDTO authUser = SessionLogin.getInstance().getData();
+        NhanVienModel authUser = SessionLogin.getInstance().getData();
 
         String username = ComponentUtils.hiddenText(authUser.getUsername(), maxLengthText);
         String email = ComponentUtils.hiddenText(authUser.getEmail(), maxLengthText);

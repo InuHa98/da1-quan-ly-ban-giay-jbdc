@@ -1,16 +1,13 @@
-package com.app.views.common;
+package com.app.views;
 
-import com.app.Application;
-import com.app.common.controller.ApplicationController;
 import com.app.common.controller.DashboardController;
 import com.app.common.infrastructure.router.NhanVienRoute;
 import com.app.common.infrastructure.router.QuanLyRoute;
 import com.app.utils.ColorUtils;
 import com.app.utils.SessionUtils;
-import com.app.views.UI.dialog.LoadingDialog;
-import com.app.views.components.sidebarmenu.SidebarMenu;
-import com.app.views.components.sidebarmenu.SidebarMenuContent;
-import com.app.views.components.sidebarmenu.SidebarMenuItem;
+import com.app.views.UI.sidebarmenu.SidebarMenu;
+import com.app.views.UI.sidebarmenu.SidebarMenuContent;
+import com.app.views.UI.sidebarmenu.SidebarMenuItem;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;

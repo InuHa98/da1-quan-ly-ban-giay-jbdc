@@ -1,4 +1,4 @@
-package com.app.views.components.sidebarmenu;
+package com.app.views.UI.sidebarmenu;
 
 import com.app.utils.ColorUtils;
 

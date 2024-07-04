@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
  * @author inuHa
  */
 
-public interface INhanVienDTO {
+public interface NhanVienModel {
 
     @Value("#{target.id}")
     int getId();

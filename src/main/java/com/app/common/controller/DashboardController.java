@@ -1,8 +1,7 @@
 package com.app.common.controller;
 
-import com.app.Application;
-import com.app.views.common.DashboardView;
-import com.app.views.components.sidebarmenu.SidebarMenuContent;
+import com.app.views.DashboardView;
+import com.app.views.UI.sidebarmenu.SidebarMenuContent;
 
 import javax.swing.*;
 import java.awt.*;

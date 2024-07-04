@@ -18,7 +18,7 @@ import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
-@EnableJpaRepositories("com.app.repositories")
+@EnableJpaRepositories({"com.app.repositories", "com.app.core"})
 @ComponentScan(value = "com.app")
 @EnableTransactionManagement(proxyTargetClass = true)
 @PropertySource("classpath:application.properties")

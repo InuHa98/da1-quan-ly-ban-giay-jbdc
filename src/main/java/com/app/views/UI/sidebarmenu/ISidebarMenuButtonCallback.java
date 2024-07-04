@@ -1,6 +1,4 @@
-package com.app.views.components.sidebarmenu;
-
-import com.app.views.components.sidebarmenu.SidebarMenuButton;
+package com.app.views.UI.sidebarmenu;
 
 @FunctionalInterface
 public interface ISidebarMenuButtonCallback {

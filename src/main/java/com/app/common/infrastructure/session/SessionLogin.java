@@ -3,12 +3,11 @@ package com.app.common.infrastructure.session;
 import com.app.common.controller.ApplicationController;
 import com.app.common.helper.MessageModal;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
-import com.app.models.INhanVienDTO;
+import com.app.models.NhanVienModel;
 import com.app.services.NhanVienService;
 import com.app.utils.ContextUtils;
 import com.app.views.UI.dialog.ModalDialog;
-import com.app.views.common.ChangePasswordView;
-import com.app.views.common.DashboardView;
+import com.app.core.inuha.views.common.ChangePasswordView;
 import com.app.views.guest.LoginView;
 import lombok.Getter;
 
@@ -27,7 +26,7 @@ public class SessionLogin {
     private String password = null;
 
     @Getter
-    private INhanVienDTO data = null;
+    private NhanVienModel data = null;
 
     private SessionLogin() {
     }
@@ -60,7 +59,7 @@ public class SessionLogin {
         return this;
     }
 
-    public void create(String username, String password, INhanVienDTO data) {
+    public void create(String username, String password, NhanVienModel data) {
         this.username = username;
         this.password = password;
         this.data = data;

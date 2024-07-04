@@ -1,9 +1,8 @@
-package com.app.views.components.sidebarmenu;
+package com.app.views.UI.sidebarmenu;
 
 import lombok.Getter;
 
 import javax.swing.*;
-import java.awt.*;
 
 public class SidebarMenuItem {
 
