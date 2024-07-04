@@ -27,7 +27,6 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import raven.popup.GlassPanePopup;
 
 /**
  *
@@ -35,7 +34,7 @@ import raven.popup.GlassPanePopup;
  */
 
 
-public class ChangePasswordView extends javax.swing.JPanel {
+public class InuhaChangePasswordView extends javax.swing.JPanel {
 
     private final InuhaNhanVienService nhanVienService = ContextUtils.getBean(InuhaNhanVienService.class);
 
@@ -84,7 +83,7 @@ public class ChangePasswordView extends javax.swing.JPanel {
     }
 
     /** Creates new form LoginView */
-    public ChangePasswordView() {
+    public InuhaChangePasswordView() {
         initComponents();
         setupComponents();
     }

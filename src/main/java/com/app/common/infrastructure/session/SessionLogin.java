@@ -7,7 +7,7 @@ import com.app.models.NhanVienModel;
 import com.app.services.NhanVienService;
 import com.app.utils.ContextUtils;
 import com.app.views.UI.dialog.ModalDialog;
-import com.app.core.inuha.views.common.ChangePasswordView;
+import com.app.core.inuha.views.common.InuhaChangePasswordView;
 import com.app.views.guest.LoginView;
 import lombok.Getter;
 
@@ -84,7 +84,7 @@ public class SessionLogin {
 
     public void changePassword() {
         SwingUtilities.invokeLater(() -> {
-            ModalDialog modalDialog = new ModalDialog("Đổi mật khẩu", new ChangePasswordView());
+            ModalDialog modalDialog = new ModalDialog("Đổi mật khẩu", new InuhaChangePasswordView());
             modalDialog.setVisible(true);
         });
     }
