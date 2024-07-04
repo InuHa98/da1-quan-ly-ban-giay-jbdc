@@ -54,7 +54,6 @@ public class ForgotPasswordView extends javax.swing.JPanel {
 
         txtEmail.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Vui lòng nhập email đã đăng ký tài khoản");
 
-        SwingUtilities.invokeLater(() -> txtEmail.requestFocus());
 
         lbEmail.setForeground(ColorUtils.PRIMARY_TEXT);
 
@@ -70,6 +69,7 @@ public class ForgotPasswordView extends javax.swing.JPanel {
         };
 
         txtEmail.addKeyListener(keyEnter);
+        txtEmail.requestFocus();
     }
 
     /**

@@ -61,8 +61,6 @@ public class ChangePasswordView extends javax.swing.JPanel {
         txtNewPassword.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Vui lòng nhập mật khẩu mới");
         txtConfirmPassword.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Vui lòng xác nhận mật khẩu mới");
 
-        SwingUtilities.invokeLater(() -> txtOldPassword.requestFocus());
-
         lbOldPassword.setForeground(ColorUtils.PRIMARY_TEXT);
         lbConfirmPassword.setForeground(ColorUtils.PRIMARY_TEXT);
         lbNewPassword.setForeground(ColorUtils.PRIMARY_TEXT);
@@ -85,6 +83,7 @@ public class ChangePasswordView extends javax.swing.JPanel {
         txtOldPassword.addKeyListener(keyEnter);
         txtNewPassword.addKeyListener(keyEnter);
         txtConfirmPassword.addKeyListener(keyEnter);
+        txtOldPassword.requestFocus();
     }
 
     /** Creates new form LoginView */

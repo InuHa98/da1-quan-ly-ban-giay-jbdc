@@ -79,21 +79,23 @@ public class ScrollBarCustomUI extends BasicScrollBarUI {
 
     @Override
     protected JButton createIncreaseButton(int i) {
-        return createDisabledButton();
+        return new CreateDisabledButton();
     }
 
     @Override
     protected JButton createDecreaseButton(int i) {
-        return createDisabledButton();
+        return new CreateDisabledButton();
     }
 
-    private JButton createDisabledButton() {
-        JButton button = new JButton();
-        button.setEnabled(false);
-        Dimension size = new Dimension(0, 0);
-        button.setPreferredSize(size);
-        button.setMinimumSize(size);
-        button.setMaximumSize(size);
-        return button;
+    private class CreateDisabledButton extends JButton {
+
+        public CreateDisabledButton() {
+            setOpaque(false);
+            setFocusable(false);
+            setFocusPainted(false);
+            setBorderPainted(false);
+            setBorder(BorderFactory.createEmptyBorder());
+        }
+
     }
 }

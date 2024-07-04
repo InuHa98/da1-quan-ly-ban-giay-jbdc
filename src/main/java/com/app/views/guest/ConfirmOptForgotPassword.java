@@ -44,7 +44,6 @@ public class ConfirmOptForgotPassword extends javax.swing.JPanel {
 
         txtOTP.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Vui lòng nhập mã OTP");
 
-        SwingUtilities.invokeLater(() -> txtOTP.requestFocus());
 
         KeyListener keyEnter = new KeyAdapter() {
             @Override
@@ -56,7 +55,7 @@ public class ConfirmOptForgotPassword extends javax.swing.JPanel {
         };
 
         txtOTP.addKeyListener(keyEnter);
-
+        txtOTP.requestFocus();
     }
 
     /** Creates new form ConfirmOptForgotPassword */

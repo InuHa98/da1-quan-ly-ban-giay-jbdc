@@ -5,6 +5,7 @@
 
 package com.app.views.quanly;
 
+import com.app.common.helper.Pagination;
 import com.app.utils.ColorUtils;
 import com.app.views.UI.panel.RoundPanel;
 import com.app.views.UI.table.TableCustomUI;
@@ -18,12 +19,31 @@ import javax.swing.table.DefaultTableModel;
  */
 public class NhanVienView extends RoundPanel {
 
+
     /** Creates new form NhanVienView */
     public NhanVienView() {
         initComponents();
         setBackground(ColorUtils.BACKGROUND_TABLE);
         TableCustomUI.apply(jScrollPane, TableCustomUI.TableType.MULTI_LINE);
         fillDataTable();
+
+        Pagination pagination = new Pagination();
+        pagination.setPanel(plPagination);
+        pagination.setCurrentPage(14);
+        pagination.setTotalPages(15);
+        pagination.setCallback(new Pagination.Callback() {
+            @Override
+            public void onChangeLimitItem(JComboBox<Integer> comboBox) {
+                System.err.println(comboBox.getSelectedItem());
+            }
+
+            @Override
+            public void onClickPage(int page) {
+                System.err.println(page);
+            }
+        });
+
+        pagination.render();
     }
 
     /**
@@ -36,11 +56,12 @@ public class NhanVienView extends RoundPanel {
     private void initComponents() {
 
         jScrollPane = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
+        tblDanhSach = new javax.swing.JTable();
+        plPagination = new javax.swing.JPanel();
 
         setBackground(new java.awt.Color(51, 51, 51));
 
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+        tblDanhSach.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -56,10 +77,21 @@ public class NhanVienView extends RoundPanel {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane.setViewportView(jTable2);
-        if (jTable2.getColumnModel().getColumnCount() > 0) {
-            jTable2.getColumnModel().getColumn(0).setPreferredWidth(30);
+        jScrollPane.setViewportView(tblDanhSach);
+        if (tblDanhSach.getColumnModel().getColumnCount() > 0) {
+            tblDanhSach.getColumnModel().getColumn(0).setPreferredWidth(30);
         }
+
+        javax.swing.GroupLayout plPaginationLayout = new javax.swing.GroupLayout(plPagination);
+        plPagination.setLayout(plPaginationLayout);
+        plPaginationLayout.setHorizontalGroup(
+            plPaginationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        plPaginationLayout.setVerticalGroup(
+            plPaginationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 30, Short.MAX_VALUE)
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -67,25 +99,30 @@ public class NhanVienView extends RoundPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 790, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 790, Short.MAX_VALUE)
+                    .addComponent(plPagination, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane)
+                .addComponent(jScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(plPagination, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane jScrollPane;
-    private javax.swing.JTable jTable2;
+    private javax.swing.JPanel plPagination;
+    private javax.swing.JTable tblDanhSach;
     // End of variables declaration//GEN-END:variables
 
     private void fillDataTable() {
-        DefaultTableModel model = (DefaultTableModel) jTable2.getModel();
+        DefaultTableModel model = (DefaultTableModel) tblDanhSach.getModel();
         model.addRow(new Object[]{1, "Chai", "Beverages", 18, true});
         model.addRow(new Object[]{2, "Chang", "Beverages", 19, false});
         model.addRow(new Object[]{3, "Aniseed Syrup", "Beverages", 18, 39});

@@ -49,7 +49,7 @@ public class LoginView extends javax.swing.JPanel {
     public LoginView(String username) {
         this();
         txtUsername.setText(username);
-        SwingUtilities.invokeLater(() -> txtPassword.requestFocus());
+        txtPassword.requestFocus();
     }
 
     /** Creates new form LoginView */
@@ -64,8 +64,6 @@ public class LoginView extends javax.swing.JPanel {
 
         txtUsername.setText("admin");
         txtPassword.setText("123");
-
-        SwingUtilities.invokeLater(() -> txtUsername.requestFocus());
 
         lbPassword.setForeground(ColorUtils.PRIMARY_TEXT);
         lbUsername.setForeground(ColorUtils.PRIMARY_TEXT);
@@ -84,6 +82,8 @@ public class LoginView extends javax.swing.JPanel {
 
         txtUsername.addKeyListener(keyEnter);
         txtPassword.addKeyListener(keyEnter);
+
+        txtUsername.requestFocus();
     }
 
     /**

@@ -33,7 +33,7 @@ public class TextAreaCellRenderer extends JTextArea implements TableCellRenderer
             if (row == hoverRow.getIndex()) {
                 setBackground(ColorUtils.BACKGROUND_HOVER);
             } else {
-                setBackground(ColorUtils.BACKGROUND_DASHBOARD);
+                setBackground(ColorUtils.BACKGROUND_TABLE);
             }
 
         }
