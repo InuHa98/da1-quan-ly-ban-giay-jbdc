@@ -7,6 +7,10 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 
+/**
+ *
+ * @author InuHa
+ */
 public class TableCustomCellRender extends DefaultTableCellRenderer {
 
     private final HoverIndex hoverRow;

@@ -3,20 +3,20 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
 
-package com.app.views.guest;
+package com.app.core.inuha.views.guest;
 
 import com.app.common.controller.ApplicationController;
 import com.app.common.helper.MessageModal;
-import com.app.common.helper.MessageToast;
+import com.app.common.infrastructure.session.SessionLogin;
 import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
-import com.app.services.NhanVienService;
+import com.app.core.inuha.models.InuhaNhanVienModel;
+import com.app.core.inuha.services.InuhaNhanVienService;
 import com.app.utils.ColorUtils;
 import com.app.utils.ComponentUtils;
-import com.app.utils.ContextUtils;
 import com.app.utils.ResourceUtils;
-import com.app.utils.ValidateUtils;
 import com.app.views.UI.dialog.LoadingDialog;
+import com.app.views.DashboardView;
 import com.formdev.flatlaf.FlatClientProperties;
 import java.awt.Graphics;
 import java.awt.event.KeyAdapter;
@@ -35,41 +35,40 @@ import net.miginfocom.swing.MigLayout;
  */
 
 
-public class ChangePasswordForgotPasswordView extends javax.swing.JPanel {
+public class LoginView extends javax.swing.JPanel {
 
-    private final NhanVienService nhanVienService = ContextUtils.getBean(NhanVienService.class);
+    private final InuhaNhanVienService nhanVienService = new InuhaNhanVienService();
 
-    private ExecutorService executorService = Executors.newSingleThreadExecutor();
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+
+    private String currentUsername = null;
 
     private String currentPassword = null;
 
-    private String currentConfirmPassword = null;
-
-    private String email = null;
-
-    private String otp = null;
-
-    public ChangePasswordForgotPasswordView(String email, String otp) {
+    public LoginView(String username) {
         this();
-        this.email = email;
-        this.otp = otp;
+        txtUsername.setText(username);
+        txtPassword.requestFocus();
     }
 
-    private void setupComponents() {
+    /** Creates new form LoginView */
+    public LoginView() {
+        initComponents();
         setLayout(new MigLayout("fill, insets 20", "[center]", "[center]"));
         pnlLogin.setBackground(ColorUtils.BACKGROUND_PRIMARY);
-        lbLogin.setForeground(ColorUtils.PRIMARY_COLOR);
+        lbForgotPassword.setForeground(ColorUtils.PRIMARY_COLOR);
 
-        txtPassword.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Vui lòng nhập mật khẩu mới");
-        txtConfirmPassword.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Vui lòng xác nhận mật khẩu mới");
+        txtUsername.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Vui lòng nhập email hoặc tên người dùng");
+        txtPassword.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Vui lòng nhập mật khẩu");
 
-        lbConfirmPassword.setForeground(ColorUtils.PRIMARY_TEXT);
+        txtUsername.setText("admin");
+        txtPassword.setText("123");
+
         lbPassword.setForeground(ColorUtils.PRIMARY_TEXT);
+        lbUsername.setForeground(ColorUtils.PRIMARY_TEXT);
 
+        currentUsername = lbUsername.getText();
         currentPassword = lbPassword.getText();
-        currentConfirmPassword = lbConfirmPassword.getText();
-
-        lbDesc.setText(String.format(lbDesc.getText(), ValidateUtils.MIN_LENGTH_PASSWORD, ValidateUtils.MAX_LENGTH_PASSWORD));
 
         KeyListener keyEnter = new KeyAdapter() {
             @Override
@@ -80,15 +79,10 @@ public class ChangePasswordForgotPasswordView extends javax.swing.JPanel {
             }
         };
 
+        txtUsername.addKeyListener(keyEnter);
         txtPassword.addKeyListener(keyEnter);
-        txtConfirmPassword.addKeyListener(keyEnter);
-        txtPassword.requestFocus();
-    }
 
-    /** Creates new form LoginView */
-    public ChangePasswordForgotPasswordView() {
-        initComponents();
-        setupComponents();
+        txtUsername.requestFocus();
     }
 
     /**
@@ -102,35 +96,35 @@ public class ChangePasswordForgotPasswordView extends javax.swing.JPanel {
 
         pnlLogin = new com.app.views.UI.panel.RoundPanel();
         jLabel1 = new javax.swing.JLabel();
-        lbDesc = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        lbUsername = new javax.swing.JLabel();
+        txtUsername = new javax.swing.JTextField();
         lbPassword = new javax.swing.JLabel();
-        lbConfirmPassword = new javax.swing.JLabel();
-        txtConfirmPassword = new javax.swing.JPasswordField();
+        txtPassword = new javax.swing.JPasswordField();
         btnSubmit = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
-        lbLogin = new javax.swing.JLabel();
-        txtPassword = new javax.swing.JPasswordField();
+        lbForgotPassword = new javax.swing.JLabel();
 
         pnlLogin.setBackground(new java.awt.Color(51, 51, 51));
 
         jLabel1.setFont(jLabel1.getFont().deriveFont(jLabel1.getFont().getStyle() | java.awt.Font.BOLD, jLabel1.getFont().getSize()+10));
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabel1.setText("Thay đổi mật khẩu!");
+        jLabel1.setText("Chào mừng trở lại!");
 
-        lbDesc.setFont(lbDesc.getFont().deriveFont(lbDesc.getFont().getSize()+1f));
-        lbDesc.setForeground(new java.awt.Color(204, 204, 204));
-        lbDesc.setText("Mật khẩu phải có từ %d đến %d kí tự");
+        jLabel2.setFont(jLabel2.getFont().deriveFont(jLabel2.getFont().getSize()+1f));
+        jLabel2.setForeground(new java.awt.Color(204, 204, 204));
+        jLabel2.setText("Vui lòng đăng nhập để sử dụng các chức năng");
+
+        lbUsername.setFont(lbUsername.getFont().deriveFont(lbUsername.getFont().getStyle() | java.awt.Font.BOLD, lbUsername.getFont().getSize()+2));
+        lbUsername.setForeground(new java.awt.Color(204, 204, 204));
+        lbUsername.setText("Username");
 
         lbPassword.setFont(lbPassword.getFont().deriveFont(lbPassword.getFont().getStyle() | java.awt.Font.BOLD, lbPassword.getFont().getSize()+2));
         lbPassword.setForeground(new java.awt.Color(204, 204, 204));
-        lbPassword.setText("New Password");
+        lbPassword.setText("Password");
 
-        lbConfirmPassword.setFont(lbConfirmPassword.getFont().deriveFont(lbConfirmPassword.getFont().getStyle() | java.awt.Font.BOLD, lbConfirmPassword.getFont().getSize()+2));
-        lbConfirmPassword.setForeground(new java.awt.Color(204, 204, 204));
-        lbConfirmPassword.setText("Confirm New Password");
-
-        btnSubmit.setText("Lấy lại mật khẩu");
+        btnSubmit.setText("Đăng nhập");
         btnSubmit.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnSubmit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -141,15 +135,15 @@ public class ChangePasswordForgotPasswordView extends javax.swing.JPanel {
         jLabel5.setFont(jLabel5.getFont().deriveFont(jLabel5.getFont().getSize()+1f));
         jLabel5.setForeground(new java.awt.Color(204, 204, 204));
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel5.setText("Đã có tài khoản?");
+        jLabel5.setText("Quên mật khẩu?");
 
-        lbLogin.setFont(lbLogin.getFont().deriveFont(lbLogin.getFont().getSize()+2f));
-        lbLogin.setForeground(new java.awt.Color(255, 102, 0));
-        lbLogin.setText("Đăng nhập ngay");
-        lbLogin.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        lbLogin.addMouseListener(new java.awt.event.MouseAdapter() {
+        lbForgotPassword.setFont(lbForgotPassword.getFont().deriveFont(lbForgotPassword.getFont().getSize()+2f));
+        lbForgotPassword.setForeground(new java.awt.Color(255, 102, 0));
+        lbForgotPassword.setText("Tìm mật khẩu");
+        lbForgotPassword.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lbForgotPassword.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                lbLoginMouseClicked(evt);
+                lbForgotPasswordMouseClicked(evt);
             }
         });
 
@@ -160,17 +154,17 @@ public class ChangePasswordForgotPasswordView extends javax.swing.JPanel {
             .addGroup(pnlLoginLayout.createSequentialGroup()
                 .addGap(42, 42, 42)
                 .addGroup(pnlLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlLoginLayout.createSequentialGroup()
-                        .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 225, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lbLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 241, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(txtPassword)
-                    .addComponent(txtConfirmPassword)
-                    .addComponent(btnSubmit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lbConfirmPassword, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lbUsername, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(txtUsername)
                     .addComponent(lbPassword, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lbDesc, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(txtPassword)
+                    .addComponent(btnSubmit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(pnlLoginLayout.createSequentialGroup()
+                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(lbForgotPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(42, Short.MAX_VALUE))
         );
         pnlLoginLayout.setVerticalGroup(
@@ -179,20 +173,20 @@ public class ChangePasswordForgotPasswordView extends javax.swing.JPanel {
                 .addGap(42, 42, 42)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lbDesc)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(lbUsername)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtUsername, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(lbPassword)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(lbConfirmPassword)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtConfirmPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(29, 29, 29)
                 .addComponent(btnSubmit, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(lbLogin, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lbForgotPassword, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(42, Short.MAX_VALUE))
         );
@@ -205,7 +199,9 @@ public class ChangePasswordForgotPasswordView extends javax.swing.JPanel {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(pnlLogin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(pnlLogin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -214,22 +210,22 @@ public class ChangePasswordForgotPasswordView extends javax.swing.JPanel {
 	handleSubmit();
     }//GEN-LAST:event_btnSubmitActionPerformed
 
-    private void lbLoginMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbLoginMouseClicked
+    private void lbForgotPasswordMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbForgotPasswordMouseClicked
         // TODO add your handling code here:
-	redirectLogin(evt);
-    }//GEN-LAST:event_lbLoginMouseClicked
+	redirectForgotPassword(evt);
+    }//GEN-LAST:event_lbForgotPasswordMouseClicked
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnSubmit;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel lbConfirmPassword;
-    private javax.swing.JLabel lbDesc;
-    private javax.swing.JLabel lbLogin;
+    private javax.swing.JLabel lbForgotPassword;
     private javax.swing.JLabel lbPassword;
+    private javax.swing.JLabel lbUsername;
     private com.app.views.UI.panel.RoundPanel pnlLogin;
-    private javax.swing.JPasswordField txtConfirmPassword;
     private javax.swing.JPasswordField txtPassword;
+    private javax.swing.JTextField txtUsername;
     // End of variables declaration//GEN-END:variables
 
     @Override
@@ -242,49 +238,33 @@ public class ChangePasswordForgotPasswordView extends javax.swing.JPanel {
     private void handleSubmit() {
         LoadingDialog loadingDialog = new LoadingDialog(this);
 
+        String username = txtUsername.getText().trim();
         String password = txtPassword.getText().trim();
-        String confirmPassword = txtConfirmPassword.getText().trim();
 
+        String txtErrorUsername = username.isEmpty() ? currentUsername + " - Vui lòng nhập trường này" : null;
         String txtErrorPassword = password.isEmpty() ? currentPassword + " - Vui lòng nhập trường này" : null;
-        String txtErrorConfirmPassword = confirmPassword.isEmpty() ? currentConfirmPassword + " - Vui lòng nhập trường này" : null;
 
-        int lenPassword = password.length();
-
-        if (txtErrorPassword == null) {
-            if (lenPassword < ValidateUtils.MIN_LENGTH_PASSWORD) {
-                txtErrorPassword = currentPassword + " - Phải có ít nhất " + ValidateUtils.MIN_LENGTH_PASSWORD + " kí tự";
-            }
-
-            if (lenPassword > ValidateUtils.MAX_LENGTH_PASSWORD) {
-                txtErrorPassword = currentPassword + " - Nhiều nhất " + ValidateUtils.MAX_LENGTH_PASSWORD + " kí tự";
-            }
-        }
-
-        if (!password.equals(confirmPassword)) {
-            txtErrorConfirmPassword = currentConfirmPassword + " - Mật khẩu nhập lại không chính xác";
-        }
-        
+        boolean isErrorUsername = txtErrorUsername != null;
         boolean isErrorPassword = txtErrorPassword != null;
-        boolean isErrorConfirmPassword = txtErrorConfirmPassword != null;
 
+        ComponentUtils.setErrorLabel(lbUsername, isErrorUsername, (txtErrorUsername != null ? txtErrorUsername : currentUsername));
         ComponentUtils.setErrorLabel(lbPassword, isErrorPassword, (txtErrorPassword != null ? txtErrorPassword : currentPassword));
-        ComponentUtils.setErrorLabel(lbConfirmPassword, isErrorConfirmPassword, (txtErrorConfirmPassword != null ? txtErrorConfirmPassword : currentConfirmPassword));
 
-        if (isErrorPassword || isErrorConfirmPassword) {
+        if (isErrorUsername || isErrorPassword) {
             return;
         }
 
         executorService.submit(() -> {
             try {
-                nhanVienService.changePassword(this.email, this.otp, password, confirmPassword);
+                InuhaNhanVienModel user = nhanVienService.login(username, password);
+                SessionLogin.getInstance().create(username, password, user);
                 loadingDialog.dispose();
-                MessageToast.clearAll();
-                MessageToast.success("Thay đổi mật khẩu thành công. Đăng nhập ngay");
-                ApplicationController.getInstance().show(new LoginView(this.email));
+                ApplicationController.getInstance().show(new DashboardView());
             } catch(ServiceResponseException e) {
                 loadingDialog.dispose();
                 MessageModal.error(e.getMessage());
             } catch(Exception e) {
+                e.printStackTrace();
                 loadingDialog.dispose();
                 MessageModal.error(ErrorConstant.DEFAULT_ERROR);
             }
@@ -293,9 +273,9 @@ public class ChangePasswordForgotPasswordView extends javax.swing.JPanel {
         loadingDialog.setVisible(true);
     }
 
-    private void redirectLogin(MouseEvent e) {
+    private void redirectForgotPassword(MouseEvent e) {
         if (SwingUtilities.isLeftMouseButton(e)) {
-            ApplicationController.getInstance().show(new LoginView());
+            ApplicationController.getInstance().show(new ForgotPasswordView());
         }
     }
 }

@@ -13,7 +13,10 @@ import net.miginfocom.swing.MigLayout;
 import javax.swing.*;
 import java.util.List;
 
-
+/**
+ *
+ * @author InuHa
+ */
 public class DashboardView extends JPanel {
 
     public static DashboardView context;

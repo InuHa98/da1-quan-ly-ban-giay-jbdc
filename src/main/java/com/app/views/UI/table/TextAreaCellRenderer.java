@@ -10,6 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ *
+ * @author InuHa
+ */
 public class TextAreaCellRenderer extends JTextArea implements TableCellRenderer {
 
     private final List<List<Integer>> rowAndCellHeights = new ArrayList<>();

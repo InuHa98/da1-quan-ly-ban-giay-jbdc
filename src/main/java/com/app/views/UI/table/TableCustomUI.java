@@ -11,6 +11,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 
+/**
+ *
+ * @author InuHa
+ */
 public class TableCustomUI {
 
     private final static Color COLOR_HEADER = ColorUtils.BACKGROUND_TABLE;

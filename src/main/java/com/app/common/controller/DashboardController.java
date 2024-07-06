@@ -6,6 +6,10 @@ import com.app.views.UI.sidebarmenu.SidebarMenuContent;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ *
+ * @author InuHa
+ */
 public class DashboardController {
 
     private DashboardView context;

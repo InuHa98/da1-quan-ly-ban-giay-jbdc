@@ -12,7 +12,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
-
+/**
+ *
+ * @author InuHa
+ */
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor

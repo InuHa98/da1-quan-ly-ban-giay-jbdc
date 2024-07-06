@@ -1,12 +1,13 @@
 package com.app.views.UI.dialog;
 
-import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
-
+/**
+ *
+ * @author InuHa
+ */
 public class ModalDialog extends JDialog {
 
     public ModalDialog(JComponent content) {

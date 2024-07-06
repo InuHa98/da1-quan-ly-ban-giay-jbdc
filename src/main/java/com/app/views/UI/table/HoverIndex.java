@@ -1,5 +1,9 @@
 package com.app.views.UI.table;
 
+/**
+ *
+ * @author InuHa
+ */
 public class HoverIndex {
 
     public int getIndex() {

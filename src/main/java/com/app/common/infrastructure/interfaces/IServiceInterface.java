@@ -5,16 +5,13 @@
 
 package com.app.common.infrastructure.interfaces;
 
-import com.microsoft.sqlserver.jdbc.SQLServerException;
-import java.awt.print.Pageable;
 import java.util.List;
-import java.util.Set;
 
 /**
  *
  * @author inuHa
  */
-public interface IDAOService<T, K> {
+public interface IServiceInterface<T, K> {
     
     List<T> getAll();
     
@@ -23,11 +20,13 @@ public interface IDAOService<T, K> {
     T getById(K id);
     
     T insert(T e);
-    
+
+    boolean has(K id);
+
     void update(T e);
     
     void delete(K id);
     
-    void deleteAll(Set<K> ids);
+    void deleteAll(List<K> ids);
     
 }

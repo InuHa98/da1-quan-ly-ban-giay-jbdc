@@ -9,6 +9,10 @@ import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.geom.RoundRectangle2D;
 
+/**
+ *
+ * @author InuHa
+ */
 public class ScrollBarCustomUI extends BasicScrollBarUI {
 
     private boolean isMin;

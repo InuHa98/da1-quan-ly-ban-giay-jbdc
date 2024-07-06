@@ -12,11 +12,10 @@ import com.app.common.infrastructure.exceptions.ServiceResponseException;
 import com.app.core.inuha.services.InuhaNhanVienService;
 import com.app.utils.ColorUtils;
 import com.app.utils.ComponentUtils;
-import com.app.utils.ContextUtils;
 import com.app.utils.ValidateUtils;
 import com.app.views.UI.dialog.LoadingDialog;
 import com.app.views.UI.dialog.ModalDialog;
-import com.app.views.guest.LoginView;
+import com.app.core.inuha.views.guest.LoginView;
 import com.formdev.flatlaf.FlatClientProperties;
 import net.miginfocom.swing.MigLayout;
 
@@ -36,7 +35,7 @@ import java.util.concurrent.Executors;
 
 public class InuhaChangePasswordView extends javax.swing.JPanel {
 
-    private final InuhaNhanVienService nhanVienService = ContextUtils.getBean(InuhaNhanVienService.class);
+    private final InuhaNhanVienService nhanVienService = new InuhaNhanVienService();
 
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
 

@@ -3,24 +3,28 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 
-package com.app.services;
+package com.app.core.inuha.services.impl;
 
-import com.app.models.NhanVienModel;
+import com.app.common.infrastructure.interfaces.IServiceInterface;
+import com.app.core.inuha.models.InuhaNhanVienModel;
 
 /**
  *
  * @author inuHa
  */
-public interface NhanVienService {
 
-    NhanVienModel login(String username, String password);
+public interface IInuhaNhanVienServiceInterface extends IServiceInterface<InuhaNhanVienModel, Integer> {
+
+    InuhaNhanVienModel login(String username, String password);
 
     void requestForgotPassword(String email);
 
     void validOtp(String email, String otp);
 
     void changePassword(String email, String otp, String password, String confirmPassword);
-    
+
     void changeAvatar(String avatar);
+
+    void changePassword(String oldPassword, String newPassword, String confirmPassword);
 
 }

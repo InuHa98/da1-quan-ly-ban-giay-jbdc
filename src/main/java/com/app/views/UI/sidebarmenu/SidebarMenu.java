@@ -9,8 +9,8 @@ import com.app.common.infrastructure.router.NhanVienRoute;
 import com.app.common.infrastructure.router.QuanLyRoute;
 import com.app.common.infrastructure.session.AvatarUpload;
 import com.app.common.infrastructure.session.SessionLogin;
-import com.app.models.NhanVienModel;
-import com.app.services.NhanVienService;
+import com.app.core.inuha.models.InuhaNhanVienModel;
+import com.app.core.inuha.services.InuhaNhanVienService;
 import com.app.utils.*;
 import com.app.views.UI.ImageRound;
 import com.app.views.UI.dialog.LoadingDialog;
@@ -31,9 +31,13 @@ import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ *
+ * @author InuHa
+ */
 public class SidebarMenu extends JPanel {
 
-    private final NhanVienService nhanVienService = ContextUtils.getBean(NhanVienService.class);
+    private final InuhaNhanVienService nhanVienService = new InuhaNhanVienService();
 
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
@@ -71,7 +75,7 @@ public class SidebarMenu extends JPanel {
 
         int maxLengthText = 23;
 
-        NhanVienModel authUser = SessionLogin.getInstance().getData();
+        InuhaNhanVienModel authUser = SessionLogin.getInstance().getData();
 
         String username = ComponentUtils.hiddenText(authUser.getUsername(), maxLengthText);
         String email = ComponentUtils.hiddenText(authUser.getEmail(), maxLengthText);

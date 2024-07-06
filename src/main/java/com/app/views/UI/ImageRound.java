@@ -6,6 +6,10 @@ import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 
+/**
+ *
+ * @author InuHa
+ */
 public class ImageRound extends JComponent {
 
     public Icon getImage() {

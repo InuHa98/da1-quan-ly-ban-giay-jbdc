@@ -2,6 +2,10 @@ package com.app.common.infrastructure.session;
 
 import javax.swing.*;
 
+/**
+ *
+ * @author InuHa
+ */
 public class AvatarUpload {
 
     private ImageIcon dataImage;

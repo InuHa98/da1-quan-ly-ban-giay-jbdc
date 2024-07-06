@@ -3,6 +3,10 @@ package com.app.views.UI.sidebarmenu;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ *
+ * @author InuHa
+ */
 public class SidebarMenuContent extends JPanel {
 
     public SidebarMenuContent() {

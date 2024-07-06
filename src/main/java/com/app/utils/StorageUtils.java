@@ -9,6 +9,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ *
+ * @author InuHa
+ */
 public class StorageUtils {
 
     public static final String FOLDER = "storages";

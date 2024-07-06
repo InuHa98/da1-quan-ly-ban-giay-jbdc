@@ -1,26 +1,23 @@
 package com.app.common.helper;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import com.app.common.configs.DBConnect;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
-@Component
+/**
+ *
+ * @author InuHa
+ */
 public class TestConnection {
 
-    @Value("${spring.datasource.url}")
-    private String url;
-
-    @Value("${spring.datasource.username}")
-    private String username;
-
-    @Value("${spring.datasource.password}")
-    private String password;
-
-    public Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(url, username, password);
+    public static boolean test() {
+        try {
+            DBConnect.getInstance().connectToDatabase();
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
 }

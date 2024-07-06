@@ -3,6 +3,10 @@ package com.app.views.UI.table;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ *
+ * @author InuHa
+ */
 public class BooleanCellRenderer extends TableCustomCellRender {
 
     public BooleanCellRenderer(HoverIndex hoverRow) {

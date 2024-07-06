@@ -1,10 +1,10 @@
 package com.app;
 
 import com.app.common.controller.ApplicationController;
+import com.app.common.helper.MessageBox;
 import com.app.common.helper.TestConnection;
-import com.app.utils.ContextUtils;
 import com.app.utils.ResourceUtils;
-import com.app.views.guest.LoginView;
+import com.app.core.inuha.views.guest.LoginView;
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.fonts.roboto.FlatRobotoFont;
 import com.formdev.flatlaf.themes.FlatMacDarkLaf;
@@ -15,6 +15,10 @@ import raven.toast.Notifications;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ *
+ * @author InuHa
+ */
 public class Application extends JFrame {
 
     public static Application app;
@@ -37,7 +41,10 @@ public class Application extends JFrame {
                 throw new RuntimeException(e);
             }
 
-            ContextUtils.getBean(TestConnection.class);
+            if (TestConnection.test() == false) {
+                MessageBox.error(null, "Không thể kết nối tới cơ sở dữ liệu!!!");
+                System.exit(1);
+            }
 	
             ApplicationController.getInstance().setContext(new Application());
             ApplicationController.getInstance().show(new LoginView());

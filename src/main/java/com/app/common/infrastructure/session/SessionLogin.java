@@ -3,30 +3,33 @@ package com.app.common.infrastructure.session;
 import com.app.common.controller.ApplicationController;
 import com.app.common.helper.MessageModal;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
-import com.app.models.NhanVienModel;
-import com.app.services.NhanVienService;
-import com.app.utils.ContextUtils;
+import com.app.core.inuha.models.InuhaNhanVienModel;
+import com.app.core.inuha.services.InuhaNhanVienService;
 import com.app.views.UI.dialog.ModalDialog;
 import com.app.core.inuha.views.common.InuhaChangePasswordView;
-import com.app.views.guest.LoginView;
+import com.app.core.inuha.views.guest.LoginView;
 import lombok.Getter;
 
 import javax.swing.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ *
+ * @author InuHa
+ */
 public class SessionLogin {
 
     private static SessionLogin instance;
 
-    private NhanVienService nhanVienService = ContextUtils.getBean(NhanVienService.class);
+    private final InuhaNhanVienService nhanVienService = new InuhaNhanVienService();
 
     private String username = null;
 
     private String password = null;
 
     @Getter
-    private NhanVienModel data = null;
+    private InuhaNhanVienModel data = null;
 
     private SessionLogin() {
     }
@@ -59,7 +62,7 @@ public class SessionLogin {
         return this;
     }
 
-    public void create(String username, String password, NhanVienModel data) {
+    public void create(String username, String password, InuhaNhanVienModel data) {
         this.username = username;
         this.password = password;
         this.data = data;

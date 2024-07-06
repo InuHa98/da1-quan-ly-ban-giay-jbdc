@@ -9,6 +9,10 @@ import lombok.Setter;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ *
+ * @author InuHa
+ */
 public class ApplicationController {
 
     private Application context;

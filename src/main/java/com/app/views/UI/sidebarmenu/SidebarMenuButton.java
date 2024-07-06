@@ -9,6 +9,10 @@ import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 
+/**
+ *
+ * @author InuHa
+ */
 public class SidebarMenuButton extends JButton {
 
     private int index;

@@ -1,12 +1,14 @@
 package com.app.views.UI.table;
 
-import com.app.utils.ColorUtils;
-
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 
+/**
+ *
+ * @author InuHa
+ */
 public class TableHeaderCustomCellRender extends DefaultTableCellRenderer {
 
     private final JTable table;

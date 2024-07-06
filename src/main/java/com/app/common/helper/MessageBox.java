@@ -3,6 +3,10 @@ package com.app.common.helper;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ *
+ * @author InuHa
+ */
 public class MessageBox {
 
     private static final String TITLE_DEFAULT = System.getProperty("APP_NAME");

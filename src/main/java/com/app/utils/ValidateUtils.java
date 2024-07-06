@@ -2,6 +2,10 @@ package com.app.utils;
 
 import java.util.regex.Pattern;
 
+/**
+ *
+ * @author InuHa
+ */
 public class ValidateUtils {
 
     public static final int MIN_LENGTH_USERNAME = 2;

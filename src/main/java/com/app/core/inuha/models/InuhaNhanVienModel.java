@@ -5,38 +5,38 @@
 
 package com.app.core.inuha.models;
 
-import org.springframework.beans.factory.annotation.Value;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  *
  * @author inuHa
  */
+@Setter
+@Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class InuhaNhanVienModel {
 
-public interface InuhaNhanVienModel {
+    private int id;
 
-    @Value("#{target.id}")
-    int getId();
+    private String username;
     
-    @Value("#{target.username}")
-    String getUsername();
-    
-    @Value("#{target.password}")
-    String getPassword();
-    
-    @Value("#{target.ho_ten}")
-    String getHoTen();
-    
-    @Value("#{target.email}")
-    String getEmail();
-    
-    @Value("#{target.sdt}")
-    String getSdt();
+    private String password;
 
-    @Value("#{target.avatar}")
-    String getAvatar();
+    private String hoTen;
+    
+    private String email;
+    
+    private String sdt;
 
-    @Value("#{target.is_admin}")
-    boolean isAdmin();
+    private String avatar;
+
+    private boolean isAdmin;
 
 
 }

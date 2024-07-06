@@ -4,6 +4,10 @@ import lombok.Getter;
 
 import javax.swing.*;
 
+/**
+ *
+ * @author InuHa
+ */
 public class SidebarMenuItem {
 
     @Getter

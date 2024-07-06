@@ -8,6 +8,10 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ *
+ * @author InuHa
+ */
 public class NhanVienRoute {
 
     private static NhanVienRoute instance;
