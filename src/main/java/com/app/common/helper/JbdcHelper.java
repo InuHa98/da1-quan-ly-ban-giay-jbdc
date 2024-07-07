@@ -72,7 +72,7 @@ public class JbdcHelper {
                 return resultSet.getObject(0);
             }
         } catch(Exception e) {
-            e.printStackTrace(System.out);
+            e.printStackTrace();
         }
         finally {
             assert stmt != null;
@@ -120,7 +120,7 @@ public class JbdcHelper {
         try {
             DBConnect.getInstance().close(close);
         } catch (SQLException e) {
-            e.printStackTrace(System.out);
+            e.printStackTrace();
         }
     }
 

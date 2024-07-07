@@ -36,7 +36,8 @@ public class InuhaNhanVienModel {
 
     private String avatar;
 
-    private boolean isAdmin;
+    private boolean trangThai;
 
+    private boolean isAdmin;
 
 }

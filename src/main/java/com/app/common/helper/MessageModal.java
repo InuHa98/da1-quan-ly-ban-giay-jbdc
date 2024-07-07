@@ -7,13 +7,15 @@ package com.app.common.helper;
 
 import com.app.utils.ColorUtils;
 import com.app.utils.ResourceUtils;
-import java.awt.Font;
+
+import java.awt.*;
 import java.util.concurrent.CountDownLatch;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import com.formdev.flatlaf.extras.FlatSVGIcon;
 import lombok.Setter;
 import net.miginfocom.swing.MigLayout;
 import raven.popup.GlassPanePopup;
@@ -48,30 +50,30 @@ public class MessageModal {
         return panel;
     }
     
-    private static ImageIcon getIcon(int icon) {
+    private static FlatSVGIcon getIcon(int icon) {
         String name = null;
         switch (icon) {
             case TYPE_INFO:
-                name = "info.png";
+                name = "info.svg";
                 break;
 
             case TYPE_DANGER:
-                name = "error.png";
+                name = "error.svg";
                 break;
 
             case TYPE_SUCCESS:
-                name = "success.png";
+                name = "success.svg";
                 break;
 
             case TYPE_WARNING:
-                name = "warning.png";
+                name = "warning.svg";
                 break;
 
             default:
                 return null;
         }
 
-        return ResourceUtils.getImageAssets("icons/" + name);
+        return ResourceUtils.getSVG("/svg/" + name, new Dimension(48, 48));
     }
 	
     private static void messageModal(String message) {

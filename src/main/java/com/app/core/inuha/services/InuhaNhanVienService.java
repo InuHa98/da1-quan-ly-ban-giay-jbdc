@@ -70,13 +70,18 @@ public class InuhaNhanVienService implements IInuhaNhanVienServiceInterface {
 
     public InuhaNhanVienModel login(String username, String password) {
         try {
-            Optional<InuhaNhanVienModel> nhanVien = ValidateUtils.isEmail(username) ? nhanVienRepository.findNhanVienByEmail(username) : nhanVienRepository.findNhanVienByUsername(username);
-            if (nhanVien.isEmpty() || !nhanVien.get().getPassword().equals(password)) {
+            Optional<InuhaNhanVienModel> find = ValidateUtils.isEmail(username) ? nhanVienRepository.findNhanVienByEmail(username) : nhanVienRepository.findNhanVienByUsername(username);
+            if (find.isEmpty() || !find.get().getPassword().equals(password)) {
                 throw new ServiceResponseException("Tài khoản hoặc mật khẩu không chính xác!");
             }
-            return nhanVien.get();
+            InuhaNhanVienModel nhanVien = find.get();
+            if (!nhanVien.isTrangThai()) {
+                throw new ServiceResponseException("Tài khoản của bạn đã bị khoá!");
+            }
+
+            return nhanVien;
         } catch (SQLException e) {
-            e.printStackTrace(System.out);
+            e.printStackTrace();
             throw new ServiceResponseException(ErrorConstant.DEFAULT_ERROR);
         }
     }
@@ -103,7 +108,7 @@ public class InuhaNhanVienService implements IInuhaNhanVienServiceInterface {
                 throw new ServiceResponseException("Không thể gửi mã. Vui lòng thử lại sau ít phút.");
             }
         } catch (SQLException e) {
-            e.printStackTrace(System.out);
+            e.printStackTrace();
             throw new ServiceResponseException(ErrorConstant.DEFAULT_ERROR);
         }
     }
@@ -118,7 +123,7 @@ public class InuhaNhanVienService implements IInuhaNhanVienServiceInterface {
                 throw new ServiceResponseException("Mã OTP không chính xác.");
             }
         } catch (SQLException e) {
-            e.printStackTrace(System.out);
+            e.printStackTrace();
             throw new ServiceResponseException(ErrorConstant.DEFAULT_ERROR);
         }
     }
@@ -139,7 +144,7 @@ public class InuhaNhanVienService implements IInuhaNhanVienServiceInterface {
                 throw new ServiceResponseException("Không thể cập nhật mật khẩu. Vui lòng thử lại");
             }
         } catch (SQLException e) {
-            e.printStackTrace(System.out);
+            e.printStackTrace();
             throw new ServiceResponseException(ErrorConstant.DEFAULT_ERROR);
         }
 
@@ -157,7 +162,7 @@ public class InuhaNhanVienService implements IInuhaNhanVienServiceInterface {
                 throw new ServiceResponseException("Không thể cập nhật ảnh đại diện. Vui lòng thử lại");
             }
         } catch (SQLException e) {
-            e.printStackTrace(System.out);
+            e.printStackTrace();
             throw new ServiceResponseException(ErrorConstant.DEFAULT_ERROR);
         }
     }
@@ -186,7 +191,7 @@ public class InuhaNhanVienService implements IInuhaNhanVienServiceInterface {
             InuhaNhanVienModel data = login(username, newPassword);
             SessionLogin.getInstance().create(username, newPassword, data);
         } catch (SQLException e) {
-            e.printStackTrace(System.out);
+            e.printStackTrace();
             throw new ServiceResponseException(ErrorConstant.DEFAULT_ERROR);
         }
 

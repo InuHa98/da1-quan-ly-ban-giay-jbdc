@@ -7,6 +7,8 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 /**
@@ -72,6 +74,26 @@ public class StorageUtils {
 
             File outputFile = new File(FOLDER + "/" + path + "/" + fileName);
             ImageIO.write(bufferedImage, imageType, outputFile);
+            return fileName;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static String uploadFile(File file, String path, String fileName) {
+        initFolder();
+
+        path = path.replaceAll("^/+", "").replaceAll("/+$", "");
+
+        try (FileInputStream fis = new FileInputStream(file);
+             FileOutputStream fos = new FileOutputStream(FOLDER + "/" + path + "/" + fileName)) {
+
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = fis.read(buffer)) > 0) {
+                fos.write(buffer, 0, length);
+            }
             return fileName;
         } catch (IOException e) {
             e.printStackTrace();

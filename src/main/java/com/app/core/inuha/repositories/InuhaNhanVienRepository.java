@@ -83,7 +83,7 @@ public class InuhaNhanVienRepository implements IDAOinterface {
 						.build();
 			}
 		} catch(Exception e) {
-			e.printStackTrace(System.out);
+			e.printStackTrace();
 		}
 		finally {
 			JbdcHelper.close(resultSet);
@@ -125,7 +125,7 @@ public class InuhaNhanVienRepository implements IDAOinterface {
 						.build();
 			}
 		} catch(Exception e) {
-			e.printStackTrace(System.out);
+			e.printStackTrace();
 		}
 		finally {
 			JbdcHelper.close(resultSet);
@@ -149,7 +149,7 @@ public class InuhaNhanVienRepository implements IDAOinterface {
 		try {
 			row = JbdcHelper.update(query, true, args);
 		} catch(Exception e) {
-			e.printStackTrace(System.out);
+			e.printStackTrace();
 		}
 
 		return row;
@@ -174,7 +174,7 @@ public class InuhaNhanVienRepository implements IDAOinterface {
 				return true;
 			}
 		} catch(Exception e) {
-			e.printStackTrace(System.out);
+			e.printStackTrace();
 		}
 		finally {
 			JbdcHelper.close(resultSet);
@@ -200,7 +200,7 @@ public class InuhaNhanVienRepository implements IDAOinterface {
 		try {
 			row = JbdcHelper.update(query, true, args);
 		} catch(Exception e) {
-			e.printStackTrace(System.out);
+			e.printStackTrace();
 		}
 
 		return row;
@@ -223,7 +223,7 @@ public class InuhaNhanVienRepository implements IDAOinterface {
 		try {
 			row = JbdcHelper.update(query, true, args);
 		} catch(Exception e) {
-			e.printStackTrace(System.out);
+			e.printStackTrace();
 		}
 
 		return row;
@@ -247,7 +247,7 @@ public class InuhaNhanVienRepository implements IDAOinterface {
 		try {
 			row = JbdcHelper.update(query, true, args);
 		} catch(Exception e) {
-			e.printStackTrace(System.out);
+			e.printStackTrace();
 		}
 
 		return row;

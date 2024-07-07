@@ -5,9 +5,14 @@
 
 package com.app.utils;
 
+import com.formdev.flatlaf.extras.FlatSVGIcon;
+
+import java.awt.*;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import javax.swing.ImageIcon;
+import javax.swing.plaf.ColorUIResource;
 
 /**
  *
@@ -63,6 +68,38 @@ public class ResourceUtils {
      */
     public static ImageIcon getImageAssets(String path) {
         return new ImageIcon(getUrlFile(DIR_ASSETS + "/" + path));
+    }
+
+    /**
+     * Lấy ra data svg trong thư mục resources/assets
+     * @param path đường dẫn tệp tin (VD: svg/logo.svg)
+     * @return com.formdev.flatlaf.extras.FlatSVGIcon
+     */
+    public static FlatSVGIcon getSVG(String path) {
+        return getSVG(path, null);
+    }
+
+    /**
+     * Lấy ra data svg trong thư mục resources/assets
+     * @param path đường dẫn tệp tin (VD: svg/logo.svg)
+     * @param size tuỳ chỉnh kích thước
+     * @return com.formdev.flatlaf.extras.FlatSVGIcon
+     */
+    public static FlatSVGIcon getSVG(String path, Dimension size) {
+        if (path == null || path.isEmpty()) {
+            return null;
+        }
+
+        path = path.replaceAll("^/+", "").replaceAll("/+$", "");
+        try {
+            path = "/" + DIR_ASSETS + "/" + path;
+            if (size != null) {
+                return new FlatSVGIcon(path.replaceAll("^/+", ""), (int) size.getWidth(), (int) size.getHeight());
+            }
+            return new FlatSVGIcon(ResourceUtils.class.getResourceAsStream(path));
+        } catch (IOException e) {
+            return null;
+        }
     }
 
 }
