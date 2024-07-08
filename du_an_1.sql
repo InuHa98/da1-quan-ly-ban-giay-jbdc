@@ -32,11 +32,11 @@ CREATE TABLE KhachHang (
 
 CREATE TABLE DanhMuc (
 	id INT IDENTITY(1, 1) PRIMARY KEY,
-	refid INT,
+	id_danh_muc_cha INT,
 	ten NVARCHAR(250) NOT NULL,
 	ghi_chu NVARCHAR(250),
 	da_xoa BIT DEFAULT 0,
-	FOREIGN KEY(refid) REFERENCES dbo.DanhMuc(id)
+	FOREIGN KEY(id_danh_muc_cha) REFERENCES dbo.DanhMuc(id)
 )
 
 
