@@ -6,26 +6,28 @@ GO
 
 CREATE TABLE NhanVien (
 	id INT IDENTITY(1, 1) PRIMARY KEY,
-	username VARCHAR(25) NOT NULL UNIQUE,
-	password NVARCHAR(50) NOT NULL,
-	email NVARCHAR(250) NOT NULL UNIQUE,
+	tai_khoan VARCHAR(25) NOT NULL,
+	mat_khau NVARCHAR(50) NOT NULL,
+	email NVARCHAR(250) NOT NULL,
 	ho_ten NVARCHAR(250),
-	sdt VARCHAR(13) NOT NULL UNIQUE,
+	sdt VARCHAR(13) NOT NULL,
 	gioi_tinh BIT,
 	dia_chi NVARCHAR(250),
-	avatar NVARCHAR(250),
+	hinh_anh NVARCHAR(250),
 	otp VARCHAR(6),
 	trang_thai BIT,
-	is_admin BIT,
-	created_at DATE NOT NULL DEFAULT GETDATE()
+	vai_tro_quan_ly BIT DEFAULT 0,
+	ngay_tao DATE NOT NULL DEFAULT GETDATE(),
+	da_xoa BIT DEFAULT 0
 )
 
 CREATE TABLE KhachHang (
 	id INT IDENTITY(1, 1) PRIMARY KEY,
 	ho_ten NVARCHAR(250) NOT NULL,
-	sdt VARCHAR(13) NOT NULL UNIQUE,
+	sdt VARCHAR(13) NOT NULL,
 	gioi_tinh BIT,
-	diem INT DEFAULT 0
+	diem INT DEFAULT 0,
+	da_xoa BIT DEFAULT 0
 )
 
 CREATE TABLE DanhMuc (
@@ -33,39 +35,46 @@ CREATE TABLE DanhMuc (
 	refid INT,
 	ten NVARCHAR(250) NOT NULL,
 	ghi_chu NVARCHAR(250),
+	da_xoa BIT DEFAULT 0,
 	FOREIGN KEY(refid) REFERENCES dbo.DanhMuc(id)
 )
 
 
 CREATE TABLE ChatLieu (
 	id INT IDENTITY(1, 1) PRIMARY KEY,
-	ten NVARCHAR(250) NOT NULL
+	ten NVARCHAR(250) NOT NULL,
+	da_xoa BIT DEFAULT 0
 )
 
 CREATE TABLE XuatXu (
 	id INT IDENTITY(1, 1) PRIMARY KEY,
-	ten NVARCHAR(250) NOT NULL UNIQUE
+	ten NVARCHAR(250) NOT NULL,
+	da_xoa BIT DEFAULT 0
 )
 
 CREATE TABLE MauSac (
 	id INT IDENTITY(1, 1) PRIMARY KEY,
-	ten NVARCHAR(250) NOT NULL UNIQUE
+	ten NVARCHAR(250) NOT NULL,
+	da_xoa BIT DEFAULT 0
 )
 
 CREATE TABLE KichCo (
 	id INT IDENTITY(1, 1) PRIMARY KEY,
-	ten NVARCHAR(250) NOT NULL UNIQUE,
-	ghi_chu NVARCHAR(250)
+	ten NVARCHAR(250) NOT NULL,
+	ghi_chu NVARCHAR(250),
+	da_xoa BIT DEFAULT 0
 )
 
 CREATE TABLE ThuongHieu (
 	id INT IDENTITY(1, 1) PRIMARY KEY,
-	ten NVARCHAR(250) NOT NULL UNIQUE
+	ten NVARCHAR(250) NOT NULL,
+	da_xoa BIT DEFAULT 0
 )
 
 CREATE TABLE KieuDang (
 	id INT IDENTITY(1, 1) PRIMARY KEY,
-	ten NVARCHAR(250) NOT NULL UNIQUE
+	ten NVARCHAR(250) NOT NULL,
+	da_xoa BIT DEFAULT 0
 )
 
 CREATE TABLE SanPham(
@@ -85,8 +94,9 @@ CREATE TABLE SanPham(
 	so_luong INT NOT NULL DEFAULT 0,
 	bar_code VARCHAR(13),
 	trang_thai BIT NOT NULL,
-	created_at DATE NOT NULL DEFAULT GETDATE(),
-	updated_at DATE DEFAULT GETDATE(),
+	ngay_tao DATE NOT NULL DEFAULT GETDATE(),
+	ngay_cap_nhat DATE DEFAULT GETDATE(),
+	da_xoa BIT DEFAULT 0,
 	FOREIGN KEY(id_nhan_vien) REFERENCES dbo.NhanVien(id),
 	FOREIGN KEY(id_danh_muc) REFERENCES dbo.DanhMuc(id),
 	FOREIGN KEY(id_thuong_hieu) REFERENCES dbo.ThuongHieu(id),
@@ -100,7 +110,7 @@ CREATE TABLE SanPham(
 CREATE TABLE HinhAnh(
 	id INT IDENTITY(1, 1) PRIMARY KEY,
 	id_san_pham INT NOT NULL,
-	url NVARCHAR(250) NOT NULL,
+	lien_ket NVARCHAR(250) NOT NULL,
 	FOREIGN KEY(id_san_pham) REFERENCES dbo.SanPham(id)
 )
 
@@ -126,8 +136,8 @@ CREATE TABLE HoaDon (
 	dia_chi NVARCHAR(500),
 	ghi_chu NVARCHAR(1000),
 	trang_thai VARCHAR(10) NOT NULL,
-	created_at DATE NOT NULL DEFAULT GETDATE(),
-	updated_at DATE NOT NULL DEFAULT GETDATE(),
+	ngay_tao DATE NOT NULL DEFAULT GETDATE(),
+	ngay_cap_nhat DATE NOT NULL DEFAULT GETDATE(),
 	FOREIGN KEY(id_nhan_vien) REFERENCES dbo.NhanVien(id),
 	FOREIGN KEY(id_khach_hang) REFERENCES dbo.KhachHang(id),
 	CHECK(trang_thai IN('TAO_MOI', 'DANG_GIAO', 'THANH_TOAN'))
@@ -146,14 +156,15 @@ CREATE TABLE HoaDonChiTiet (
 
 CREATE TABLE MaGiamGia(
 	id INT IDENTITY(1, 1) PRIMARY KEY,
-	ma VARCHAR(50) NOT NULL UNIQUE,
+	ma VARCHAR(50) NOT NULL,
 	so_luong INT NOT NULL DEFAULT 0,
 	ngay_bat_dau DATE NOT NULL,
 	ngay_ket_thuc DATE NOT NULL,
 	phan_tram_giam_gia INT NOT NULL DEFAULT 0,
 	don_hang_toi_thieu MONEY NOT NULL DEFAULT 0,
 	giam_toi_da MONEY NOT NULL DEFAULT 0,
-	trang_thai BIT NOT NULL
+	trang_thai BIT NOT NULL,
+	da_xoa BIT DEFAULT 0
 )
 
 CREATE TABLE MaGiamGiaSanPham (
@@ -165,7 +176,7 @@ CREATE TABLE MaGiamGiaSanPham (
 )
 
 INSERT INTO dbo.NhanVien
-(username, password, email, ho_ten, sdt, gioi_tinh, dia_chi, avatar, otp, trang_thai,is_admin, created_at)
+(tai_khoan, mat_khau, email, ho_ten, sdt, gioi_tinh, dia_chi, hinh_anh, otp, trang_thai,vai_tro_quan_ly, ngay_tao)
 VALUES
 (
 	'admin',       -- username - varchar(25)
@@ -179,7 +190,7 @@ VALUES
     '',       -- otp - varchar(6)
     1,     -- trang_thai - bit
     1,     -- is_admin - bit
-    GETDATE() -- created_at - date
+    GETDATE() -- ngay_tao - date
 ),
 (
 	'user',       -- username - varchar(25)
@@ -193,5 +204,5 @@ VALUES
     '',       -- otp - varchar(6)
     1,     -- trang_thai - bit
     0,     -- is_admin - bit
-    GETDATE() -- created_at - date
+    GETDATE() -- ngay_tao - date
 )

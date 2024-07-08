@@ -5,6 +5,8 @@
 
 package com.app.common.infrastructure.interfaces;
 
+import com.app.common.infrastructure.request.FillterRequest;
+
 import java.util.List;
 
 /**
@@ -12,11 +14,7 @@ import java.util.List;
  * @author inuHa
  */
 public interface IServiceInterface<T, K> {
-    
-    List<T> getAll();
-    
-    List<T> getAllByIds(List<K> ids);
-    
+
     T getById(K id);
     
     T insert(T e);
@@ -28,5 +26,9 @@ public interface IServiceInterface<T, K> {
     void delete(K id);
     
     void deleteAll(List<K> ids);
-    
+
+    List<T> getAll(FillterRequest request);
+
+    int getTotalPage(FillterRequest request);
+
 }

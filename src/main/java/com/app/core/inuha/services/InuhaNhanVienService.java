@@ -7,6 +7,7 @@ package com.app.core.inuha.services;
 
 import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
+import com.app.common.infrastructure.request.FillterRequest;
 import com.app.common.infrastructure.session.SessionLogin;
 import com.app.core.inuha.models.InuhaNhanVienModel;
 import com.app.core.inuha.repositories.InuhaNhanVienRepository;
@@ -29,13 +30,13 @@ public class InuhaNhanVienService implements IInuhaNhanVienServiceInterface {
     private final InuhaNhanVienRepository nhanVienRepository = new InuhaNhanVienRepository();
 
     @Override
-    public List<InuhaNhanVienModel> getAll() {
+    public List<InuhaNhanVienModel> getAll(FillterRequest request) {
 	return null;
     }
 
     @Override
-    public List<InuhaNhanVienModel> getAllByIds(List<Integer> ids) {
-	return null;
+    public int getTotalPage(FillterRequest request) {
+        return 0;
     }
 
     @Override

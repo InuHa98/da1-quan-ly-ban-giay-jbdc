@@ -18,10 +18,6 @@ import java.util.regex.Pattern;
 public class JbdcHelper {
 
     public static ResultSet query(String query, Object... args) throws SQLException {
-        return query(query, false, args);
-    }
-
-    public static ResultSet query(String query, boolean autoCloseConnect, Object... args) throws SQLException {
         ResultSet resultSet = null;
         PreparedStatement stmt = null;
         try {
@@ -30,12 +26,6 @@ public class JbdcHelper {
         } catch (SQLException e) {
             throw new SQLException(e);
         }
-        finally {
-            if (autoCloseConnect) {
-                assert stmt != null;
-                close(resultSet);
-            }
-        }
         return resultSet;
     }
 
@@ -43,7 +33,11 @@ public class JbdcHelper {
         return update(query, false, args);
     }
 
-    public static int update(String query, boolean autoCloseConnect, Object... args) throws SQLException {
+    public static int updateAndFlush(String query, Object... args) throws SQLException {
+        return update(query, true, args);
+    }
+
+    private static int update(String query, boolean autoCloseConnect, Object... args) throws SQLException {
         int result = 0;
         PreparedStatement stmt = null;
 
@@ -64,21 +58,32 @@ public class JbdcHelper {
 
     public static Object value(String query, Object... args) throws SQLException {
         ResultSet resultSet = null;
-        Statement stmt = null;
         try {
-            resultSet = query(query, false, args);
-            stmt = resultSet.getStatement();
+            resultSet = query(query, args);
             if (resultSet.next()) {
-                return resultSet.getObject(0);
+                return resultSet.getObject(1);
             }
         } catch(Exception e) {
             e.printStackTrace();
         }
         finally {
-            assert stmt != null;
             close(resultSet);
         }
         return null;
+    }
+
+    public static boolean has(String query, Object... args) throws SQLException {
+        ResultSet resultSet = null;
+        try {
+            resultSet = query(query, args);
+            return resultSet.next();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        finally {
+            close(resultSet);
+        }
+        return false;
     }
 
     public static PreparedStatement getStatement(String query, Object... args) throws SQLException {

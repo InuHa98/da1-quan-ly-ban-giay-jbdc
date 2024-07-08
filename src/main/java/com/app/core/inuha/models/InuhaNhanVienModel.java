@@ -28,16 +28,24 @@ public class InuhaNhanVienModel {
     
     private String password;
 
-    private String hoTen;
-    
     private String email;
-    
+
+    private String hoTen;
+
     private String sdt;
 
+    private boolean gioiTinh;
+
+    private String diaChi;
+
     private String avatar;
+
+    private String otp;
 
     private boolean trangThai;
 
     private boolean isAdmin;
+
+    private String ngayTao;
 
 }

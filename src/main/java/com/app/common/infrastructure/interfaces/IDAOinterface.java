@@ -1,6 +1,9 @@
 package com.app.common.infrastructure.interfaces;
 
+import com.app.common.infrastructure.request.FillterRequest;
+
 import java.sql.SQLException;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -9,18 +12,18 @@ import java.util.Set;
  */
 public interface IDAOinterface<T, I> {
 
-    public T getById(I id) throws SQLException;
+    int insert(T model) throws SQLException;
 
-    public Set<T> selectAll() throws SQLException;
+    int update(T model) throws SQLException;
 
-    public Long insert(T model) throws SQLException;
+    int delete(I id) throws SQLException;
 
-    public int update(T model) throws SQLException;
+    boolean has(I id) throws SQLException;
 
-    public int delete(I id) throws SQLException;
+    Optional<T> getById(I id) throws SQLException;
 
-    public boolean has(I id) throws SQLException;
+    Set<T> selectAll(FillterRequest request) throws SQLException;
 
-    public int count() throws SQLException;
+    int count(FillterRequest request) throws SQLException;
 
 }
