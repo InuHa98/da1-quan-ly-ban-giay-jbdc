@@ -32,12 +32,12 @@ public class QuanLyRoute {
     }
 
     private void init() {
-        itemSideMenu.add(new SidebarMenuItem(1, "statistic", "Thống kê", new JLabel("Giáp ăn lozzzzzzzzz 1")));
-        itemSideMenu.add(new SidebarMenuItem(2, "sell", "Bán hàng", new JLabel("Giáp ăn lozzzzzzzzz 2")));
-        itemSideMenu.add(new SidebarMenuItem(3, "product", "Sản phẩm", new JLabel("Giáp ăn lozzzzzzzzz 3")));
-        itemSideMenu.add(new SidebarMenuItem(4, "voucher", "Mã giảm giá", new JLabel("Giáp ăn lozzzzzzzzz 4")));
-        itemSideMenu.add(new SidebarMenuItem(5, "receipt", "Hoá đơn", new JLabel("Giáp ăn lozzzzzzzzz 5")));
-        itemSideMenu.add(new SidebarMenuItem(6, "customer", "Khách hàng", new JLabel("Giáp ăn lozzzzzzzzz 6")));
+        itemSideMenu.add(new SidebarMenuItem(1, "statistic", "Thống kê", new JLabel("1")));
+        itemSideMenu.add(new SidebarMenuItem(2, "sell", "Bán hàng", new JLabel("2")));
+        itemSideMenu.add(new SidebarMenuItem(3, "product", "Sản phẩm", new JLabel("3")));
+        itemSideMenu.add(new SidebarMenuItem(4, "voucher", "Mã giảm giá", new JLabel("4")));
+        itemSideMenu.add(new SidebarMenuItem(5, "receipt", "Hoá đơn", new JLabel("5")));
+        itemSideMenu.add(new SidebarMenuItem(6, "customer", "Khách hàng", new JLabel("6")));
         itemSideMenu.add(new SidebarMenuItem(7, "users", "Nhân viên", new InuhaNhanVienView()));
         itemSideMenu.add(new SidebarMenuItem(8, "password", "Đổi mật khẩu", (button) -> {
             SessionLogin.getInstance().changePassword();

@@ -30,7 +30,7 @@ public class InuhaNhanVienView extends RoundPanel {
         Pagination pagination = new Pagination();
         pagination.setPanel(plPagination);
         pagination.setCurrentPage(14);
-        pagination.setTotalPages(15);
+        pagination.setTotalPages(20);
         pagination.setCallback(new Pagination.Callback() {
             @Override
             public void onChangeLimitItem(JComboBox<Integer> comboBox) {
@@ -42,7 +42,7 @@ public class InuhaNhanVienView extends RoundPanel {
                 System.err.println(page);
             }
         });
-
+        System.out.println("aaaaaa");
         pagination.render();
     }
 

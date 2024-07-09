@@ -26,6 +26,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
@@ -67,10 +68,18 @@ public class SidebarMenu extends JPanel {
 
             Optional<SidebarMenuItem> item = itemsMenu.stream().filter(o -> o.getIndex() == index).findFirst();
             if (item.isEmpty()) {
-                throw new RuntimeException("Không tìm thấy SidebarMenuItem");
+                return;
             }
 
-            DashboardController.getInstance().show(item.get().getComponent());
+            try {
+                String className = item.get().getComponent().getClass().getName();
+                Class<?> loadClass = Class.forName(className);
+                DashboardController.getInstance().show((JComponent) loadClass.getDeclaredConstructor().newInstance());
+            } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException |
+                     InvocationTargetException e) {
+                throw new RuntimeException(e);
+            }
+
         });
 
         int maxLengthText = 23;
