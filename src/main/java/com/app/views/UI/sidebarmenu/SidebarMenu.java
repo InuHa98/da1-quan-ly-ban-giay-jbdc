@@ -9,8 +9,8 @@ import com.app.common.infrastructure.router.NhanVienRoute;
 import com.app.common.infrastructure.router.QuanLyRoute;
 import com.app.common.infrastructure.session.AvatarUpload;
 import com.app.common.infrastructure.session.SessionLogin;
-import com.app.core.inuha.models.InuhaNhanVienModel;
-import com.app.core.inuha.services.InuhaNhanVienService;
+import com.app.core.inuha.models.InuhaTaiKhoanModel;
+import com.app.core.inuha.services.InuhaTaiKhoanService;
 import com.app.utils.*;
 import com.app.views.UI.ImageRound;
 import com.app.views.UI.dialog.LoadingDialog;
@@ -38,7 +38,7 @@ import java.util.concurrent.Executors;
  */
 public class SidebarMenu extends JPanel {
 
-    private final InuhaNhanVienService nhanVienService = new InuhaNhanVienService();
+    private final InuhaTaiKhoanService nhanVienService = new InuhaTaiKhoanService();
 
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
@@ -71,8 +71,14 @@ public class SidebarMenu extends JPanel {
                 return;
             }
 
+	    String className = item.get().getPackageComponent();
+	    
+	    if (className == null || className.isEmpty()) {
+		System.err.println("Không tìm thấy route");
+		return;
+	    }
+	    
             try {
-                String className = item.get().getComponent().getClass().getName();
                 Class<?> loadClass = Class.forName(className);
                 DashboardController.getInstance().show((JComponent) loadClass.getDeclaredConstructor().newInstance());
             } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException |
@@ -84,7 +90,7 @@ public class SidebarMenu extends JPanel {
 
         int maxLengthText = 23;
 
-        InuhaNhanVienModel authUser = SessionLogin.getInstance().getData();
+        InuhaTaiKhoanModel authUser = SessionLogin.getInstance().getData();
 
         String username = ComponentUtils.hiddenText(authUser.getUsername(), maxLengthText);
         String email = ComponentUtils.hiddenText(authUser.getEmail(), maxLengthText);

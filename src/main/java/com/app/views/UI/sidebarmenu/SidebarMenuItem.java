@@ -20,16 +20,16 @@ public class SidebarMenuItem {
     private String label;
 
     @Getter
-    private JComponent component;
+    private String packageComponent;
 
     @Getter
     private ISidebarMenuButtonCallback callback;
 
-    public SidebarMenuItem(int index, String icon, String label, JComponent component) {
+    public SidebarMenuItem(int index, String icon, String label, String packageComponent) {
         this.index = index;
         this.icon = icon;
         this.label = label;
-        this.component = component;
+        this.packageComponent = packageComponent;
     }
 
     public SidebarMenuItem(int index, String icon, String label, ISidebarMenuButtonCallback callback) {

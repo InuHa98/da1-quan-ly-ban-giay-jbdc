@@ -4,8 +4,8 @@ package com.app.core.inuha.repositories;
 import com.app.common.helper.JbdcHelper;
 import com.app.common.infrastructure.interfaces.IDAOinterface;
 import com.app.common.infrastructure.request.FillterRequest;
-import com.app.core.inuha.models.InuhaNhanVienModel;
-import com.app.core.inuha.request.InuhaFillterRequestNhanVien;
+import com.app.core.inuha.models.InuhaTaiKhoanModel;
+import com.app.core.inuha.request.InuhaFillterTaiKhoanRequest;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,13 +16,13 @@ import java.util.Set;
  *
  * @author InuHa
  */
-public class InuhaNhanVienRepository implements IDAOinterface<InuhaNhanVienModel, Integer> {
+public class InuhaTaiKhoanRepository implements IDAOinterface<InuhaTaiKhoanModel, Integer> {
 
 	@Override
-	public int insert(InuhaNhanVienModel model) throws SQLException {
+	public int insert(InuhaTaiKhoanModel model) throws SQLException {
 		int result = 0;
 		String query = """
-  			INSERT INTO NhanVien(tai_khoan, mat_khau, email, ho_ten, sdt, gioi_tinh, dia_chi, hinh_anh, otp, trang_thai, vai_tro_quan_ly, ngay_tao)
+  			INSERT INTO TaiKhoan(tai_khoan, mat_khau, email, ho_ten, sdt, gioi_tinh, dia_chi, hinh_anh, otp, trang_thai, adm, ngay_tao)
   			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 		""";
 		try {
@@ -50,10 +50,10 @@ public class InuhaNhanVienRepository implements IDAOinterface<InuhaNhanVienModel
 	}
 
 	@Override
-	public int update(InuhaNhanVienModel model) throws SQLException {
+	public int update(InuhaTaiKhoanModel model) throws SQLException {
 		int result = 0;
 		String query = """
-  			UPDATE NhanVien SET
+  			UPDATE TaiKhoan SET
     			tai_khoan = ?,
     			mat_khau = ?,
     			email = ?,
@@ -64,7 +64,7 @@ public class InuhaNhanVienRepository implements IDAOinterface<InuhaNhanVienModel
 				hinh_anh = ?,
 				otp = ?,
 				trang_thai = ?,
-				vai_tro_quan_ly = ?,
+				adm = ?,
 				ngay_tao = ?
   			WHERE id = ?
 		""";
@@ -96,7 +96,7 @@ public class InuhaNhanVienRepository implements IDAOinterface<InuhaNhanVienModel
 	@Override
 	public int delete(Integer id) throws SQLException {
 		int result = 0;
-		String query = "DELETE FROM NhanVien WHERE id = ?";
+		String query = "DELETE FROM TaiKhoan WHERE id = ?";
 		try {
 			result = JbdcHelper.updateAndFlush(query, id);
 		} catch(Exception e) {
@@ -108,7 +108,7 @@ public class InuhaNhanVienRepository implements IDAOinterface<InuhaNhanVienModel
 
 	@Override
 	public boolean has(Integer id) throws SQLException {
-		String query = "SELECT TOP(1) 1 FROM NhanVien WHERE id = ? AND da_xoa = 0";
+		String query = "SELECT TOP(1) 1 FROM TaiKhoan WHERE id = ? AND trang_thai_xoa = 0";
 		try {
 			return (boolean) JbdcHelper.value(query, id);
 		} catch (Exception e) {
@@ -118,16 +118,16 @@ public class InuhaNhanVienRepository implements IDAOinterface<InuhaNhanVienModel
 	}
 
 	@Override
-	public Optional<InuhaNhanVienModel> getById(Integer id) throws SQLException {
+	public Optional<InuhaTaiKhoanModel> getById(Integer id) throws SQLException {
 		ResultSet resultSet = null;
-		InuhaNhanVienModel nhanVien = null;
+		InuhaTaiKhoanModel TaiKhoan = null;
 
-		String query = "SELECT * FROM NhanVien WHERE id = ? AND da_xoa = 0";
+		String query = "SELECT * FROM TaiKhoan WHERE id = ? AND trang_thai_xoa = 0";
 
 		try {
 			resultSet = JbdcHelper.query(query, id);
 			while(resultSet.next()) {
-				nhanVien = buildNhanVien(resultSet);
+				TaiKhoan = buildTaiKhoan(resultSet);
 			}
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -137,24 +137,24 @@ public class InuhaNhanVienRepository implements IDAOinterface<InuhaNhanVienModel
 			JbdcHelper.close(resultSet);
 		}
 
-		return Optional.ofNullable(nhanVien);
+		return Optional.ofNullable(TaiKhoan);
 	}
 
 	@Override
-	public Set<InuhaNhanVienModel> selectAll(FillterRequest request) throws SQLException {
-		Set<InuhaNhanVienModel> list = new HashSet<>();
+	public Set<InuhaTaiKhoanModel> selectAll(FillterRequest request) throws SQLException {
+		Set<InuhaTaiKhoanModel> list = new HashSet<>();
 		ResultSet resultSet = null;
 
 		String query = """
-			WITH NhanVienCTE AS (
+			WITH TaiKhoanCTE AS (
 				SELECT
 					*,
-					ROW_NUMBER() OVER (ORDER BY id) AS RowNum
-				FROM NhanVien
+					ROW_NUMBER() OVER (ORDER BY id) AS stt
+				FROM TaiKhoan
 			)
 			SELECT *
-			FROM NhanVienCTE
-			WHERE da_xoa = 0 AND (RowNum BETWEEN ? AND ?)
+			FROM TaiKhoanCTE
+			WHERE trang_thai_xoa = 0 AND (stt BETWEEN ? AND ?)
 		""";
 
 		int[] offset = FillterRequest.getOffset(request.getPage(), request.getSize());
@@ -169,8 +169,8 @@ public class InuhaNhanVienRepository implements IDAOinterface<InuhaNhanVienModel
 		try {
 			resultSet = JbdcHelper.query(query, args);
 			while(resultSet.next()) {
-				InuhaNhanVienModel nhanVien = buildNhanVien(resultSet);
-				list.add(nhanVien);
+				InuhaTaiKhoanModel taiKhoan = buildTaiKhoan(resultSet);
+				list.add(taiKhoan);
 			}
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -185,11 +185,11 @@ public class InuhaNhanVienRepository implements IDAOinterface<InuhaNhanVienModel
 
 	@Override
 	public int count(FillterRequest request) throws SQLException {
-		InuhaFillterRequestNhanVien filter = (InuhaFillterRequestNhanVien) request;
+		InuhaFillterTaiKhoanRequest filter = (InuhaFillterTaiKhoanRequest) request;
 		int totalPages = 0;
 		int totalRows = 0;
 
-		String query = "SELECT COUNT(*) FROM NhanVien WHERE ho_ten LIKE ?";
+		String query = "SELECT COUNT(*) FROM TaiKhoan WHERE ho_ten LIKE ?";
 
 		Object[] args = new Object[] {
 				"%" + filter.getKeyword() + "%"
@@ -205,8 +205,8 @@ public class InuhaNhanVienRepository implements IDAOinterface<InuhaNhanVienModel
 		return totalPages;
 	}
 
-	private InuhaNhanVienModel buildNhanVien(ResultSet resultSet) throws SQLException {
-		return InuhaNhanVienModel.builder()
+	private InuhaTaiKhoanModel buildTaiKhoan(ResultSet resultSet) throws SQLException {
+		return InuhaTaiKhoanModel.builder()
 				.id(resultSet.getInt("id"))
 				.username(resultSet.getString("tai_khoan"))
 				.password(resultSet.getString("mat_khau"))
@@ -218,22 +218,22 @@ public class InuhaNhanVienRepository implements IDAOinterface<InuhaNhanVienModel
 				.avatar(resultSet.getString("hinh_anh"))
 				.otp(resultSet.getString("otp"))
 				.trangThai(resultSet.getBoolean("trang_thai"))
-				.isAdmin(resultSet.getBoolean("vai_tro_quan_ly"))
+				.isAdmin(resultSet.getBoolean("adm"))
 				.ngayTao(resultSet.getString("ngay_tao"))
 				.build();
 	}
 
-	public Optional<InuhaNhanVienModel> findNhanVienByEmail(String email) throws SQLException {
+	public Optional<InuhaTaiKhoanModel> findByEmail(String email) throws SQLException {
 		ResultSet resultSet = null;
-		InuhaNhanVienModel nhanVien = null;
+		InuhaTaiKhoanModel taiKhoan = null;
 
-		String query = "SELECT * FROM NhanVien WHERE email LIKE ? AND da_xoa = 0";
+		String query = "SELECT * FROM TaiKhoan WHERE email LIKE ? AND trang_thai_xoa = 0";
 
 		try {
 
 			resultSet = JbdcHelper.query(query, email);
 			while(resultSet.next()) {
-				nhanVien = buildNhanVien(resultSet);
+				taiKhoan = buildTaiKhoan(resultSet);
 			}
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -243,19 +243,19 @@ public class InuhaNhanVienRepository implements IDAOinterface<InuhaNhanVienModel
 			JbdcHelper.close(resultSet);
 		}
 
-        return Optional.ofNullable(nhanVien);
+        return Optional.ofNullable(taiKhoan);
 	}
 
-	public Optional<InuhaNhanVienModel> findNhanVienByUsername(String username) throws SQLException {
+	public Optional<InuhaTaiKhoanModel> findByUsername(String username) throws SQLException {
 		ResultSet resultSet = null;
-		InuhaNhanVienModel nhanVien = null;
+		InuhaTaiKhoanModel taiKhoan = null;
 
-		String query = "SELECT * FROM NhanVien WHERE tai_khoan LIKE ? AND da_xoa = 0";
+		String query = "SELECT * FROM TaiKhoan WHERE tai_khoan LIKE ? AND trang_thai_xoa = 0";
 
 		try {
 			resultSet = JbdcHelper.query(query, username);
 			while(resultSet.next()) {
-				nhanVien = buildNhanVien(resultSet);
+				taiKhoan = buildTaiKhoan(resultSet);
 			}
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -265,13 +265,13 @@ public class InuhaNhanVienRepository implements IDAOinterface<InuhaNhanVienModel
 			JbdcHelper.close(resultSet);
 		}
 
-		return Optional.ofNullable(nhanVien);
+		return Optional.ofNullable(taiKhoan);
 	}
 
 	public Integer updateOTPById(int id, String otp) throws SQLException {
 		int row = 0;
 
-		String query = "UPDATE NhanVien SET otp = ? WHERE id = ? AND da_xoa = 0";
+		String query = "UPDATE TaiKhoan SET otp = ? WHERE id = ? AND trang_thai_xoa = 0";
 
 		Object[] args = new Object[] {
 				otp,
@@ -289,7 +289,7 @@ public class InuhaNhanVienRepository implements IDAOinterface<InuhaNhanVienModel
 	}
 
 	public boolean checkOtp(String email, String otp) throws SQLException {
-		String query = "SELECT TOP(1) 1 FROM NhanVien WHERE email LIKE ? AND otp = ? AND da_xoa = 0";
+		String query = "SELECT TOP(1) 1 FROM TaiKhoan WHERE email LIKE ? AND otp = ? AND trang_thai_xoa = 0";
 
 		Object[] args = new Object[] {
 				email,
@@ -308,9 +308,9 @@ public class InuhaNhanVienRepository implements IDAOinterface<InuhaNhanVienModel
 		int row = 0;
 
 		String query = """
-			UPDATE NhanVien
+			UPDATE TaiKhoan
 			SET password = ?, otp = NULL
-			WHERE email LIKE ? AND otp = ? AND da_xoa = 0
+			WHERE email LIKE ? AND otp = ? AND trang_thai_xoa = 0
 		""";
 
 		Object[] args = new Object[] {
@@ -332,7 +332,7 @@ public class InuhaNhanVienRepository implements IDAOinterface<InuhaNhanVienModel
 	public Integer updateAvatar(int id, String avatar) throws SQLException {
 		int row = 0;
 
-		String query = "UPDATE NhanVien SET hinh_anh = ? WHERE id = ? AND da_xoa = 0";
+		String query = "UPDATE TaiKhoan SET hinh_anh = ? WHERE id = ? AND trang_thai_xoa = 0";
 
 		Object[] args = new Object[] {
 				avatar,
@@ -352,7 +352,7 @@ public class InuhaNhanVienRepository implements IDAOinterface<InuhaNhanVienModel
 	public Integer updatePassword(int id, String oldPassword, String newPassword) throws SQLException {
 		int row = 0;
 
-		String query = "UPDATE NhanVien SET mat_khau = ? WHERE id = ? AND mat_khau = ? AND da_xoa = 0";
+		String query = "UPDATE TaiKhoan SET mat_khau = ? WHERE id = ? AND mat_khau = ? AND trang_thai_xoa = 0";
 
 		Object[] args = new Object[] {
 				newPassword,

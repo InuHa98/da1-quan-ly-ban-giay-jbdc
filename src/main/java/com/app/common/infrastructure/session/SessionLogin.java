@@ -3,10 +3,10 @@ package com.app.common.infrastructure.session;
 import com.app.common.controller.ApplicationController;
 import com.app.common.helper.MessageModal;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
-import com.app.core.inuha.models.InuhaNhanVienModel;
-import com.app.core.inuha.services.InuhaNhanVienService;
+import com.app.core.inuha.models.InuhaTaiKhoanModel;
+import com.app.core.inuha.services.InuhaTaiKhoanService;
 import com.app.views.UI.dialog.ModalDialog;
-import com.app.core.inuha.views.common.InuhaChangePasswordView;
+import com.app.core.inuha.views.all.InuhaChangePasswordView;
 import com.app.core.inuha.views.guest.LoginView;
 import lombok.Getter;
 
@@ -22,14 +22,14 @@ public class SessionLogin {
 
     private static SessionLogin instance;
 
-    private final InuhaNhanVienService nhanVienService = new InuhaNhanVienService();
+    private final InuhaTaiKhoanService nhanVienService = new InuhaTaiKhoanService();
 
     private String username = null;
 
     private String password = null;
 
     @Getter
-    private InuhaNhanVienModel data = null;
+    private InuhaTaiKhoanModel data = null;
 
     private SessionLogin() {
     }
@@ -62,7 +62,7 @@ public class SessionLogin {
         return this;
     }
 
-    public void create(String username, String password, InuhaNhanVienModel data) {
+    public void create(String username, String password, InuhaTaiKhoanModel data) {
         this.username = username;
         this.password = password;
         this.data = data;

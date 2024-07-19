@@ -10,7 +10,7 @@ import com.app.common.helper.MessageModal;
 import com.app.common.helper.MessageToast;
 import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
-import com.app.core.inuha.services.InuhaNhanVienService;
+import com.app.core.inuha.services.InuhaTaiKhoanService;
 import com.app.views.UI.dialog.LoadingDialog;
 import com.formdev.flatlaf.FlatClientProperties;
 
@@ -26,7 +26,7 @@ import java.util.concurrent.Executors;
  */
 public class ConfirmOptForgotPassword extends javax.swing.JPanel {
 
-    private final InuhaNhanVienService nhanVienService = new InuhaNhanVienService();
+    private final InuhaTaiKhoanService nhanVienService = new InuhaTaiKhoanService();
 
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
 

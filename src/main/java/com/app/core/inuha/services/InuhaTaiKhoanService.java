@@ -9,8 +9,8 @@ import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
 import com.app.common.infrastructure.request.FillterRequest;
 import com.app.common.infrastructure.session.SessionLogin;
-import com.app.core.inuha.models.InuhaNhanVienModel;
-import com.app.core.inuha.repositories.InuhaNhanVienRepository;
+import com.app.core.inuha.models.InuhaTaiKhoanModel;
+import com.app.core.inuha.repositories.InuhaTaiKhoanRepository;
 import com.app.core.inuha.services.impl.IInuhaNhanVienServiceInterface;
 import com.app.utils.SessionUtils;
 import com.app.utils.ValidateUtils;
@@ -25,12 +25,12 @@ import java.util.Optional;
  * @author inuHa
  */
 
-public class InuhaNhanVienService implements IInuhaNhanVienServiceInterface {
+public class InuhaTaiKhoanService implements IInuhaNhanVienServiceInterface {
 
-    private final InuhaNhanVienRepository nhanVienRepository = new InuhaNhanVienRepository();
+    private final InuhaTaiKhoanRepository nhanVienRepository = new InuhaTaiKhoanRepository();
 
     @Override
-    public List<InuhaNhanVienModel> getAll(FillterRequest request) {
+    public List<InuhaTaiKhoanModel> getAll(FillterRequest request) {
 	return null;
     }
 
@@ -40,12 +40,12 @@ public class InuhaNhanVienService implements IInuhaNhanVienServiceInterface {
     }
 
     @Override
-    public InuhaNhanVienModel getById(Integer id) {
+    public InuhaTaiKhoanModel getById(Integer id) {
 	    return null;
     }
 
     @Override
-    public InuhaNhanVienModel insert(InuhaNhanVienModel e) {
+    public InuhaTaiKhoanModel insert(InuhaTaiKhoanModel e) {
 	return null;
     }
 
@@ -55,7 +55,7 @@ public class InuhaNhanVienService implements IInuhaNhanVienServiceInterface {
     }
 
     @Override
-    public void update(InuhaNhanVienModel e) {
+    public void update(InuhaTaiKhoanModel e) {
 
     }
 
@@ -69,13 +69,13 @@ public class InuhaNhanVienService implements IInuhaNhanVienServiceInterface {
 
     }
 
-    public InuhaNhanVienModel login(String username, String password) {
+    public InuhaTaiKhoanModel login(String username, String password) {
         try {
-            Optional<InuhaNhanVienModel> find = ValidateUtils.isEmail(username) ? nhanVienRepository.findNhanVienByEmail(username) : nhanVienRepository.findNhanVienByUsername(username);
+            Optional<InuhaTaiKhoanModel> find = ValidateUtils.isEmail(username) ? nhanVienRepository.findByEmail(username) : nhanVienRepository.findByUsername(username);
             if (find.isEmpty() || !find.get().getPassword().equals(password)) {
                 throw new ServiceResponseException("Tài khoản hoặc mật khẩu không chính xác!");
             }
-            InuhaNhanVienModel nhanVien = find.get();
+            InuhaTaiKhoanModel nhanVien = find.get();
             if (!nhanVien.isTrangThai()) {
                 throw new ServiceResponseException("Tài khoản của bạn đã bị khoá!");
             }
@@ -94,7 +94,7 @@ public class InuhaNhanVienService implements IInuhaNhanVienServiceInterface {
         }
 
         try {
-            Optional<InuhaNhanVienModel> nhanVien = nhanVienRepository.findNhanVienByEmail(email);
+            Optional<InuhaTaiKhoanModel> nhanVien = nhanVienRepository.findByEmail(email);
             if (nhanVien.isEmpty()) {
                 throw new ServiceResponseException("Email vừa nhập không tồn tại trên hệ thống.");
             }
@@ -189,7 +189,7 @@ public class InuhaNhanVienService implements IInuhaNhanVienServiceInterface {
             }
 
             String username = SessionLogin.getInstance().getData().getUsername();
-            InuhaNhanVienModel data = login(username, newPassword);
+            InuhaTaiKhoanModel data = login(username, newPassword);
             SessionLogin.getInstance().create(username, newPassword, data);
         } catch (SQLException e) {
             e.printStackTrace();

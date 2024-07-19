@@ -1,5 +1,6 @@
 package com.app.common.infrastructure.router;
 
+import com.app.common.infrastructure.constants.RouterConstant;
 import com.app.common.infrastructure.session.SessionLogin;
 import com.app.views.UI.sidebarmenu.SidebarMenuItem;
 import lombok.Getter;
@@ -16,11 +17,8 @@ public class NhanVienRoute {
 
     private static NhanVienRoute instance;
 
-    @Getter
-    private List<SidebarMenuItem> itemSideMenu = new ArrayList<>();
-
     private NhanVienRoute() {
-        this.init();
+	
     }
 
     public static NhanVienRoute getInstance() {
@@ -30,16 +28,20 @@ public class NhanVienRoute {
         return instance;
     }
 
-    private void init() {
-        itemSideMenu.add(new SidebarMenuItem(1, "sell", "Bán hàng", new JLabel("1")));
-        itemSideMenu.add(new SidebarMenuItem(2, "receipt", "Hoá đơn", new JLabel("2")));
-        itemSideMenu.add(new SidebarMenuItem(3, "customer", "Khách hàng", new JLabel("3")));
+    public List<SidebarMenuItem> getItemSideMenu() {
+	List<SidebarMenuItem> itemSideMenu = new ArrayList<>();
+	
+        itemSideMenu.add(new SidebarMenuItem(1, "sell", "Bán hàng", RouterConstant.BAN_HANG));
+        itemSideMenu.add(new SidebarMenuItem(2, "receipt", "Hoá đơn", RouterConstant.HOA_DON));
+        itemSideMenu.add(new SidebarMenuItem(3, "customer", "Khách hàng", RouterConstant.KHACH_HANG));
         itemSideMenu.add(new SidebarMenuItem(4, "password", "Đổi mật khẩu", (button) -> {
             SessionLogin.getInstance().changePassword();
         }));
         itemSideMenu.add(new SidebarMenuItem(5, "logout", "Đăng xuất", (button) -> {
             SessionLogin.getInstance().logout();
         }));
+	
+	return itemSideMenu;
     }
 
 }
