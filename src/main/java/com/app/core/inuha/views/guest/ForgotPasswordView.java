@@ -9,7 +9,7 @@ import com.app.common.controller.ApplicationController;
 import com.app.common.helper.MessageModal;
 import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
-import com.app.core.inuha.services.InuhaNhanVienService;
+import com.app.core.inuha.services.InuhaTaiKhoanService;
 import com.app.utils.ColorUtils;
 import com.app.utils.ComponentUtils;
 import com.app.utils.ResourceUtils;
@@ -36,7 +36,7 @@ import net.miginfocom.swing.MigLayout;
 
 public class ForgotPasswordView extends javax.swing.JPanel {
 
-    private final InuhaNhanVienService nhanVienService = new InuhaNhanVienService();
+    private final InuhaTaiKhoanService nhanVienService = new InuhaTaiKhoanService();
 
     private String currentEmail = null;
 

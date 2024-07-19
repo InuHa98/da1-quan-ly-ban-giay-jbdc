@@ -3,13 +3,13 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
 
-package com.app.core.inuha.views.common;
+package com.app.core.inuha.views.all;
 
 import com.app.common.controller.ApplicationController;
 import com.app.common.helper.MessageToast;
 import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
-import com.app.core.inuha.services.InuhaNhanVienService;
+import com.app.core.inuha.services.InuhaTaiKhoanService;
 import com.app.utils.ColorUtils;
 import com.app.utils.ComponentUtils;
 import com.app.utils.ValidateUtils;
@@ -35,7 +35,7 @@ import java.util.concurrent.Executors;
 
 public class InuhaChangePasswordView extends javax.swing.JPanel {
 
-    private final InuhaNhanVienService nhanVienService = new InuhaNhanVienService();
+    private final InuhaTaiKhoanService nhanVienService = new InuhaTaiKhoanService();
 
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
 

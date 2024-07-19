@@ -27,6 +27,8 @@ public class ColorUtils {
 
     public static Color BACKGROUND_PRIMARY = new Color(43, 43, 43);
 
+    public static Color BACKGROUND_GRAY = new Color(43, 45, 49);
+
     public static Color BACKGROUND_HOVER = new Color(65, 69, 89);
 
     public static Color BACKGROUND_DASHBOARD = new Color(32, 33, 37);

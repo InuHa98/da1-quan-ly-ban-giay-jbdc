@@ -6,16 +6,16 @@
 package com.app.core.inuha.services.impl;
 
 import com.app.common.infrastructure.interfaces.IServiceInterface;
-import com.app.core.inuha.models.InuhaNhanVienModel;
+import com.app.core.inuha.models.InuhaTaiKhoanModel;
 
 /**
  *
  * @author inuHa
  */
 
-public interface IInuhaNhanVienServiceInterface extends IServiceInterface<InuhaNhanVienModel, Integer> {
+public interface IInuhaNhanVienServiceInterface extends IServiceInterface<InuhaTaiKhoanModel, Integer> {
 
-    InuhaNhanVienModel login(String username, String password);
+    InuhaTaiKhoanModel login(String username, String password);
 
     void requestForgotPassword(String email);
 

@@ -42,7 +42,6 @@ public class InuhaNhanVienView extends RoundPanel {
                 System.err.println(page);
             }
         });
-        System.out.println("aaaaaa");
         pagination.render();
     }
 

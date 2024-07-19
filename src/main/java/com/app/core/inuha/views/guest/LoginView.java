@@ -10,8 +10,8 @@ import com.app.common.helper.MessageModal;
 import com.app.common.infrastructure.session.SessionLogin;
 import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
-import com.app.core.inuha.models.InuhaNhanVienModel;
-import com.app.core.inuha.services.InuhaNhanVienService;
+import com.app.core.inuha.models.InuhaTaiKhoanModel;
+import com.app.core.inuha.services.InuhaTaiKhoanService;
 import com.app.utils.ColorUtils;
 import com.app.utils.ComponentUtils;
 import com.app.utils.ResourceUtils;
@@ -37,7 +37,7 @@ import net.miginfocom.swing.MigLayout;
 
 public class LoginView extends javax.swing.JPanel {
 
-    private final InuhaNhanVienService nhanVienService = new InuhaNhanVienService();
+    private final InuhaTaiKhoanService nhanVienService = new InuhaTaiKhoanService();
 
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
@@ -256,7 +256,7 @@ public class LoginView extends javax.swing.JPanel {
 
         executorService.submit(() -> {
             try {
-                InuhaNhanVienModel user = nhanVienService.login(username, password);
+                InuhaTaiKhoanModel user = nhanVienService.login(username, password);
                 SessionLogin.getInstance().create(username, password, user);
                 loadingDialog.dispose();
                 ApplicationController.getInstance().show(new DashboardView());

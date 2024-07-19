@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class InuhaFillterRequestNhanVien extends FillterRequest {
+public class InuhaFillterTaiKhoanRequest extends FillterRequest {
 
     private String keyword;
 

@@ -1,5 +1,6 @@
 package com.app.common.infrastructure.router;
 
+import com.app.common.infrastructure.constants.RouterConstant;
 import com.app.common.infrastructure.session.SessionLogin;
 import com.app.core.inuha.views.quanly.InuhaNhanVienView;
 import com.app.views.UI.sidebarmenu.SidebarMenuItem;
@@ -32,17 +33,18 @@ public class QuanLyRoute {
     }
 
     private void init() {
-        itemSideMenu.add(new SidebarMenuItem(1, "statistic", "Thống kê", new JLabel("1")));
-        itemSideMenu.add(new SidebarMenuItem(2, "sell", "Bán hàng", new JLabel("2")));
-        itemSideMenu.add(new SidebarMenuItem(3, "product", "Sản phẩm", new JLabel("3")));
-        itemSideMenu.add(new SidebarMenuItem(4, "voucher", "Mã giảm giá", new JLabel("4")));
-        itemSideMenu.add(new SidebarMenuItem(5, "receipt", "Hoá đơn", new JLabel("5")));
-        itemSideMenu.add(new SidebarMenuItem(6, "customer", "Khách hàng", new JLabel("6")));
-        itemSideMenu.add(new SidebarMenuItem(7, "users", "Nhân viên", new InuhaNhanVienView()));
-        itemSideMenu.add(new SidebarMenuItem(8, "password", "Đổi mật khẩu", (button) -> {
+        itemSideMenu.add(new SidebarMenuItem(1, "statistic", "Thống kê", RouterConstant.THONG_KE));
+        itemSideMenu.add(new SidebarMenuItem(2, "sell", "Bán hàng", RouterConstant.BAN_HANG));
+        itemSideMenu.add(new SidebarMenuItem(3, "product", "Sản phẩm", RouterConstant.SAN_PHAM));
+        itemSideMenu.add(new SidebarMenuItem(4, "voucher", "Phiếu giảm giá", RouterConstant.PHIEU_GIAM_GIA));
+        itemSideMenu.add(new SidebarMenuItem(5, "sale", "Đợt giảm giá", RouterConstant.DOT_GIAM_GIA));
+        itemSideMenu.add(new SidebarMenuItem(6, "receipt", "Hoá đơn", RouterConstant.HOA_DON));
+        itemSideMenu.add(new SidebarMenuItem(7, "customer", "Khách hàng", RouterConstant.KHACH_HANG));
+        itemSideMenu.add(new SidebarMenuItem(8, "users", "Nhân viên", RouterConstant.NHAN_VIEN));
+        itemSideMenu.add(new SidebarMenuItem(9, "password", "Đổi mật khẩu", (button) -> {
             SessionLogin.getInstance().changePassword();
         }));
-        itemSideMenu.add(new SidebarMenuItem(9, "logout", "Đăng xuất", (button) -> {
+        itemSideMenu.add(new SidebarMenuItem(10, "logout", "Đăng xuất", (button) -> {
             SessionLogin.getInstance().logout();
         }));
     }

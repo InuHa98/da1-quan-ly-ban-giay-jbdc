@@ -8,7 +8,7 @@ package com.app.utils;
 import com.app.common.helper.MailerHelper;
 import com.app.common.infrastructure.session.AvatarUpload;
 import com.app.common.infrastructure.session.SessionLogin;
-import com.app.core.inuha.models.InuhaNhanVienModel;
+import com.app.core.inuha.models.InuhaTaiKhoanModel;
 
 import javax.swing.*;
 import java.io.BufferedReader;
@@ -58,13 +58,13 @@ public class SessionUtils {
         return mailerHelper.send(email, "Quên mật khẩu", htmlContent);
     }
 
-    public static AvatarUpload uploadAvatar(InuhaNhanVienModel user, String pathImage) {
+    public static AvatarUpload uploadAvatar(InuhaTaiKhoanModel user, String pathImage) {
         ImageIcon resizeImage = ComponentUtils.resizeImage(new ImageIcon(pathImage), MAX_WIDTH_AVATAR_UPLOAD, MAX_HEIGHT_AVATAR_UPLOAD);
         String fileName = StorageUtils.uploadAvatar(resizeImage, String.format(AVATAR_NAME_FORMAT, user.getId()));
         return new AvatarUpload(resizeImage, fileName);
     }
 
-    public static ImageIcon getAvatar(InuhaNhanVienModel user) {
+    public static ImageIcon getAvatar(InuhaTaiKhoanModel user) {
         String avatar = user.getAvatar();
 
         if (avatar != null && !avatar.trim().isEmpty()) {

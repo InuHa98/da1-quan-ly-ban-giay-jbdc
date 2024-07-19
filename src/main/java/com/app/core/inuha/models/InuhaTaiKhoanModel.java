@@ -20,7 +20,7 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class InuhaNhanVienModel {
+public class InuhaTaiKhoanModel {
 
     private int id;
 
