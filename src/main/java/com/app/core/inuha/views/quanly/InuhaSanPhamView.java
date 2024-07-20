@@ -1,8 +1,7 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
-package com.app.core.inuha.views.sanpham;
+package com.app.core.inuha.views.quanly;
+
+import raven.modal.ModalDialog;
+import raven.modal.component.SimpleModalBorder;
 
 /**
  *
@@ -75,7 +74,6 @@ public class InuhaSanPhamView extends javax.swing.JPanel {
         jCheckBox2 = new javax.swing.JCheckBox();
         jScrollPane6 = new javax.swing.JScrollPane();
         jTable4 = new javax.swing.JTable();
-        jPanel3 = new javax.swing.JPanel();
 
         jLabel11.setText("Mã sản phẩm");
 
@@ -92,6 +90,11 @@ public class InuhaSanPhamView extends javax.swing.JPanel {
         jScrollPane4.setViewportView(jTextArea3);
 
         jButton11.setText("Thêm");
+        jButton11.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton11ActionPerformed(evt);
+            }
+        });
 
         jButton12.setText("Cập nhật");
 
@@ -173,7 +176,7 @@ public class InuhaSanPhamView extends javax.swing.JPanel {
                         .addComponent(jRadioButton5)
                         .addGap(34, 34, 34)
                         .addComponent(jRadioButton6)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 339, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 341, Short.MAX_VALUE)
                         .addComponent(jButton15)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -243,7 +246,7 @@ public class InuhaSanPhamView extends javax.swing.JPanel {
                 .addGap(214, 214, 214))
         );
 
-        jTabbedPane5.addTab("Sản phẩm", jPanel1);
+        jTabbedPane5.addTab("Danh sách sản phẩm", jPanel1);
 
         jLabel16.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel16.setForeground(new java.awt.Color(102, 102, 255));
@@ -450,20 +453,7 @@ public class InuhaSanPhamView extends javax.swing.JPanel {
                 .addGap(214, 214, 214))
         );
 
-        jTabbedPane5.addTab("Chi tiết sản phẩm", jPanel2);
-
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1042, Short.MAX_VALUE)
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 501, Short.MAX_VALUE)
-        );
-
-        jTabbedPane5.addTab("Thuộc tính sản phẩm", jPanel3);
+        jTabbedPane5.addTab("Danh sách sản phẩm chi tiết", jPanel2);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -471,7 +461,7 @@ public class InuhaSanPhamView extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jTabbedPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 1047, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 24, Short.MAX_VALUE))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -488,6 +478,11 @@ public class InuhaSanPhamView extends javax.swing.JPanel {
     private void jButton16ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton16ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton16ActionPerformed
+
+    private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton11ActionPerformed
+        // TODO add your handling code here:
+	showModalThemSanPham();
+    }//GEN-LAST:event_jButton11ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -519,7 +514,6 @@ public class InuhaSanPhamView extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel20;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
@@ -542,4 +536,8 @@ public class InuhaSanPhamView extends javax.swing.JPanel {
     private javax.swing.JTextField jTextField5;
     private javax.swing.JTextField jTextField6;
     // End of variables declaration//GEN-END:variables
+
+    private void showModalThemSanPham() {
+	ModalDialog.showModal(this, new SimpleModalBorder(new InuhaSanPhamView2(), null));
+    }
 }
