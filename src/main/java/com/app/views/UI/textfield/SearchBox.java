@@ -4,7 +4,6 @@ import com.app.utils.ColorUtils;
 import com.app.utils.ResourceUtils;
 import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.ui.FlatLineBorder;
-import com.github.weisj.jsvg.util.ColorUtil;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Insets;
@@ -20,7 +19,7 @@ public class SearchBox extends javax.swing.JPanel {
     public SearchBox() {
 	initComponents();
 	setBackground(ColorUtils.INPUT_PRIMARY);
-	setBorder(new FlatLineBorder(new Insets(0, 10, 0, 10), ColorUtils.BACKGROUND_HOVER, 1, 10));
+	setBorder(new FlatLineBorder(new Insets(2, 5, 2, 5), ColorUtils.BACKGROUND_HOVER, 1, 10));
 	txtKeyword.setBorder(new EmptyBorder(0, 0, 0, 0));
         txtKeyword.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Nhập từ khoá...");
 	txtKeyword.setBackground(ColorUtils.INPUT_PRIMARY);
@@ -49,16 +48,14 @@ public class SearchBox extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(lblIcon, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(txtKeyword, javax.swing.GroupLayout.PREFERRED_SIZE, 364, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtKeyword, javax.swing.GroupLayout.DEFAULT_SIZE, 366, Short.MAX_VALUE)
+                .addGap(5, 5, 5))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(lblIcon, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(txtKeyword))
+            .addComponent(lblIcon, javax.swing.GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
+            .addComponent(txtKeyword, javax.swing.GroupLayout.Alignment.TRAILING)
         );
     }// </editor-fold>//GEN-END:initComponents
 
