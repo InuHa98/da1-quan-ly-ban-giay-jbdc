@@ -1,5 +1,6 @@
 package com.app.core.inuha.views.quanly;
 
+import com.app.common.helper.MessageModal;
 import com.app.utils.ColorUtils;
 import com.app.utils.ResourceUtils;
 import com.app.views.UI.panel.RoundPanel;
@@ -205,6 +206,7 @@ public class InuhaSanPhamView2 extends RoundPanel {
 
     private void btnShowDialogAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowDialogAddActionPerformed
         // TODO add your handling code here:
+	MessageModal.success("tieu de", "noi dung");
     }//GEN-LAST:event_btnShowDialogAddActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

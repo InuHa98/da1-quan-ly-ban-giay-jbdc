@@ -1,18 +1,21 @@
 package com.app.common.infrastructure.session;
 
+import com.app.Application;
 import com.app.common.controller.ApplicationController;
 import com.app.common.helper.MessageModal;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
 import com.app.core.inuha.models.InuhaTaiKhoanModel;
 import com.app.core.inuha.services.InuhaTaiKhoanService;
-import com.app.views.UI.dialog.ModalDialog;
 import com.app.core.inuha.views.all.InuhaChangePasswordView;
 import com.app.core.inuha.views.guest.LoginView;
+import com.app.core.inuha.views.quanly.InuhaSanPhamView2;
 import lombok.Getter;
 
 import javax.swing.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import raven.modal.ModalDialog;
+import raven.modal.component.SimpleModalBorder;
 
 /**
  *
@@ -86,9 +89,6 @@ public class SessionLogin {
     }
 
     public void changePassword() {
-        SwingUtilities.invokeLater(() -> {
-            ModalDialog modalDialog = new ModalDialog("Đổi mật khẩu", new InuhaChangePasswordView());
-            modalDialog.setVisible(true);
-        });
+        ModalDialog.showModal(Application.app, new SimpleModalBorder(new InuhaChangePasswordView(), "Thay đổi mật khẩu"));
     }
 }

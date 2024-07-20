@@ -6,7 +6,7 @@
 package com.app.core.inuha.views.all;
 
 import com.app.common.controller.ApplicationController;
-import com.app.common.helper.MessageToast;
+import com.app.common.helper.MessageModal;
 import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
 import com.app.core.inuha.services.InuhaTaiKhoanService;
@@ -14,7 +14,6 @@ import com.app.utils.ColorUtils;
 import com.app.utils.ComponentUtils;
 import com.app.utils.ValidateUtils;
 import com.app.views.UI.dialog.LoadingDialog;
-import com.app.views.UI.dialog.ModalDialog;
 import com.app.core.inuha.views.guest.LoginView;
 import com.formdev.flatlaf.FlatClientProperties;
 import net.miginfocom.swing.MigLayout;
@@ -26,6 +25,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import raven.modal.ModalDialog;
 
 /**
  *
@@ -245,15 +245,14 @@ public class InuhaChangePasswordView extends javax.swing.JPanel {
             try {
                 nhanVienService.changePassword(oldPassword, newPassword, confirmPassword);
                 loadingDialog.dispose();
-                MessageToast.clearAll();
-                MessageToast.success("Thay đổi mật khẩu thành công.");
-                ModalDialog.closeLatestDialog();
+                MessageModal.success("Thay đổi mật khẩu thành công.");
+		ModalDialog.closeAllModal();
             } catch(ServiceResponseException e) {
                 loadingDialog.dispose();
-                MessageToast.error(e.getMessage());
+                MessageModal.error(e.getMessage());
             } catch(Exception e) {
                 loadingDialog.dispose();
-                MessageToast.error(ErrorConstant.DEFAULT_ERROR);
+                MessageModal.error(ErrorConstant.DEFAULT_ERROR);
             }
         });
 
