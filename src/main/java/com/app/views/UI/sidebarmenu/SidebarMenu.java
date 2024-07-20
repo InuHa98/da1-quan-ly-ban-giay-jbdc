@@ -92,8 +92,8 @@ public class SidebarMenu extends JPanel {
 
         InuhaTaiKhoanModel authUser = SessionLogin.getInstance().getData();
 
-        String username = ComponentUtils.hiddenText(authUser.getUsername(), maxLengthText);
-        String email = ComponentUtils.hiddenText(authUser.getEmail(), maxLengthText);
+        String username = authUser != null ? ComponentUtils.hiddenText(authUser.getUsername(), maxLengthText) : null;
+        String email = authUser != null ? ComponentUtils.hiddenText(authUser.getEmail(), maxLengthText) : null;
 
         lbUsername.setText(username);
         lbEmail.setText(email);

@@ -65,6 +65,9 @@ public class SessionUtils {
     }
 
     public static ImageIcon getAvatar(InuhaTaiKhoanModel user) {
+	if (user == null) {
+	    return null;
+	}
         String avatar = user.getAvatar();
 
         if (avatar != null && !avatar.trim().isEmpty()) {
@@ -79,11 +82,12 @@ public class SessionUtils {
     }
 
     public static boolean isManager() {
-        return SessionLogin.getInstance().getData().isAdmin();
+	InuhaTaiKhoanModel data = SessionLogin.getInstance().getData();
+        return data != null && data.isAdmin();
     }
 
     public static boolean isStaff() {
-        return !SessionLogin.getInstance().getData().isAdmin();
+        return !isManager();
     }
 
 }

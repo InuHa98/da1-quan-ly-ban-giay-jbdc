@@ -29,6 +29,8 @@ public class ColorUtils {
 
     public static Color BACKGROUND_GRAY = new Color(43, 45, 49);
 
+    public static Color BACKGROUND_DARK = new Color(30, 31, 34);
+	
     public static Color BACKGROUND_HOVER = new Color(65, 69, 89);
 
     public static Color BACKGROUND_DASHBOARD = new Color(32, 33, 37);
@@ -36,6 +38,11 @@ public class ColorUtils {
     public static Color BACKGROUND_TABLE = new Color(43, 45, 49);
     
     public static Color BACKGROUND_TABLE_SELECTION = new Color(63, 66, 72);
+    
+    public static Color BUTTON_PRIMARY = new Color(78, 83, 110);
+    
+    public static Color INPUT_PRIMARY = new Color(32, 33, 37);
+
     
     /**
      * Chuyển đổi mã hex thành color
