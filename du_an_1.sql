@@ -116,6 +116,8 @@ CREATE TABLE SanPham (
 	id_thuong_hieu INT NOT NULL,
 	id_xuat_xu INT NOT NULL,
 	id_kieu_dang INT NOT NULL,
+	id_chat_lieu INT NOT NULL,
+	id_de_giay INT NOT NULL,
 	id_hinh_anh INT NOT NULL,
 	ma VARCHAR(50) NOT NULL,
 	ten NVARCHAR(500) NOT NULL,
@@ -130,14 +132,14 @@ CREATE TABLE SanPham (
 	FOREIGN KEY(id_thuong_hieu) REFERENCES dbo.ThuongHieu(id),
 	FOREIGN KEY(id_xuat_xu) REFERENCES dbo.XuatXu(id),
 	FOREIGN KEY(id_kieu_dang) REFERENCES dbo.KieuDang(id),
+	FOREIGN KEY(id_chat_lieu) REFERENCES dbo.ChatLieu(id),
+	FOREIGN KEY(id_de_giay) REFERENCES dbo.DeGiay(id),
 	FOREIGN KEY(id_hinh_anh) REFERENCES dbo.HinhAnh(id)
 )
 
 CREATE TABLE SanPhamChiTiet (
 	id INT IDENTITY(1, 1) PRIMARY KEY,
 	id_san_pham INT NOT NULL,
-	id_chat_lieu INT NOT NULL,
-	id_de_giay INT NOT NULL,
 	id_kich_co INT NOT NULL,
 	id_mau_sac INT NOT NULL,
 	gia_tang_them MONEY DEFAULT 0,
@@ -146,8 +148,6 @@ CREATE TABLE SanPhamChiTiet (
 	ngay_cap_nhat DATE DEFAULT GETDATE(),
 	trang_thai_xoa BIT DEFAULT 0,
 	FOREIGN KEY(id_san_pham) REFERENCES dbo.SanPham(id),
-	FOREIGN KEY(id_chat_lieu) REFERENCES dbo.ChatLieu(id),
-	FOREIGN KEY(id_de_giay) REFERENCES dbo.DeGiay(id),
 	FOREIGN KEY(id_kich_co) REFERENCES dbo.KichCo(id),
 	FOREIGN KEY(id_mau_sac) REFERENCES dbo.MauSac(id)
 )
