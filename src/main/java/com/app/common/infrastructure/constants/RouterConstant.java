@@ -16,10 +16,10 @@ public class RouterConstant {
     
     public final static String DOT_GIAM_GIA = "";
     
-    public final static String HOA_DON = "";
+    public final static String HOA_DON = "com.app.core.dattv.views.DatHoaDonView";
     
-    public final static String KHACH_HANG = "";
+    public final static String KHACH_HANG = "com.app.core.lam.views.LamKhachHangViews";
     
-    public final static String NHAN_VIEN = "com.app.core.inuha.views.quanly.InuhaNhanVienView";
+    public final static String NHAN_VIEN = "com.app.core.dung.views.DungNhanVienView";
     
 }

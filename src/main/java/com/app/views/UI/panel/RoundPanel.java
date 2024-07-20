@@ -5,6 +5,7 @@
 
 package com.app.views.UI.panel;
 
+import com.app.utils.ColorUtils;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -26,6 +27,7 @@ public class RoundPanel extends JPanel {
     private int roundBottomRight = 20;
 
     public RoundPanel() {
+	setBackground(ColorUtils.BACKGROUND_GRAY);
         setOpaque(false);
     }
 
