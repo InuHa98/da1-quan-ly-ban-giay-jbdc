@@ -1,6 +1,7 @@
-package com.app.views.UI.table;
+package com.app.views.UI.table.celll;
 
 import com.app.utils.ColorUtils;
+import com.app.views.UI.table.HoverIndex;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -19,11 +20,13 @@ public class TextAreaCellRenderer extends JTextArea implements TableCellRenderer
     private final List<List<Integer>> rowAndCellHeights = new ArrayList<>();
     private final HoverIndex hoverRow;
 
+   
     public TextAreaCellRenderer(HoverIndex hoverRow) {
         this.hoverRow = hoverRow;
         setWrapStyleWord(true);
         setLineWrap(true);
         setOpaque(true);
+        setEditable(false);
         setBorder(new EmptyBorder(10, 10, 10, 10));
     }
 
@@ -31,6 +34,8 @@ public class TextAreaCellRenderer extends JTextArea implements TableCellRenderer
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         setText(Objects.toString(value, ""));
         adjustRowHeight(table, row, column);
+        
+                
         if (isSelected) {
             setBackground(table.getSelectionBackground());
         } else {
@@ -43,6 +48,11 @@ public class TextAreaCellRenderer extends JTextArea implements TableCellRenderer
         }
         setFont(table.getFont());
         return this;
+    }
+    
+    private void setHorizontalAlignment(float alignment) {
+        setAlignmentX(alignment);
+        setAlignmentY(alignment);
     }
 
     private void adjustRowHeight(JTable table, int row, int column) {
@@ -61,5 +71,5 @@ public class TextAreaCellRenderer extends JTextArea implements TableCellRenderer
             table.setRowHeight(row, max);
         }
     }
-
+    
 }

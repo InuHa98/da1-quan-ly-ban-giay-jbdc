@@ -2,18 +2,20 @@ package com.app.views.UI.textfield;
 
 import com.app.utils.ColorUtils;
 import com.app.utils.ResourceUtils;
+import com.app.views.UI.panel.RoundPanel;
 import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.ui.FlatLineBorder;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Insets;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 /**
  *
  * @author inuHa
  */
-public class SearchBox extends javax.swing.JPanel {
+public class SearchBox extends RoundPanel {
 
     /** Creates new form SearchBox2 */
     public SearchBox() {
@@ -28,6 +30,10 @@ public class SearchBox extends javax.swing.JPanel {
     
     public void setPlaceholder(String text) {
         txtKeyword.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, text);
+    }
+    
+    public JTextField getKeyword() {    
+        return txtKeyword;
     }
 
     /**
@@ -49,13 +55,13 @@ public class SearchBox extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(lblIcon, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtKeyword, javax.swing.GroupLayout.DEFAULT_SIZE, 366, Short.MAX_VALUE)
+                .addComponent(txtKeyword, javax.swing.GroupLayout.DEFAULT_SIZE, 365, Short.MAX_VALUE)
                 .addGap(5, 5, 5))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(lblIcon, javax.swing.GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
-            .addComponent(txtKeyword, javax.swing.GroupLayout.Alignment.TRAILING)
+            .addComponent(lblIcon, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(txtKeyword, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 

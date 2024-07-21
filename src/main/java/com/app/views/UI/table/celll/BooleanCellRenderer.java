@@ -1,5 +1,6 @@
-package com.app.views.UI.table;
+package com.app.views.UI.table.celll;
 
+import com.app.views.UI.table.HoverIndex;
 import javax.swing.*;
 import java.awt.*;
 
@@ -9,6 +10,7 @@ import java.awt.*;
  */
 public class BooleanCellRenderer extends TableCustomCellRender {
 
+    
     public BooleanCellRenderer(HoverIndex hoverRow) {
         super(hoverRow);
     }
