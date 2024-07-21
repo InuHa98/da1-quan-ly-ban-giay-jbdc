@@ -8,7 +8,6 @@ import com.app.core.inuha.models.InuhaTaiKhoanModel;
 import com.app.core.inuha.services.InuhaTaiKhoanService;
 import com.app.core.inuha.views.all.InuhaChangePasswordView;
 import com.app.core.inuha.views.guest.LoginView;
-import com.app.core.inuha.views.quanly.InuhaSanPhamView2;
 import lombok.Getter;
 
 import javax.swing.*;
