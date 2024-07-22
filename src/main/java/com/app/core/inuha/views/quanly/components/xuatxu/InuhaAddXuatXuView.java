@@ -1,17 +1,19 @@
-package com.app.core.inuha.views.quanly.components.danhmuc;
+package com.app.core.inuha.views.quanly.components.xuatxu;
 
+import com.app.core.inuha.views.quanly.components.thuonghieu.*;
 import com.app.Application;
 import com.app.common.helper.MessageModal;
 import com.app.common.helper.MessageToast;
 import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
-import com.app.core.inuha.models.InuhaDanhMucModel;
-import com.app.core.inuha.services.InuhaDanhMucService;
-import com.app.core.inuha.views.quanly.components.sanpham.InuhaThemSanPhamView;
+import com.app.core.inuha.models.sanpham.InuhaXuatXuModel;
+import com.app.core.inuha.services.InuhaXuatXuService;
+import com.app.core.inuha.views.quanly.components.sanpham.InuhaAddSanPhamView;
 import com.app.utils.ColorUtils;
 import com.app.views.UI.dialog.LoadingDialog;
 import com.formdev.flatlaf.FlatClientProperties;
 import java.awt.Color;
+import java.awt.event.KeyEvent;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import javax.swing.JPanel;
@@ -21,23 +23,24 @@ import raven.modal.ModalDialog;
  *
  * @author InuHa
  */
-public class InuhaThemDanhMucView extends JPanel {
+public class InuhaAddXuatXuView extends JPanel {
 
-    private final InuhaDanhMucService danhMucService = new InuhaDanhMucService();
+    private final InuhaXuatXuService xuatXuService = new InuhaXuatXuService();
     
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
     
     private final Color currentColor;
     
     /**
-     * Creates new form InuhaThemDanhMucView
+     * Creates new form InuhaThemXuatXuView
      */
-    public InuhaThemDanhMucView() {
+    public InuhaAddXuatXuView() {
         initComponents();
         currentColor = lblTen.getForeground();
         txtTen.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Tối đa 250 ký tự...");
         btnSubmit.setBackground(ColorUtils.PRIMARY_COLOR);
     }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -64,7 +67,13 @@ public class InuhaThemDanhMucView extends JPanel {
         });
 
         lblTen.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        lblTen.setText("Tên danh mục:");
+        lblTen.setText("Tên xuất xứ:");
+
+        txtTen.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtTenKeyPressed(evt);
+            }
+        });
 
         btnCancel.setText("Huỷ bỏ");
         btnCancel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -117,6 +126,13 @@ public class InuhaThemDanhMucView extends JPanel {
         handleClickButtonSubmit();
     }//GEN-LAST:event_btnSubmitActionPerformed
 
+    private void txtTenKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtTenKeyPressed
+        // TODO add your handling code here:
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) { 
+            handleClickButtonSubmit();
+        }
+    }//GEN-LAST:event_txtTenKeyPressed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancel;
@@ -126,7 +142,7 @@ public class InuhaThemDanhMucView extends JPanel {
     // End of variables declaration//GEN-END:variables
 
     private void handleClickButtoncancel() {
-        ModalDialog.closeModal(InuhaQuanLyDanhMucView.MODAL_ID_CREATE);
+        ModalDialog.closeModal(InuhaListXuatXuView.MODAL_ID_CREATE);
     }
 
     private void handleClickButtonSubmit() {
@@ -136,30 +152,30 @@ public class InuhaThemDanhMucView extends JPanel {
         lblTen.setForeground(ColorUtils.DANGER_COLOR);
         
         if (ten.isEmpty()) { 
-            MessageToast.error("Tên danh mục không được bỏ trống");
+            MessageToast.error("Tên xuất xứ không được bỏ trống");
             return;
         }
         
         if (ten.length() > 250) { 
-            MessageToast.error("Tên danh mục không được vượt quá 250 ký tự");
+            MessageToast.error("Tên xuất xứ không được vượt quá 250 ký tự");
             return;
         }
         
         lblTen.setForeground(currentColor);
         
-        InuhaDanhMucModel model = new InuhaDanhMucModel();
+        InuhaXuatXuModel model = new InuhaXuatXuModel();
         model.setTen(ten);
         
         LoadingDialog loadingDialog = new LoadingDialog(Application.app);
         
         executorService.submit(() -> {
             try {
-                danhMucService.insert(model);
+                xuatXuService.insert(model);
                 loadingDialog.dispose();
-                InuhaThemSanPhamView.getIntance().loadDataDanhMuc();
-                InuhaQuanLyDanhMucView.getInstance().loadDataPage(1);
-                MessageToast.success("Thêm mới danh mục thành công!");
-                ModalDialog.closeModal(InuhaQuanLyDanhMucView.MODAL_ID_CREATE);
+                InuhaAddSanPhamView.getIntance().loadDataXuatXu();
+                InuhaListXuatXuView.getInstance().loadDataPage(1);
+                ModalDialog.closeModal(InuhaListXuatXuView.MODAL_ID_CREATE);
+                MessageToast.success("Thêm mới xuất xứ thành công!");
             } catch (ServiceResponseException e) {
                 loadingDialog.dispose();
                 MessageToast.error(e.getMessage());

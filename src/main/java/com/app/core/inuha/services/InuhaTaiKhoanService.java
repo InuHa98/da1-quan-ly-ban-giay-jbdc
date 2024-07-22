@@ -26,7 +26,7 @@ public class InuhaTaiKhoanService implements IInuhaNhanVienServiceInterface {
     private final InuhaTaiKhoanRepository nhanVienRepository = new InuhaTaiKhoanRepository();
 
     @Override
-    public Set<InuhaTaiKhoanModel> getPage(FillterRequest request) {
+    public List<InuhaTaiKhoanModel> getPage(FillterRequest request) {
 	return null;
     }
 
@@ -66,7 +66,7 @@ public class InuhaTaiKhoanService implements IInuhaNhanVienServiceInterface {
     }
 
     @Override
-    public Set<InuhaTaiKhoanModel> getAll() {
+    public List<InuhaTaiKhoanModel> getAll() {
         return null;
     }
 

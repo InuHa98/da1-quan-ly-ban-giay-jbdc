@@ -1,53 +1,70 @@
-package com.app.core.inuha.views.quanly.components.danhmuc;
+package com.app.core.inuha.views.quanly.components.chatlieu;
 
+import com.app.core.inuha.views.quanly.components.xuatxu.*;
+import com.app.core.inuha.views.quanly.components.thuonghieu.*;
+import com.app.Application;
+import com.app.common.helper.MessageModal;
+import com.app.common.helper.MessageToast;
 import com.app.common.helper.Pagination;
+import com.app.common.infrastructure.constants.ErrorConstant;
+import com.app.common.infrastructure.exceptions.ServiceResponseException;
 import com.app.common.infrastructure.request.FillterRequest;
-import com.app.core.inuha.models.InuhaDanhMucModel;
-import com.app.core.inuha.services.InuhaDanhMucService;
-import com.app.core.inuha.views.quanly.components.table.danhmuc.InuhaDanhMucTableActionCellEditor;
-import com.app.core.inuha.views.quanly.components.table.danhmuc.InuhaDanhMucTableActionCellRender;
-import com.app.core.inuha.views.quanly.components.table.danhmuc.InuhaDanhMucTableActionPanel;
+import com.app.core.inuha.models.sanpham.InuhaChatLieuModel;
+import com.app.core.inuha.services.InuhaChatLieuService;
+import com.app.core.inuha.views.quanly.components.sanpham.InuhaAddSanPhamView;
+import com.app.core.inuha.views.quanly.components.table.thuoctinhsanpham.InuhaThuocTinhTableActionCellEditor;
+import com.app.core.inuha.views.quanly.components.table.thuoctinhsanpham.InuhaThuocTinhTableActionCellRender;
 import com.app.utils.ColorUtils;
 import com.app.utils.ResourceUtils;
+import com.app.views.UI.dialog.LoadingDialog;
 import com.app.views.UI.table.TableCustomUI;
 import java.awt.Dimension;
-import java.util.Set;
 import javax.swing.JComboBox;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import raven.modal.ModalDialog;
 import raven.modal.component.SimpleModalBorder;
 import com.app.views.UI.table.ITableActionEvent;
-import com.app.views.UI.table.TableActionPanel;
-import com.app.views.UI.table.celll.TableActionCellEditor;
-import com.app.views.UI.table.celll.TableActionCellRender;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  *
  * @author InuHa
  */
-public class InuhaQuanLyDanhMucView extends javax.swing.JPanel {
+public class InuhaListChatLieuView extends javax.swing.JPanel {
 
-    private static InuhaQuanLyDanhMucView instance;
+    private static InuhaListChatLieuView instance;
     
-    private final InuhaDanhMucService danhMucService = new InuhaDanhMucService();
+    private final ExecutorService executorService = Executors.newFixedThreadPool(2);
+    
+    private final InuhaChatLieuService chatLieuService = new InuhaChatLieuService();
     
     public Pagination pagination = new Pagination();
     
     private int sizePage = pagination.getLimitItem();
     
-    public static InuhaQuanLyDanhMucView getInstance() { 
+    private List<InuhaChatLieuModel> dataItems = new ArrayList<>();
+    
+    public final static String MODAL_ID_CREATE = "modal_create_chat_lieu";
+        
+    public final static String MODAL_ID_EDIT = "modal_edit_chat_lieu";
+        
+    public static InuhaListChatLieuView getInstance() { 
         if (instance == null) { 
-            instance = new InuhaQuanLyDanhMucView();
+            instance = new InuhaListChatLieuView();
         }
         return instance;
     }
     
     /**
-     * Creates new form InuhaQuanLyDanhMucView
+     * Creates new form InuhaQuanLyChatLieuView
      */
-    private InuhaQuanLyDanhMucView() {
+    public InuhaListChatLieuView() {
         initComponents();
+        instance = this;
 
         btnAdd.setBackground(ColorUtils.PRIMARY_COLOR);
         btnAdd.setIcon(ResourceUtils.getSVG("/svg/plus.svg", new Dimension(20, 20)));
@@ -62,7 +79,8 @@ public class InuhaQuanLyDanhMucView extends javax.swing.JPanel {
         ITableActionEvent event = new ITableActionEvent() {
             @Override
             public void onEdit(int row) {
-                System.out.println("Edit row : " + row);
+                InuhaChatLieuModel item = dataItems.get(row);
+                ModalDialog.showModal(instance, new SimpleModalBorder(new InuhaEditChatLieuView(item), "Chỉnh sửa chất liệu"), MODAL_ID_EDIT);
             }
 
             @Override
@@ -70,8 +88,30 @@ public class InuhaQuanLyDanhMucView extends javax.swing.JPanel {
                 if (table.isEditing()) {
                     table.getCellEditor().stopCellEditing();
                 }
-                DefaultTableModel model = (DefaultTableModel) table.getModel();
-                model.removeRow(row);
+                InuhaChatLieuModel item = dataItems.get(row);
+                
+                LoadingDialog loadingDialog = new LoadingDialog(Application.app);
+
+                executorService.submit(() -> {
+                    if (MessageModal.confirmWarning("Xoá: " + item.getTen(), "Bạn thực sự muốn xoá chất liệu này?")) {
+                        executorService.submit(() -> {
+                            try {
+                                chatLieuService.delete(item.getId());
+                                loadingDialog.dispose();
+                                InuhaAddSanPhamView.getIntance().loadDataChatLieu();
+                                loadDataPage();
+                                MessageToast.success("Xoá thành công chất liệu: " + item.getTen());
+                            } catch (ServiceResponseException e) {
+                                loadingDialog.dispose();
+                                MessageToast.error(e.getMessage());
+                            } catch (Exception e) {
+                                loadingDialog.dispose();
+                                MessageModal.error(ErrorConstant.DEFAULT_ERROR);
+                            } 
+                        });
+                        loadingDialog.setVisible(true);
+                    }
+                });
             }
 
             @Override
@@ -79,13 +119,17 @@ public class InuhaQuanLyDanhMucView extends javax.swing.JPanel {
             }
         };
         
-        TableCustomUI.apply(scrDanhSach, TableCustomUI.TableType.MULTI_LINE);
+        TableCustomUI.apply(scrDanhSach, TableCustomUI.TableType.DEFAULT);
         pnlDanhSach.setBackground(ColorUtils.BACKGROUND_GRAY);
         tblDanhSach.setBackground(ColorUtils.BACKGROUND_GRAY);
         tblDanhSach.getTableHeader().setBackground(ColorUtils.BACKGROUND_GRAY);
         
-        table.getColumnModel().getColumn(4).setCellRenderer(new InuhaDanhMucTableActionCellRender(table));
-        table.getColumnModel().getColumn(4).setCellEditor(new InuhaDanhMucTableActionCellEditor(event));
+        table.getColumnModel().getColumn(4).setCellRenderer(new InuhaThuocTinhTableActionCellRender(table));
+        table.getColumnModel().getColumn(4).setCellEditor(new InuhaThuocTinhTableActionCellEditor(event));
+    }
+    
+    public void loadDataPage() { 
+        loadDataPage(pagination.getCurrentPage());
     }
     
     public void loadDataPage(int page) { 
@@ -98,13 +142,18 @@ public class InuhaQuanLyDanhMucView extends javax.swing.JPanel {
             model.setRowCount(0);
             
             FillterRequest request = new FillterRequest();
+            
+            int totalPages = chatLieuService.getTotalPage(request);
+            if (totalPages < page) { 
+                page = totalPages;
+            }
+            
             request.setPage(page);
             request.setSize(sizePage);
+           
+            dataItems = chatLieuService.getPage(request);
             
-            int totalPages = danhMucService.getTotalPage(request);
-            Set<InuhaDanhMucModel> list = danhMucService.getPage(request);
-            
-            for(InuhaDanhMucModel m: list) { 
+            for(InuhaChatLieuModel m: dataItems) { 
                 model.addRow(m.toDataRow());
             }
 
@@ -152,7 +201,7 @@ public class InuhaQuanLyDanhMucView extends javax.swing.JPanel {
         tblDanhSach = new javax.swing.JTable();
         pnlPhanTrang = new javax.swing.JPanel();
 
-        btnAdd.setText("Thêm danh mục mới");
+        btnAdd.setText("Thêm chất liệu mới");
         btnAdd.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnAdd.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -165,7 +214,7 @@ public class InuhaQuanLyDanhMucView extends javax.swing.JPanel {
 
             },
             new String [] {
-                "#", "Tên danh mục", "Ngày tạo", "Cập nhật cuối", "hành động"
+                "#", "Tên chất liệu", "Ngày tạo", "Cập nhật cuối", "hành động"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -181,6 +230,7 @@ public class InuhaQuanLyDanhMucView extends javax.swing.JPanel {
         scrDanhSach.setViewportView(tblDanhSach);
         if (tblDanhSach.getColumnModel().getColumnCount() > 0) {
             tblDanhSach.getColumnModel().getColumn(0).setMaxWidth(50);
+            tblDanhSach.getColumnModel().getColumn(1).setMinWidth(200);
         }
 
         javax.swing.GroupLayout pnlDanhSachLayout = new javax.swing.GroupLayout(pnlDanhSach);
@@ -251,9 +301,8 @@ public class InuhaQuanLyDanhMucView extends javax.swing.JPanel {
     private javax.swing.JTable tblDanhSach;
     // End of variables declaration//GEN-END:variables
 
-    public final static String MODAL_ID_CREATE = "modal_create_danh_muc";
     
     private void handleClickButtonAdd() {
-        ModalDialog.showModal(this, new SimpleModalBorder(new InuhaThemDanhMucView(), "Thêm danh mục mới"), MODAL_ID_CREATE);
+        ModalDialog.showModal(this, new SimpleModalBorder(new InuhaAddChatLieuView(), "Thêm chất liệu mới"), MODAL_ID_CREATE);
     }
 }

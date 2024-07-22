@@ -23,7 +23,6 @@ public class TableCustomCellRender extends DefaultTableCellRenderer {
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         Component com = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-        setBorder(new EmptyBorder(10, 10, 10, 10));
         
         if (value instanceof Number) {
             setHorizontalAlignment(SwingConstants.CENTER);
@@ -37,9 +36,10 @@ public class TableCustomCellRender extends DefaultTableCellRenderer {
             if (row == hoverRow.getIndex()) {
                 com.setBackground(ColorUtils.BACKGROUND_HOVER);
             } else {
-                com.setBackground(table.getBackground());
+                setBackground(row % 2 == 0 ? ColorUtils.BACKGROUND_TABLE_ODD : table.getBackground());
             }
         }
+
         com.setFont(table.getFont());
         return com;
     }

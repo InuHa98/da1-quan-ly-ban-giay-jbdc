@@ -42,18 +42,14 @@ public class TextAreaCellRenderer extends JTextArea implements TableCellRenderer
             if (row == hoverRow.getIndex()) {
                 setBackground(ColorUtils.BACKGROUND_HOVER);
             } else {
-                setBackground(table.getBackground());
+                setBackground(row % 2 == 0 ? ColorUtils.BACKGROUND_TABLE_ODD : table.getBackground());
             }
 
         }
         setFont(table.getFont());
         return this;
     }
-    
-    private void setHorizontalAlignment(float alignment) {
-        setAlignmentX(alignment);
-        setAlignmentY(alignment);
-    }
+  
 
     private void adjustRowHeight(JTable table, int row, int column) {
         setBounds(table.getCellRect(row, column, false));

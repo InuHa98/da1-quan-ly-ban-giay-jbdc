@@ -1,4 +1,4 @@
-package com.app.core.inuha.models;
+package com.app.core.inuha.models.sanpham;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,11 +17,15 @@ import lombok.Setter;
 @AllArgsConstructor
 public class InuhaDanhMucModel {
     
+    private int id;
+    
     private int stt;
     
     private String ten;
     
     private String ngayTao;
+    
+    private boolean trangThaiXoa;
     
     private String ngayCapNhat;
     

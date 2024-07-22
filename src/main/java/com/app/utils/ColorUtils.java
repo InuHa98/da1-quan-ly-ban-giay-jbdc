@@ -37,6 +37,8 @@ public class ColorUtils {
 	
     public static Color BACKGROUND_TABLE = new Color(35, 36, 40);
     
+    public static Color BACKGROUND_TABLE_ODD = new Color(63, 66, 72);
+        
     public static Color TEXT_TABLE = new Color(181, 186, 193);
         
     public static Color BACKGROUND_TABLE_SELECTION = new Color(63, 66, 72);

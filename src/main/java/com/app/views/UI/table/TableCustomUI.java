@@ -31,7 +31,7 @@ public class TableCustomUI {
     private final static Color COLOR_BACKGROUND = ColorUtils.BACKGROUND_TABLE;
     private final static Color COLOR_GRID_COLOR = ColorUtils.BACKGROUND_GRAY;
     private final static Color COLOR_SELECTION_TEXT = ColorUtils.PRIMARY_TEXT;
-    private final static Color COLOR_SELECTION_BACKGROUND = ColorUtils.BACKGROUND_TABLE_SELECTION;
+    private final static Color COLOR_SELECTION_BACKGROUND = ColorUtils.BACKGROUND_HOVER;
 
     
        
@@ -46,7 +46,7 @@ public class TableCustomUI {
         table.setSelectionBackground(COLOR_SELECTION_BACKGROUND);
         table.setGridColor(COLOR_GRID_COLOR);
 
-        //table.getTableHeader().setReorderingAllowed(false);
+        table.getTableHeader().setReorderingAllowed(false);
         table.getTableHeader().putClientProperty(FlatClientProperties.STYLE, """
             height:30;
             hoverBackground:null;
@@ -57,9 +57,10 @@ public class TableCustomUI {
         table.getTableHeader().setDefaultRenderer(new TableHeaderCustomCellRender(table));
         //table.getTableHeader().setDefaultRenderer(new TableHeaderAlignment(table));
 
+        table.setShowGrid(false);
+        table.setIntercellSpacing(new Dimension(0, 0));
         
-        
-        table.setRowHeight(30);
+        table.setRowHeight(40);
         HoverIndex hoverRow = new HoverIndex();
         TableCellRenderer cellRender;
         if (type == TableType.DEFAULT) {

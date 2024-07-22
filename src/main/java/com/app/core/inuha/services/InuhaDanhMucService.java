@@ -1,15 +1,16 @@
 package com.app.core.inuha.services;
 
 import com.app.common.infrastructure.constants.ErrorConstant;
+import com.app.common.infrastructure.constants.TrangThaiXoaConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
 import com.app.common.infrastructure.request.FillterRequest;
-import com.app.core.inuha.models.InuhaDanhMucModel;
-import com.app.core.inuha.repositories.InuhaDanhMucRepository;
+import com.app.core.inuha.models.sanpham.InuhaDanhMucModel;
+import com.app.core.inuha.repositories.sanpham.InuhaDanhMucRepository;
 import com.app.core.inuha.services.impl.IInuhaDanhMucServiceInterface;
 import java.sql.SQLException;
-import java.util.LinkedHashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
+import java.util.Optional;
 
 /**
  *
@@ -17,7 +18,7 @@ import java.util.Set;
  */
 public class InuhaDanhMucService implements IInuhaDanhMucServiceInterface {
 
-    private final InuhaDanhMucRepository danhMucRepository = new InuhaDanhMucRepository();
+    private final InuhaDanhMucRepository repository = new InuhaDanhMucRepository();
     
     @Override
     public InuhaDanhMucModel getById(Integer id) {
@@ -27,10 +28,10 @@ public class InuhaDanhMucService implements IInuhaDanhMucServiceInterface {
     @Override
     public Integer insert(InuhaDanhMucModel model) {
         try {
-            if (danhMucRepository.has(model.getTen())) { 
+            if (repository.has(model.getTen())) { 
                 throw new ServiceResponseException("Tên danh mục đã tồn tại trên hệ thống");
             }
-            int rows = danhMucRepository.insert(model);
+            int rows = repository.insert(model);
             if (rows < 1) { 
                 throw new ServiceResponseException("Không thể thêm danh mục");
             }
@@ -43,15 +44,51 @@ public class InuhaDanhMucService implements IInuhaDanhMucServiceInterface {
 
     @Override
     public boolean has(Integer id) {
-        return false;
+        try {
+            return repository.has(id);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            throw new ServiceResponseException("Không thể tìm kiếm danh mục");
+        }
     }
 
     @Override
-    public void update(InuhaDanhMucModel e) {
+    public void update(InuhaDanhMucModel model) {
+        try {
+            Optional<InuhaDanhMucModel> find = repository.getById(model.getId());
+            if (find.isEmpty()) { 
+                throw new ServiceResponseException("Không tìm thấy danh mục");
+            }
+            
+            if (repository.has(model)) { 
+                throw new ServiceResponseException("Tên danh mục đã tồn tại trên hệ thống");
+            }
+            repository.update(model);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            throw new ServiceResponseException("Không thể xoá danh mục này");
+        }
     }
 
     @Override
     public void delete(Integer id) {
+        try {
+            Optional<InuhaDanhMucModel> find = repository.getById(id);
+            if (find.isEmpty()) { 
+                throw new ServiceResponseException("Không tìm thấy danh mục");
+            }
+            
+            if (repository.hasUse(id)) { 
+                InuhaDanhMucModel item = find.get();
+                item.setTrangThaiXoa(TrangThaiXoaConstant.DA_XOA);
+                repository.update(item);
+            } else { 
+                repository.delete(id);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            throw new ServiceResponseException("Không thể xoá danh mục này");
+        }
     }
 
     @Override
@@ -59,29 +96,29 @@ public class InuhaDanhMucService implements IInuhaDanhMucServiceInterface {
     }
 
     @Override
-    public Set<InuhaDanhMucModel> getAll() {
+    public List<InuhaDanhMucModel> getAll() {
         try {
-            return danhMucRepository.selectAll();
+            return repository.selectAll();
         } catch (SQLException ex) {
             ex.printStackTrace();
-            throw new ServiceResponseException(ErrorConstant.DEFAULT_ERROR);
+            throw new ServiceResponseException("Không thể lấy danh sách danh mục");
         }
     }
 
     @Override
-    public Set<InuhaDanhMucModel> getPage(FillterRequest request) {
+    public List<InuhaDanhMucModel> getPage(FillterRequest request) {
         try {
-            return danhMucRepository.selectPage(request);
+            return repository.selectPage(request);
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
-        return new LinkedHashSet<>();
+        return new ArrayList<>();
     }
 
     @Override
     public Integer getTotalPage(FillterRequest request) {
         try {
-            return danhMucRepository.count(request);
+            return repository.count(request);
         } catch (SQLException ex) {
             ex.printStackTrace();
         }

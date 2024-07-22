@@ -28,9 +28,9 @@ public interface IServiceInterface<T, K> {
     
     void deleteAll(List<K> ids);
 
-    Set<T> getAll();
+    List<T> getAll();
 
-    Set<T> getPage(FillterRequest request);
+    List<T> getPage(FillterRequest request);
 
     Integer getTotalPage(FillterRequest request);
 

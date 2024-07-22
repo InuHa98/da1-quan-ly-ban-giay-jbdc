@@ -120,7 +120,7 @@ CREATE TABLE SanPham (
 	id_de_giay INT NOT NULL,
 	id_hinh_anh INT NOT NULL,
 	ma VARCHAR(50) NOT NULL,
-	ten NVARCHAR(500) NOT NULL,
+	ten NVARCHAR(250) NOT NULL,
 	mo_ta NVARCHAR(2000),
 	gia_ban MONEY NOT NULL,
 	qr_code VARCHAR(50),

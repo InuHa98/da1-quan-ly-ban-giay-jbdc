@@ -2,7 +2,7 @@ package com.app.core.inuha.views.quanly;
 
 import com.app.common.helper.MessageModal;
 import com.app.common.helper.Pagination;
-import com.app.core.inuha.views.quanly.components.sanpham.InuhaThemSanPhamView;
+import com.app.core.inuha.views.quanly.components.sanpham.InuhaAddSanPhamView;
 import com.app.utils.ColorUtils;
 import com.app.utils.ResourceUtils;
 import com.app.views.UI.panel.RoundPanel;
@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import raven.modal.ModalDialog;
 import raven.modal.component.SimpleModalBorder;
 import com.app.views.UI.table.ITableActionEvent;
-import com.app.views.UI.table.TableActionPanel;
 import com.app.views.UI.table.celll.TableActionCellEditor;
 import com.app.views.UI.table.celll.TableActionCellRender;
 
@@ -82,7 +81,7 @@ public class InuhaSanPhamView extends RoundPanel {
         };
         pnlTable.setBackground(ColorUtils.BACKGROUND_TABLE);
         
-        TableCustomUI.apply(scrDanhSach, TableCustomUI.TableType.MULTI_LINE);
+        TableCustomUI.apply(scrDanhSach, TableCustomUI.TableType.DEFAULT);
         table.getColumnModel().getColumn(0).setHeaderRenderer(new CheckBoxTableHeaderRenderer(table, 0));
         table.getColumnModel().getColumn(9).setCellRenderer(new TableActionCellRender(table));
         table.getColumnModel().getColumn(9).setCellEditor(new TableActionCellEditor(event));
@@ -524,7 +523,7 @@ public class InuhaSanPhamView extends RoundPanel {
     }
 
     private void handleClickButtonAdd() {
-        ModalDialog.showModal(this, new SimpleModalBorder(InuhaThemSanPhamView.getIntance(), "Thêm sản phẩm"));
+        ModalDialog.showModal(this, new SimpleModalBorder(new InuhaAddSanPhamView(), "Thêm sản phẩm"));
     }
 
     
