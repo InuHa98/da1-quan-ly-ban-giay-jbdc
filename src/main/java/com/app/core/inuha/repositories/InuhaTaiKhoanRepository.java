@@ -141,33 +141,18 @@ public class InuhaTaiKhoanRepository implements IDAOinterface<InuhaTaiKhoanModel
 	}
 
 	@Override
-	public Set<InuhaTaiKhoanModel> selectAll(FillterRequest request) throws SQLException {
+	public Set<InuhaTaiKhoanModel> selectAll() throws SQLException {
 		Set<InuhaTaiKhoanModel> list = new HashSet<>();
 		ResultSet resultSet = null;
 
 		String query = """
-			WITH TaiKhoanCTE AS (
-				SELECT
-					*,
-					ROW_NUMBER() OVER (ORDER BY id) AS stt
-				FROM TaiKhoan
-			)
 			SELECT *
-			FROM TaiKhoanCTE
-			WHERE trang_thai_xoa = 0 AND (stt BETWEEN ? AND ?)
+			FROM TaiKhoan
+			WHERE trang_thai_xoa = 0
 		""";
 
-		int[] offset = FillterRequest.getOffset(request.getPage(), request.getSize());
-		int start = offset[0];
-		int limit = offset[1];
-
-		Object[] args = new Object[] {
-				start,
-				limit
-		};
-
 		try {
-			resultSet = JbdcHelper.query(query, args);
+			resultSet = JbdcHelper.query(query);
 			while(resultSet.next()) {
 				InuhaTaiKhoanModel taiKhoan = buildTaiKhoan(resultSet);
 				list.add(taiKhoan);
@@ -184,25 +169,68 @@ public class InuhaTaiKhoanRepository implements IDAOinterface<InuhaTaiKhoanModel
 	}
 
 	@Override
-	public int count(FillterRequest request) throws SQLException {
-		InuhaFillterTaiKhoanRequest filter = (InuhaFillterTaiKhoanRequest) request;
-		int totalPages = 0;
-		int totalRows = 0;
+	public Set<InuhaTaiKhoanModel> selectPage(FillterRequest request) throws SQLException {
+		Set<InuhaTaiKhoanModel> list = new HashSet<>();
+		ResultSet resultSet = null;
 
-		String query = "SELECT COUNT(*) FROM TaiKhoan WHERE ho_ten LIKE ?";
+		String query = """
+                    WITH TaiKhoanCTE AS (
+                        SELECT
+                            *,
+                            ROW_NUMBER() OVER (ORDER BY id) AS stt
+                        FROM TaiKhoan
+                    )
+                    SELECT *
+                    FROM TaiKhoanCTE
+                    WHERE trang_thai_xoa = 0 AND (stt BETWEEN ? AND ?)
+		""";
+
+		int[] offset = FillterRequest.getOffset(request.getPage(), request.getSize());
+		int start = offset[0];
+		int limit = offset[1];
 
 		Object[] args = new Object[] {
-				"%" + filter.getKeyword() + "%"
+				start,
+				limit
 		};
 
 		try {
-			totalRows = (int) JbdcHelper.value(query, args);
-			totalPages = (int) Math.ceil((double) totalRows / filter.getSize());
+                    resultSet = JbdcHelper.query(query, args);
+                    while(resultSet.next()) {
+                        InuhaTaiKhoanModel taiKhoan = buildTaiKhoan(resultSet);
+                        list.add(taiKhoan);
+                    }
 		} catch(Exception e) {
-			e.printStackTrace();
-			throw new SQLException(e.getMessage());
+                    e.printStackTrace();
+                    throw new SQLException(e.getMessage());
 		}
-		return totalPages;
+		finally {
+                    JbdcHelper.close(resultSet);
+		}
+
+		return list;
+	}
+
+	@Override
+	public int count(FillterRequest request) throws SQLException {
+            InuhaFillterTaiKhoanRequest filter = (InuhaFillterTaiKhoanRequest) request;
+            int totalPages = 0;
+            int totalRows = 0;
+
+            String query = "SELECT COUNT(*) FROM TaiKhoan WHERE ho_ten LIKE ?";
+
+            Object[] args = new Object[] {
+                            "%" + filter.getKeyword() + "%"
+            };
+
+            try {
+                    totalRows = (int) JbdcHelper.value(query, args);
+                    totalPages = (int) Math.ceil((double) totalRows / filter.getSize());
+            } catch(Exception e) {
+                    e.printStackTrace();
+                    throw new SQLException(e.getMessage());
+            }
+            return totalPages;
 	}
 
 	private InuhaTaiKhoanModel buildTaiKhoan(ResultSet resultSet) throws SQLException {

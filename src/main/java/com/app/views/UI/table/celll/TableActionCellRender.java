@@ -1,15 +1,13 @@
 package com.app.views.UI.table.celll;
 
-import com.app.core.inuha.views.quanly.components.sanpham.table.*;
 import com.app.utils.ColorUtils;
 import com.app.views.UI.table.HoverIndex;
-import com.app.views.UI.table.celll.TableCustomCellRender;
-import java.awt.Color;
+import com.app.views.UI.table.ITableActionPanel;
+import com.app.views.UI.table.TableActionPanel;
 import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
-import javax.swing.JCheckBox;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
@@ -20,7 +18,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 public class TableActionCellRender extends DefaultTableCellRenderer {
 
     protected HoverIndex hoverRow = new HoverIndex();
-    
+   
     public TableActionCellRender(JTable table) {
         table.addMouseListener(new MouseAdapter() {
             @Override
@@ -51,5 +49,22 @@ public class TableActionCellRender extends DefaultTableCellRenderer {
         });
     }
 
-    
+    @Override
+    public Component getTableCellRendererComponent(JTable table, Object o, boolean isSeleted, boolean bln1, int row, int column) {
+        Component com = super.getTableCellRendererComponent(table, o, isSeleted, bln1, row, column);
+        
+        TableActionPanel actionPanel = new TableActionPanel();
+        
+        if (isSeleted == false) {
+            if (row == hoverRow.getIndex()) {
+                actionPanel.setBackground(ColorUtils.BACKGROUND_HOVER);
+            } else {
+                actionPanel.setBackground(table.getBackground());
+            }
+        } else {
+            actionPanel.setBackground(table.getSelectionBackground());
+        }
+        
+        return actionPanel;
+    }
 }

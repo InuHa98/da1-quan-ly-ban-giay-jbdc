@@ -1,11 +1,10 @@
-package com.app.views.UI.textfield;
+package com.app.views.UI.panel;
 
 import com.app.utils.ColorUtils;
 import com.app.utils.ResourceUtils;
 import com.app.views.UI.panel.RoundPanel;
 import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.ui.FlatLineBorder;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Insets;
 import javax.swing.JTextField;
@@ -26,6 +25,7 @@ public class SearchBox extends RoundPanel {
         txtKeyword.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Nhập từ khoá...");
 	txtKeyword.setBackground(ColorUtils.INPUT_PRIMARY);
 	lblIcon.setIcon(ResourceUtils.getSVG("/svg/search.svg", new Dimension(24, 24)));
+       
     }
     
     public void setPlaceholder(String text) {

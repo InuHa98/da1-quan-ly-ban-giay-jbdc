@@ -1,27 +1,49 @@
-package com.app.core.inuha.views.quanly.components.sanpham.table;
+package com.app.views.UI.table;
 
+import com.app.utils.ColorUtils;
 import com.app.utils.ResourceUtils;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import com.app.views.UI.table.celll.TableActionEvent;
+import java.awt.BasicStroke;
+import java.awt.Cursor;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 
 /**
  *
  * @author InuHa
  */
-public class InuhaTableActionPanel extends javax.swing.JPanel {
+public class TableActionPanel extends javax.swing.JPanel implements ITableActionPanel {
 
     /** Creates new form TableActionPanel */
-    public InuhaTableActionPanel() {
+    public TableActionPanel() {
         initComponents();
         cmdView.setIcon(ResourceUtils.getSVG("/svg/eye.svg", new Dimension(20, 20)));
         cmdEdit.setIcon(ResourceUtils.getSVG("/svg/edit.svg", new Dimension(20, 20)));
         cmdDelete.setIcon(ResourceUtils.getSVG("/svg/trash.svg", new Dimension(20, 20)));
-    }
+        
+        cmdView.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        cmdEdit.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        cmdDelete.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-    public void initEvent(TableActionEvent event, int row) {
+    }
+    
+    public void hideView() { 
+        cmdView.setVisible(false);
+    }
+    
+    public void hideEdit() { 
+        cmdEdit.setVisible(false);
+    }
+        
+    public void hideDelete() { 
+        cmdDelete.setVisible(false);
+    }
+    
+    @Override
+    public void initEvent(ITableActionEvent event, int row) {
         cmdEdit.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
@@ -51,9 +73,9 @@ public class InuhaTableActionPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        cmdView = new com.app.core.inuha.views.quanly.components.sanpham.table.InuhaTableActionButton();
-        cmdEdit = new com.app.core.inuha.views.quanly.components.sanpham.table.InuhaTableActionButton();
-        cmdDelete = new com.app.core.inuha.views.quanly.components.sanpham.table.InuhaTableActionButton();
+        cmdView = new com.app.views.UI.table.TableActionButton();
+        cmdEdit = new com.app.views.UI.table.TableActionButton();
+        cmdDelete = new com.app.views.UI.table.TableActionButton();
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -82,9 +104,19 @@ public class InuhaTableActionPanel extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.app.core.inuha.views.quanly.components.sanpham.table.InuhaTableActionButton cmdDelete;
-    private com.app.core.inuha.views.quanly.components.sanpham.table.InuhaTableActionButton cmdEdit;
-    private com.app.core.inuha.views.quanly.components.sanpham.table.InuhaTableActionButton cmdView;
+    private com.app.views.UI.table.TableActionButton cmdDelete;
+    private com.app.views.UI.table.TableActionButton cmdEdit;
+    private com.app.views.UI.table.TableActionButton cmdView;
     // End of variables declaration//GEN-END:variables
 
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2 = (Graphics2D) g.create();
+        g2.setColor(ColorUtils.BACKGROUND_GRAY);
+        g2.setStroke(new BasicStroke(1));
+        //g2.drawLine(getWidth() - 1, 0, getWidth() - 1, getHeight());
+        g2.drawLine(0, getHeight() - 1, getWidth() - 1, getHeight() - 1);
+        g2.dispose();
+    }
 }

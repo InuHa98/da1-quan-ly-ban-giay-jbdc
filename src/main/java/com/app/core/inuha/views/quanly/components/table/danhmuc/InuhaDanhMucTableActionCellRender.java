@@ -1,4 +1,4 @@
-package com.app.core.inuha.views.quanly.components.sanpham.table;
+package com.app.core.inuha.views.quanly.components.table.danhmuc;
 
 import com.app.utils.ColorUtils;
 import com.app.views.UI.table.celll.TableActionCellRender;
@@ -9,29 +9,28 @@ import javax.swing.JTable;
  *
  * @author InuHa
  */
-public class InuhaTableActionCellRender extends TableActionCellRender {
-
-   
-    public InuhaTableActionCellRender(JTable table) {
+public class InuhaDanhMucTableActionCellRender extends TableActionCellRender {
+    
+    public InuhaDanhMucTableActionCellRender(JTable table) {
         super(table);
     }
-
+    
     @Override
     public Component getTableCellRendererComponent(JTable table, Object o, boolean isSeleted, boolean bln1, int row, int column) {
         Component com = super.getTableCellRendererComponent(table, o, isSeleted, bln1, row, column);
-        InuhaTableActionPanel action = new InuhaTableActionPanel();
+        
+        InuhaDanhMucTableActionPanel actionPanel = new InuhaDanhMucTableActionPanel();
         
         if (isSeleted == false) {
             if (row == hoverRow.getIndex()) {
-                action.setBackground(ColorUtils.BACKGROUND_HOVER);
+                actionPanel.setBackground(ColorUtils.BACKGROUND_HOVER);
             } else {
-                action.setBackground(ColorUtils.BACKGROUND_TABLE);
+                actionPanel.setBackground(table.getBackground());
             }
         } else {
-            action.setBackground(table.getSelectionBackground());
+            actionPanel.setBackground(table.getSelectionBackground());
         }
         
-        return action;
+        return actionPanel;
     }
-    
 }

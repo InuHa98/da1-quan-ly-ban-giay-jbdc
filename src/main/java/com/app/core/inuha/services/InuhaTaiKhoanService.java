@@ -1,8 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-
 package com.app.core.inuha.services;
 
 import com.app.common.infrastructure.constants.ErrorConstant;
@@ -19,6 +14,7 @@ import com.app.utils.ValidateUtils;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  *
@@ -30,12 +26,12 @@ public class InuhaTaiKhoanService implements IInuhaNhanVienServiceInterface {
     private final InuhaTaiKhoanRepository nhanVienRepository = new InuhaTaiKhoanRepository();
 
     @Override
-    public List<InuhaTaiKhoanModel> getAll(FillterRequest request) {
+    public Set<InuhaTaiKhoanModel> getPage(FillterRequest request) {
 	return null;
     }
 
     @Override
-    public int getTotalPage(FillterRequest request) {
+    public Integer getTotalPage(FillterRequest request) {
         return 0;
     }
 
@@ -45,7 +41,7 @@ public class InuhaTaiKhoanService implements IInuhaNhanVienServiceInterface {
     }
 
     @Override
-    public InuhaTaiKhoanModel insert(InuhaTaiKhoanModel e) {
+    public Integer insert(InuhaTaiKhoanModel e) {
 	return null;
     }
 
@@ -67,6 +63,11 @@ public class InuhaTaiKhoanService implements IInuhaNhanVienServiceInterface {
     @Override
     public void deleteAll(List<Integer> ids) {
 
+    }
+
+    @Override
+    public Set<InuhaTaiKhoanModel> getAll() {
+        return null;
     }
 
     public InuhaTaiKhoanModel login(String username, String password) {

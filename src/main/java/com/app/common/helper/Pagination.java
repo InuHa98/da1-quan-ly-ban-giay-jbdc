@@ -73,7 +73,7 @@ public class Pagination {
         return panel;
     }
 
-    private void renderListPage() {
+    public void renderListPage() {
 
         listPage.removeAll();
 

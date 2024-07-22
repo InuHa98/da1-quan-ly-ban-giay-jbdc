@@ -42,11 +42,11 @@
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Component class="com.app.core.inuha.views.quanly.components.sanpham.table.InuhaTableActionButton" name="cmdView">
+    <Component class="com.app.views.UI.table.TableActionButton" name="cmdView">
     </Component>
-    <Component class="com.app.core.inuha.views.quanly.components.sanpham.table.InuhaTableActionButton" name="cmdEdit">
+    <Component class="com.app.views.UI.table.TableActionButton" name="cmdEdit">
     </Component>
-    <Component class="com.app.core.inuha.views.quanly.components.sanpham.table.InuhaTableActionButton" name="cmdDelete">
+    <Component class="com.app.views.UI.table.TableActionButton" name="cmdDelete">
     </Component>
   </SubComponents>
 </Form>

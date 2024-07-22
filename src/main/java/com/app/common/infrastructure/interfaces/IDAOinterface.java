@@ -22,7 +22,9 @@ public interface IDAOinterface<T, I> {
 
     Optional<T> getById(I id) throws SQLException;
 
-    Set<T> selectAll(FillterRequest request) throws SQLException;
+    Set<T> selectAll() throws SQLException;
+
+    Set<T> selectPage(FillterRequest request) throws SQLException;
 
     int count(FillterRequest request) throws SQLException;
 

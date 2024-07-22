@@ -1,4 +1,4 @@
-package com.app.core.inuha.views.quanly.components.sanpham.table;
+package com.app.views.UI.table;
 
 import com.app.utils.ColorUtils;
 import java.awt.Color;
@@ -15,11 +15,11 @@ import javax.swing.border.EmptyBorder;
  *
  * @author InuHa
  */
-public class InuhaTableActionButton extends JButton {
+public class TableActionButton extends JButton {
 
     private boolean mousePress;
 
-    public InuhaTableActionButton() {
+    public TableActionButton() {
         setContentAreaFilled(false);
         setBorder(new EmptyBorder(3, 3, 3, 3));
         addMouseListener(new MouseAdapter() {

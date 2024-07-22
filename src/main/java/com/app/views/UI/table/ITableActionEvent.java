@@ -1,10 +1,10 @@
-package com.app.views.UI.table.celll;
+package com.app.views.UI.table;
 
 /**
  *
  * @author InuHa
  */
-public interface TableActionEvent {
+public interface ITableActionEvent {
 
     public void onEdit(int row);
 
