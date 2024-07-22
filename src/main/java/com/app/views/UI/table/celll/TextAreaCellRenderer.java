@@ -42,18 +42,14 @@ public class TextAreaCellRenderer extends JTextArea implements TableCellRenderer
             if (row == hoverRow.getIndex()) {
                 setBackground(ColorUtils.BACKGROUND_HOVER);
             } else {
-                setBackground(ColorUtils.BACKGROUND_TABLE);
+                setBackground(row % 2 == 0 ? ColorUtils.BACKGROUND_TABLE_ODD : table.getBackground());
             }
 
         }
         setFont(table.getFont());
         return this;
     }
-    
-    private void setHorizontalAlignment(float alignment) {
-        setAlignmentX(alignment);
-        setAlignmentY(alignment);
-    }
+  
 
     private void adjustRowHeight(JTable table, int row, int column) {
         setBounds(table.getCellRect(row, column, false));
@@ -70,6 +66,17 @@ public class TextAreaCellRenderer extends JTextArea implements TableCellRenderer
         if (table.getRowHeight(row) != max) {
             table.setRowHeight(row, max);
         }
+    }
+    
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2 = (Graphics2D) g.create();
+        g2.setColor(ColorUtils.BACKGROUND_GRAY);
+        g2.setStroke(new BasicStroke(1));
+        //g2.drawLine(getWidth() - 1, 0, getWidth() - 1, getHeight());
+        g2.drawLine(0, getHeight() - 1, getWidth() - 1, getHeight() - 1);
+        g2.dispose();
     }
     
 }

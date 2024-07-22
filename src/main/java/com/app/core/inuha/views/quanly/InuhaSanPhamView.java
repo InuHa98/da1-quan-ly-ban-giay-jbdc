@@ -1,22 +1,25 @@
 package com.app.core.inuha.views.quanly;
 
+import com.app.common.helper.MessageModal;
 import com.app.common.helper.Pagination;
-import com.app.core.inuha.views.quanly.components.sanpham.table.InuhaTableActionCellEditor;
-import com.app.core.inuha.views.quanly.components.sanpham.table.InuhaTableActionCellRender;
+import com.app.core.inuha.views.quanly.components.sanpham.InuhaAddSanPhamView;
 import com.app.utils.ColorUtils;
 import com.app.utils.ResourceUtils;
 import com.app.views.UI.panel.RoundPanel;
 import com.app.views.UI.table.TableCustomUI;
 import com.app.views.UI.table.celll.CheckBoxTableHeaderRenderer;
-import com.app.views.UI.table.celll.TableHeaderAlignment;
-import com.formdev.flatlaf.FlatClientProperties;
 import java.awt.Dimension;
 import java.util.List;
 import javax.swing.JComboBox;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
-import com.app.views.UI.table.celll.TableActionEvent;
+import java.util.ArrayList;
+import raven.modal.ModalDialog;
+import raven.modal.component.SimpleModalBorder;
+import com.app.views.UI.table.ITableActionEvent;
+import com.app.views.UI.table.celll.TableActionCellEditor;
+import com.app.views.UI.table.celll.TableActionCellRender;
 
 /**
  *
@@ -56,7 +59,7 @@ public class InuhaSanPhamView extends RoundPanel {
     private void setupTable(JTable table) { 
         
         
-        TableActionEvent event = new TableActionEvent() {
+        ITableActionEvent event = new ITableActionEvent() {
             @Override
             public void onEdit(int row) {
                 System.out.println("Edit row : " + row);
@@ -78,10 +81,10 @@ public class InuhaSanPhamView extends RoundPanel {
         };
         pnlTable.setBackground(ColorUtils.BACKGROUND_TABLE);
         
-        TableCustomUI.apply(scrDanhSach, TableCustomUI.TableType.MULTI_LINE);
+        TableCustomUI.apply(scrDanhSach, TableCustomUI.TableType.DEFAULT);
         table.getColumnModel().getColumn(0).setHeaderRenderer(new CheckBoxTableHeaderRenderer(table, 0));
-        table.getColumnModel().getColumn(9).setCellRenderer(new InuhaTableActionCellRender(table));
-        table.getColumnModel().getColumn(9).setCellEditor(new InuhaTableActionCellEditor(event));
+        table.getColumnModel().getColumn(9).setCellRenderer(new TableActionCellRender(table));
+        table.getColumnModel().getColumn(9).setCellEditor(new TableActionCellEditor(event));
     }
     
     private void renderPagination() { 
@@ -133,7 +136,7 @@ public class InuhaSanPhamView extends RoundPanel {
         tbpTab = new javax.swing.JTabbedPane();
         pnlDanhSachSanPham = new javax.swing.JPanel();
         pnlFilter = new com.app.views.UI.panel.RoundPanel();
-        pnlSearchBox = new com.app.views.UI.textfield.SearchBox();
+        pnlSearchBox = new com.app.views.UI.panel.SearchBox();
         cboThuongHieu = new javax.swing.JComboBox<>();
         cboXuatXu = new javax.swing.JComboBox<>();
         btnClear = new javax.swing.JButton();
@@ -263,6 +266,11 @@ public class InuhaSanPhamView extends RoundPanel {
         btnThemSanPham.setText("Thêm sản phẩm");
         btnThemSanPham.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnThemSanPham.setMaximumSize(new java.awt.Dimension(50, 23));
+        btnThemSanPham.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnThemSanPhamActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout splitLine2Layout = new javax.swing.GroupLayout(splitLine2);
         splitLine2.setLayout(splitLine2Layout);
@@ -277,8 +285,12 @@ public class InuhaSanPhamView extends RoundPanel {
 
         btnXoaSanPham.setText("Xoá");
         btnXoaSanPham.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnXoaSanPham.setEnabled(false);
         btnXoaSanPham.setMaximumSize(new java.awt.Dimension(50, 23));
+        btnXoaSanPham.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnXoaSanPhamActionPerformed(evt);
+            }
+        });
 
         pnlPhanTrang.setOpaque(false);
 
@@ -316,6 +328,9 @@ public class InuhaSanPhamView extends RoundPanel {
                 return canEdit [columnIndex];
             }
         });
+        tblDanhSach.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        tblDanhSach.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        tblDanhSach.setShowGrid(true);
         tblDanhSach.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tblDanhSachMouseClicked(evt);
@@ -448,6 +463,16 @@ public class InuhaSanPhamView extends RoundPanel {
         System.out.println("row click");
     }//GEN-LAST:event_tblDanhSachMouseClicked
 
+    private void btnXoaSanPhamActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXoaSanPhamActionPerformed
+        // TODO add your handling code here:
+        handleClickButtonDelete();
+    }//GEN-LAST:event_btnXoaSanPhamActionPerformed
+
+    private void btnThemSanPhamActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThemSanPhamActionPerformed
+        // TODO add your handling code here:
+        handleClickButtonAdd();
+    }//GEN-LAST:event_btnThemSanPhamActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnClear;
@@ -469,7 +494,7 @@ public class InuhaSanPhamView extends RoundPanel {
     private com.app.views.UI.panel.RoundPanel pnlFilter;
     private com.app.views.UI.panel.RoundPanel pnlList;
     private javax.swing.JPanel pnlPhanTrang;
-    private com.app.views.UI.textfield.SearchBox pnlSearchBox;
+    private com.app.views.UI.panel.SearchBox pnlSearchBox;
     private com.app.views.UI.panel.RoundPanel pnlTable;
     private javax.swing.JScrollPane scrDanhSach;
     private com.app.views.UI.label.SplitLine splitLine1;
@@ -477,4 +502,29 @@ public class InuhaSanPhamView extends RoundPanel {
     private javax.swing.JTable tblDanhSach;
     private javax.swing.JTabbedPane tbpTab;
     // End of variables declaration//GEN-END:variables
+
+    private void handleClickButtonDelete() {
+        List<Integer> rows = findSelectedRows(tblDanhSach);
+        if (rows.isEmpty()) { 
+            MessageModal.error("Vui lòng chọn ít nhất một sản phẩm muốn xoá!!!");
+            return;
+        }
+    }
+    
+    private List<Integer> findSelectedRows(JTable table) {
+        List<Integer> trueRows = new ArrayList<>();
+        for (int row = 0; row < table.getRowCount(); row++) {
+            Boolean value = (Boolean) table.getValueAt(row, 0);
+            if (Boolean.TRUE.equals(value)) {
+                trueRows.add(row);
+            }
+        }
+        return trueRows;
+    }
+
+    private void handleClickButtonAdd() {
+        ModalDialog.showModal(this, new SimpleModalBorder(new InuhaAddSanPhamView(), "Thêm sản phẩm"));
+    }
+
+    
 }
