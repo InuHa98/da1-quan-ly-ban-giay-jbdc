@@ -1,10 +1,19 @@
 package com.app.core.inuha.views.quanly;
 
+import com.app.Application;
 import com.app.common.helper.MessageModal;
 import com.app.common.helper.Pagination;
+import com.app.core.inuha.models.sanpham.InuhaDanhMucModel;
+import com.app.core.inuha.models.sanpham.InuhaThuongHieuModel;
+import com.app.core.inuha.models.sanpham.InuhaXuatXuModel;
+import com.app.core.inuha.services.InuhaDanhMucService;
+import com.app.core.inuha.services.InuhaThuongHieuService;
+import com.app.core.inuha.services.InuhaXuatXuService;
 import com.app.core.inuha.views.quanly.components.sanpham.InuhaAddSanPhamView;
 import com.app.utils.ColorUtils;
 import com.app.utils.ResourceUtils;
+import com.app.views.UI.combobox.ComboBoxItem;
+import com.app.views.UI.dialog.LoadingDialog;
 import com.app.views.UI.panel.RoundPanel;
 import com.app.views.UI.table.TableCustomUI;
 import com.app.views.UI.table.celll.CheckBoxTableHeaderRenderer;
@@ -20,6 +29,8 @@ import raven.modal.component.SimpleModalBorder;
 import com.app.views.UI.table.ITableActionEvent;
 import com.app.views.UI.table.celll.TableActionCellEditor;
 import com.app.views.UI.table.celll.TableActionCellRender;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  *
@@ -27,16 +38,40 @@ import com.app.views.UI.table.celll.TableActionCellRender;
  */
 public class InuhaSanPhamView extends RoundPanel {
 
-    /**
-     * Creates new form InuhaSanPhamView
-     */
+    private static InuhaSanPhamView instance;
+        
+    private final ExecutorService executorService = Executors.newFixedThreadPool(2);
+    
+    private final static InuhaDanhMucService danhMucService = new InuhaDanhMucService();
+    
+    private final static InuhaThuongHieuService thuongHieuService = new InuhaThuongHieuService();
+    
+    private final static InuhaXuatXuService xuatXuService = new InuhaXuatXuService();
+    
+    private List<InuhaDanhMucModel> dataDanhMuc = new ArrayList<>();
+    
+    private List<InuhaThuongHieuModel> dataThuongHieu = new ArrayList<>();
+    
+    private List<InuhaXuatXuModel> dataXuatXu = new ArrayList<>();
     
     private JTextField txtTuKhoa;
     
     private Pagination pagination = new Pagination();
     
+    /**
+     * Creates new form InuhaSanPhamView
+     */
+    
+    public static InuhaSanPhamView getInstance() { 
+        if (instance == null) { 
+            instance = new InuhaSanPhamView();
+        }
+        return instance;
+    }
+
     public InuhaSanPhamView() {
         initComponents();
+        instance = this;
         pnlSearchBox.setPlaceholder("Nhập tên hoặc mã sản phẩm ...");
         txtTuKhoa = pnlSearchBox.getKeyword();
         pnlContainer.setBackground(ColorUtils.BACKGROUND_DASHBOARD);
@@ -51,9 +86,68 @@ public class InuhaSanPhamView extends RoundPanel {
         btnThemSanPham.setBackground(ColorUtils.BUTTON_PRIMARY);
         
         
-        setupTable(tblDanhSach);
-        fillTable();
-        renderPagination();
+        LoadingDialog loading = new LoadingDialog(Application.app);
+        executorService.submit(() -> {
+            loadDataDanhMuc();
+            loadDataThuongHieu();
+            loadDataXuatXu();
+            
+            setupTable(tblDanhSach);
+            fillTable();
+            renderPagination();
+            loading.dispose();
+        });
+        loading.setVisible(true);
+    }
+    
+    public void loadDataDanhMuc() { 
+        dataDanhMuc = danhMucService.getAll();
+        cboDanhMuc.removeAllItems();
+       
+        if (dataDanhMuc.isEmpty()) { 
+            cboDanhMuc.addItem(new ComboBoxItem<>("-- Chưa có mục nào --", -1));
+            cboDanhMuc.setEnabled(false);
+            return;
+        }
+        
+        cboDanhMuc.setEnabled(true);
+        for(InuhaDanhMucModel m: dataDanhMuc) { 
+            cboDanhMuc.addItem(new ComboBoxItem<>(m.getTen(), m.getId()));
+        }
+    }
+
+    public void loadDataThuongHieu() { 
+        dataThuongHieu = thuongHieuService.getAll();
+        cboThuongHieu.removeAllItems();
+        
+        if (dataThuongHieu.isEmpty()) { 
+            cboThuongHieu.addItem(new ComboBoxItem<>("-- Chưa có mục nào --", -1));
+            cboThuongHieu.setEnabled(false);
+            return;
+        }
+        
+        cboThuongHieu.setEnabled(true);
+        
+        for(InuhaThuongHieuModel m: dataThuongHieu) { 
+            cboThuongHieu.addItem(new ComboBoxItem<>(m.getTen(), m.getId()));
+        }
+    }
+    
+    public void loadDataXuatXu() { 
+        dataXuatXu = xuatXuService.getAll();
+        cboXuatXu.removeAllItems();
+        
+        if (dataXuatXu.isEmpty()) { 
+            cboXuatXu.addItem(new ComboBoxItem<>("-- Chưa có mục nào --", -1));
+            cboXuatXu.setEnabled(false);
+            return;
+        }
+        
+        cboXuatXu.setEnabled(true);
+        
+        for(InuhaXuatXuModel m: dataXuatXu) { 
+            cboXuatXu.addItem(new ComboBoxItem<>(m.getTen(), m.getId()));
+        }
     }
     
     private void setupTable(JTable table) { 
@@ -137,8 +231,8 @@ public class InuhaSanPhamView extends RoundPanel {
         pnlDanhSachSanPham = new javax.swing.JPanel();
         pnlFilter = new com.app.views.UI.panel.RoundPanel();
         pnlSearchBox = new com.app.views.UI.panel.SearchBox();
-        cboThuongHieu = new javax.swing.JComboBox<>();
-        cboXuatXu = new javax.swing.JComboBox<>();
+        cboThuongHieu = new javax.swing.JComboBox();
+        cboXuatXu = new javax.swing.JComboBox();
         btnClear = new javax.swing.JButton();
         btnSearch = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
@@ -146,7 +240,7 @@ public class InuhaSanPhamView extends RoundPanel {
         jLabel3 = new javax.swing.JLabel();
         lblFilter = new javax.swing.JLabel();
         splitLine1 = new com.app.views.UI.label.SplitLine();
-        cboDanhMuc = new javax.swing.JComboBox<>();
+        cboDanhMuc = new javax.swing.JComboBox();
         jLabel4 = new javax.swing.JLabel();
         pnlList = new com.app.views.UI.panel.RoundPanel();
         lblList = new javax.swing.JLabel();
@@ -161,9 +255,9 @@ public class InuhaSanPhamView extends RoundPanel {
 
         pnlDanhSachSanPham.setOpaque(false);
 
-        cboThuongHieu.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "-- Tất cả thương hiệu --" }));
+        cboThuongHieu.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "-- Tất cả thương hiệu --" }));
 
-        cboXuatXu.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "-- Tất cả xuất xứ --" }));
+        cboXuatXu.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "-- Tất cả xuất xứ --" }));
 
         btnClear.setText("Huỷ lọc");
         btnClear.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -191,7 +285,7 @@ public class InuhaSanPhamView extends RoundPanel {
             .addGap(0, 13, Short.MAX_VALUE)
         );
 
-        cboDanhMuc.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "-- Tất cả danh mục --" }));
+        cboDanhMuc.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "-- Tất cả danh mục --" }));
 
         jLabel4.setText("Danh mục:");
 
@@ -479,9 +573,9 @@ public class InuhaSanPhamView extends RoundPanel {
     private javax.swing.JButton btnSearch;
     private javax.swing.JButton btnThemSanPham;
     private javax.swing.JButton btnXoaSanPham;
-    private javax.swing.JComboBox<String> cboDanhMuc;
-    private javax.swing.JComboBox<String> cboThuongHieu;
-    private javax.swing.JComboBox<String> cboXuatXu;
+    private javax.swing.JComboBox cboDanhMuc;
+    private javax.swing.JComboBox cboThuongHieu;
+    private javax.swing.JComboBox cboXuatXu;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

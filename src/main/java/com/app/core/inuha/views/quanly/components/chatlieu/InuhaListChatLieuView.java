@@ -90,7 +90,7 @@ public class InuhaListChatLieuView extends javax.swing.JPanel {
                 }
                 InuhaChatLieuModel item = dataItems.get(row);
                 
-                LoadingDialog loadingDialog = new LoadingDialog(Application.app);
+                LoadingDialog loadingDialog = new LoadingDialog();
 
                 executorService.submit(() -> {
                     if (MessageModal.confirmWarning("Xoá: " + item.getTen(), "Bạn thực sự muốn xoá chất liệu này?")) {
@@ -98,7 +98,7 @@ public class InuhaListChatLieuView extends javax.swing.JPanel {
                             try {
                                 chatLieuService.delete(item.getId());
                                 loadingDialog.dispose();
-                                InuhaAddSanPhamView.getIntance().loadDataChatLieu();
+                                InuhaAddSanPhamView.getInstance().loadDataChatLieu();
                                 loadDataPage();
                                 MessageToast.success("Xoá thành công chất liệu: " + item.getTen());
                             } catch (ServiceResponseException e) {

@@ -101,7 +101,7 @@ public class InuhaChatLieuRepository implements IDAOinterface<InuhaChatLieuModel
     }
         
     public boolean hasUse(Integer id) throws SQLException {
-        String query = "SELECT TOP(1) 1 FROM SanPham WHERE id_danh_muc = ?";
+        String query = "SELECT TOP(1) 1 FROM SanPham WHERE id_chat_lieu = ?";
         try {
             return JbdcHelper.value(query, id) != null;
         } catch (Exception e) {

@@ -7,6 +7,7 @@ import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
 import com.app.common.infrastructure.session.AvatarUpload;
 import com.app.common.infrastructure.session.SessionLogin;
+import com.app.core.inuha.models.InuhaSanPhamModel;
 import com.app.core.inuha.models.sanpham.InuhaChatLieuModel;
 import com.app.core.inuha.models.sanpham.InuhaDanhMucModel;
 import com.app.core.inuha.models.sanpham.InuhaDeGiayModel;
@@ -17,6 +18,7 @@ import com.app.core.inuha.services.InuhaChatLieuService;
 import com.app.core.inuha.services.InuhaDanhMucService;
 import com.app.core.inuha.services.InuhaDeGiayService;
 import com.app.core.inuha.services.InuhaKieuDangService;
+import com.app.core.inuha.services.InuhaSanPhamService;
 import com.app.core.inuha.services.InuhaThuongHieuService;
 import com.app.core.inuha.services.InuhaXuatXuService;
 import com.app.core.inuha.views.quanly.components.chatlieu.InuhaListChatLieuView;
@@ -27,6 +29,7 @@ import com.app.core.inuha.views.quanly.components.xuatxu.InuhaListXuatXuView;
 import com.app.core.inuha.views.quanly.components.kieudang.InuhaListKieuDangView;
 import com.app.utils.ColorUtils;
 import com.app.utils.CurrencyUtils;
+import com.app.utils.ProductUtils;
 import com.app.utils.ResourceUtils;
 import com.app.utils.SessionUtils;
 import com.app.views.DashboardView;
@@ -45,7 +48,9 @@ import java.util.concurrent.Executors;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
+import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import jnafilechooser.api.JnaFileChooser;
 import raven.modal.ModalDialog;
 import raven.modal.component.SimpleModalBorder;
 
@@ -55,9 +60,11 @@ import raven.modal.component.SimpleModalBorder;
  */
 public class InuhaAddSanPhamView extends javax.swing.JPanel {
 
-    private static InuhaAddSanPhamView intance;
+    private static InuhaAddSanPhamView instance;
     
-    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+    private final InuhaSanPhamService sanPhamService = new InuhaSanPhamService();
+    
+    private final ExecutorService executorService = Executors.newFixedThreadPool(2);
         
     private final static InuhaDanhMucService danhMucService = new InuhaDanhMucService();
     
@@ -85,11 +92,11 @@ public class InuhaAddSanPhamView extends javax.swing.JPanel {
     
     private final Color currentColor;
     
-    public static InuhaAddSanPhamView getIntance() {
-        if (intance == null) {
-            intance = new InuhaAddSanPhamView();
+    public static InuhaAddSanPhamView getInstance() {
+        if (instance == null) {
+            instance = new InuhaAddSanPhamView();
         }
-        return intance;
+        return instance;
     }
     
     
@@ -97,7 +104,7 @@ public class InuhaAddSanPhamView extends javax.swing.JPanel {
      * Creates new form InuhThemSanPhamView
      */
     public InuhaAddSanPhamView() {
-        intance = this;
+        instance = this;
         initComponents();
         currentColor = lblTen.getForeground();
         
@@ -124,7 +131,7 @@ public class InuhaAddSanPhamView extends javax.swing.JPanel {
         cboChatLieu.setModel(new DefaultComboBoxModel<ComboBoxItem<Integer>>());
         cboDeGiay.setModel(new DefaultComboBoxModel<ComboBoxItem<Integer>>());
         
-        LoadingDialog loading = new LoadingDialog(Application.app);
+        LoadingDialog loading = new LoadingDialog();
         executorService.submit(() -> {
             loadDataDanhMuc();
             loadDataThuongHieu();
@@ -795,21 +802,21 @@ public class InuhaAddSanPhamView extends javax.swing.JPanel {
     }
 
     private void handleClickButtonImage() {
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setFileFilter(new FileNameExtensionFilter("Image files", "jpg", "jpeg", "png"));
-        int result = fileChooser.showOpenDialog(null);
-        if (result == JFileChooser.APPROVE_OPTION) {
-            File selectedFile = fileChooser.getSelectedFile();
+        JnaFileChooser ch = new JnaFileChooser();
+        ch.addFilter("Image", "png", "jpg", "jpeg");
+        boolean act = ch.showOpenDialog(SwingUtilities.getWindowAncestor(this));
+        if (act) {
+            File file = ch.getSelectedFile();
 
-            LoadingDialog loading = new LoadingDialog(Application.app);
+            LoadingDialog loading = new LoadingDialog();
 
             executorService.submit(() -> {
                 try {
-                    ImageIcon imageIcon = new ImageIcon(selectedFile.getAbsolutePath());
+                    ImageIcon imageIcon = new ImageIcon(file.getAbsolutePath());
                     Image image = imageIcon.getImage().getScaledInstance(lblDataAnh.getWidth(), lblDataAnh.getHeight(), Image.SCALE_SMOOTH);
                     loading.dispose();
                     lblDataAnh.setIcon(new ImageIcon(image));
-                    lblDataAnh.putClientProperty("path-image", selectedFile.getAbsolutePath());
+                    lblDataAnh.putClientProperty("path-image", file.getAbsolutePath());
                 } catch (Exception ex) {
                     ex.printStackTrace();
                     loading.dispose();
@@ -833,10 +840,8 @@ public class InuhaAddSanPhamView extends javax.swing.JPanel {
         ComboBoxItem<Integer> kieuDang = (ComboBoxItem<Integer>) cboKieuDang.getSelectedItem();
         ComboBoxItem<Integer> chatLieu = (ComboBoxItem<Integer>) cboChatLieu.getSelectedItem();
         ComboBoxItem<Integer> deGiay = (ComboBoxItem<Integer>) cboDeGiay.getSelectedItem();
-        String hinhAnh = (String) lblDataAnh.getClientProperty("path-image");
-        
-        System.out.println(hinhAnh);
-        
+        String selectHinhAnh = (String) lblDataAnh.getClientProperty("path-image");
+                
         ten = ten.replaceAll("\\s+"," ");
         
         lblTen.setForeground(ColorUtils.DANGER_COLOR);
@@ -917,11 +922,80 @@ public class InuhaAddSanPhamView extends javax.swing.JPanel {
         lblDeGiay.setForeground(currentColor);
         
         lblHinhAnh.setForeground(ColorUtils.DANGER_COLOR);
-        if (hinhAnh == null || hinhAnh.isEmpty()) { 
+        if (selectHinhAnh == null || selectHinhAnh.isEmpty()) { 
             MessageToast.error("Vui lòng chọn một hình ảnh");
             btnUploadImage.requestFocus();
             return;
         }
         lblHinhAnh.setForeground(currentColor);
+        
+        String ma = ProductUtils.generateCode();
+
+        InuhaDanhMucModel danhMucModel = new InuhaDanhMucModel();
+        danhMucModel.setId(danhMuc.getValue());
+        
+        InuhaThuongHieuModel thuongHieuModel = new InuhaThuongHieuModel();
+        thuongHieuModel.setId(thuongHieu.getValue());
+        
+        InuhaXuatXuModel xuatXuModel = new InuhaXuatXuModel();
+        xuatXuModel.setId(xuatXu.getValue());
+        
+        InuhaKieuDangModel kieuDangModel = new InuhaKieuDangModel();
+        kieuDangModel.setId(kieuDang.getValue());
+        
+        InuhaChatLieuModel chatLieuModel = new InuhaChatLieuModel();
+        chatLieuModel.setId(chatLieu.getValue());
+        
+        InuhaDeGiayModel deGiayModel = new InuhaDeGiayModel();
+        deGiayModel.setId(deGiay.getValue());
+        
+        InuhaSanPhamModel model = new InuhaSanPhamModel();
+        model.setMa(ma);
+        model.setTen(ten);
+        model.setGiaBan(Double.parseDouble(String.valueOf(CurrencyUtils.parseNumber(gia))));
+        model.setTrangThai(trangThai);
+        model.setMoTa(moTa);
+        model.setDanhMuc(danhMucModel);
+        model.setThuongHieu(thuongHieuModel);
+        model.setXuatXu(xuatXuModel);
+        model.setKieuDang(kieuDangModel);
+        model.setChatLieu(chatLieuModel);
+        model.setDeGiay(deGiayModel);
+        
+        LoadingDialog loading = new LoadingDialog();
+        executorService.submit(() -> {
+            if (MessageModal.confirmInfo("Thêm mới sản phẩm này?")) {
+
+                executorService.submit(() -> {
+
+                    String pathImage = ProductUtils.uploadImage(ma, selectHinhAnh);
+                    MessageToast.clearAll();
+
+                    if (pathImage == null) {
+                        loading.dispose();
+                        MessageToast.error("Không thể upload hình ảnh!");
+                        return;
+                    }
+                    
+                    model.setHinhAnh(pathImage);
+                    
+                    try {
+                        sanPhamService.insert(model);
+                        loading.dispose();
+                        MessageToast.success("Thếm mới sản phẩm thành công.");
+                        ModalDialog.closeAllModal();
+                    } catch (ServiceResponseException e) {
+                        loading.dispose();
+                        MessageToast.error(e.getMessage());
+                    } catch (Exception e) {
+                        loading.dispose();
+                        MessageToast.error(ErrorConstant.DEFAULT_ERROR);
+                    }
+                });
+
+                loading.setVisible(true);
+            }
+        });
+        
     }
 }

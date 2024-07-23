@@ -89,7 +89,7 @@ public class InuhaListDeGiayView extends javax.swing.JPanel {
                 }
                 InuhaDeGiayModel item = dataItems.get(row);
                 
-                LoadingDialog loadingDialog = new LoadingDialog(Application.app);
+                LoadingDialog loadingDialog = new LoadingDialog();
 
                 executorService.submit(() -> {
                     if (MessageModal.confirmWarning("Xoá: " + item.getTen(), "Bạn thực sự muốn xoá đế giày này?")) {
@@ -97,7 +97,7 @@ public class InuhaListDeGiayView extends javax.swing.JPanel {
                             try {
                                 deGiayService.delete(item.getId());
                                 loadingDialog.dispose();
-                                InuhaAddSanPhamView.getIntance().loadDataDeGiay();
+                                InuhaAddSanPhamView.getInstance().loadDataDeGiay();
                                 loadDataPage();
                                 MessageToast.success("Xoá thành công đế giày: " + item.getTen());
                             } catch (ServiceResponseException e) {

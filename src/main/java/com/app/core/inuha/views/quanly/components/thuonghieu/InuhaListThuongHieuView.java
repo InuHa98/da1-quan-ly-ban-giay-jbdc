@@ -88,7 +88,7 @@ public class InuhaListThuongHieuView extends javax.swing.JPanel {
                 }
                 InuhaThuongHieuModel item = dataItems.get(row);
                 
-                LoadingDialog loadingDialog = new LoadingDialog(Application.app);
+                LoadingDialog loadingDialog = new LoadingDialog();
 
                 executorService.submit(() -> {
                     if (MessageModal.confirmWarning("Xoá: " + item.getTen(), "Bạn thực sự muốn xoá thương hiệu này?")) {
@@ -96,7 +96,7 @@ public class InuhaListThuongHieuView extends javax.swing.JPanel {
                             try {
                                 thuongHieuService.delete(item.getId());
                                 loadingDialog.dispose();
-                                InuhaAddSanPhamView.getIntance().loadDataThuongHieu();
+                                InuhaAddSanPhamView.getInstance().loadDataThuongHieu();
                                 loadDataPage();
                                 MessageToast.success("Xoá thành công thương hiệu: " + item.getTen());
                             } catch (ServiceResponseException e) {

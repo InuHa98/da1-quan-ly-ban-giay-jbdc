@@ -8,6 +8,7 @@ import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
 import com.app.core.inuha.models.sanpham.InuhaXuatXuModel;
 import com.app.core.inuha.services.InuhaXuatXuService;
+import com.app.core.inuha.views.quanly.InuhaSanPhamView;
 import com.app.core.inuha.views.quanly.components.sanpham.InuhaAddSanPhamView;
 import com.app.utils.ColorUtils;
 import com.app.views.UI.dialog.LoadingDialog;
@@ -166,13 +167,14 @@ public class InuhaAddXuatXuView extends JPanel {
         InuhaXuatXuModel model = new InuhaXuatXuModel();
         model.setTen(ten);
         
-        LoadingDialog loadingDialog = new LoadingDialog(Application.app);
+        LoadingDialog loadingDialog = new LoadingDialog();
         
         executorService.submit(() -> {
             try {
                 xuatXuService.insert(model);
                 loadingDialog.dispose();
-                InuhaAddSanPhamView.getIntance().loadDataXuatXu();
+                InuhaSanPhamView.getInstance().loadDataXuatXu();
+                InuhaAddSanPhamView.getInstance().loadDataXuatXu();
                 InuhaListXuatXuView.getInstance().loadDataPage(1);
                 ModalDialog.closeModal(InuhaListXuatXuView.MODAL_ID_CREATE);
                 MessageToast.success("Thêm mới xuất xứ thành công!");

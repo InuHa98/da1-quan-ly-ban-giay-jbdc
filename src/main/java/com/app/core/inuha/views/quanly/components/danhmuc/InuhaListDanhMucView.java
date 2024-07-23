@@ -91,7 +91,7 @@ public class InuhaListDanhMucView extends javax.swing.JPanel {
                 }
                 InuhaDanhMucModel item = dataItems.get(row);
                 
-                LoadingDialog loadingDialog = new LoadingDialog(Application.app);
+                LoadingDialog loadingDialog = new LoadingDialog();
 
                 executorService.submit(() -> {
                     if (MessageModal.confirmWarning("Xoá: " + item.getTen(), "Bạn thực sự muốn xoá danh mục này?")) {
@@ -99,7 +99,7 @@ public class InuhaListDanhMucView extends javax.swing.JPanel {
                             try {
                                 danhMucService.delete(item.getId());
                                 loadingDialog.dispose();
-                                InuhaAddSanPhamView.getIntance().loadDataDanhMuc();
+                                InuhaAddSanPhamView.getInstance().loadDataDanhMuc();
                                 loadDataPage();
                                 MessageToast.success("Xoá thành công danh mục: " + item.getTen());
                             } catch (ServiceResponseException e) {

@@ -101,7 +101,7 @@ public class InuhaThuongHieuRepository implements IDAOinterface<InuhaThuongHieuM
     }
         
     public boolean hasUse(Integer id) throws SQLException {
-        String query = "SELECT TOP(1) 1 FROM SanPham WHERE id_danh_muc = ?";
+        String query = "SELECT TOP(1) 1 FROM SanPham WHERE id_thuong_hieu = ?";
         try {
             return JbdcHelper.value(query, id) != null;
         } catch (Exception e) {

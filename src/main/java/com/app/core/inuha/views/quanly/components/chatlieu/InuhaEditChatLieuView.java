@@ -172,13 +172,13 @@ public class InuhaEditChatLieuView extends JPanel {
         
         model.setTen(ten);
         
-        LoadingDialog loadingDialog = new LoadingDialog(Application.app);
+        LoadingDialog loadingDialog = new LoadingDialog();
         
         executorService.submit(() -> {
             try {
                 chatLieuService.update(model);
                 loadingDialog.dispose();
-                InuhaAddSanPhamView.getIntance().loadDataChatLieu();
+                InuhaAddSanPhamView.getInstance().loadDataChatLieu();
                 InuhaListChatLieuView.getInstance().loadDataPage();
                 ModalDialog.closeModal(InuhaListChatLieuView.MODAL_ID_EDIT);
                 MessageToast.success("Chỉnh sửa chất liệu thành công!");
