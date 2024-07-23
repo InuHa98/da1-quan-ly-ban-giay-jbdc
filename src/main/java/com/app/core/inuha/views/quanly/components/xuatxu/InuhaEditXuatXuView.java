@@ -7,6 +7,7 @@ import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
 import com.app.core.inuha.models.sanpham.InuhaXuatXuModel;
 import com.app.core.inuha.services.InuhaXuatXuService;
+import com.app.core.inuha.views.quanly.InuhaSanPhamView;
 import com.app.core.inuha.views.quanly.components.sanpham.InuhaAddSanPhamView;
 import com.app.utils.ColorUtils;
 import com.app.views.UI.dialog.LoadingDialog;
@@ -171,13 +172,14 @@ public class InuhaEditXuatXuView extends JPanel {
         
         model.setTen(ten);
         
-        LoadingDialog loadingDialog = new LoadingDialog(Application.app);
+        LoadingDialog loadingDialog = new LoadingDialog();
         
         executorService.submit(() -> {
             try {
                 xuatXuService.update(model);
                 loadingDialog.dispose();
-                InuhaAddSanPhamView.getIntance().loadDataXuatXu();
+                InuhaSanPhamView.getInstance().loadDataXuatXu();
+                InuhaAddSanPhamView.getInstance().loadDataXuatXu();
                 InuhaListXuatXuView.getInstance().loadDataPage();
                 ModalDialog.closeModal(InuhaListXuatXuView.MODAL_ID_EDIT);
                 MessageToast.success("Chỉnh sửa xuất xứ thành công!");

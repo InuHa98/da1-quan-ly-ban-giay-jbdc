@@ -165,13 +165,13 @@ public class InuhaAddDeGiayView extends JPanel {
         InuhaDeGiayModel model = new InuhaDeGiayModel();
         model.setTen(ten);
         
-        LoadingDialog loadingDialog = new LoadingDialog(Application.app);
+        LoadingDialog loadingDialog = new LoadingDialog();
         
         executorService.submit(() -> {
             try {
                 deGiayService.insert(model);
                 loadingDialog.dispose();
-                InuhaAddSanPhamView.getIntance().loadDataDeGiay();
+                InuhaAddSanPhamView.getInstance().loadDataDeGiay();
                 InuhaListDeGiayView.getInstance().loadDataPage(1);
                 ModalDialog.closeModal(InuhaListDeGiayView.MODAL_ID_CREATE);
                 MessageToast.success("Thêm mới đế giày thành công!");

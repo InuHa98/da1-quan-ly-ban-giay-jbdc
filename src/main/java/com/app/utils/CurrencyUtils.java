@@ -44,4 +44,18 @@ public class CurrencyUtils {
         return new DefaultFormatterFactory(formatter);
     }
 
+    public static String startPad(String original, int length, char padChar) {
+        if (original.length() >= length) {
+            return original;
+        }
+        
+        StringBuilder sb = new StringBuilder();
+        for (int i = original.length(); i < length; i++) {
+            sb.append(padChar);
+        }
+        
+        sb.append(original);
+        return sb.toString();
+    }
+    
 }

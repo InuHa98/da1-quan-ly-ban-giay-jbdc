@@ -89,7 +89,7 @@ public class InuhaListXuatXuView extends javax.swing.JPanel {
                 }
                 InuhaXuatXuModel item = dataItems.get(row);
                 
-                LoadingDialog loadingDialog = new LoadingDialog(Application.app);
+                LoadingDialog loadingDialog = new LoadingDialog();
 
                 executorService.submit(() -> {
                     if (MessageModal.confirmWarning("Xoá: " + item.getTen(), "Bạn thực sự muốn xoá xuất xứ này?")) {
@@ -97,7 +97,7 @@ public class InuhaListXuatXuView extends javax.swing.JPanel {
                             try {
                                 xuatXuService.delete(item.getId());
                                 loadingDialog.dispose();
-                                InuhaAddSanPhamView.getIntance().loadDataXuatXu();
+                                InuhaAddSanPhamView.getInstance().loadDataXuatXu();
                                 loadDataPage();
                                 MessageToast.success("Xoá thành công xuất xứ: " + item.getTen());
                             } catch (ServiceResponseException e) {

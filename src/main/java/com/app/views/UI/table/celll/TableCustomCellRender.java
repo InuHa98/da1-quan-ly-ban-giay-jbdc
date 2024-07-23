@@ -24,11 +24,11 @@ public class TableCustomCellRender extends DefaultTableCellRenderer {
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         Component com = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         
-        if (value instanceof Number) {
-            setHorizontalAlignment(SwingConstants.CENTER);
-        } else {
-            setHorizontalAlignment(SwingConstants.LEFT);
-        }
+//        if (value instanceof Number) {
+//            setHorizontalAlignment(SwingConstants.CENTER);
+//        } else {
+//            setHorizontalAlignment(SwingConstants.LEFT);
+//        }
                 
         if (isSelected) {
             com.setBackground(table.getSelectionBackground());

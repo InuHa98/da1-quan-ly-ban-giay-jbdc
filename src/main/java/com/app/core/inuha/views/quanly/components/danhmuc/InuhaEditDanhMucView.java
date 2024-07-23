@@ -7,6 +7,7 @@ import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
 import com.app.core.inuha.models.sanpham.InuhaDanhMucModel;
 import com.app.core.inuha.services.InuhaDanhMucService;
+import com.app.core.inuha.views.quanly.InuhaSanPhamView;
 import static com.app.core.inuha.views.quanly.components.danhmuc.InuhaListDanhMucView.MODAL_ID_EDIT;
 import com.app.core.inuha.views.quanly.components.sanpham.InuhaAddSanPhamView;
 import com.app.utils.ColorUtils;
@@ -173,13 +174,14 @@ public class InuhaEditDanhMucView extends JPanel {
         
         model.setTen(ten);
         
-        LoadingDialog loadingDialog = new LoadingDialog(Application.app);
+        LoadingDialog loadingDialog = new LoadingDialog();
         
         executorService.submit(() -> {
             try {
                 danhMucService.update(model);
                 loadingDialog.dispose();
-                InuhaAddSanPhamView.getIntance().loadDataDanhMuc();
+                InuhaSanPhamView.getInstance().loadDataDanhMuc();
+                InuhaAddSanPhamView.getInstance().loadDataDanhMuc();
                 InuhaListDanhMucView.getInstance().loadDataPage();
                 ModalDialog.closeModal(InuhaListDanhMucView.MODAL_ID_EDIT);
                 MessageToast.success("Chỉnh sửa danh mục thành công!");

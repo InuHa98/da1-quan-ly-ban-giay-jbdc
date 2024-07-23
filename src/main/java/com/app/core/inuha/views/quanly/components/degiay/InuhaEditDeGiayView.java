@@ -172,13 +172,13 @@ public class InuhaEditDeGiayView extends JPanel {
         
         model.setTen(ten);
         
-        LoadingDialog loadingDialog = new LoadingDialog(Application.app);
+        LoadingDialog loadingDialog = new LoadingDialog();
         
         executorService.submit(() -> {
             try {
                 deGiayService.update(model);
                 loadingDialog.dispose();
-                InuhaAddSanPhamView.getIntance().loadDataDeGiay();
+                InuhaAddSanPhamView.getInstance().loadDataDeGiay();
                 InuhaListDeGiayView.getInstance().loadDataPage();
                 ModalDialog.closeModal(InuhaListDeGiayView.MODAL_ID_EDIT);
                 MessageToast.success("Chỉnh sửa đế giày thành công!");

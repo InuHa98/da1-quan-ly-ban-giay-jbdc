@@ -7,6 +7,7 @@ import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
 import com.app.core.inuha.models.sanpham.InuhaDanhMucModel;
 import com.app.core.inuha.services.InuhaDanhMucService;
+import com.app.core.inuha.views.quanly.InuhaSanPhamView;
 import com.app.core.inuha.views.quanly.components.sanpham.InuhaAddSanPhamView;
 import com.app.utils.ColorUtils;
 import com.app.views.UI.dialog.LoadingDialog;
@@ -165,13 +166,14 @@ public class InuhaAddDanhMucView extends JPanel {
         InuhaDanhMucModel model = new InuhaDanhMucModel();
         model.setTen(ten);
         
-        LoadingDialog loadingDialog = new LoadingDialog(Application.app);
+        LoadingDialog loadingDialog = new LoadingDialog();
         
         executorService.submit(() -> {
             try {
                 danhMucService.insert(model);
                 loadingDialog.dispose();
-                InuhaAddSanPhamView.getIntance().loadDataDanhMuc();
+                InuhaSanPhamView.getInstance().loadDataDanhMuc();
+                InuhaAddSanPhamView.getInstance().loadDataDanhMuc();
                 InuhaListDanhMucView.getInstance().loadDataPage(1);
                 ModalDialog.closeModal(InuhaListDanhMucView.MODAL_ID_CREATE);
                 MessageToast.success("Thêm mới danh mục thành công!");

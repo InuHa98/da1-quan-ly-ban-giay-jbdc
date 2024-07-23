@@ -166,13 +166,13 @@ public class InuhaAddKieuDangView extends JPanel {
         InuhaKieuDangModel model = new InuhaKieuDangModel();
         model.setTen(ten);
         
-        LoadingDialog loadingDialog = new LoadingDialog(Application.app);
+        LoadingDialog loadingDialog = new LoadingDialog();
         
         executorService.submit(() -> {
             try {
                 kieuDangService.insert(model);
                 loadingDialog.dispose();
-                InuhaAddSanPhamView.getIntance().loadDataKieuDang();
+                InuhaAddSanPhamView.getInstance().loadDataKieuDang();
                 InuhaListKieuDangView.getInstance().loadDataPage(1);
                 ModalDialog.closeModal(InuhaListKieuDangView.MODAL_ID_CREATE);
                 MessageToast.success("Thêm mới kiểu dáng thành công!");

@@ -90,7 +90,7 @@ public class InuhaListKieuDangView extends javax.swing.JPanel {
                 }
                 InuhaKieuDangModel item = dataItems.get(row);
                 
-                LoadingDialog loadingDialog = new LoadingDialog(Application.app);
+                LoadingDialog loadingDialog = new LoadingDialog();
 
                 executorService.submit(() -> {
                     if (MessageModal.confirmWarning("Xoá: " + item.getTen(), "Bạn thực sự muốn xoá kiểu dáng này?")) {
@@ -98,7 +98,7 @@ public class InuhaListKieuDangView extends javax.swing.JPanel {
                             try {
                                 kieuDangService.delete(item.getId());
                                 loadingDialog.dispose();
-                                InuhaAddSanPhamView.getIntance().loadDataKieuDang();
+                                InuhaAddSanPhamView.getInstance().loadDataKieuDang();
                                 loadDataPage();
                                 MessageToast.success("Xoá thành công kiểu dáng: " + item.getTen());
                             } catch (ServiceResponseException e) {
