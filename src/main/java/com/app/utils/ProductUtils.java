@@ -9,7 +9,7 @@ import javax.swing.*;
  */
 public class ProductUtils {
 
-    private static final String PREFIX_CODE = "HD-";
+    private static final String PREFIX_CODE = "SP-";
     
     private static final int LENGTH_CODE = 6;
 
@@ -31,7 +31,7 @@ public class ProductUtils {
             number = Integer.parseInt(numberPart);
         }
 
-        return PREFIX_CODE + CurrencyUtils.startPad(String.valueOf(number), LENGTH_CODE, '0');
+        return PREFIX_CODE + CurrencyUtils.startPad(String.valueOf(++number), LENGTH_CODE, '0');
     }
 
     public static String uploadImage(String code, String pathImage) {
@@ -54,6 +54,10 @@ public class ProductUtils {
         }
 
         return ResourceUtils.getImageAssets("images/no-product.jpeg");
+    }
+    
+    public static String getUrlImageProduct(String image) { 
+        return StorageUtils.getUrlImageProduct(image);
     }
 
 }

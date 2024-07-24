@@ -13,10 +13,18 @@ import java.util.Locale;
  */
 public class CurrencyUtils {
 
+    public static String parseString(double price) {
+        return parseString(Math.round(price));
+    }
+    
     public static String parseString(long price) {
         return new DecimalFormat("#,###").format(price).replace(",", ".") + "đ";
     }
 
+    public static String parseTextField(double price) {
+        return new DecimalFormat("#,###").format(price).replace(",", ".");
+    }
+        
     public static long parseNumber(String price) {
         return Long.parseLong(price.replace(".", "").replace("đ", ""));
     }

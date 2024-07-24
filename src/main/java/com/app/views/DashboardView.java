@@ -30,10 +30,10 @@ public class DashboardView extends JPanel {
         context = this;
         sidebarMenu = new SidebarMenu();
         sidebarMenuContent = new SidebarMenuContent();
-
+        
         add(sidebarMenu);
         add(sidebarMenuContent, "grow, push, wrap");
-
+        
         DashboardController.getInstance().setContext(context);
         DashboardController.getInstance().setContent(sidebarMenuContent);
 
@@ -44,6 +44,7 @@ public class DashboardView extends JPanel {
             sidebarMenu.setSelected(itemsMenu.get(0).getIndex());
         }
 
+        
     }
 
     private void initComponents() {

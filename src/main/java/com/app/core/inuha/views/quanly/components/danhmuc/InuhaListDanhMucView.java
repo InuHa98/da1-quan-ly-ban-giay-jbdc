@@ -182,6 +182,7 @@ public class InuhaListDanhMucView extends javax.swing.JPanel {
     }
         
     private void rerenderPagination(int currentPage, int totalPages) { 
+        currentPage = currentPage < 1 ? 1 : currentPage;
         pagination.setCurrentPage(currentPage);
         pagination.setTotalPages(totalPages);
         pagination.renderListPage();

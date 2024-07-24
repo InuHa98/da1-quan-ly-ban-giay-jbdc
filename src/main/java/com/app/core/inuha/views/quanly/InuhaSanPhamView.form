@@ -121,7 +121,7 @@
                                               <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
                                               <Group type="103" groupAlignment="0" attributes="0">
                                                   <Component id="jLabel3" max="32767" attributes="0"/>
-                                                  <Component id="cboXuatXu" max="32767" attributes="0"/>
+                                                  <Component id="cboTrangThai" max="32767" attributes="0"/>
                                               </Group>
                                               <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
                                               <Component id="btnSearch" min="-2" max="-2" attributes="0"/>
@@ -159,7 +159,7 @@
                                   <Component id="pnlSearchBox" max="32767" attributes="0"/>
                                   <Component id="btnClear" alignment="0" max="32767" attributes="0"/>
                                   <Group type="102" alignment="0" attributes="0">
-                                      <Component id="cboXuatXu" min="-2" pref="35" max="-2" attributes="0"/>
+                                      <Component id="cboTrangThai" min="-2" pref="35" max="-2" attributes="0"/>
                                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                                   </Group>
                                   <Component id="btnSearch" alignment="1" max="32767" attributes="0"/>
@@ -173,6 +173,9 @@
                   </Layout>
                   <SubComponents>
                     <Component class="com.app.views.UI.panel.SearchBox" name="pnlSearchBox">
+                      <Events>
+                        <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="pnlSearchBoxKeyPressed"/>
+                      </Events>
                     </Component>
                     <Component class="javax.swing.JComboBox" name="cboThuongHieu">
                       <Properties>
@@ -186,11 +189,11 @@
                         <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value=""/>
                       </AuxValues>
                     </Component>
-                    <Component class="javax.swing.JComboBox" name="cboXuatXu">
+                    <Component class="javax.swing.JComboBox" name="cboTrangThai">
                       <Properties>
                         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
                           <StringArray count="1">
-                            <StringItem index="0" value="-- T&#x1ea5;t c&#x1ea3; xu&#x1ea5;t x&#x1ee9; --"/>
+                            <StringItem index="0" value="-- T&#x1ea5;t c&#x1ea3; tr&#x1ea1;ng th&#xe1;i --"/>
                           </StringArray>
                         </Property>
                       </Properties>
@@ -205,6 +208,9 @@
                           <Color id="Hand Cursor"/>
                         </Property>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnClearActionPerformed"/>
+                      </Events>
                     </Component>
                     <Component class="javax.swing.JButton" name="btnSearch">
                       <Properties>
@@ -213,6 +219,9 @@
                           <Color id="Hand Cursor"/>
                         </Property>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnSearchActionPerformed"/>
+                      </Events>
                     </Component>
                     <Component class="javax.swing.JLabel" name="jLabel1">
                       <Properties>
@@ -226,7 +235,7 @@
                     </Component>
                     <Component class="javax.swing.JLabel" name="jLabel3">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Xu&#x1ea5;t x&#x1ee9;:"/>
+                        <Property name="text" type="java.lang.String" value="Tr&#x1ea1;ng th&#xe1;i:"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JLabel" name="lblFilter">
@@ -284,13 +293,15 @@
                           <Group type="102" alignment="1" attributes="0">
                               <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="1" attributes="0">
-                                  <Component id="pnlTable" max="32767" attributes="0"/>
+                                  <Component id="pnlDanhSach" max="32767" attributes="0"/>
                                   <Component id="pnlPhanTrang" max="32767" attributes="0"/>
                                   <Group type="102" attributes="0">
                                       <Component id="lblList" min="-2" pref="598" max="-2" attributes="0"/>
-                                      <EmptySpace pref="160" max="32767" attributes="0"/>
+                                      <EmptySpace pref="79" max="32767" attributes="0"/>
                                       <Component id="btnXoaSanPham" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
+                                      <Component id="btnScanQR" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                       <Component id="btnThemSanPham" min="-2" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
@@ -306,11 +317,12 @@
                                   <Component id="lblList" alignment="3" min="-2" pref="39" max="-2" attributes="0"/>
                                   <Component id="btnThemSanPham" alignment="3" min="-2" pref="32" max="-2" attributes="0"/>
                                   <Component id="btnXoaSanPham" alignment="3" min="-2" pref="32" max="-2" attributes="0"/>
+                                  <Component id="btnScanQR" alignment="3" min="-2" pref="32" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="splitLine2" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="pnlTable" max="32767" attributes="0"/>
+                              <Component id="pnlDanhSach" max="32767" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Component id="pnlPhanTrang" min="-2" max="-2" attributes="0"/>
                               <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
@@ -388,7 +400,7 @@
                         </DimensionLayout>
                       </Layout>
                     </Container>
-                    <Container class="com.app.views.UI.panel.RoundPanel" name="pnlTable">
+                    <Container class="com.app.views.UI.panel.RoundPanel" name="pnlDanhSach">
 
                       <Layout>
                         <DimensionLayout dim="0">
@@ -417,22 +429,23 @@
                             <Component class="javax.swing.JTable" name="tblDanhSach">
                               <Properties>
                                 <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                                  <Table columnCount="10" rowCount="0">
+                                  <Table columnCount="11" rowCount="0">
                                     <Column editable="true" title="" type="java.lang.Boolean"/>
                                     <Column editable="false" title="#" type="java.lang.Object"/>
-                                    <Column editable="false" title="M&#xe3; s&#x1ea3;n ph&#x1ea9;m" type="java.lang.Object"/>
-                                    <Column editable="false" title="T&#xea;n s&#x1ea3;n ph&#x1ea9;m" type="java.lang.Object"/>
+                                    <Column editable="false" title="M&#xe3;" type="java.lang.Object"/>
+                                    <Column editable="false" title="" type="java.lang.Object"/>
+                                    <Column editable="false" title="T&#xea;n" type="java.lang.Object"/>
                                     <Column editable="false" title="Danh m&#x1ee5;c" type="java.lang.Object"/>
                                     <Column editable="false" title="Th&#x1b0;&#x1a1;ng hi&#x1ec7;u" type="java.lang.Object"/>
-                                    <Column editable="false" title="Xu&#x1ea5;t x&#x1ee9;" type="java.lang.Object"/>
                                     <Column editable="false" title="S&#x1ed1; l&#x1b0;&#x1ee3;ng" type="java.lang.Object"/>
+                                    <Column editable="false" title="Gi&#xe1; b&#xe1;n" type="java.lang.Object"/>
                                     <Column editable="false" title="Tr&#x1ea1;ng th&#xe1;i" type="java.lang.Object"/>
                                     <Column editable="true" title="H&#xe0;nh &#x111;&#x1ed9;ng" type="java.lang.Object"/>
                                   </Table>
                                 </Property>
                                 <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
                                   <TableColumnModel selectionModel="0">
-                                    <Column maxWidth="40" minWidth="-1" prefWidth="-1" resizable="true">
+                                    <Column maxWidth="30" minWidth="-1" prefWidth="-1" resizable="true">
                                       <Title/>
                                       <Editor/>
                                       <Renderer/>
@@ -447,7 +460,7 @@
                                       <Editor/>
                                       <Renderer/>
                                     </Column>
-                                    <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                                    <Column maxWidth="60" minWidth="-1" prefWidth="-1" resizable="true">
                                       <Title/>
                                       <Editor/>
                                       <Renderer/>
@@ -478,6 +491,11 @@
                                       <Renderer/>
                                     </Column>
                                     <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                                      <Title/>
+                                      <Editor/>
+                                      <Renderer/>
+                                    </Column>
+                                    <Column maxWidth="-1" minWidth="120" prefWidth="-1" resizable="true">
                                       <Title/>
                                       <Editor/>
                                       <Renderer/>
@@ -501,6 +519,17 @@
                         </Container>
                       </SubComponents>
                     </Container>
+                    <Component class="javax.swing.JButton" name="btnScanQR">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Qu&#xe9;t QR"/>
+                        <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
+                          <Color id="Hand Cursor"/>
+                        </Property>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnScanQRActionPerformed"/>
+                      </Events>
+                    </Component>
                   </SubComponents>
                 </Container>
               </SubComponents>

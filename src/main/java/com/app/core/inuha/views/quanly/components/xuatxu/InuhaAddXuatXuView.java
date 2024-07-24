@@ -173,7 +173,6 @@ public class InuhaAddXuatXuView extends JPanel {
             try {
                 xuatXuService.insert(model);
                 loadingDialog.dispose();
-                InuhaSanPhamView.getInstance().loadDataXuatXu();
                 InuhaAddSanPhamView.getInstance().loadDataXuatXu();
                 InuhaListXuatXuView.getInstance().loadDataPage(1);
                 ModalDialog.closeModal(InuhaListXuatXuView.MODAL_ID_CREATE);
