@@ -39,7 +39,9 @@ public class MessageModal {
 
     private static JPanel renderBody(String message, Integer type) {
         JPanel panel = new JPanel(new MigLayout("wrap, fillx, insets 0 40 10 40", "[left]", "[center]"));
-        JLabel msg = new JLabel(message);
+        JLabel msg = new JLabel();
+        msg.setMaximumSize(new Dimension(400, 100));
+        msg.setText("<html><body style='line-height: 30px'>"+ message +"</body></html>");
         msg.setForeground(ColorUtils.PRIMARY_TEXT);
         msg.setFont(msg.getFont().deriveFont(Font.PLAIN, 14));
         if (type != null) {

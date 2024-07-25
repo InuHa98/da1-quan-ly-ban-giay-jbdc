@@ -26,9 +26,18 @@ public class ScrollBarCustomUI extends BasicScrollBarUI {
 
     private static final Color TRACK_COLOR = new Color(50, 50, 50, 100);
 
+    public static void apply(JScrollPane scroll) { 
+        scroll.setViewportBorder(null);
+        scroll.setBorder(null);
+        scroll.getViewport().setOpaque(false);
+        scroll.getVerticalScrollBar().setUI(new ScrollBarCustomUI());
+        scroll.getHorizontalScrollBar().setUI(new ScrollBarCustomUI());
+    }
+    
     @Override
     public void installUI(JComponent c) {
         super.installUI(c);
+        scrollbar.setOpaque(false);
         scrollbar.setUnitIncrement(20);
         scrollbar.addAdjustmentListener(new AdjustmentListener() {
             @Override
@@ -48,13 +57,16 @@ public class ScrollBarCustomUI extends BasicScrollBarUI {
     }
 
     @Override
-    protected void paintTrack(Graphics grphcs, JComponent jc, Rectangle rctngl) {
-        Graphics2D g2 = (Graphics2D) grphcs;
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2.setColor(TRACK_COLOR);
-
-        int round = 8;
-        g2.fill(new RoundRectangle2D.Double(rctngl.x, rctngl.y, rctngl.width, rctngl.height, round, round));
+    protected void paintTrack(Graphics g, JComponent jc, Rectangle rctngl) {
+        Graphics2D g2 = (Graphics2D) g;
+        g2.setColor(new Color(50, 50, 50));
+        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.0f));
+        int x = rctngl.x;
+        int y = rctngl.y;
+        int width = rctngl.width;
+        int height = rctngl.height;
+        g2.fillRoundRect(x, y, width, height, 1, 1);
+        g2.setComposite(AlphaComposite.SrcOver);
     }
 
     @Override

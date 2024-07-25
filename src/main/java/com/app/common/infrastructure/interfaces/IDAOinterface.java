@@ -3,6 +3,7 @@ package com.app.common.infrastructure.interfaces;
 import com.app.common.infrastructure.request.FillterRequest;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -22,7 +23,9 @@ public interface IDAOinterface<T, I> {
 
     Optional<T> getById(I id) throws SQLException;
 
-    Set<T> selectAll(FillterRequest request) throws SQLException;
+    List<T> selectAll() throws SQLException;
+
+    List<T> selectPage(FillterRequest request) throws SQLException;
 
     int count(FillterRequest request) throws SQLException;
 
