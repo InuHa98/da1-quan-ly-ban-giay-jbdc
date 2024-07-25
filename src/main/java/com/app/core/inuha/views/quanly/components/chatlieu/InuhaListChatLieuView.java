@@ -142,14 +142,15 @@ public class InuhaListChatLieuView extends javax.swing.JPanel {
             model.setRowCount(0);
             
             FillterRequest request = new FillterRequest();
-            
+            request.setSize(sizePage);
+	    
             int totalPages = chatLieuService.getTotalPage(request);
             if (totalPages < page) { 
                 page = totalPages;
             }
             
             request.setPage(page);
-            request.setSize(sizePage);
+
            
             dataItems = chatLieuService.getPage(request);
             
@@ -181,6 +182,7 @@ public class InuhaListChatLieuView extends javax.swing.JPanel {
     }
         
     private void rerenderPagination(int currentPage, int totalPages) { 
+        currentPage = currentPage < 1 ? 1 : currentPage;
         pagination.setCurrentPage(currentPage);
         pagination.setTotalPages(totalPages);
         pagination.renderListPage();

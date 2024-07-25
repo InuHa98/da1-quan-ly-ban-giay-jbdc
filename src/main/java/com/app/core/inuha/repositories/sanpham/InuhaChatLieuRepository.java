@@ -192,10 +192,11 @@ public class InuhaChatLieuRepository implements IDAOinterface<InuhaChatLieuModel
                     *,
                     ROW_NUMBER() OVER (ORDER BY id DESC) AS stt
                 FROM %s
+                WHERE trang_thai_xoa = 0
             )
             SELECT *
             FROM TableCTE
-            WHERE trang_thai_xoa = 0 AND (stt BETWEEN ? AND ?)
+            WHERE stt BETWEEN ? AND ?
         """, TABLE_NAME);
 
         int[] offset = FillterRequest.getOffset(request.getPage(), request.getSize());
@@ -229,7 +230,7 @@ public class InuhaChatLieuRepository implements IDAOinterface<InuhaChatLieuModel
         int totalPages = 0;
         int totalRows = 0;
 
-        String query = String.format("SELECT COUNT(*) FROM %s", TABLE_NAME);
+        String query = String.format("SELECT COUNT(*) FROM %s WHERE trang_thai_xoa = 0", TABLE_NAME);
 
         try {
             totalRows = (int) JbdcHelper.value(query);

@@ -1,6 +1,8 @@
 package com.app.core.inuha.models;
 
 import com.app.core.inuha.models.sanpham.*;
+import com.app.utils.CurrencyUtils;
+import com.app.utils.ProductUtils;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,9 +30,9 @@ public class InuhaSanPhamModel {
     
     private String moTa;
     
+    private double giaNhap;
+	
     private double giaBan;
-    
-    private String qrCode;
     
     private String hinhAnh;
     
@@ -58,14 +60,16 @@ public class InuhaSanPhamModel {
     
     public Object[] toDataRowSanPham() { 
         return new Object[] { 
+            false,
             stt,
             ma,
+            ProductUtils.getImage(hinhAnh),
             ten,
             danhMuc.getTen(),
             thuongHieu.getTen(),
-            xuatXu.getTen(),
-            soLuong,
-            trangThai
+            CurrencyUtils.parseString(soLuong),
+            CurrencyUtils.parseString(giaBan),
+            ProductUtils.getTrangThai(trangThai)
         };
     }
 }

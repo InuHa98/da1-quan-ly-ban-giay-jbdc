@@ -7,6 +7,7 @@ import com.app.views.UI.table.celll.BooleanCellRenderer;
 import com.app.views.UI.table.celll.TextAreaCellRenderer;
 import com.app.utils.ColorUtils;
 import com.app.views.UI.scroll.ScrollBarCustomUI;
+import com.app.views.UI.table.celll.TableImageCellRender;
 import com.formdev.flatlaf.FlatClientProperties;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -29,7 +30,7 @@ public class TableCustomUI {
     private final static Color COLOR_HEADER = ColorUtils.BACKGROUND_TABLE;
     private final static Color COLOR_HEADER_TEXT = ColorUtils.TEXT_TABLE;
     private final static Color COLOR_BACKGROUND = ColorUtils.BACKGROUND_TABLE;
-    private final static Color COLOR_GRID_COLOR = ColorUtils.BACKGROUND_GRAY;
+    private final static Color COLOR_GRID_COLOR = ColorUtils.lighten(ColorUtils.BACKGROUND_TABLE, 0.1f);
     private final static Color COLOR_SELECTION_TEXT = ColorUtils.PRIMARY_TEXT;
     private final static Color COLOR_SELECTION_BACKGROUND = ColorUtils.BACKGROUND_HOVER;
 
@@ -71,8 +72,10 @@ public class TableCustomUI {
         table.setDefaultRenderer(Object.class, cellRender);
         table.setDefaultRenderer(Boolean.class, new BooleanCellRenderer(hoverRow));
         
-        
         table.setShowVerticalLines(true);
+        table.setShowHorizontalLines(false);
+        table.setShowGrid(false);
+        table.setIntercellSpacing(new Dimension(0, 0));
 
         scroll.setBorder(BorderFactory.createEmptyBorder());
         JPanel panel = new JPanel() {

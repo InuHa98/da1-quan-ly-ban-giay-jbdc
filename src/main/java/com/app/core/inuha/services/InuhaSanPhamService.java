@@ -22,7 +22,15 @@ public class InuhaSanPhamService implements IInuhaSanPhamServiceInterface {
     
     @Override
     public InuhaSanPhamModel getById(Integer id) {
-        return null;
+        try {
+            Optional<InuhaSanPhamModel> find = repository.getById(id);
+            if (find.isEmpty()) { 
+                throw new SQLException();
+            }
+            return find.get();
+        } catch (SQLException ex) {
+            throw new ServiceResponseException("Không tìm thấy sản phẩm");
+        }
     }
 
     @Override
@@ -93,6 +101,19 @@ public class InuhaSanPhamService implements IInuhaSanPhamServiceInterface {
 
     @Override
     public void deleteAll(List<Integer> ids) {
+        int errors = 0;
+        for(int id: ids) { 
+            try {
+                delete(id);
+            } catch (Exception e) { 
+                e.printStackTrace();
+                errors++;
+            }
+        }
+        
+        if (errors > 0) { 
+            throw new ServiceResponseException("Không thể xoá " + errors + " sản phẩm đã chọn");
+        }
     }
 
     @Override

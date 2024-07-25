@@ -35,7 +35,7 @@ public class ColorUtils {
 
     public static Color BACKGROUND_DASHBOARD = new Color(35, 36, 40);
 	
-    public static Color BACKGROUND_TABLE = new Color(35, 36, 40);
+    public static Color BACKGROUND_TABLE = new Color(43, 45, 49);
     
     public static Color BACKGROUND_TABLE_ODD = new Color(63, 66, 72);
         

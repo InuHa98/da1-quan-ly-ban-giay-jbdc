@@ -55,4 +55,8 @@ public class TableCustomCellRender extends DefaultTableCellRenderer {
         g2.dispose();
     }
     
+    @Override
+    protected void paintBorder(Graphics g) {
+    }
+    
 }

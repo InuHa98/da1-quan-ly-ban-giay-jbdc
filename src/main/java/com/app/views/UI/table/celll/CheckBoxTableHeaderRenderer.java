@@ -58,19 +58,6 @@ public class CheckBoxTableHeaderRenderer extends JCheckBox implements TableCellR
             }
         });
         
-        this.table.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent evt) {
-                if (SwingUtilities.isLeftMouseButton(evt)) { 
-                    int row = table.rowAtPoint(evt.getPoint());
-                    int col = table.columnAtPoint(evt.getPoint());
-                    boolean isSelected = (boolean) table.getValueAt(row, column);
-                    if (col != column) { 
-                        table.setValueAt(!isSelected, row, column);
-                    }
-                }
-            }
-        });
     }
 
     private void checkRow() {

@@ -10,6 +10,7 @@ import com.app.core.inuha.models.sanpham.InuhaDeGiayModel;
 import com.app.core.inuha.models.sanpham.InuhaKieuDangModel;
 import com.app.core.inuha.models.sanpham.InuhaThuongHieuModel;
 import com.app.core.inuha.models.sanpham.InuhaXuatXuModel;
+import com.app.core.inuha.request.InuhaFilterSanPhamRequest;
 import com.app.utils.TimeUtils;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -29,7 +30,7 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
     public int insert(InuhaSanPhamModel model) throws SQLException {
         int result = 0;
         String query = String.format("""
-            INSERT INTO %s(id_danh_muc, id_thuong_hieu, id_xuat_xu, id_kieu_dang, id_chat_lieu, id_de_giay, ma, ten, mo_ta, gia_ban, qr_code, hinh_anh, trang_thai, ngay_tao)
+            INSERT INTO %s(id_danh_muc, id_thuong_hieu, id_xuat_xu, id_kieu_dang, id_chat_lieu, id_de_giay, ma, ten, mo_ta, gia_nhap, gia_ban, hinh_anh, trang_thai, ngay_tao)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, TABLE_NAME);
         try {
@@ -43,8 +44,8 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
                 model.getMa(),
                 model.getTen(),
                 model.getMoTa(),
+		model.getGiaNhap(),
                 model.getGiaBan(),
-                model.getQrCode(),
                 model.getHinhAnh(),
                 model.isTrangThai(),
                 TimeUtils.currentDate()
@@ -71,6 +72,7 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
                 id_de_giay = ?,
                 ten = ?,
                 mo_ta = ?,
+                gia_nhap = ?,
                 gia_ban = ?,
                 hinh_anh = ?,
                 trang_thai = ?,
@@ -88,6 +90,7 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
                 model.getDeGiay().getId(),
                 model.getTen(),
                 model.getMoTa(),
+		model.getGiaNhap(),
                 model.getGiaBan(),
                 model.getHinhAnh(),
                 model.isTrangThai(),
@@ -107,9 +110,12 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
     @Override
     public int delete(Integer id) throws SQLException {
         int result = 0;
-        String query = String.format("DELETE FROM %s WHERE id = ?", TABLE_NAME);
+        String query = String.format("""
+            DELETE FROM SanPhamChiTiet WHERE id_san_pham = ?;
+            DELETE FROM %s WHERE id = ?
+        """, TABLE_NAME);
         try {
-            result = JbdcHelper.updateAndFlush(query, id);
+            result = JbdcHelper.updateAndFlush(query, id, id);
         } catch(Exception e) {
             e.printStackTrace();
             throw new SQLException(e.getMessage());
@@ -139,7 +145,12 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
     }
         
     public boolean hasUse(Integer id) throws SQLException {
-        String query = "SELECT TOP(1) 1 FROM SanPhamChiTiet WHERE id_san_pham = ?";
+        String query = """
+            SELECT TOP(1) 1
+            FROM HoaDonChitiet AS hdct
+                LEFT JOIN SanPhamChiTiet AS spct ON spct.id = hdct.id_san_pham_chi_tiet
+            WHERE spct.id_san_pham = ?
+        """;
         try {
             return JbdcHelper.value(query, id) != null;
         } catch (Exception e) {
@@ -164,7 +175,7 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
             throw new SQLException(e.getMessage());
         }
     }
-    
+        
     @Override
     public Optional<InuhaSanPhamModel> getById(Integer id) throws SQLException {
         ResultSet resultSet = null;
@@ -183,14 +194,15 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
                 xx.ngay_tao AS ngay_tao_xuat_xu,
                 xx.ngay_cap_nhat AS ngay_cap_nhat_xuat_xu,
                 kd.ten AS ten_kieu_dang,
-                kd.ngay_tao AS ngay_kieu_dang,
+                kd.ngay_tao AS ngay_tao_kieu_dang,
                 kd.ngay_cap_nhat AS ngay_cap_nhat_kieu_dang,
                 cl.ten AS ten_chat_lieu,
                 cl.ngay_tao AS ngay_tao_chat_lieu,
                 cl.ngay_cap_nhat AS ngay_cap_nhat_chat_lieu,
                 dg.ten AS ten_de_giay,
                 dg.ngay_tao AS ngay_tao_de_giay,
-                dg.ngay_cap_nhat AS ngay_cap_nhat_de_giay
+                dg.ngay_cap_nhat AS ngay_cap_nhat_de_giay,
+                (SELECT SUM(so_luong) FROM SanPhamChiTiet WHERE id_san_pham = sp.id) AS so_luong
             FROM %s AS sp
                 LEFT JOIN DanhMuc AS dm ON dm.id = sp.id_danh_muc
                 LEFT JOIN ThuongHieu AS th ON th.id = sp.id_thuong_hieu
@@ -198,7 +210,9 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
                 LEFT JOIN KieuDang AS kd ON kd.id = sp.id_kieu_dang
                 LEFT JOIN ChatLieu AS cl ON cl.id = sp.id_chat_lieu
                 LEFT JOIN DeGiay AS dg ON dg.id = sp.id_de_giay
-            WHERE id = ? AND trang_thai_xoa = 0
+            WHERE
+                sp.id = ? AND
+                sp.trang_thai_xoa = 0
         """, TABLE_NAME);
 
         try {
@@ -225,7 +239,7 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
         String query = String.format("""
             SELECT
                 sp.*,
-                ROW_NUMBER() OVER (ORDER BY id DESC) AS stt,
+                ROW_NUMBER() OVER (ORDER BY sp.id DESC) AS stt,
                 dm.ten AS ten_danh_muc,
                 dm.ngay_tao AS ngay_tao_danh_muc,
                 dm.ngay_cap_nhat AS ngay_cap_nhat_danh_muc,
@@ -236,14 +250,15 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
                 xx.ngay_tao AS ngay_tao_xuat_xu,
                 xx.ngay_cap_nhat AS ngay_cap_nhat_xuat_xu,
                 kd.ten AS ten_kieu_dang,
-                kd.ngay_tao AS ngay_kieu_dang,
+                kd.ngay_tao AS ngay_tao_kieu_dang,
                 kd.ngay_cap_nhat AS ngay_cap_nhat_kieu_dang,
                 cl.ten AS ten_chat_lieu,
                 cl.ngay_tao AS ngay_tao_chat_lieu,
                 cl.ngay_cap_nhat AS ngay_cap_nhat_chat_lieu,
                 dg.ten AS ten_de_giay,
                 dg.ngay_tao AS ngay_tao_de_giay,
-                dg.ngay_cap_nhat AS ngay_cap_nhat_de_giay
+                dg.ngay_cap_nhat AS ngay_cap_nhat_de_giay,
+                (SELECT SUM(so_luong) FROM SanPhamChiTiet WHERE id_san_pham = sp.id) AS so_luong
             FROM %s AS sp
                 LEFT JOIN DanhMuc AS dm ON dm.id = sp.id_danh_muc
                 LEFT JOIN ThuongHieu AS th ON th.id = sp.id_thuong_hieu
@@ -251,8 +266,9 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
                 LEFT JOIN KieuDang AS kd ON kd.id = sp.id_kieu_dang
                 LEFT JOIN ChatLieu AS cl ON cl.id = sp.id_chat_lieu
                 LEFT JOIN DeGiay AS dg ON dg.id = sp.id_de_giay
-            WHERE trang_thai_xoa = 0
-            ORDER BY id DESC 
+            WHERE
+                sp.trang_thai_xoa = 0
+            ORDER BY sp.id DESC 
         """, TABLE_NAME);
 
         try {
@@ -274,14 +290,17 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
 
     @Override
     public List<InuhaSanPhamModel> selectPage(FillterRequest request) throws SQLException {
+        
+        InuhaFilterSanPhamRequest filter = (InuhaFilterSanPhamRequest) request;
+        
         List<InuhaSanPhamModel> list = new ArrayList<>();
         ResultSet resultSet = null;
-
+        
         String query = String.format("""
             WITH TableCTE AS (
                 SELECT
                     sp.*,
-                    ROW_NUMBER() OVER (ORDER BY id DESC) AS stt,
+                    ROW_NUMBER() OVER (ORDER BY sp.id DESC) AS stt,
                     dm.ten AS ten_danh_muc,
                     dm.ngay_tao AS ngay_tao_danh_muc,
                     dm.ngay_cap_nhat AS ngay_cap_nhat_danh_muc,
@@ -292,14 +311,15 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
                     xx.ngay_tao AS ngay_tao_xuat_xu,
                     xx.ngay_cap_nhat AS ngay_cap_nhat_xuat_xu,
                     kd.ten AS ten_kieu_dang,
-                    kd.ngay_tao AS ngay_kieu_dang,
+                    kd.ngay_tao AS ngay_tao_kieu_dang,
                     kd.ngay_cap_nhat AS ngay_cap_nhat_kieu_dang,
                     cl.ten AS ten_chat_lieu,
                     cl.ngay_tao AS ngay_tao_chat_lieu,
                     cl.ngay_cap_nhat AS ngay_cap_nhat_chat_lieu,
                     dg.ten AS ten_de_giay,
                     dg.ngay_tao AS ngay_tao_de_giay,
-                    dg.ngay_cap_nhat AS ngay_cap_nhat_de_giay
+                    dg.ngay_cap_nhat AS ngay_cap_nhat_de_giay,
+                    (SELECT SUM(so_luong) FROM SanPhamChiTiet WHERE id_san_pham = sp.id) AS so_luong
                 FROM %s AS sp
                     LEFT JOIN DanhMuc AS dm ON dm.id = sp.id_danh_muc
                     LEFT JOIN ThuongHieu AS th ON th.id = sp.id_thuong_hieu
@@ -307,17 +327,34 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
                     LEFT JOIN KieuDang AS kd ON kd.id = sp.id_kieu_dang
                     LEFT JOIN ChatLieu AS cl ON cl.id = sp.id_chat_lieu
                     LEFT JOIN DeGiay AS dg ON dg.id = sp.id_de_giay
+                WHERE
+                    sp.trang_thai_xoa = 0 AND
+                    (
+                        (? IS NULL OR sp.ten LIKE ? OR sp.ma LIKE ?) AND
+                        (COALESCE(?, 0) < 1 OR sp.id_danh_muc = ?) AND
+                        (COALESCE(?, 0) < 1 OR sp.id_thuong_hieu = ?) AND
+                        (COALESCE(?, 0) < 0 OR sp.trang_thai = ?)
+                    )
             )
             SELECT *
             FROM TableCTE
-            WHERE trang_thai_xoa = 0 AND (stt BETWEEN ? AND ?)
+            WHERE stt BETWEEN ? AND ?
         """, TABLE_NAME);
 
-        int[] offset = FillterRequest.getOffset(request.getPage(), request.getSize());
+        int[] offset = FillterRequest.getOffset(filter.getPage(), filter.getSize());
         int start = offset[0];
         int limit = offset[1];
 
         Object[] args = new Object[] {
+            filter.getKeyword(),
+            String.format("%%%s%%", filter.getKeyword()),
+            String.format("%%%s%%", filter.getKeyword()),
+            filter.getIdDanhMuc(),
+            filter.getIdDanhMuc(),
+            filter.getIdThuongHieu(),
+            filter.getIdThuongHieu(),
+            filter.getTrangThai(),
+            filter.getTrangThai(),
             start,
             limit
         };
@@ -341,13 +378,39 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
 
     @Override
     public int count(FillterRequest request) throws SQLException {
+        
+        InuhaFilterSanPhamRequest filter = (InuhaFilterSanPhamRequest) request;
+        
         int totalPages = 0;
         int totalRows = 0;
 
-        String query = String.format("SELECT COUNT(*) FROM %s", TABLE_NAME);
+        String query = String.format("""
+            SELECT COUNT(*)
+            FROM %s
+            WHERE
+                trang_thai_xoa = 0 AND  
+                (
+                    (? IS NULL OR ten LIKE ? OR ma LIKE ?) AND
+                    (COALESCE(?, 0) < 1 OR id_danh_muc = ?) AND
+                    (COALESCE(?, 0) < 1 OR id_thuong_hieu = ?) AND
+                    (COALESCE(?, 0) < 0 OR trang_thai = ?)
+                ) 
+        """, TABLE_NAME);
 
+        Object[] args = new Object[] { 
+            filter.getKeyword(),
+            String.format("%%%s%%", filter.getKeyword()),
+            String.format("%%%s%%", filter.getKeyword()),
+            filter.getIdDanhMuc(),
+            filter.getIdDanhMuc(),
+            filter.getIdThuongHieu(),
+            filter.getIdThuongHieu(),
+            filter.getTrangThai(),
+            filter.getTrangThai()
+        };
+        
         try {
-            totalRows = (int) JbdcHelper.value(query);
+            totalRows = (int) JbdcHelper.value(query, args);
             totalPages = (int) Math.ceil((double) totalRows / request.getSize());
         } catch(Exception e) {
             e.printStackTrace();
@@ -362,11 +425,11 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
     
     private InuhaSanPhamModel buildData(ResultSet resultSet, boolean addSTT) throws SQLException { 
         InuhaDanhMucModel danhMuc = new InuhaDanhMucModel(resultSet.getInt("id_danh_muc"), -1, resultSet.getString("ten_danh_muc"), resultSet.getString("ngay_tao_danh_muc"), false, resultSet.getString("ngay_cap_nhat_danh_muc"));
-        InuhaThuongHieuModel thuongHieu = new InuhaThuongHieuModel(resultSet.getInt("id_danh_muc"), -1, resultSet.getString("ten_danh_muc"), resultSet.getString("ngay_tao_danh_muc"), false, resultSet.getString("ngay_cap_nhat_danh_muc"));
-        InuhaXuatXuModel xuatXu = new InuhaXuatXuModel(resultSet.getInt("id_danh_muc"), -1, resultSet.getString("ten_danh_muc"), resultSet.getString("ngay_tao_danh_muc"), false, resultSet.getString("ngay_cap_nhat_danh_muc"));
-        InuhaKieuDangModel kieuDang = new InuhaKieuDangModel(resultSet.getInt("id_danh_muc"), -1, resultSet.getString("ten_danh_muc"), resultSet.getString("ngay_tao_danh_muc"), false, resultSet.getString("ngay_cap_nhat_danh_muc"));
-        InuhaChatLieuModel chatLieu = new InuhaChatLieuModel(resultSet.getInt("id_danh_muc"), -1, resultSet.getString("ten_danh_muc"), resultSet.getString("ngay_tao_danh_muc"), false, resultSet.getString("ngay_cap_nhat_danh_muc"));
-        InuhaDeGiayModel deGiay = new InuhaDeGiayModel(resultSet.getInt("id_danh_muc"), -1, resultSet.getString("ten_danh_muc"), resultSet.getString("ngay_tao_danh_muc"), false, resultSet.getString("ngay_cap_nhat_danh_muc"));
+        InuhaThuongHieuModel thuongHieu = new InuhaThuongHieuModel(resultSet.getInt("id_thuong_hieu"), -1, resultSet.getString("ten_thuong_hieu"), resultSet.getString("ngay_tao_thuong_hieu"), false, resultSet.getString("ngay_cap_nhat_thuong_hieu"));
+        InuhaXuatXuModel xuatXu = new InuhaXuatXuModel(resultSet.getInt("id_xuat_xu"), -1, resultSet.getString("ten_xuat_xu"), resultSet.getString("ngay_tao_xuat_xu"), false, resultSet.getString("ngay_cap_nhat_xuat_xu"));
+        InuhaKieuDangModel kieuDang = new InuhaKieuDangModel(resultSet.getInt("id_kieu_dang"), -1, resultSet.getString("ten_kieu_dang"), resultSet.getString("ngay_tao_kieu_dang"), false, resultSet.getString("ngay_cap_nhat_kieu_dang"));
+        InuhaChatLieuModel chatLieu = new InuhaChatLieuModel(resultSet.getInt("id_chat_lieu"), -1, resultSet.getString("ten_chat_lieu"), resultSet.getString("ngay_tao_chat_lieu"), false, resultSet.getString("ngay_cap_nhat_chat_lieu"));
+        InuhaDeGiayModel deGiay = new InuhaDeGiayModel(resultSet.getInt("id_de_giay"), -1, resultSet.getString("ten_de_giay"), resultSet.getString("ngay_tao_de_giay"), false, resultSet.getString("ngay_cap_nhat_de_giay"));
         
         return InuhaSanPhamModel.builder()
             .id(resultSet.getInt("id"))
@@ -374,8 +437,8 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
             .ma(resultSet.getString("ma"))
             .ten(resultSet.getString("ten"))
             .moTa(resultSet.getString("mo_ta"))
+	    .giaNhap(resultSet.getDouble("gia_nhap"))
             .giaBan(resultSet.getDouble("gia_ban"))
-            .qrCode(resultSet.getString("qr_code"))
             .hinhAnh(resultSet.getString("hinh_anh"))
             .trangThai(resultSet.getBoolean("trang_thai"))
             .ngayTao(resultSet.getString("ngay_tao"))
