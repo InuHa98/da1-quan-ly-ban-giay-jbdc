@@ -6,23 +6,28 @@ package com.app.core.dattv.request;
 
 import java.util.Date;
 
+
+
 /**
  *
  * @author WIN
  */
+
 public class DatHoaDonRequest {
+    private int id;
     private String maHd;
     private Date thoiGian;
     private String khachHang;
     private double tongTienhang;
     private double giamGia;
     private double thanhTien;
-    private int trangThai;
+    private boolean trangThai;
+    private boolean phuongThucTT;
 
     public DatHoaDonRequest() {
     }
 
-    public DatHoaDonRequest(String maHd, Date thoiGian, String khachHang, double tongTienhang, double giamGia, double thanhTien, int trangThai) {
+    public DatHoaDonRequest(String maHd, Date thoiGian, String khachHang, double tongTienhang, double giamGia, double thanhTien, boolean trangThai, boolean phuongThucTT) {
         this.maHd = maHd;
         this.thoiGian = thoiGian;
         this.khachHang = khachHang;
@@ -30,6 +35,16 @@ public class DatHoaDonRequest {
         this.giamGia = giamGia;
         this.thanhTien = thanhTien;
         this.trangThai = trangThai;
+        this.phuongThucTT = phuongThucTT;
+        this.id=id;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getMaHd() {
@@ -80,13 +95,23 @@ public class DatHoaDonRequest {
         this.thanhTien = thanhTien;
     }
 
-    public int getTrangThai() {
+    public boolean isTrangThai() {
         return trangThai;
     }
 
-    public void setTrangThai(int trangThai) {
+    public void setTrangThai(boolean trangThai) {
         this.trangThai = trangThai;
     }
+
+    public boolean isPhuongThucTT() {
+        return phuongThucTT;
+    }
+
+    public void setPhuongThucTT(boolean phuongThucTT) {
+        this.phuongThucTT = phuongThucTT;
+    }
+
+    
     
     
 
