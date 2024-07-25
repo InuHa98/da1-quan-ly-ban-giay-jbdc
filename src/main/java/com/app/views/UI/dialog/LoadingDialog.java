@@ -22,11 +22,15 @@ import net.miginfocom.swing.MigLayout;
 @Setter
 @Getter
 public class LoadingDialog extends JDialog {
-
+    
     private String title = "Vui lòng chờ giây lát...";
 
+    public LoadingDialog() { 
+        this(Application.app);
+    }
+    
     public LoadingDialog(Component parent) {
-	    setUndecorated(true);
+	setUndecorated(true);
         getRootPane().setBackground(new Color(0, 0, 0, 0));
         getRootPane().putClientProperty("Window.shadow", Boolean.FALSE);
         setBackground(new Color(0, 0, 0, 0));
@@ -34,7 +38,11 @@ public class LoadingDialog extends JDialog {
 
         setContentPane(contentPane());
         setModal(true);
-        setSize(parent.getSize());
+        if (parent != null) { 
+            setSize(parent.getSize());
+        } else {
+            pack();
+        }
         setLocationRelativeTo(parent);
     }
     
@@ -44,7 +52,7 @@ public class LoadingDialog extends JDialog {
             protected void paintComponent(Graphics grphcs) {
                 Graphics2D g2 = (Graphics2D) grphcs;
                 g2.setColor(new Color(255, 255, 255));
-                g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
+                g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f));
                 g2.fillRect(0, 0, getWidth(), getHeight());
                 g2.setComposite(AlphaComposite.SrcOver);
                 super.paintComponent(grphcs);

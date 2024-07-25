@@ -116,6 +116,10 @@ public class StorageUtils {
     public static ImageIcon getProduct(String fileName) {
         return getImage(FOLDER_PRODUCT + "/" + fileName);
     }
+    
+    public static String getUrlImageProduct(String fileName) { 
+        return FOLDER + "/" + FOLDER_PRODUCT + "/" + fileName;
+    }
 
     private static String getImageFormat(BufferedImage bufferedImage) throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
