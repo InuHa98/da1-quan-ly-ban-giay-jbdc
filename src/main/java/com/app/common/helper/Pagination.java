@@ -73,7 +73,7 @@ public class Pagination {
         return panel;
     }
 
-    private void renderListPage() {
+    public void renderListPage() {
 
         listPage.removeAll();
 
@@ -153,7 +153,7 @@ public class Pagination {
             page.addActionListener(onClick);
             page.setMaximumSize(maxSize);
             if (currentPage == i) {
-                page.setBackground(ColorUtils.lighten(ColorUtils.BACKGROUND_HOVER, 0.2f));
+                page.setBackground(ColorUtils.PRIMARY_COLOR);
                 page.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
             }
             listPage.add(page);

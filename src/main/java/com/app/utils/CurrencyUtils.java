@@ -13,10 +13,22 @@ import java.util.Locale;
  */
 public class CurrencyUtils {
 
+    public static String parseString(double price) {
+        return parseString(Math.round(price));
+    }
+    
     public static String parseString(long price) {
         return new DecimalFormat("#,###").format(price).replace(",", ".") + "đ";
     }
+    
+    public static String parseString(int price) {
+        return new DecimalFormat("#,###").format(price).replace(",", ".");
+    }
 
+    public static String parseTextField(double price) {
+        return new DecimalFormat("#,###").format(price).replace(",", ".");
+    }
+        
     public static long parseNumber(String price) {
         return Long.parseLong(price.replace(".", "").replace("đ", ""));
     }
@@ -44,4 +56,18 @@ public class CurrencyUtils {
         return new DefaultFormatterFactory(formatter);
     }
 
+    public static String startPad(String original, int length, char padChar) {
+        if (original.length() >= length) {
+            return original;
+        }
+        
+        StringBuilder sb = new StringBuilder();
+        for (int i = original.length(); i < length; i++) {
+            sb.append(padChar);
+        }
+        
+        sb.append(original);
+        return sb.toString();
+    }
+    
 }

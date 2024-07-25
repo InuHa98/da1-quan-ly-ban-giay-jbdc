@@ -1,11 +1,14 @@
 package com.app.common.controller;
 
 import com.app.views.DashboardView;
+import com.app.views.UI.dialog.LoadingDialog;
 import com.app.views.UI.scroll.ScrollBarCustomUI;
 import com.app.views.UI.sidebarmenu.SidebarMenuContent;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ExecutorService;
 
 /**
  *
@@ -52,21 +55,28 @@ public class DashboardController {
             System.out.println("Context not found");
             return;
         }
+        
+        LoadingDialog loading = new LoadingDialog();
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        executorService.submit(() -> {
+            EventQueue.invokeLater(() -> {
+                content.removeAll();
 
-        EventQueue.invokeLater(() -> {
-            content.removeAll();
-
-            JScrollPane scroll = new JScrollPane();
-            scroll.setViewportBorder(null);
-            scroll.setBorder(null);
-            scroll.getViewport().setOpaque(false);
-            scroll.getVerticalScrollBar().setUI(new ScrollBarCustomUI());
-            scroll.getHorizontalScrollBar().setUI(new ScrollBarCustomUI());
-            scroll.setViewportView(component);
-            content.add(scroll);
-            content.revalidate();
-            content.repaint();
+                JScrollPane scroll = new JScrollPane();
+                scroll.setViewportBorder(null);
+                scroll.setBorder(null);
+                scroll.getViewport().setOpaque(false);
+                scroll.getVerticalScrollBar().setUI(new ScrollBarCustomUI());
+                scroll.getHorizontalScrollBar().setUI(new ScrollBarCustomUI());
+                scroll.setViewportView(component);
+                content.add(scroll);
+                content.revalidate();
+                content.repaint();
+                
+                loading.dispose();
+            });
         });
+        loading.setVisible(true);
     }
 
 }

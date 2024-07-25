@@ -8,6 +8,7 @@ package com.app.common.infrastructure.interfaces;
 import com.app.common.infrastructure.request.FillterRequest;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -17,18 +18,20 @@ public interface IServiceInterface<T, K> {
 
     T getById(K id);
     
-    T insert(T e);
+    Integer insert(T model);
 
     boolean has(K id);
 
-    void update(T e);
+    void update(T model);
     
     void delete(K id);
     
     void deleteAll(List<K> ids);
 
-    List<T> getAll(FillterRequest request);
+    List<T> getAll();
 
-    int getTotalPage(FillterRequest request);
+    List<T> getPage(FillterRequest request);
+
+    Integer getTotalPage(FillterRequest request);
 
 }

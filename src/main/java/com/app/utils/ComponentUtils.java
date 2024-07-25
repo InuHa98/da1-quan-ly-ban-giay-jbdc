@@ -16,7 +16,7 @@ import javax.swing.JLabel;
  */
 public class ComponentUtils {
 
-        public static ImageIcon resizeImageByWidth(ImageIcon imageIcon, int newWidth) {
+    public static ImageIcon resizeImageByWidth(ImageIcon imageIcon, int newWidth) {
         Image image = imageIcon.getImage();
 
         double scale = (double) newWidth / imageIcon.getIconWidth();

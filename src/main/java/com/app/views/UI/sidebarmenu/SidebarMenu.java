@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import jnafilechooser.api.JnaFileChooser;
 
 /**
  *
@@ -40,7 +41,7 @@ public class SidebarMenu extends JPanel {
 
     private final InuhaTaiKhoanService nhanVienService = new InuhaTaiKhoanService();
 
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final ExecutorService executor = Executors.newFixedThreadPool(2);
 
     private ImageRound lbAvatar;
 
@@ -152,20 +153,18 @@ public class SidebarMenu extends JPanel {
     }
 
     private void handleChangeAvatar(MouseEvent event) {
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setFileFilter(new FileNameExtensionFilter("Image files", "jpg", "jpeg", "png", "gif"));
-        int result = fileChooser.showOpenDialog(null);
-        if (result == JFileChooser.APPROVE_OPTION) {
-            File selectedFile = fileChooser.getSelectedFile();
+        JnaFileChooser ch = new JnaFileChooser();
+        ch.addFilter("Image", "png", "jpg", "jpeg");
+        boolean act = ch.showOpenDialog(SwingUtilities.getWindowAncestor(this));
+        if (act) {
+            File selectedFile = ch.getSelectedFile();
 
-            LoadingDialog loading = new LoadingDialog(DashboardView.context);
+            LoadingDialog loading = new LoadingDialog();
 
             executor.submit(() -> {
                 if (MessageModal.confirmInfo("Cập nhật ảnh đại diện mới?")) {
 
-                    ExecutorService executorUpload = Executors.newSingleThreadExecutor();
-
-                    executorUpload.submit(() -> {
+                    executor.submit(() -> {
 
                         AvatarUpload avatarUpload = SessionUtils.uploadAvatar(SessionLogin.getInstance().getData(), selectedFile.getAbsolutePath());
                         MessageToast.clearAll();
