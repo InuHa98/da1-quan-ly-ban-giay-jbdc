@@ -26,11 +26,10 @@ public class Application extends JFrame {
 
     public static Application app;
 
-<<<<<<< HEAD
     private final static int MIN_WIDTH = 1200;
-=======
+
     public final static int MIN_WIDTH = 1400;
->>>>>>> dev
+
 
     public final static int MIN_HEIGHT = 800;
     
