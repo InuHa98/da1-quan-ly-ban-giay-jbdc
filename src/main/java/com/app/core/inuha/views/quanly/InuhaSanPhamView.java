@@ -824,6 +824,6 @@ public class InuhaSanPhamView extends RoundPanel {
     }
     
     private void showDetailSanPham(InuhaSanPhamModel item) {
-        ModalDialog.showModal(instance, new SimpleModalBorder(new InuhaDetailSanPhamView(item), "Chi tiết sản phẩm"));
+        ModalDialog.showModal(instance, new SimpleModalBorder(new InuhaDetailSanPhamView(item), null));
     }
 }

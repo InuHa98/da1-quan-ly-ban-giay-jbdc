@@ -25,7 +25,7 @@ public class ColorUtils {
 
     public static Color WARNING_COLOR = new Color(253, 174, 0);
 
-    public static Color BACKGROUND_PRIMARY = new Color(43, 43, 43);
+    public static Color BACKGROUND_PRIMARY = new Color(30, 31, 34);
 
     public static Color BACKGROUND_GRAY = new Color(49, 51, 56);
 
