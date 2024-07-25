@@ -49,12 +49,12 @@ public class Application extends JFrame {
                 int scaledFontSize = (int) (baseFontSize * scaleFactor);
                 Font newFont = new Font(FlatRobotoFont.FAMILY, Font.PLAIN, scaledFontSize);
 
-                int basePadding = 10;
-                int scaledPadding = (int) (basePadding * scaleFactor);
-
-                UIManager.put("Label.font", newFont);
-                UIManager.put("Button.font", newFont);
-                UIManager.put("TextField.font", newFont);
+//                int basePadding = 10;
+//                int scaledPadding = (int) (basePadding * scaleFactor);
+//
+//                UIManager.put("Label.font", newFont);
+//                UIManager.put("Button.font", newFont);
+//                UIManager.put("TextField.font", newFont);
 //                UIManager.put("Component.padding", new Insets(scaledPadding, scaledPadding, scaledPadding, scaledPadding));
 //                UIManager.put("Component.margin", new Insets(scaledPadding, scaledPadding, scaledPadding, scaledPadding));
 //                UIManager.put("Button.padding", new Insets(scaledPadding / 2, scaledPadding / 2, scaledPadding / 2, scaledPadding / 2));
@@ -69,9 +69,9 @@ public class Application extends JFrame {
             }
 	
             ApplicationController.getInstance().setContext(new Application());
-            ApplicationController.getInstance().show(new LoginView());
-//	    ApplicationController.getInstance().show(new DashboardView());
-//	    DashboardController.getInstance().show(new InuhaSanPhamView());
+//            ApplicationController.getInstance().show(new LoginView());
+	    ApplicationController.getInstance().show(new DashboardView());
+	    DashboardController.getInstance().show(new InuhaSanPhamView());
 	    
             app = ApplicationController.getInstance().getContext();
             app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

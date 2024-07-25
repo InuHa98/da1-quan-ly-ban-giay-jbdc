@@ -111,6 +111,7 @@ public class InuhaAddSanPhamView extends javax.swing.JPanel {
         this.sanPham = sanPham;
         
         txtTen.setText(sanPham.getTen());
+	txtGiaNhap.setText(CurrencyUtils.parseTextField(sanPham.getGiaNhap()));
         txtGiaBan.setText(CurrencyUtils.parseTextField(sanPham.getGiaBan()));
         rdoDangBan.setSelected(sanPham.isTrangThai());
         rdoNgungBan.setSelected(!sanPham.isTrangThai());
@@ -138,8 +139,9 @@ public class InuhaAddSanPhamView extends javax.swing.JPanel {
         btnSubmit.setBackground(ColorUtils.BUTTON_PRIMARY);
         
         txtTen.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Tối đa 250 ký tự...");
-        txtGiaBan.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "VNĐ");
-
+        txtGiaNhap.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "VNĐ");
+	txtGiaBan.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "VNĐ");
+	
         btnDetail.setVisible(false);
         
         btnCmdDanhMuc.setIcon(ResourceUtils.getSVG("/svg/plus.svg", new Dimension(20, 20)));
@@ -150,8 +152,9 @@ public class InuhaAddSanPhamView extends javax.swing.JPanel {
         btnCmdChatLieu.setIcon(ResourceUtils.getSVG("/svg/plus.svg", new Dimension(20, 20)));
         btnUploadImage.setIcon(ResourceUtils.getSVG("/svg/file.svg", new Dimension(20, 20)));
         
+        txtGiaNhap.setFormatterFactory(CurrencyUtils.getDefaultFormatVND());
         txtGiaBan.setFormatterFactory(CurrencyUtils.getDefaultFormatVND());
-        
+		
         cboDanhMuc.setModel(new DefaultComboBoxModel<ComboBoxItem<Integer>>());
         cboThuongHieu.setModel(new DefaultComboBoxModel<ComboBoxItem<Integer>>());
         cboXuatXu.setModel(new DefaultComboBoxModel<ComboBoxItem<Integer>>());
@@ -314,7 +317,7 @@ public class InuhaAddSanPhamView extends javax.swing.JPanel {
         roundPanel1 = new com.app.views.UI.panel.RoundPanel();
         lblTen = new javax.swing.JLabel();
         txtTen = new javax.swing.JTextField();
-        lblGia = new javax.swing.JLabel();
+        lblGiaBan = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         rdoDangBan = new javax.swing.JRadioButton();
         rdoNgungBan = new javax.swing.JRadioButton();
@@ -322,6 +325,8 @@ public class InuhaAddSanPhamView extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         txtMoTa = new javax.swing.JTextArea();
         txtGiaBan = new javax.swing.JFormattedTextField();
+        txtGiaNhap = new javax.swing.JFormattedTextField();
+        lblGiaNhap = new javax.swing.JLabel();
         roundPanel2 = new com.app.views.UI.panel.RoundPanel();
         lblDeGiay = new javax.swing.JLabel();
         cboDeGiay = new javax.swing.JComboBox();
@@ -353,8 +358,8 @@ public class InuhaAddSanPhamView extends javax.swing.JPanel {
         lblTen.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         lblTen.setText("Tên sản phẩm:");
 
-        lblGia.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        lblGia.setText("Giá bán:");
+        lblGiaBan.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblGiaBan.setText("Giá bán:");
 
         jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel5.setText("Trạng thái:");
@@ -373,33 +378,42 @@ public class InuhaAddSanPhamView extends javax.swing.JPanel {
         txtMoTa.setRows(5);
         jScrollPane1.setViewportView(txtMoTa);
 
+        lblGiaNhap.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblGiaNhap.setText("Giá nhập:");
+
         javax.swing.GroupLayout roundPanel1Layout = new javax.swing.GroupLayout(roundPanel1);
         roundPanel1.setLayout(roundPanel1Layout);
         roundPanel1Layout.setHorizontalGroup(
             roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, roundPanel1Layout.createSequentialGroup()
-                .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+            .addGroup(roundPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(roundPanel1Layout.createSequentialGroup()
-                        .addContainerGap(10, Short.MAX_VALUE)
-                        .addComponent(txtGiaBan, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel5)
                         .addGap(18, 18, 18)
                         .addComponent(rdoDangBan)
                         .addGap(18, 18, 18)
                         .addComponent(rdoNgungBan))
+                    .addComponent(lblMoTa))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, roundPanel1Layout.createSequentialGroup()
+                .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(roundPanel1Layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtGiaNhap, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblGiaNhap))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtGiaBan, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblGiaBan)))
                     .addGroup(roundPanel1Layout.createSequentialGroup()
                         .addGap(10, 10, 10)
-                        .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, roundPanel1Layout.createSequentialGroup()
-                                .addComponent(lblGia)
-                                .addGap(18, 18, Short.MAX_VALUE)
-                                .addComponent(jLabel5)
-                                .addGap(103, 103, 103))
-                            .addComponent(jScrollPane1)
-                            .addComponent(txtTen, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, roundPanel1Layout.createSequentialGroup()
-                                .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(lblTen, javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(lblMoTa, javax.swing.GroupLayout.Alignment.LEADING))
+                        .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(txtTen)
+                            .addGroup(roundPanel1Layout.createSequentialGroup()
+                                .addComponent(lblTen)
                                 .addGap(0, 0, Short.MAX_VALUE)))))
                 .addGap(10, 10, 10))
         );
@@ -410,20 +424,25 @@ public class InuhaAddSanPhamView extends javax.swing.JPanel {
                 .addComponent(lblTen)
                 .addGap(10, 10, 10)
                 .addComponent(txtTen, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblGia)
-                    .addComponent(jLabel5))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(18, 18, 18)
                 .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(rdoDangBan)
-                        .addComponent(rdoNgungBan))
-                    .addComponent(txtGiaBan, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(27, 27, 27)
+                    .addGroup(roundPanel1Layout.createSequentialGroup()
+                        .addComponent(lblGiaBan)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtGiaBan, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(roundPanel1Layout.createSequentialGroup()
+                        .addComponent(lblGiaNhap)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtGiaNhap, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(25, 25, 25)
+                .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5)
+                    .addComponent(rdoDangBan)
+                    .addComponent(rdoNgungBan))
+                .addGap(18, 18, 18)
                 .addComponent(lblMoTa)
-                .addGap(10, 10, 10)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(20, 20, 20))
         );
 
@@ -832,7 +851,8 @@ public class InuhaAddSanPhamView extends javax.swing.JPanel {
     private javax.swing.JLabel lblChatLieu;
     private javax.swing.JLabel lblDanhMuc;
     private javax.swing.JLabel lblDeGiay;
-    private javax.swing.JLabel lblGia;
+    private javax.swing.JLabel lblGiaBan;
+    private javax.swing.JLabel lblGiaNhap;
     private javax.swing.JLabel lblHinhAnh;
     private javax.swing.JLabel lblKieuDang;
     private javax.swing.JLabel lblMoTa;
@@ -848,6 +868,7 @@ public class InuhaAddSanPhamView extends javax.swing.JPanel {
     private com.app.views.UI.panel.RoundPanel roundPanel4;
     private com.app.views.UI.label.SplitLine splitLine3;
     private javax.swing.JFormattedTextField txtGiaBan;
+    private javax.swing.JFormattedTextField txtGiaNhap;
     private javax.swing.JTextArea txtMoTa;
     private javax.swing.JTextField txtTen;
     // End of variables declaration//GEN-END:variables
@@ -906,7 +927,8 @@ public class InuhaAddSanPhamView extends javax.swing.JPanel {
 
     private void handleClickButtonSubmit() {
         String ten = txtTen.getText().trim();
-        String gia = txtGiaBan.getText().trim();
+	String giaNhap = txtGiaNhap.getText().trim();
+        String giaBan = txtGiaBan.getText().trim();
         boolean trangThai = rdoDangBan.isSelected();
         String moTa = txtMoTa.getText().trim();
         ComboBoxItem<Integer> danhMuc = (ComboBoxItem<Integer>) cboDanhMuc.getSelectedItem();
@@ -931,14 +953,22 @@ public class InuhaAddSanPhamView extends javax.swing.JPanel {
             return;
         }
         lblTen.setForeground(currentColor);
-        
-        lblGia.setForeground(ColorUtils.DANGER_COLOR);
-        if (gia.isEmpty()) { 
-            MessageToast.error("Tên giá bán không được bỏ trống");
+	
+        lblGiaNhap.setForeground(ColorUtils.DANGER_COLOR);
+        if (giaNhap.isEmpty()) { 
+            MessageToast.error("Giá nhập không hợp lệ");
+            txtGiaNhap.requestFocus();
+            return;
+        }
+        lblGiaNhap.setForeground(currentColor);
+	
+        lblGiaBan.setForeground(ColorUtils.DANGER_COLOR);
+        if (giaBan.isEmpty() || CurrencyUtils.parseNumber(giaBan) < 1) { 
+            MessageToast.error("Giá bán không hợp lệ");
             txtGiaBan.requestFocus();
             return;
         }
-        lblGia.setForeground(currentColor);
+        lblGiaBan.setForeground(currentColor);
 
         lblMoTa.setForeground(ColorUtils.DANGER_COLOR);
         if (moTa.length() > 2000) { 
@@ -1029,7 +1059,8 @@ public class InuhaAddSanPhamView extends javax.swing.JPanel {
         InuhaSanPhamModel model = new InuhaSanPhamModel();
         model.setMa(ma);
         model.setTen(ten);
-        model.setGiaBan(Double.parseDouble(String.valueOf(CurrencyUtils.parseNumber(gia))));
+	model.setGiaNhap(Double.parseDouble(String.valueOf(CurrencyUtils.parseNumber(giaNhap))));
+        model.setGiaBan(Double.parseDouble(String.valueOf(CurrencyUtils.parseNumber(giaBan))));
         model.setTrangThai(trangThai);
         model.setMoTa(moTa);
         model.setDanhMuc(danhMucModel);

@@ -59,5 +59,9 @@ public class ProductUtils {
     public static String getUrlImageProduct(String image) { 
         return StorageUtils.getUrlImageProduct(image);
     }
+    
+    public static String getTrangThai(boolean trangThai) { 
+	return trangThai ? "Đang bán" : "Dừng bán";
+    }
 
 }

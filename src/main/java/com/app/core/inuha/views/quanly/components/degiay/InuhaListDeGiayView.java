@@ -141,14 +141,15 @@ public class InuhaListDeGiayView extends javax.swing.JPanel {
             model.setRowCount(0);
             
             FillterRequest request = new FillterRequest();
-            
+            request.setSize(sizePage);
+	    
             int totalPages = deGiayService.getTotalPage(request);
             if (totalPages < page) { 
                 page = totalPages;
             }
             
             request.setPage(page);
-            request.setSize(sizePage);
+
            
             dataItems = deGiayService.getPage(request);
             

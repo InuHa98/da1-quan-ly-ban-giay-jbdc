@@ -44,11 +44,11 @@ public class InuhaSanPhamChiTietModel {
         return new Object[] { 
             false,
             stt,
-            "aaaa",
+            sanPham.getTen(),
             kichCo.getTen(),
             mauSac.getTen(),
-            soLuong,
-            trangThai
-        };
+            CurrencyUtils.parseString(soLuong),
+            ProductUtils.getTrangThai(trangThai)
+	};
     }
 }

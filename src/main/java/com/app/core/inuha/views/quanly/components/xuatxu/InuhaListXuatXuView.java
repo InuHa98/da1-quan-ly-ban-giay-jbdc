@@ -141,14 +141,15 @@ public class InuhaListXuatXuView extends javax.swing.JPanel {
             model.setRowCount(0);
             
             FillterRequest request = new FillterRequest();
-            
+            request.setSize(sizePage);
+	    
             int totalPages = xuatXuService.getTotalPage(request);
             if (totalPages < page) { 
                 page = totalPages;
             }
             
             request.setPage(page);
-            request.setSize(sizePage);
+
            
             dataItems = xuatXuService.getPage(request);
             

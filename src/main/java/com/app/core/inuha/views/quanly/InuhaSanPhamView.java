@@ -6,12 +6,14 @@ import com.app.common.helper.Pagination;
 import com.app.common.helper.QrCodeHelper;
 import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
+import com.app.core.inuha.models.InuhaSanPhamChiTietModel;
 import com.app.core.inuha.models.InuhaSanPhamModel;
 import com.app.core.inuha.models.sanpham.InuhaDanhMucModel;
 import com.app.core.inuha.models.sanpham.InuhaThuongHieuModel;
 import com.app.core.inuha.models.sanpham.InuhaXuatXuModel;
 import com.app.core.inuha.request.InuhaFilterSanPhamRequest;
 import com.app.core.inuha.services.InuhaDanhMucService;
+import com.app.core.inuha.services.InuhaSanPhamChiTietService;
 import com.app.core.inuha.services.InuhaSanPhamService;
 import com.app.core.inuha.services.InuhaThuongHieuService;
 import com.app.core.inuha.services.InuhaXuatXuService;
@@ -206,7 +208,8 @@ public class InuhaSanPhamView extends RoundPanel {
             ComboBoxItem<Integer> trangThai = (ComboBoxItem<Integer>) cboTrangThai.getSelectedItem();
 
             InuhaFilterSanPhamRequest request = new InuhaFilterSanPhamRequest(keyword, danhMuc.getValue(), thuongHieu.getValue(), trangThai.getValue());
-        
+            request.setSize(sizePage);
+	    
             int totalPages = sanPhamService.getTotalPage(request);
             
             if (totalPages < page) { 
@@ -214,7 +217,7 @@ public class InuhaSanPhamView extends RoundPanel {
             }
             
             request.setPage(page);
-            request.setSize(sizePage);
+
            
             dataItems = sanPhamService.getPage(request);
             
@@ -591,7 +594,7 @@ public class InuhaSanPhamView extends RoundPanel {
                 .addComponent(pnlList, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        tbpTab.addTab("Sanh sách sản phẩm", pnlDanhSachSanPham);
+        tbpTab.addTab("Danh sách sản phẩm", pnlDanhSachSanPham);
 
         pnlDanhSachSanPhamChiTiet.setOpaque(false);
 
@@ -792,7 +795,9 @@ public class InuhaSanPhamView extends RoundPanel {
                     if ((id = QrCodeUtils.getIdSanPham(code)) > 0) {
                         sanPhamModel = sanPhamService.getById(id);
                     } else if((id = QrCodeUtils.getIdSanPhamChiTiet(code)) > 0) { 
-
+			InuhaSanPhamChiTietService sanPhamChiTietService = new InuhaSanPhamChiTietService();
+			InuhaSanPhamChiTietModel sanPhamChiTietModel = sanPhamChiTietService.getById(id);
+			sanPhamModel = sanPhamChiTietModel.getSanPham();
                     } else { 
                         loading.dispose();
                         MessageToast.error("QRCode không hợp lệ!!!");

@@ -30,6 +30,8 @@ public class InuhaSanPhamModel {
     
     private String moTa;
     
+    private double giaNhap;
+	
     private double giaBan;
     
     private String hinhAnh;
@@ -65,9 +67,9 @@ public class InuhaSanPhamModel {
             ten,
             danhMuc.getTen(),
             thuongHieu.getTen(),
-            soLuong,
+            CurrencyUtils.parseString(soLuong),
             CurrencyUtils.parseString(giaBan),
-            trangThai ? "Đang bán" : "Dừng bán"
+            ProductUtils.getTrangThai(trangThai)
         };
     }
 }

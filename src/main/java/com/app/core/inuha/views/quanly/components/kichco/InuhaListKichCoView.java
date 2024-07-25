@@ -143,14 +143,15 @@ public class InuhaListKichCoView extends javax.swing.JPanel {
             model.setRowCount(0);
             
             FillterRequest request = new FillterRequest();
-            
+            request.setSize(sizePage);
+	    
             int totalPages = kichCoService.getTotalPage(request);
             if (totalPages < page) { 
                 page = totalPages;
             }
             
             request.setPage(page);
-            request.setSize(sizePage);
+
            
             dataItems = kichCoService.getPage(request);
             

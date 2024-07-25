@@ -30,8 +30,8 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
     public int insert(InuhaSanPhamModel model) throws SQLException {
         int result = 0;
         String query = String.format("""
-            INSERT INTO %s(id_danh_muc, id_thuong_hieu, id_xuat_xu, id_kieu_dang, id_chat_lieu, id_de_giay, ma, ten, mo_ta, gia_ban, hinh_anh, trang_thai, ngay_tao)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO %s(id_danh_muc, id_thuong_hieu, id_xuat_xu, id_kieu_dang, id_chat_lieu, id_de_giay, ma, ten, mo_ta, gia_nhap, gia_ban, hinh_anh, trang_thai, ngay_tao)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, TABLE_NAME);
         try {
             Object[] args = new Object[] {
@@ -44,6 +44,7 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
                 model.getMa(),
                 model.getTen(),
                 model.getMoTa(),
+		model.getGiaNhap(),
                 model.getGiaBan(),
                 model.getHinhAnh(),
                 model.isTrangThai(),
@@ -71,6 +72,7 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
                 id_de_giay = ?,
                 ten = ?,
                 mo_ta = ?,
+                gia_nhap = ?,
                 gia_ban = ?,
                 hinh_anh = ?,
                 trang_thai = ?,
@@ -88,6 +90,7 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
                 model.getDeGiay().getId(),
                 model.getTen(),
                 model.getMoTa(),
+		model.getGiaNhap(),
                 model.getGiaBan(),
                 model.getHinhAnh(),
                 model.isTrangThai(),
@@ -434,6 +437,7 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
             .ma(resultSet.getString("ma"))
             .ten(resultSet.getString("ten"))
             .moTa(resultSet.getString("mo_ta"))
+	    .giaNhap(resultSet.getDouble("gia_nhap"))
             .giaBan(resultSet.getDouble("gia_ban"))
             .hinhAnh(resultSet.getString("hinh_anh"))
             .trangThai(resultSet.getBoolean("trang_thai"))

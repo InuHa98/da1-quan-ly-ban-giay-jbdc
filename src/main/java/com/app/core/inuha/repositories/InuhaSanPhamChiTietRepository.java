@@ -342,6 +342,10 @@ public class InuhaSanPhamChiTietRepository implements IDAOinterface<InuhaSanPham
             resultSet = JbdcHelper.query(query, args);
             while(resultSet.next()) {
                 InuhaSanPhamChiTietModel model = buildData(resultSet);
+                Optional<InuhaSanPhamModel> sanPham = sanPhamRepository.getById(resultSet.getInt("id_san_pham"));
+                if (sanPham.isPresent()) { 
+                    model.setSanPham(sanPham.get());
+                }
                 list.add(model);
             }
         } catch(Exception e) {

@@ -20,6 +20,10 @@ public class CurrencyUtils {
     public static String parseString(long price) {
         return new DecimalFormat("#,###").format(price).replace(",", ".") + "đ";
     }
+    
+    public static String parseString(int price) {
+        return new DecimalFormat("#,###").format(price).replace(",", ".");
+    }
 
     public static String parseTextField(double price) {
         return new DecimalFormat("#,###").format(price).replace(",", ".");
