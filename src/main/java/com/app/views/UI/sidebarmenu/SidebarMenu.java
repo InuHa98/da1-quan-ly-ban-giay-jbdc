@@ -83,7 +83,7 @@ public class SidebarMenu extends JPanel {
                 Class<?> loadClass = Class.forName(className);
                 DashboardController.getInstance().show((JComponent) loadClass.getDeclaredConstructor().newInstance());
             } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException |
-                     InvocationTargetException e) {
+                InvocationTargetException e) {
                 throw new RuntimeException(e);
             }
 
@@ -154,7 +154,7 @@ public class SidebarMenu extends JPanel {
 
     private void handleChangeAvatar(MouseEvent event) {
         JnaFileChooser ch = new JnaFileChooser();
-        ch.addFilter("Image", "png", "jpg", "jpeg");
+        ch.addFilter("Hình ảnh", "png", "jpg", "jpeg");
         boolean act = ch.showOpenDialog(SwingUtilities.getWindowAncestor(this));
         if (act) {
             File selectedFile = ch.getSelectedFile();

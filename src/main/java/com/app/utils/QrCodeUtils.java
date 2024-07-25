@@ -34,7 +34,7 @@ public class QrCodeUtils {
     
     private static final int HEIGHT = 600;
     
-    private static final String IMAGE_FORMAT = "PNG";
+    public static final String IMAGE_FORMAT = "PNG";
     
     
     public static String generateCodeSanPham(int id) { 
@@ -72,27 +72,10 @@ public class QrCodeUtils {
         return matcher.matches();
     }
         
-    private static void generateQRCodeImage(String text, File file) throws WriterException, IOException {
+    public static void generateQRCodeImage(String text, File file) throws WriterException, IOException {
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
         BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, WIDTH, HEIGHT);
         MatrixToImageWriter.writeToPath(bitMatrix, IMAGE_FORMAT, file.toPath());
-    }
-
-    public static void save(String code, String fileName) {
-        JnaFileChooser ch = new JnaFileChooser();
-        ch.setMode(JnaFileChooser.Mode.Directories);
-        boolean act = ch.showOpenDialog(Application.app);
-        if (act) {
-            File folder = ch.getSelectedFile();
-            File file = new File(folder, fileName + "." + IMAGE_FORMAT.toLowerCase());
-            try {
-                generateQRCodeImage(code, file);
-                MessageToast.success("Lưu QR Code thành công!");
-            } catch (WriterException | IOException e) {
-                e.printStackTrace();
-                MessageToast.error("Không thể lưu QR Code!!!!");
-            }
-        }
     }
     
 }

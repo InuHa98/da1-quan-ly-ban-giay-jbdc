@@ -899,7 +899,7 @@ public class InuhaAddSanPhamView extends javax.swing.JPanel {
 
     private void handleClickButtonImage() {
         JnaFileChooser ch = new JnaFileChooser();
-        ch.addFilter("Image", "png", "jpg", "jpeg");
+        ch.addFilter("Hình ảnh", "png", "jpg", "jpeg");
         boolean act = ch.showOpenDialog(SwingUtilities.getWindowAncestor(this));
         if (act) {
             File file = ch.getSelectedFile();

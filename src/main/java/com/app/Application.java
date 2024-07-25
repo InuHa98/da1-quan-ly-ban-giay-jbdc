@@ -69,9 +69,9 @@ public class Application extends JFrame {
             }
 	
             ApplicationController.getInstance().setContext(new Application());
-            ApplicationController.getInstance().show(new LoginView());
-//	    ApplicationController.getInstance().show(new DashboardView());
-//	    DashboardController.getInstance().show(new InuhaSanPhamView());
+//            ApplicationController.getInstance().show(new LoginView());
+	    ApplicationController.getInstance().show(new DashboardView());
+	    DashboardController.getInstance().show(new InuhaSanPhamView());
 	    
             app = ApplicationController.getInstance().getContext();
             app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
