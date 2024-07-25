@@ -18,7 +18,7 @@ public class RouterConstant {
     
     public final static String HOA_DON = "com.app.core.dattv.views.DatHoaDonView";
     
-    public final static String KHACH_HANG = "com.app.core.lam.views.LamKhachHangViews";
+    public final static String KHACH_HANG = "com.app.core.lam.views.KhachHangView";
     
     public final static String NHAN_VIEN = "com.app.core.dung.views.DungNhanVienView";
     
