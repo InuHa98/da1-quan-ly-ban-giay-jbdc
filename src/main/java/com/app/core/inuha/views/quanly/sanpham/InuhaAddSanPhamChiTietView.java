@@ -397,7 +397,7 @@ public class InuhaAddSanPhamChiTietView extends javax.swing.JPanel {
 
         lblSoLuong.setForeground(ColorUtils.DANGER_COLOR);
         if (soLuong.isEmpty()) { 
-            MessageToast.error("Vui lòng nhập số lượng tồn");
+            MessageToast.error("Vui lòng nhập số lượng");
             txtSoLuong.requestFocus();
             return;
         }
@@ -464,6 +464,7 @@ public class InuhaAddSanPhamChiTietView extends javax.swing.JPanel {
 			    InuhaDetailSanPhamChiTietView.getInstance().updateView(model);
                         }
                         InuhaSanPhamView.getInstance().loadDataPage();
+			InuhaSanPhamView.getInstance().loadDataPageSPCT();
 			loading.dispose();
                         ModalDialog.closeModal(InuhaDetailSanPhamView.ID_MODAL_ADD);
                     } catch (ServiceResponseException e) {

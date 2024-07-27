@@ -1,5 +1,6 @@
 package com.app.core.inuha.services;
 
+import com.app.common.helper.JbdcHelper;
 import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.constants.TrangThaiXoaConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
@@ -123,6 +124,21 @@ public class InuhaDanhMucService implements IInuhaDanhMucServiceInterface {
             ex.printStackTrace();
         }
         return 0;
+    }
+    
+    public InuhaDanhMucModel insertByExcel(String name) {
+        try {
+	    Optional<InuhaDanhMucModel> find = repository.getByName(name);
+	    if (find.isPresent()) { 
+		return find.get();
+	    }
+	    InuhaDanhMucModel model = new InuhaDanhMucModel();
+	    model.setTen(name);
+	    insert(model);
+            return getById(JbdcHelper.getLastInsertedId());
+        } catch (Exception ex) {
+	    throw new ServiceResponseException("Không thể thêm dữ liệu");
+        }
     }
     
 }

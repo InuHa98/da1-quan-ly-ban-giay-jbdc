@@ -419,6 +419,60 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
         return totalPages;
     }
     
+    public Optional<InuhaSanPhamModel> getByCode(String code) throws SQLException {
+        ResultSet resultSet = null;
+        InuhaSanPhamModel model = null;
+
+        String query = String.format("""
+            SELECT
+                sp.*,
+                dm.ten AS ten_danh_muc,
+                dm.ngay_tao AS ngay_tao_danh_muc,
+                dm.ngay_cap_nhat AS ngay_cap_nhat_danh_muc,
+                th.ten AS ten_thuong_hieu,
+                th.ngay_tao AS ngay_tao_thuong_hieu,
+                th.ngay_cap_nhat AS ngay_cap_nhat_thuong_hieu,
+                xx.ten AS ten_xuat_xu,
+                xx.ngay_tao AS ngay_tao_xuat_xu,
+                xx.ngay_cap_nhat AS ngay_cap_nhat_xuat_xu,
+                kd.ten AS ten_kieu_dang,
+                kd.ngay_tao AS ngay_tao_kieu_dang,
+                kd.ngay_cap_nhat AS ngay_cap_nhat_kieu_dang,
+                cl.ten AS ten_chat_lieu,
+                cl.ngay_tao AS ngay_tao_chat_lieu,
+                cl.ngay_cap_nhat AS ngay_cap_nhat_chat_lieu,
+                dg.ten AS ten_de_giay,
+                dg.ngay_tao AS ngay_tao_de_giay,
+                dg.ngay_cap_nhat AS ngay_cap_nhat_de_giay,
+                (SELECT SUM(so_luong) FROM SanPhamChiTiet WHERE id_san_pham = sp.id) AS so_luong
+            FROM %s AS sp
+                LEFT JOIN DanhMuc AS dm ON dm.id = sp.id_danh_muc
+                LEFT JOIN ThuongHieu AS th ON th.id = sp.id_thuong_hieu
+                LEFT JOIN XuatXu AS xx ON xx.id = sp.id_xuat_xu
+                LEFT JOIN KieuDang AS kd ON kd.id = sp.id_kieu_dang
+                LEFT JOIN ChatLieu AS cl ON cl.id = sp.id_chat_lieu
+                LEFT JOIN DeGiay AS dg ON dg.id = sp.id_de_giay
+            WHERE
+                sp.ma LIKE ? AND
+                sp.trang_thai_xoa = 0
+        """, TABLE_NAME);
+
+        try {
+            resultSet = JbdcHelper.query(query, code);
+            while(resultSet.next()) {
+                model = buildData(resultSet, false);
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+            throw new SQLException(e.getMessage());
+        }
+        finally {
+            JbdcHelper.close(resultSet);
+        }
+
+        return Optional.ofNullable(model);
+    }
+	
     private InuhaSanPhamModel buildData(ResultSet resultSet) throws SQLException { 
         return buildData(resultSet, true);
     }

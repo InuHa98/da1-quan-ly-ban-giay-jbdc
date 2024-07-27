@@ -183,6 +183,7 @@ public class InuhaEditThuongHieuView extends JPanel {
                 InuhaAddSanPhamView.getInstance().loadDataThuongHieu();
                 InuhaListThuongHieuView.getInstance().loadDataPage();
 		InuhaSanPhamView.getInstance().loadDataPage();
+		InuhaSanPhamView.getInstance().loadDataPageSPCT();
                 ModalDialog.closeModal(InuhaListThuongHieuView.MODAL_ID_EDIT);
                 MessageToast.success("Chỉnh sửa thương hiệu thành công!");
             } catch (ServiceResponseException e) {

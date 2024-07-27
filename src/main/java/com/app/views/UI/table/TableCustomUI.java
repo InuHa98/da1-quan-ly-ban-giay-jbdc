@@ -11,6 +11,7 @@ import com.app.views.UI.table.celll.TableImageCellRender;
 import com.formdev.flatlaf.FlatClientProperties;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -20,6 +21,9 @@ import javax.swing.table.TableCellRenderer;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 
 /**
  *
@@ -46,7 +50,7 @@ public class TableCustomUI {
         table.setSelectionForeground(COLOR_SELECTION_TEXT);
         table.setSelectionBackground(COLOR_SELECTION_BACKGROUND);
         table.setGridColor(COLOR_GRID_COLOR);
-
+	
         table.getTableHeader().setReorderingAllowed(false);
         table.getTableHeader().putClientProperty(FlatClientProperties.STYLE, """
             height:30;
@@ -131,6 +135,56 @@ public class TableCustomUI {
         });
     }
 
+    public static void resizeColumnHeader(JTable table) {
+        JTableHeader header = table.getTableHeader();
+        TableColumnModel columnModel = table.getColumnModel();
+
+        for (int column = 0; column < table.getColumnCount(); column++) {
+            TableColumn tableColumn = columnModel.getColumn(column);
+
+            int maxWidth = 0;
+
+            TableCellRenderer headerRenderer = tableColumn.getHeaderRenderer();
+            if (headerRenderer == null) {
+                headerRenderer = header.getDefaultRenderer();
+            }
+            Component headerComp = headerRenderer.getTableCellRendererComponent(table, tableColumn.getHeaderValue(), false, false, 0, column);
+            maxWidth = headerComp.getPreferredSize().width;
+
+            for (int row = 0; row < table.getRowCount(); row++) {
+                TableCellRenderer cellRenderer = table.getCellRenderer(row, column);
+                Component cellComp = cellRenderer.getTableCellRendererComponent(table, table.getValueAt(row, column), false, false, row, column);
+                maxWidth = Math.max(maxWidth, cellComp.getPreferredSize().width);
+            }
+
+            tableColumn.setPreferredWidth(maxWidth + table.getIntercellSpacing().width + 30);
+        }
+    }
+    
+    private static void adjustLastColumnWidth(JTable table) {
+        int totalWidth = table.getPreferredSize().width;
+        int visibleWidth = table.getVisibleRect().width;
+        TableColumnModel columnModel = table.getColumnModel();
+        int lastColumnIndex = columnModel.getColumnCount() - 1;
+        TableColumn lastColumn = columnModel.getColumn(lastColumnIndex);
+
+        // Đảm bảo cột cuối cùng bám sát vào bên phải
+        int lastColumnWidth = visibleWidth - getTotalColumnWidthsExceptLast(table, lastColumnIndex);
+        lastColumn.setPreferredWidth(lastColumnWidth);
+    }
+
+    private static int getTotalColumnWidthsExceptLast(JTable table, int lastColumnIndex) {
+        TableColumnModel columnModel = table.getColumnModel();
+        int totalWidth = 0;
+
+        for (int i = 0; i < lastColumnIndex; i++) {
+            TableColumn column = columnModel.getColumn(i);
+            totalWidth += column.getPreferredWidth();
+        }
+
+        return totalWidth;
+    }
+    
     public static enum TableType {
         MULTI_LINE, DEFAULT
     }

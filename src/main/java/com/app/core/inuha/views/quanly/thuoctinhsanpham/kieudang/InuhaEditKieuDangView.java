@@ -179,6 +179,7 @@ public class InuhaEditKieuDangView extends JPanel {
                 kieuDangService.update(model);
                 InuhaAddSanPhamView.getInstance().loadDataKieuDang();
                 InuhaListKieuDangView.getInstance().loadDataPage();
+		InuhaSanPhamView.getInstance().loadDataPageSPCT();
 		InuhaSanPhamView.getInstance().loadDataKieuDang();
                 ModalDialog.closeModal(InuhaListKieuDangView.MODAL_ID_EDIT);
                 MessageToast.success("Chỉnh sửa kiểu dáng thành công!");

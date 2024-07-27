@@ -64,6 +64,7 @@ public class WebcamQRCodeScanPanel extends RoundPanel {
             instance.close();
             instance.initializeWebcam();
             loading.dispose();
+	    executorService.shutdown();
         });
         loading.setVisible(true);
 

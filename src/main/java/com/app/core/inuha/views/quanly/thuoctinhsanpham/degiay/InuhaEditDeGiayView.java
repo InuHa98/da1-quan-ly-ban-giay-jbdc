@@ -181,6 +181,7 @@ public class InuhaEditDeGiayView extends JPanel {
                 InuhaAddSanPhamView.getInstance().loadDataDeGiay();
                 InuhaListDeGiayView.getInstance().loadDataPage();
 		InuhaSanPhamView.getInstance().loadDataDeGiay();
+		InuhaSanPhamView.getInstance().loadDataPageSPCT();
                 ModalDialog.closeModal(InuhaListDeGiayView.MODAL_ID_EDIT);
                 MessageToast.success("Chỉnh sửa đế giày thành công!");
             } catch (ServiceResponseException e) {

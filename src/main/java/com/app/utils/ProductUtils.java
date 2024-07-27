@@ -79,7 +79,7 @@ public class ProductUtils {
     }
     
     public static String getTrangThai(boolean trangThai) { 
-	return trangThai ? "Đang bán" : "Dừng bán";
+	return trangThai ? "Đang bán" : "Ngừng bán";
     }
 
 }

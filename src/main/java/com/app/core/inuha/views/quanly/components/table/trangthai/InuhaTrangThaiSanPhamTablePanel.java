@@ -61,7 +61,7 @@ public class InuhaTrangThaiSanPhamTablePanel extends javax.swing.JPanel {
         txtText = new javax.swing.JLabel();
 
         txtText.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        txtText.setText("Dừng bán");
+        txtText.setText("Ngừng bán");
 
         javax.swing.GroupLayout pnlContainerLayout = new javax.swing.GroupLayout(pnlContainer);
         pnlContainer.setLayout(pnlContainerLayout);

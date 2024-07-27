@@ -81,7 +81,8 @@ public class InuhaSanPhamChiTietModel {
 	    CurrencyUtils.parseString(sanPham.getGiaNhap()),
 	    CurrencyUtils.parseString(sanPham.getGiaBan()),
             CurrencyUtils.parseString(soLuong),
-            getTrangThai()
+            getTrangThai(),
+	    sanPham.getMoTa()
 	};
     }
 	

@@ -8,6 +8,7 @@ import com.app.core.inuha.models.InuhaTaiKhoanModel;
 import com.app.core.inuha.services.InuhaTaiKhoanService;
 import com.app.core.inuha.views.all.InuhaChangePasswordView;
 import com.app.core.inuha.views.guest.LoginView;
+import com.app.views.UI.dialog.LoadingDialog;
 import lombok.Getter;
 
 import javax.swing.*;
@@ -77,14 +78,19 @@ public class SessionLogin {
     }
 
     public void logout() {
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
+	LoadingDialog loading = new LoadingDialog();
+        ExecutorService executorService = Executors.newFixedThreadPool(2);
         executorService.submit(() -> {
             if (MessageModal.confirmInfo("Bạn thực sự muốn đăng xuất?")) {
-                clear();
-                ApplicationController.getInstance().show(new LoginView());
+		executorService.submit(() -> {
+		    clear();
+		    ApplicationController.getInstance().show(new LoginView());
+		    loading.dispose();
+		});
+		loading.setVisible(true);
+		executorService.shutdown();
             }
         });
-        executorService.shutdown();
     }
 
     public void changePassword() {
