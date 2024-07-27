@@ -7,7 +7,7 @@ import com.app.core.dung.views.DungNhanVienView;
 import com.app.core.inuha.views.quanly.InuhaSanPhamView;
 import com.app.core.khoi.views.KhoiPhieuGiamGiaView;
 import com.app.core.kienhacker.views.KienDotGiamGiaView;
-import com.app.core.lam.views.LamKhachHangViews;
+import com.app.core.lam.views.KhachHangView;
 import com.app.utils.RouterUtils;
 
 /**
