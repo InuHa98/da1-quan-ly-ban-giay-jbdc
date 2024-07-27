@@ -9,6 +9,7 @@ import com.app.core.inuha.models.InuhaSanPhamModel;
 import com.app.core.inuha.models.sanpham.InuhaKieuDangModel;
 import com.app.core.inuha.repositories.InuhaSanPhamRepository;
 import com.app.core.inuha.services.impl.IInuhaSanPhamServiceInterface;
+import com.app.utils.ProductUtils;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -88,12 +89,13 @@ public class InuhaSanPhamService implements IInuhaSanPhamServiceInterface {
                 throw new ServiceResponseException("Không tìm thấy sản phẩm");
             }
             
+	    InuhaSanPhamModel item = find.get();
             if (repository.hasUse(id)) { 
-                InuhaSanPhamModel item = find.get();
                 item.setTrangThaiXoa(TrangThaiXoaConstant.DA_XOA);
                 repository.update(item);
             } else { 
                 repository.delete(id);
+		ProductUtils.removeImageProduct(item.getHinhAnh());
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
