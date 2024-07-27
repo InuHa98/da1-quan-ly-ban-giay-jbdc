@@ -1,16 +1,22 @@
 package com.app.core.inuha.services;
 
+import com.app.common.helper.JbdcHelper;
 import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.constants.TrangThaiXoaConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
 import com.app.common.infrastructure.request.FillterRequest;
 import com.app.core.inuha.models.InuhaSanPhamChiTietModel;
+import com.app.core.inuha.models.InuhaSanPhamModel;
+import com.app.core.inuha.models.sanpham.InuhaKichCoModel;
 import com.app.core.inuha.repositories.InuhaSanPhamChiTietRepository;
+import com.app.core.inuha.repositories.InuhaSanPhamRepository;
 import com.app.core.inuha.services.impl.IInuhaSanPhamChiTietServiceInterface;
+import com.app.utils.ProductUtils;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.apache.logging.log4j.util.ProcessIdUtil;
 
 /**
  *
@@ -165,4 +171,30 @@ public class InuhaSanPhamChiTietService implements IInuhaSanPhamChiTietServiceIn
         return null;
     }
     
+    public boolean insertByExcel(InuhaSanPhamChiTietModel model) {
+        try {
+	    if (model.getMa() == null && model.getSanPham().getMa() == null) {
+		return false;
+	    }
+	    
+	    Optional<InuhaSanPhamChiTietModel> findChiTiet = repository.getByCode(model.getMa());
+	    if (findChiTiet.isPresent()) {
+		model.setId(findChiTiet.get().getId());
+		update(model);
+		return true;
+	    }
+	    
+	    InuhaSanPhamRepository sanPhamRepository = new InuhaSanPhamRepository();
+	    Optional<InuhaSanPhamModel> findSanPham = sanPhamRepository.getByCode(model.getSanPham().getMa());
+	    if (findSanPham.isEmpty()) {
+		throw new IllegalArgumentException();
+	    }
+	    model.getSanPham().setId(findSanPham.get().getId());
+	    model.setMa(ProductUtils.generateCodeSanPhamChiTiet());
+	    insert(model);
+	    return true;
+        } catch (Exception ex) {
+	    throw new ServiceResponseException("Không thể thêm dữ liệu");
+        }
+    }
 }

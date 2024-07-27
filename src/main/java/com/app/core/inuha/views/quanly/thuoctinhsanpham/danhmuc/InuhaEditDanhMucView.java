@@ -184,6 +184,7 @@ public class InuhaEditDanhMucView extends JPanel {
                 InuhaAddSanPhamView.getInstance().loadDataDanhMuc();
                 InuhaListDanhMucView.getInstance().loadDataPage();
 		InuhaSanPhamView.getInstance().loadDataPage();
+		InuhaSanPhamView.getInstance().loadDataPageSPCT();
                 ModalDialog.closeModal(InuhaListDanhMucView.MODAL_ID_EDIT);
                 MessageToast.success("Chỉnh sửa danh mục thành công!");
             } catch (ServiceResponseException e) {

@@ -3,6 +3,7 @@ package com.app.core.inuha.repositories.sanpham;
 import com.app.common.helper.JbdcHelper;
 import com.app.common.infrastructure.interfaces.IDAOinterface;
 import com.app.common.infrastructure.request.FillterRequest;
+import com.app.core.inuha.models.sanpham.InuhaKieuDangModel;
 import com.app.core.inuha.models.sanpham.InuhaMauSacModel;
 import com.app.utils.TimeUtils;
 import java.sql.ResultSet;
@@ -240,6 +241,28 @@ public class InuhaMauSacRepository implements IDAOinterface<InuhaMauSacModel, In
             throw new SQLException(e.getMessage());
         }
         return totalPages;
+    }
+    
+    public Optional<InuhaMauSacModel> getByName(String name) throws SQLException {
+        ResultSet resultSet = null;
+        InuhaMauSacModel model = null;
+
+        String query = String.format("SELECT * FROM %s WHERE ten LIKE ? AND trang_thai_xoa = 0", TABLE_NAME);
+
+        try {
+            resultSet = JbdcHelper.query(query, String.format("%%%s%%", name));
+            while(resultSet.next()) {
+                model = buildData(resultSet, false);
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+            throw new SQLException(e.getMessage());
+        }
+        finally {
+            JbdcHelper.close(resultSet);
+        }
+
+        return Optional.ofNullable(model);
     }
     
     private InuhaMauSacModel buildData(ResultSet resultSet) throws SQLException { 

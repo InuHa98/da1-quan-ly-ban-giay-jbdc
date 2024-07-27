@@ -180,6 +180,7 @@ public class InuhaEditXuatXuView extends JPanel {
                 InuhaAddSanPhamView.getInstance().loadDataXuatXu();
                 InuhaListXuatXuView.getInstance().loadDataPage();
 		InuhaSanPhamView.getInstance().loadDataXuatXu();
+		InuhaSanPhamView.getInstance().loadDataPageSPCT();
                 ModalDialog.closeModal(InuhaListXuatXuView.MODAL_ID_EDIT);
                 MessageToast.success("Chỉnh sửa xuất xứ thành công!");
             } catch (ServiceResponseException e) {

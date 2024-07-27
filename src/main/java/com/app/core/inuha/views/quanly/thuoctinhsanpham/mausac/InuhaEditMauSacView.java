@@ -183,6 +183,7 @@ public class InuhaEditMauSacView extends JPanel {
 		InuhaDetailSanPhamView.getInstance().loadDataPage();
                 InuhaAddSanPhamChiTietView.getInstance().loadDataMauSac();
                 InuhaListMauSacView.getInstance().loadDataPage();
+		InuhaSanPhamView.getInstance().loadDataPageSPCT();
 		InuhaSanPhamView.getInstance().loadDataMauSac();
                 ModalDialog.closeModal(InuhaListMauSacView.MODAL_ID_EDIT);
                 MessageToast.success("Chỉnh sửa màu sắc thành công!");

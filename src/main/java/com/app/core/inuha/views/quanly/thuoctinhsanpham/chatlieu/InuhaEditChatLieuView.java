@@ -180,6 +180,7 @@ public class InuhaEditChatLieuView extends JPanel {
                 InuhaAddSanPhamView.getInstance().loadDataChatLieu();
                 InuhaListChatLieuView.getInstance().loadDataPage();
 		InuhaSanPhamView.getInstance().loadDataChatLieu();
+		InuhaSanPhamView.getInstance().loadDataPageSPCT();
                 ModalDialog.closeModal(InuhaListChatLieuView.MODAL_ID_EDIT);
                 MessageToast.success("Chỉnh sửa chất liệu thành công!");
             } catch (ServiceResponseException e) {

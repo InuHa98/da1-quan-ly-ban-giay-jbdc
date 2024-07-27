@@ -75,8 +75,7 @@ public class SidebarMenu extends JPanel {
     public SidebarMenu() {
 	instance = this;
         initComponents();
-		
-        this.initMenu((index) -> {
+	ISidebarMenuEvent event = (index) -> {
 
             Optional<SidebarMenuItem> item = itemsMenu.stream().filter(o -> o.getIndex() == index).findFirst();
             if (item.isEmpty()) {
@@ -98,7 +97,9 @@ public class SidebarMenu extends JPanel {
                 throw new RuntimeException(e);
             }
 
-        });
+        };
+	
+        this.initMenu(event);
 
         int maxLengthText = 23;
 
@@ -253,6 +254,7 @@ public class SidebarMenu extends JPanel {
                     });
 
                     loading.setVisible(true);
+		    
                 }
             });
 
@@ -282,7 +284,7 @@ public class SidebarMenu extends JPanel {
         SidebarMenuButton menuButton = new SidebarMenuButton(index, callback);
         setFont(menuButton.getFont().deriveFont(Font.PLAIN, 14));
         menuButton.setIcon(ComponentUtils.resizeImage(ResourceUtils.getImageAssets("sidemenu/" + icon + ".png"), 24, 24));
-        menuButton.setText("       " + text);
+        menuButton.setText("        " + text);
         menuButton.addActionListener((e) -> {
             if (!animator.isRunning()) {
                 if (menuButton != selectedMenu) {
@@ -292,7 +294,14 @@ public class SidebarMenu extends JPanel {
                         unSelectedMenu = selectedMenu;
                         selectedMenu = menuButton;
                         animator.start();
-                        menuEvent.menuSelected(menuButton.getIndex());
+			LoadingDialog loading = new LoadingDialog();
+			ExecutorService executorService = Executors.newSingleThreadExecutor();
+			executorService.submit(() -> {
+			    menuEvent.menuSelected(menuButton.getIndex());
+			    loading.dispose();
+			    executorService.shutdown();
+			});
+                        loading.setVisible(true);
                     }
                 }
             }

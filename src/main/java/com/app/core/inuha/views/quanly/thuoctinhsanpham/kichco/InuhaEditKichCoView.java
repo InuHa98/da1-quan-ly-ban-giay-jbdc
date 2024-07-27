@@ -182,6 +182,7 @@ public class InuhaEditKichCoView extends JPanel {
                 InuhaDetailSanPhamView.getInstance().loadDataKichCo();
                 InuhaAddSanPhamChiTietView.getInstance().loadDataKichCo();
 		InuhaDetailSanPhamView.getInstance().loadDataPage();
+		InuhaSanPhamView.getInstance().loadDataPageSPCT();
                 InuhaListKichCoView.getInstance().loadDataPage();
 		InuhaSanPhamView.getInstance().loadDataKichCo();
                 ModalDialog.closeModal(InuhaListKichCoView.MODAL_ID_EDIT);

@@ -1,9 +1,12 @@
 package com.app.core.inuha.services;
 
+import com.app.common.helper.JbdcHelper;
 import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.constants.TrangThaiXoaConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
 import com.app.common.infrastructure.request.FillterRequest;
+import com.app.core.inuha.models.sanpham.InuhaDanhMucModel;
+import com.app.core.inuha.models.sanpham.InuhaThuongHieuModel;
 import com.app.core.inuha.models.sanpham.InuhaXuatXuModel;
 import com.app.core.inuha.repositories.sanpham.InuhaXuatXuRepository;
 import com.app.core.inuha.services.impl.IInuhaXuatXuServiceInterface;
@@ -123,6 +126,21 @@ public class InuhaXuatXuService implements IInuhaXuatXuServiceInterface {
             ex.printStackTrace();
         }
         return 0;
+    }
+    
+    public InuhaXuatXuModel insertByExcel(String name) {
+        try {
+	    Optional<InuhaXuatXuModel> find = repository.getByName(name);
+	    if (find.isPresent()) { 
+		return find.get();
+	    }
+	    InuhaXuatXuModel model = new InuhaXuatXuModel();
+	    model.setTen(name);
+	    insert(model);
+            return getById(JbdcHelper.getLastInsertedId());
+        } catch (Exception ex) {
+	    throw new ServiceResponseException("Không thể thêm dữ liệu");
+        }
     }
     
 }

@@ -28,6 +28,7 @@ import com.app.utils.CurrencyUtils;
 import com.app.utils.ProductUtils;
 import com.app.utils.QrCodeUtils;
 import com.app.utils.ResourceUtils;
+import com.app.utils.TimeUtils;
 import com.app.views.UI.combobox.ComboBoxItem;
 import com.app.views.UI.dialog.LoadingDialog;
 import com.app.views.UI.picturebox.DefaultPictureBoxRender;
@@ -48,6 +49,8 @@ import com.app.views.UI.table.celll.TableActionCellEditor;
 import com.app.views.UI.table.celll.TableActionCellRender;
 import java.awt.Rectangle;
 import java.awt.Shape;
+import static java.time.Instant.now;
+import java.time.format.DateTimeFormatter;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import javax.swing.JPanel;
@@ -117,7 +120,7 @@ public class InuhaDetailSanPhamView extends JPanel {
         cboTrangThai.removeAllItems();
         cboTrangThai.addItem(new ComboBoxItem<>("-- Tất cả trạng thái --", -1));
         cboTrangThai.addItem(new ComboBoxItem<>("Đang bán", 1));
-        cboTrangThai.addItem(new ComboBoxItem<>("Dừng bán", 0));
+        cboTrangThai.addItem(new ComboBoxItem<>("Ngừng bán", 0));
         
         pictureBox.setImage(QrCodeHelper.getImage(QrCodeUtils.generateCodeSanPham(sanPham.getId())));
         pictureBox.setBoxFit(PictureBox.BoxFit.CONTAIN);
@@ -195,6 +198,7 @@ public class InuhaDetailSanPhamView extends JPanel {
                                 sanPhamChiTietService.delete(item.getId());
                                 loadingDialog.dispose();
                                 InuhaSanPhamView.getInstance().loadDataPage();
+				InuhaSanPhamView.getInstance().loadDataPageSPCT();
                                 loadDataPage();
                                 MessageToast.success("Xoá thành công sản phẩm chi tiết");
                             } catch (ServiceResponseException e) {
@@ -857,23 +861,15 @@ public class InuhaDetailSanPhamView extends JPanel {
     // End of variables declaration//GEN-END:variables
 
     private void handleClickButtonExport() {
-        String fileName = sanPham.getMa() + "-" + System.currentTimeMillis();
+        String fileName = sanPham.getMa() + "-" + TimeUtils.now("dd_MM_yyyy__hh_mm_a");
 	String[] headers = new String[] {
 	    "STT",
-	    "Mã sản phẩm",
 	    "Mã chi tiết",
+	    "Mã sản phẩm",
 	    "Tên sản phẩm",
-	    "Danh mục",
-	    "Thương hiệu",
-	    "Xuất xứ",
-	    "Kiểu dáng",
-	    "Chất liệu",
-	    "Đế giày",
 	    "Kích cỡ",
 	    "Màu sắc",
-	    "Giá nhập",
-	    "Giá bán",
-	    "Số lượng tồn",
+	    "Số lượng",
 	    "Trạng thái"
 	};
 
@@ -891,19 +887,11 @@ public class InuhaDetailSanPhamView extends JPanel {
 		for(InuhaSanPhamChiTietModel item: items) { 
 		    rows.add(new String[] { 
 			String.valueOf(i++),
-			item.getSanPham().getMa(),
 			item.getMa(),
+			item.getSanPham().getMa(),
 			item.getSanPham().getTen(),
-			item.getSanPham().getDanhMuc().getTen(),
-			item.getSanPham().getThuongHieu().getTen(),
-			item.getSanPham().getXuatXu().getTen(),
-			item.getSanPham().getKieuDang().getTen(),
-			item.getSanPham().getChatLieu().getTen(),
-			item.getSanPham().getDeGiay().getTen(),
 			item.getKichCo().getTen(),
 			item.getMauSac().getTen(),
-			CurrencyUtils.parseString(item.getSanPham().getGiaNhap()),
-			CurrencyUtils.parseString(item.getSanPham().getGiaBan()),
 			CurrencyUtils.parseTextField(item.getSoLuong()),
 			ProductUtils.getTrangThai(item.getTrangThai())
 		    });

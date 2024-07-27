@@ -452,7 +452,48 @@ public class InuhaSanPhamChiTietRepository implements IDAOinterface<InuhaSanPham
         }
         return totalPages;
     }
-    
+
+    public Optional<InuhaSanPhamChiTietModel> getByCode(String ma) throws SQLException {
+        ResultSet resultSet = null;
+        InuhaSanPhamChiTietModel model = null;
+
+        String query = String.format("""
+            SELECT
+                spct.*,
+                kc.ten AS ten_kich_co,
+                kc.ngay_tao AS ngay_tao_kich_co,
+                kc.ngay_cap_nhat AS ngay_cap_nhat_kich_co,
+                ms.ten AS ten_mau_sac,
+                ms.ngay_tao AS ngay_tao_mau_sac,
+                ms.ngay_cap_nhat AS ngay_cap_nhat_mau_sac
+            FROM %s AS spct
+                LEFT JOIN KichCo AS kc ON kc.id = spct.id_kich_co
+                LEFT JOIN MauSac AS ms ON ms.id = spct.id_mau_sac
+            WHERE
+                spct.ma = ? AND
+                spct.trang_thai_xoa = 0
+        """, TABLE_NAME);
+
+        try {
+            resultSet = JbdcHelper.query(query, ma);
+            while(resultSet.next()) {
+                model = buildData(resultSet, false);
+                Optional<InuhaSanPhamModel> sanPham = sanPhamRepository.getById(resultSet.getInt("id_san_pham"));
+                if (sanPham.isPresent()) { 
+                    model.setSanPham(sanPham.get());
+                }
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+            throw new SQLException(e.getMessage());
+        }
+        finally {
+            JbdcHelper.close(resultSet);
+        }
+
+        return Optional.ofNullable(model);
+    }
+	
     private InuhaSanPhamChiTietModel buildData(ResultSet resultSet) throws SQLException { 
         return buildData(resultSet, true);
     }

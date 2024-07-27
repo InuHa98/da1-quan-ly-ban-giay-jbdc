@@ -1111,11 +1111,13 @@ public class InuhaAddSanPhamView extends javax.swing.JPanel {
                             loading.dispose();
                             MessageToast.success("Thếm mới sản phẩm thành công.");
                             InuhaSanPhamView.getInstance().loadDataPage(1);
+			    InuhaSanPhamView.getInstance().loadDataPageSPCT(1);
                         } else {
                             sanPhamService.update(model);
                             loading.dispose();
                             MessageToast.success("Lưu chỉnh sửa sản phẩm thành công.");
                             InuhaSanPhamView.getInstance().loadDataPage();
+			    InuhaSanPhamView.getInstance().loadDataPageSPCT();
                         }
 
                         ModalDialog.closeAllModal();
