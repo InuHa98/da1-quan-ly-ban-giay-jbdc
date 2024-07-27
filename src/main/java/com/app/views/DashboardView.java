@@ -1,5 +1,6 @@
 package com.app.views;
 
+import com.app.Application;
 import com.app.common.controller.DashboardController;
 import com.app.common.infrastructure.router.NhanVienRoute;
 import com.app.common.infrastructure.router.QuanLyRoute;
@@ -8,10 +9,14 @@ import com.app.utils.SessionUtils;
 import com.app.views.UI.sidebarmenu.SidebarMenu;
 import com.app.views.UI.sidebarmenu.SidebarMenuContent;
 import com.app.views.UI.sidebarmenu.SidebarMenuItem;
+import java.awt.Dimension;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import java.util.List;
+import java.util.TimerTask;
 
 /**
  *
@@ -30,7 +35,7 @@ public class DashboardView extends JPanel {
         context = this;
         sidebarMenu = new SidebarMenu();
         sidebarMenuContent = new SidebarMenuContent();
-        
+
         add(sidebarMenu);
         add(sidebarMenuContent, "grow, push, wrap");
         
@@ -44,12 +49,12 @@ public class DashboardView extends JPanel {
             sidebarMenu.setSelected(itemsMenu.get(0).getIndex());
         }
 
-        
+
     }
 
     private void initComponents() {
         this.setBackground(ColorUtils.BACKGROUND_DASHBOARD);
-        this.setLayout(new MigLayout("fill, insets 0 0 0 0", "[left]rel[grow,fill]", "[top]"));
+        this.setLayout(new MigLayout("fill, insets 0 0 0 0", "[left]0[grow,fill]", "[top]"));
     }
 
 }

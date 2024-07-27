@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -62,6 +64,7 @@ public class WebcamQRCodeScanPanel extends RoundPanel {
             instance.close();
             instance.initializeWebcam();
             loading.dispose();
+	    executorService.shutdown();
         });
         loading.setVisible(true);
 
@@ -82,12 +85,24 @@ public class WebcamQRCodeScanPanel extends RoundPanel {
         
         webcam.setViewSize(WebcamResolution.VGA.getSize());
         
-        try {
-            webcam.open();
-        } catch(Exception e) { 
-            MessageModal.error("Webcam đang bị tắt hoặc đã được chạy trên ứng dụng khác!!!");
-            return;
-        }
+	int check = 0;
+	while (true) {
+	    try {
+		webcam.open();
+		break;
+	    } catch(Exception e) { 
+		if (check > 3) {
+		    MessageModal.error("Webcam đang bị tắt hoặc đã được chạy trên ứng dụng khác!!!");
+		    return;		    
+		}
+	    }
+	    try {
+		Thread.sleep(500);
+	    } catch (InterruptedException ex) {
+		ex.printStackTrace();
+	    }
+	    check++;
+	}
 
         panel = new WebcamPanel(webcam);
         panel.setFPSDisplayed(false);
@@ -118,7 +133,7 @@ public class WebcamQRCodeScanPanel extends RoundPanel {
         }
         
         while (true) {
-            if (isExists()) { 
+            if (!isExists()) { 
                 close();
                 return;
             }
@@ -169,9 +184,9 @@ public class WebcamQRCodeScanPanel extends RoundPanel {
         }
 
         try { 
-            return !ModalDialog.isIdExist(QrCodeUtils.MODAL_SCAN_ID);
+            return ModalDialog.isIdExist(QrCodeUtils.MODAL_SCAN_ID);
         } catch (Exception e) { 
-            return true;
+            return false;
         }
     }
     

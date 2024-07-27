@@ -56,27 +56,20 @@ public class DashboardController {
             return;
         }
         
-        LoadingDialog loading = new LoadingDialog();
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-        executorService.submit(() -> {
-            EventQueue.invokeLater(() -> {
-                content.removeAll();
+	EventQueue.invokeLater(() -> {
+	    content.removeAll();
 
-                JScrollPane scroll = new JScrollPane();
-                scroll.setViewportBorder(null);
-                scroll.setBorder(null);
-                scroll.getViewport().setOpaque(false);
-                scroll.getVerticalScrollBar().setUI(new ScrollBarCustomUI());
-                scroll.getHorizontalScrollBar().setUI(new ScrollBarCustomUI());
-                scroll.setViewportView(component);
-                content.add(scroll);
-                content.revalidate();
-                content.repaint();
-                
-                loading.dispose();
-            });
-        });
-        loading.setVisible(true);
+	    JScrollPane scroll = new JScrollPane();
+	    scroll.setViewportBorder(null);
+	    scroll.setBorder(null);
+	    scroll.getViewport().setOpaque(false);
+	    scroll.getVerticalScrollBar().setUI(new ScrollBarCustomUI());
+	    scroll.getHorizontalScrollBar().setUI(new ScrollBarCustomUI());
+	    scroll.setViewportView(component);
+	    content.add(scroll);
+	    content.revalidate();
+	    content.repaint();
+	});
     }
 
 }

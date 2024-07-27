@@ -1,10 +1,12 @@
 package com.app.core.inuha.services;
 
+import com.app.common.helper.JbdcHelper;
 import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.constants.TrangThaiXoaConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
 import com.app.common.infrastructure.request.FillterRequest;
 import com.app.core.inuha.models.InuhaSanPhamModel;
+import com.app.core.inuha.models.sanpham.InuhaKieuDangModel;
 import com.app.core.inuha.repositories.InuhaSanPhamRepository;
 import com.app.core.inuha.services.impl.IInuhaSanPhamServiceInterface;
 import java.sql.SQLException;
@@ -154,6 +156,18 @@ public class InuhaSanPhamService implements IInuhaSanPhamServiceInterface {
             ex.printStackTrace();
         }
         return null;
+    }
+    
+    public InuhaSanPhamModel getByCode(String ma) {
+        try {
+            Optional<InuhaSanPhamModel> find = repository.getByCode(ma);
+            if (find.isEmpty()) { 
+                throw new SQLException();
+            }
+            return find.get();
+        } catch (SQLException ex) {
+            throw new ServiceResponseException("Không tìm thấy sản phẩm");
+        }
     }
     
 }
