@@ -69,7 +69,7 @@ public class InuhaSanPhamModel {
             thuongHieu.getTen(),
             CurrencyUtils.parseString(soLuong),
             CurrencyUtils.parseString(giaBan),
-            ProductUtils.getTrangThai(trangThai)
+            trangThai
         };
     }
 }

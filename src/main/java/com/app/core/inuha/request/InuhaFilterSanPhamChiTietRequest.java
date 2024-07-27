@@ -12,7 +12,21 @@ import lombok.Setter;
 @AllArgsConstructor
 public class InuhaFilterSanPhamChiTietRequest extends FillterRequest {
     
+    private String keyword;
+    
     private int idSanPham;
+    
+    private int idDanhMuc;
+    
+    private int idThuongHieu;
+    
+    private int idXuatXu;
+    
+    private int idKieuDang;
+    
+    private int idChatLieu;
+    
+    private int idDeGiay;
     
     private int idKichCo;
     

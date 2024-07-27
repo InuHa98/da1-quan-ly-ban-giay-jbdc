@@ -8,6 +8,7 @@ import com.app.core.inuha.views.quanly.InuhaSanPhamView;
 import com.app.core.khoi.views.KhoiPhieuGiamGiaView;
 import com.app.core.kienhacker.views.KienDotGiamGiaView;
 import com.app.core.lam.views.LamKhachHangViews;
+import com.app.utils.RouterUtils;
 
 /**
  *
@@ -19,7 +20,7 @@ public class RouterConstant {
     
     public final static String BAN_HANG = "com.app.core.all.views.BanHangView";
 	
-    public final static String SAN_PHAM = InuhaSanPhamView.class.getPackageName();
+    public final static String SAN_PHAM = RouterUtils.getPackageName(InuhaSanPhamView.class);
     
     public final static String PHIEU_GIAM_GIA = "com.app.core.khoi.views.KhoiPhieuGiamGiaView";
     

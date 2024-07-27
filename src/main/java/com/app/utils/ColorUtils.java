@@ -29,7 +29,7 @@ public class ColorUtils {
 
     public static Color BACKGROUND_GRAY = new Color(49, 51, 56);
 
-    public static Color BACKGROUND_DARK = new Color(43, 45, 49);
+    public static Color BACKGROUND_DARK = new Color(30, 31, 34);
 	
     public static Color BACKGROUND_HOVER = new Color(65, 69, 89);
 

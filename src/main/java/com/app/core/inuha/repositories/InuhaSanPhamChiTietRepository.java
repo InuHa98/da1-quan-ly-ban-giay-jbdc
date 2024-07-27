@@ -35,14 +35,15 @@ public class InuhaSanPhamChiTietRepository implements IDAOinterface<InuhaSanPham
     public int insert(InuhaSanPhamChiTietModel model) throws SQLException {
         int result = 0;
         String query = String.format("""
-            INSERT INTO %s(id_san_pham, id_kich_co, id_mau_sac, so_luong, trang_thai, ngay_tao)
-            VALUES (?, ?, ?, ?, ?, ?)
+            INSERT INTO %s(id_san_pham, id_kich_co, id_mau_sac, ma,  so_luong, trang_thai, ngay_tao)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
         """, TABLE_NAME);
         try {
             Object[] args = new Object[] {
                 model.getSanPham().getId(),
                 model.getKichCo().getId(),
                 model.getMauSac().getId(),
+		model.getMa(),
                 model.getSoLuong(),
                 model.isTrangThai(),
                 TimeUtils.currentDate()
@@ -114,10 +115,10 @@ public class InuhaSanPhamChiTietRepository implements IDAOinterface<InuhaSanPham
         }
     }
 
-    public boolean has(Integer idKichCo, Integer idMauSac) throws SQLException {
-        String query = String.format("SELECT TOP(1) 1 FROM %s WHERE id_kich_co = ? AND id_mau_sac = ? AND trang_thai_xoa = 0", TABLE_NAME);
+    public boolean has(Integer idSanPham, Integer idKichCo, Integer idMauSac) throws SQLException {
+        String query = String.format("SELECT TOP(1) 1 FROM %s WHERE id_san_pham = ? AND id_kich_co = ? AND id_mau_sac = ? AND trang_thai_xoa = 0", TABLE_NAME);
         try {
-            return JbdcHelper.value(query, idKichCo, idMauSac) != null;
+            return JbdcHelper.value(query, idSanPham, idKichCo, idMauSac) != null;
         } catch (Exception e) {
             e.printStackTrace();
             throw new SQLException(e.getMessage());
@@ -144,12 +145,13 @@ public class InuhaSanPhamChiTietRepository implements IDAOinterface<InuhaSanPham
             FROM %s
             WHERE
                 id != ? AND 
+                id_san_pham = ? AND
                 id_kich_co = ? AND
                 id_mau_sac = ? AND
                 trang_thai_xoa = 0
         """, TABLE_NAME);
         try {
-            return JbdcHelper.value(query, model.getId(), model.getKichCo().getId(), model.getMauSac().getId()) != null;
+            return JbdcHelper.value(query, model.getId(), model.getSanPham().getId(), model.getKichCo().getId(), model.getMauSac().getId()) != null;
         } catch (Exception e) {
             e.printStackTrace();
             throw new SQLException(e.getMessage());
@@ -308,13 +310,21 @@ public class InuhaSanPhamChiTietRepository implements IDAOinterface<InuhaSanPham
                 FROM %s AS spct
                     LEFT JOIN KichCo AS kc ON kc.id = spct.id_kich_co
                     LEFT JOIN MauSac AS ms ON ms.id = spct.id_mau_sac
+                    LEFT JOIN SanPham AS sp ON sp.id = spct.id_san_pham
                 WHERE
-                    spct.id_san_pham = ? AND
+                    (COALESCE(?, 0) = 0 OR spct.id_san_pham = ?) AND
                     spct.trang_thai_xoa = 0 AND
                     (
-                        (COALESCE(?, 0) < 1 OR spct.id_kich_co = ?) AND
-                        (COALESCE(?, 0) < 1 OR spct.id_mau_sac = ?) AND
-                        (COALESCE(?, 0) < 0 OR spct.trang_thai = ?)
+			(COALESCE(?, NULL) IS NULL OR spct.ma = ? OR sp.ma = ? OR sp.ten LIKE ?) AND
+			(COALESCE(?, 0) < 1 OR sp.id_danh_muc = ?) AND
+			(COALESCE(?, 0) < 1 OR sp.id_thuong_hieu = ?) AND
+			(COALESCE(?, 0) < 1 OR sp.id_xuat_xu = ?) AND
+			(COALESCE(?, 0) < 1 OR sp.id_kieu_dang = ?) AND
+			(COALESCE(?, 0) < 1 OR sp.id_chat_lieu = ?) AND
+			(COALESCE(?, 0) < 1 OR sp.id_de_giay = ?) AND
+			(COALESCE(?, 0) < 1 OR spct.id_kich_co = ?) AND
+			(COALESCE(?, 0) < 1 OR spct.id_mau_sac = ?) AND
+			(COALESCE(?, 0) < 0 OR spct.trang_thai = ?)
                     )
             )
             SELECT *
@@ -327,7 +337,24 @@ public class InuhaSanPhamChiTietRepository implements IDAOinterface<InuhaSanPham
         int limit = offset[1];
 
         Object[] args = new Object[] {
+	    filter.getIdSanPham(),
             filter.getIdSanPham(),
+	    filter.getKeyword(),
+	    filter.getKeyword(),
+	    filter.getKeyword(),
+	    String.format("%%%s%%", filter.getKeyword()),
+	    filter.getIdDanhMuc(),
+	    filter.getIdDanhMuc(),
+	    filter.getIdThuongHieu(),
+	    filter.getIdThuongHieu(),
+	    filter.getIdXuatXu(),
+	    filter.getIdXuatXu(),
+	    filter.getIdKieuDang(),
+	    filter.getIdKieuDang(),
+	    filter.getIdChatLieu(),
+	    filter.getIdChatLieu(),
+	    filter.getIdDeGiay(),
+	    filter.getIdDeGiay(),
             filter.getIdKichCo(),
             filter.getIdKichCo(),
             filter.getIdMauSac(),
@@ -369,19 +396,45 @@ public class InuhaSanPhamChiTietRepository implements IDAOinterface<InuhaSanPham
 
         String query = String.format("""
             SELECT COUNT(*)
-            FROM %s
+            FROM %s AS spct
+            LEFT JOIN SanPham AS sp ON sp.id = spct.id_san_pham
             WHERE
-                id_san_pham = ? AND
-                trang_thai_xoa = 0 AND  
+                (COALESCE(?, 0) = 0 OR spct.id_san_pham = ?) AND
+                spct.trang_thai_xoa = 0 AND  
                 (
-                    (COALESCE(?, 0) < 1 OR id_kich_co = ?) AND
-                    (COALESCE(?, 0) < 1 OR id_mau_sac = ?) AND
-                    (COALESCE(?, 0) < 0 OR trang_thai = ?)
+                    (COALESCE(?, NULL) IS NULL OR spct.ma = ? OR sp.ma = ? OR sp.ten LIKE ?) AND
+                    (COALESCE(?, 0) < 1 OR sp.id_danh_muc = ?) AND
+		    (COALESCE(?, 0) < 1 OR sp.id_thuong_hieu = ?) AND
+		    (COALESCE(?, 0) < 1 OR sp.id_xuat_xu = ?) AND
+		    (COALESCE(?, 0) < 1 OR sp.id_kieu_dang = ?) AND
+		    (COALESCE(?, 0) < 1 OR sp.id_chat_lieu = ?) AND
+		    (COALESCE(?, 0) < 1 OR sp.id_de_giay = ?) AND
+                    (COALESCE(?, 0) < 1 OR spct.id_kich_co = ?) AND
+                    (COALESCE(?, 0) < 1 OR spct.id_mau_sac = ?) AND
+                    (COALESCE(?, 0) < 0 OR spct.trang_thai = ?)
                 ) 
         """, TABLE_NAME);
 
+	
         Object[] args = new Object[] { 
+	    filter.getIdSanPham(),
             filter.getIdSanPham(),
+	    filter.getKeyword(),
+	    filter.getKeyword(),
+	    filter.getKeyword(),
+	    String.format("%%%s%%", filter.getKeyword()),
+	    filter.getIdDanhMuc(),
+	    filter.getIdDanhMuc(),
+	    filter.getIdThuongHieu(),
+	    filter.getIdThuongHieu(),
+	    filter.getIdXuatXu(),
+	    filter.getIdXuatXu(),
+	    filter.getIdKieuDang(),
+	    filter.getIdKieuDang(),
+	    filter.getIdChatLieu(),
+	    filter.getIdChatLieu(),
+	    filter.getIdDeGiay(),
+	    filter.getIdDeGiay(),
             filter.getIdKichCo(),
             filter.getIdKichCo(),
             filter.getIdMauSac(),
@@ -411,7 +464,8 @@ public class InuhaSanPhamChiTietRepository implements IDAOinterface<InuhaSanPham
         return InuhaSanPhamChiTietModel.builder()
             .id(resultSet.getInt("id"))
             .stt(addSTT ? resultSet.getInt("stt") : -1)
-            .trangThai(resultSet.getBoolean("trang_thai"))
+	    .ma(resultSet.getString("ma"))
+	    .trangThai(resultSet.getBoolean("trang_thai"))
             .ngayTao(resultSet.getString("ngay_tao"))
             .ngayCapNhat(resultSet.getString("ngay_cap_nhat"))
             .trangThaiXoa(resultSet.getBoolean("trang_thai_xoa"))
@@ -423,7 +477,7 @@ public class InuhaSanPhamChiTietRepository implements IDAOinterface<InuhaSanPham
     
     
     public String getLastCode() throws SQLException {
-        String query = String.format("SELECT TOP(1) id FROM %s ORDER BY id DESC", TABLE_NAME);
+        String query = String.format("SELECT TOP(1) ma FROM %s ORDER BY id DESC", TABLE_NAME);
         try {
             return (String) JbdcHelper.value(query);
         } catch (Exception e) {

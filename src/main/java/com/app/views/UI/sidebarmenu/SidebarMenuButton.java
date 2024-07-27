@@ -29,7 +29,7 @@ public class SidebarMenuButton extends JButton {
         setCursor(new Cursor(Cursor.HAND_CURSOR));
         setHorizontalAlignment(SwingConstants.LEFT);
         setBackground(ColorUtils.BACKGROUND_HOVER);
-        setBorder(new EmptyBorder(8, 20, 8, 15));
+        setBorder(new EmptyBorder(8, 30, 8, 15));
     }
 
     public float getAnimate() {
