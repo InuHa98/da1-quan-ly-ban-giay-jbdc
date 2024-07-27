@@ -21,9 +21,7 @@ public class DiaChiModels extends KhachHangModels {
     public DiaChiModels() {
     }
 
-    public DiaChiModels(int idDC, int idKH, String diaChi, boolean trangThaiXoa) {
-        this.idDC = idDC;
-        this.idKH = idKH;
+    public DiaChiModels( String diaChi, boolean trangThaiXoa) {
         this.diaChi = diaChi;
         this.trangThaiXoa = trangThaiXoa;
     }
@@ -48,5 +46,5 @@ public class DiaChiModels extends KhachHangModels {
     public String toString() {
         return "DiaChiModels{" + "idDC=" + idDC + ", idKH=" + idKH + ", diaChi=" + diaChi + ", trangThaiXoa=" + trangThaiXoa + '}';
     }
-
+    
 }
