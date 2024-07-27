@@ -36,8 +36,8 @@ public class InuhaSanPhamChiTietService implements IInuhaSanPhamChiTietServiceIn
     @Override
     public Integer insert(InuhaSanPhamChiTietModel model) {
         try {
-            if (repository.has(model.getKichCo().getId(), model.getMauSac().getId())) { 
-                throw new ServiceResponseException("Tên sản phẩm chi tiết đã tồn tại trên hệ thống");
+            if (repository.has(model.getSanPham().getId(), model.getKichCo().getId(), model.getMauSac().getId())) { 
+                throw new ServiceResponseException("Sản phẩm chi tiết đã tồn tại trên hệ thống");
             }
             int rows = repository.insert(model);
             if (rows < 1) { 
@@ -69,7 +69,7 @@ public class InuhaSanPhamChiTietService implements IInuhaSanPhamChiTietServiceIn
             }
             
             if (repository.has(model)) { 
-                throw new ServiceResponseException("Tên sản phẩm chi tiết đã tồn tại trên hệ thống");
+                throw new ServiceResponseException("Sản phẩm chi tiết đã tồn tại trên hệ thống");
             }
             repository.update(model);
         } catch (SQLException ex) {
@@ -120,6 +120,15 @@ public class InuhaSanPhamChiTietService implements IInuhaSanPhamChiTietServiceIn
     public List<InuhaSanPhamChiTietModel> getAll() {
         try {
             return repository.selectAll();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            throw new ServiceResponseException("Không thể lấy danh sách sản phẩm chi tiết");
+        }
+    }
+    
+    public List<InuhaSanPhamChiTietModel> getAll(int id) {
+        try {
+            return repository.selectAll(id);
         } catch (SQLException ex) {
             ex.printStackTrace();
             throw new ServiceResponseException("Không thể lấy danh sách sản phẩm chi tiết");

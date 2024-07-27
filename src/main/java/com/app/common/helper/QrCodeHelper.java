@@ -5,6 +5,11 @@ import com.app.utils.QrCodeUtils;
 import com.app.views.UI.panel.qrcode.IQRCodeScanEvent;
 import com.app.views.UI.panel.qrcode.WebcamQRCodeScanPanel;
 import com.google.zxing.Result;
+import com.google.zxing.WriterException;
+import java.io.File;
+import java.io.IOException;
+import javax.swing.ImageIcon;
+import jnafilechooser.api.JnaFileChooser;
 import raven.modal.ModalDialog;
 import raven.modal.component.SimpleModalBorder;
 
@@ -33,6 +38,33 @@ public class QrCodeHelper {
     public static void closeWebcam() { 
         ModalDialog.closeModal(QrCodeUtils.MODAL_SCAN_ID);
         WebcamQRCodeScanPanel.dispose();
+    }
+    
+    public static void save(String code, String fileName) {
+        JnaFileChooser ch = new JnaFileChooser();
+        ch.setMode(JnaFileChooser.Mode.Directories);
+        boolean act = ch.showOpenDialog(Application.app);
+        if (act) {
+            File folder = ch.getSelectedFile();
+            File file = new File(folder, fileName + "." + QrCodeUtils.IMAGE_FORMAT.toLowerCase());
+            try {
+                QrCodeUtils.generateQRCodeImage(code, file);
+                MessageToast.success("Lưu QR Code thành công!");
+            } catch (WriterException | IOException e) {
+                e.printStackTrace();
+                MessageToast.error("Không thể lưu QR Code!!!!");
+            }
+        }
+    }
+   
+    
+    public static ImageIcon getImage(String code) {
+	try {
+	    return QrCodeUtils.generateQRCodeImage(code);
+	} catch (WriterException e) {
+	    e.printStackTrace();
+	}
+	return null;
     }
     
 }
