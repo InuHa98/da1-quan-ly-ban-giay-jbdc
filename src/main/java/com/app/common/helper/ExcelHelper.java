@@ -2,6 +2,7 @@ package com.app.common.helper;
 
 import com.app.Application;
 import com.app.utils.QrCodeUtils;
+import com.app.views.UI.dialog.LoadingDialog;
 import com.google.zxing.WriterException;
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,6 +15,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import jnafilechooser.api.JnaFileChooser;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 
@@ -72,8 +75,11 @@ public class ExcelHelper {
         return data;
     }
 	
-    private static void writeExcel(File file, List<String[]> headers, List<String[]> rows) throws IOException { 
-        List<String[]> data = headers != null ? new ArrayList<>(headers) : new ArrayList<>();
+    private static void writeExcel(File file, String[] headers, List<String[]> rows) throws IOException { 
+        List<String[]> data = new ArrayList<>();
+	if (headers != null) { 
+	    data.add(headers);
+	}
 	data.addAll(rows);
 
         Workbook workbook = new XSSFWorkbook();
@@ -128,20 +134,29 @@ public class ExcelHelper {
 	writeFile(fileName, null, rows);
     }
     
-    public static void writeFile(String fileName, List<String[]> headers, List<String[]> rows) {
+    public static void writeFile(String fileName, String[] headers, List<String[]> rows) {
         JnaFileChooser ch = new JnaFileChooser();
         ch.setMode(JnaFileChooser.Mode.Directories);
         boolean act = ch.showOpenDialog(Application.app);
         if (act) {
             File folder = ch.getSelectedFile();
             File file = new File(folder, fileName + ".xlsx");
-            try {
-                writeExcel(file, headers, rows);
-                MessageToast.success("Xuất dữ liệu sang Excel thành công!");
-            } catch (IOException e) {
-                e.printStackTrace();
-                MessageToast.error("Không thể xuất dữ liệu sang Excel!!!!");
-            }
+	    
+	    ExecutorService executorService = Executors.newSingleThreadExecutor();
+	    LoadingDialog loading = new LoadingDialog();
+	    executorService.submit(() -> { 
+		try {
+		    writeExcel(file, headers, rows);
+		    MessageToast.success("Xuất dữ liệu sang Excel thành công!");
+		} catch (IOException e) {
+		    e.printStackTrace();
+		    MessageToast.error("Không thể xuất dữ liệu sang Excel!!!!");
+		} finally {
+		    loading.dispose();
+		}
+	    });
+	    loading.setVisible(true);
+
         }
     }
     

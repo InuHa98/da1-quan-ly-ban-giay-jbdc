@@ -24,6 +24,8 @@ public class InuhaSanPhamChiTietModel {
         
     private int id;
     
+    private String ma;
+    
     private int soLuong;
     
     private boolean trangThai;
@@ -40,15 +42,47 @@ public class InuhaSanPhamChiTietModel {
     
     private InuhaMauSacModel mauSac;
     
+    public boolean getTrangThai() { 
+	return sanPham.isTrangThai() && trangThai;
+    }
+	
+    public boolean isTrangThai() { 
+	return trangThai;
+    }
+    
     public Object[] toDataRowSanPhamChiTiet() { 
         return new Object[] { 
             false,
             stt,
-            sanPham.getTen(),
+            ma,
             kichCo.getTen(),
             mauSac.getTen(),
             CurrencyUtils.parseString(soLuong),
-            ProductUtils.getTrangThai(trangThai)
+            getTrangThai()
 	};
     }
+    
+    public Object[] toDataRowAllSanPhamChiTiet() { 
+        return new Object[] { 
+            false,
+            stt,
+            ma,
+	    sanPham.getMa(),
+	    ProductUtils.getImage(sanPham.getHinhAnh()),
+            sanPham.getTen(),
+	    sanPham.getDanhMuc().getTen(),
+	    sanPham.getThuongHieu().getTen(),
+	    sanPham.getXuatXu().getTen(),
+	    sanPham.getKieuDang().getTen(),
+	    sanPham.getChatLieu().getTen(),
+	    sanPham.getDeGiay().getTen(),
+	    kichCo.getTen(),
+	    mauSac.getTen(),
+	    CurrencyUtils.parseString(sanPham.getGiaNhap()),
+	    CurrencyUtils.parseString(sanPham.getGiaBan()),
+            CurrencyUtils.parseString(soLuong),
+            getTrangThai()
+	};
+    }
+	
 }
