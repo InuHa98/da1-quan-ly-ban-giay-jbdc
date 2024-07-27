@@ -113,7 +113,7 @@ public class JbdcHelper {
             sql += ")}";
             stmt = connection.prepareCall(sql);
         } else {
-            stmt = connection.prepareStatement(query);
+            stmt = connection.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS);
         }
 
         for (int i = 0; i < args.length; i++) {

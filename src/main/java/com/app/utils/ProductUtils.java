@@ -81,5 +81,9 @@ public class ProductUtils {
     public static String getTrangThai(boolean trangThai) { 
 	return trangThai ? "Đang bán" : "Ngừng bán";
     }
+    
+    public static boolean removeImageProduct(String image) { 
+        return StorageUtils.deleteFile(getUrlImageProduct(image));
+    }
 
 }
