@@ -74,6 +74,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import jnafilechooser.api.JnaFileChooser;
 
 /**
@@ -169,13 +170,9 @@ public class InuhaSanPhamView extends RoundPanel {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) { 
-                    handleClickButtonSearch2();
+                    handleClickButtonSeachChiTiet();
                 }
             }
-
-	    private void handleClickButtonSearch2() {
-		throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-	    }
         });
 		
         pnlContainer.setBackground(ColorUtils.BACKGROUND_PRIMARY);
@@ -188,6 +185,11 @@ public class InuhaSanPhamView extends RoundPanel {
         btnXoaSanPham.setIcon(ResourceUtils.getSVG("/svg/trash.svg", new Dimension(20, 20)));
         btnSearch.setIcon(ResourceUtils.getSVG("/svg/search.svg", new Dimension(20, 20)));
         btnSearch2.setIcon(ResourceUtils.getSVG("/svg/search.svg", new Dimension(20, 20)));
+	btnScanQR.setIcon(ResourceUtils.getSVG("/svg/qr.svg", new Dimension(20, 20)));
+	btnScanQRChiTiet.setIcon(ResourceUtils.getSVG("/svg/qr.svg", new Dimension(20, 20)));
+	btnExport.setIcon(ResourceUtils.getSVG("/svg/export.svg", new Dimension(20, 20)));
+	btnImport.setIcon(ResourceUtils.getSVG("/svg/import.svg", new Dimension(20, 20)));
+	btnSaveAllQR.setIcon(ResourceUtils.getSVG("/svg/save.svg", new Dimension(20, 20)));
 	
         btnClear.setBackground(ColorUtils.BUTTON_GRAY);
 	btnClear2.setBackground(ColorUtils.BUTTON_GRAY);
@@ -217,8 +219,13 @@ public class InuhaSanPhamView extends RoundPanel {
 	cboKichCo.setPreferredSize(cboSize);
 	cboMauSac.setPreferredSize(cboSize);
 	
-        loadDataDanhMuc();
-        loadDataThuongHieu();
+        setupTable(tblDanhSach);
+	setupTableSPCT(tblDanhSachChiTiet);
+        setupPagination();
+	setupPaginationSPCT();
+	
+	loadDataDanhMuc();
+	loadDataThuongHieu();
 	loadDataXuatXu();
 	loadDataKieuDang();
 	loadDataChatLieu();
@@ -226,12 +233,8 @@ public class InuhaSanPhamView extends RoundPanel {
 	loadDataKichCo();
 	loadDataMauSac();
 
-        setupTable(tblDanhSach);
-	setupTableSPCT(tblDanhSachChiTiet);
-        loadDataPage(1);
+	loadDataPage(1);
 	loadDataPageSPCT(1);
-        setupPagination();
-	setupPaginationSPCT();
     }
     
     private void setupTable(JTable table) { 
@@ -283,7 +286,6 @@ public class InuhaSanPhamView extends RoundPanel {
         
         pnlDanhSach.setBackground(ColorUtils.BACKGROUND_TABLE);
         TableCustomUI.apply(scrDanhSach, TableCustomUI.TableType.DEFAULT);
-        TableCustomUI.resizeColumnHeader(table);
 	
         table.setRowHeight(50);
         table.getColumnModel().getColumn(0).setHeaderRenderer(new CheckBoxTableHeaderRenderer(table, 0));
@@ -358,7 +360,11 @@ public class InuhaSanPhamView extends RoundPanel {
             ComboBoxItem<Integer> thuongHieu = (ComboBoxItem<Integer>) cboThuongHieu.getSelectedItem();
             ComboBoxItem<Integer> trangThai = (ComboBoxItem<Integer>) cboTrangThai.getSelectedItem();
 
-            InuhaFilterSanPhamRequest request = new InuhaFilterSanPhamRequest(keyword, danhMuc.getValue(), thuongHieu.getValue(), trangThai.getValue());
+            InuhaFilterSanPhamRequest request = new InuhaFilterSanPhamRequest();
+	    request.setKeyword(keyword);
+	    request.setDanhMuc(danhMuc);
+	    request.setThuongHieu(thuongHieu);
+	    request.setTrangThai(trangThai);
             request.setSize(sizePage);
 	    
             int totalPages = sanPhamService.getTotalPage(request);
@@ -406,15 +412,15 @@ public class InuhaSanPhamView extends RoundPanel {
 
             InuhaFilterSanPhamChiTietRequest request = new InuhaFilterSanPhamChiTietRequest();
 	    request.setKeyword(keyword);
-	    request.setIdDanhMuc(danhMuc.getValue());
-	    request.setIdThuongHieu(thuongHieu.getValue());
-	    request.setIdXuatXu(xuatXu.getValue());
-	    request.setIdKieuDang(kieuDang.getValue());
-	    request.setIdChatLieu(chatLieu.getValue());
-	    request.setIdDeGiay(deGiay.getValue());
-	    request.setIdKichCo(kichCo.getValue());
-	    request.setIdMauSac(mauSac.getValue());
-	    request.setTrangThai(trangThai.getValue());
+	    request.setDanhMuc(danhMuc);
+	    request.setThuongHieu(thuongHieu);
+	    request.setXuatXu(xuatXu);
+	    request.setKieuDang(kieuDang);
+	    request.setChatLieu(chatLieu);
+	    request.setDeGiay(deGiay);
+	    request.setKichCo(kichCo);
+	    request.setMauSac(mauSac);
+	    request.setTrangThai(trangThai);
             request.setSize(sizePage);
 	    
             int totalPages = sanPhamChiTietService.getTotalPage(request);
@@ -493,17 +499,11 @@ public class InuhaSanPhamView extends RoundPanel {
     }
 	
     private void rerenderPagination(int currentPage, int totalPages) { 
-        currentPage = currentPage < 1 ? 1 : currentPage;
-        pagination.setCurrentPage(currentPage);
-        pagination.setTotalPages(totalPages);
-        pagination.renderListPage();
+	pagination.rerender(currentPage, totalPages);
     }
     
     private void rerenderPaginationSPCT(int currentPage, int totalPages) { 
-        currentPage = currentPage < 1 ? 1 : currentPage;
-        paginationSPCT.setCurrentPage(currentPage);
-        paginationSPCT.setTotalPages(totalPages);
-        paginationSPCT.renderListPage();
+	paginationSPCT.rerender(currentPage, totalPages);
     }
     
     public void loadDataDanhMuc() { 

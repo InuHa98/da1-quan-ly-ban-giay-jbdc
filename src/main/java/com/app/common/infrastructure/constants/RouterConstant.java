@@ -1,13 +1,8 @@
 package com.app.common.infrastructure.constants;
 
-import com.app.core.all.views.BanHangView;
-import com.app.core.all.views.ThongKeView;
-import com.app.core.dattv.views.DatHoaDonView;
-import com.app.core.dung.views.DungNhanVienView;
+import com.app.core.inuha.views.all.banhang.InuhaBanHangView;
+import com.app.core.inuha.views.all.thongke.InuhaThongKeView;
 import com.app.core.inuha.views.quanly.InuhaSanPhamView;
-import com.app.core.khoi.views.KhoiPhieuGiamGiaView;
-import com.app.core.kienhacker.views.KienDotGiamGiaView;
-import com.app.core.lam.views.LamKhachHangViews;
 import com.app.utils.RouterUtils;
 
 /**
@@ -16,9 +11,9 @@ import com.app.utils.RouterUtils;
  */
 public class RouterConstant {
 
-    public final static String THONG_KE = "com.app.core.all.views.ThongKeView";
+    public final static String THONG_KE = RouterUtils.getPackageName(InuhaThongKeView.class);
     
-    public final static String BAN_HANG = "com.app.core.all.views.BanHangView";
+    public final static String BAN_HANG = RouterUtils.getPackageName(InuhaBanHangView.class);
 	
     public final static String SAN_PHAM = RouterUtils.getPackageName(InuhaSanPhamView.class);
     

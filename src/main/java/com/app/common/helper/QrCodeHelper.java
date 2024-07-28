@@ -4,12 +4,21 @@ import com.app.Application;
 import com.app.utils.QrCodeUtils;
 import com.app.views.UI.panel.qrcode.IQRCodeScanEvent;
 import com.app.views.UI.panel.qrcode.WebcamQRCodeScanPanel;
+import static com.app.views.UI.panel.qrcode.WebcamQRCodeScanPanel.playSound;
 import com.google.zxing.Result;
 import com.google.zxing.WriterException;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
+import javax.swing.JPanel;
+import javax.swing.SwingWorker;
 import jnafilechooser.api.JnaFileChooser;
+import net.miginfocom.swing.MigLayout;
 import raven.modal.ModalDialog;
 import raven.modal.component.SimpleModalBorder;
 
@@ -27,6 +36,7 @@ public class QrCodeHelper {
         IQRCodeScanEvent callback = new IQRCodeScanEvent() { 
             @Override
             public void onScanning(Result result) {
+		WebcamQRCodeScanPanel.playSound();
                 event.onScanning(result);
                 closeWebcam();
             }
@@ -35,6 +45,30 @@ public class QrCodeHelper {
         ModalDialog.showModal(Application.app, new SimpleModalBorder(WebcamQRCodeScanPanel.getInstance(callback), title), QrCodeUtils.MODAL_SCAN_ID);
     }
     
+    public static void initWebcam(JPanel panel, Dimension size, IQRCodeScanEvent event) { 
+	panel.setLayout(new MigLayout("fill", String.format("[center, %s:%s]", size.getWidth(), size.getWidth()), String.format("[center, %s:%s]", size.getHeight(), size.getHeight())));
+	SwingWorker<JPanel, Void> worker = new SwingWorker<>() {
+	    @Override
+	    protected JPanel doInBackground() {
+		return WebcamQRCodeScanPanel.initPanel(event);
+	    }
+
+	    @Override
+	    protected void done() {
+		try {
+		    panel.add(get());
+		} catch (InterruptedException ex) {
+		    ex.printStackTrace();
+		} catch (ExecutionException ex) {
+		    ex.printStackTrace();
+		}
+	    }
+	};
+	worker.execute();
+	JPanel webcam = WebcamQRCodeScanPanel.initPanel(event);
+	panel.add(webcam);
+    }
+	
     public static void closeWebcam() { 
         ModalDialog.closeModal(QrCodeUtils.MODAL_SCAN_ID);
         WebcamQRCodeScanPanel.dispose();

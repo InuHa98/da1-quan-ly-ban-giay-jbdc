@@ -13,7 +13,7 @@ import java.awt.Color;
  */
 public class ColorUtils {
 
-    public static Color PRIMARY_COLOR = new Color(100, 110, 177);
+    public static Color PRIMARY_COLOR = new Color(234, 108, 32);
 
     public static Color PRIMARY_TEXT = new Color(189, 189, 189);
 
@@ -31,7 +31,7 @@ public class ColorUtils {
 
     public static Color BACKGROUND_DARK = new Color(30, 31, 34);
 	
-    public static Color BACKGROUND_HOVER = new Color(65, 69, 89);
+    public static Color BACKGROUND_HOVER = new Color(113, 84, 68);
 
     public static Color BACKGROUND_DASHBOARD = new Color(35, 36, 40);
 	
@@ -41,9 +41,9 @@ public class ColorUtils {
         
     public static Color TEXT_TABLE = new Color(181, 186, 193);
         
-    public static Color BACKGROUND_TABLE_SELECTION = new Color(63, 66, 72);
+    public static Color BACKGROUND_TABLE_SELECTION = new Color(234, 108, 32);
     
-    public static Color BUTTON_PRIMARY = new Color(98, 93, 147);
+    public static Color BUTTON_PRIMARY = new Color(234, 108, 32);
 
     public static Color BUTTON_GRAY = new Color(34, 35, 38);
         

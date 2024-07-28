@@ -103,7 +103,6 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
             e.printStackTrace();
             throw new SQLException(e.getMessage());
         }
-
         return result;
     }
 
@@ -331,9 +330,13 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
                     sp.trang_thai_xoa = 0 AND
                     (
                         (? IS NULL OR sp.ten LIKE ? OR sp.ma LIKE ?) AND
-                        (COALESCE(?, 0) < 1 OR sp.id_danh_muc = ?) AND
-                        (COALESCE(?, 0) < 1 OR sp.id_thuong_hieu = ?) AND
-                        (COALESCE(?, 0) < 0 OR sp.trang_thai = ?)
+			(COALESCE(?, 0) < 1 OR dm.ten LIKE ?) AND
+                        (COALESCE(?, 0) < 1 OR th.ten LIKE ?) AND
+                        (COALESCE(?, 0) < 1 OR xx.ten LIKE ?) AND
+			(COALESCE(?, 0) < 1 OR kd.ten LIKE ?) AND
+			(COALESCE(?, 0) < 1 OR cl.ten LIKE ?) AND
+			(COALESCE(?, 0) < 1 OR dg.ten LIKE ?) AND
+                        (COALESCE(?, -1) < 0 OR sp.trang_thai = ?)
                     )
             )
             SELECT *
@@ -345,19 +348,28 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
         int start = offset[0];
         int limit = offset[1];
 
+	
         Object[] args = new Object[] {
             filter.getKeyword(),
             String.format("%%%s%%", filter.getKeyword()),
             String.format("%%%s%%", filter.getKeyword()),
-            filter.getIdDanhMuc(),
-            filter.getIdDanhMuc(),
-            filter.getIdThuongHieu(),
-            filter.getIdThuongHieu(),
-            filter.getTrangThai(),
-            filter.getTrangThai(),
+            filter.getDanhMuc().getValue(),
+            filter.getDanhMuc().getText(),
+            filter.getThuongHieu().getValue(),
+            filter.getThuongHieu().getText(),
+            filter.getXuatXu().getValue(),
+            filter.getXuatXu().getText(),
+	    filter.getKieuDang().getValue(),
+            filter.getKieuDang().getText(),
+	    filter.getChatLieu().getValue(),
+            filter.getChatLieu().getText(),
+	    filter.getDeGiay().getValue(),
+            filter.getDeGiay().getText(),
+            filter.getTrangThai().getValue(),
+            filter.getTrangThai().getValue(),
             start,
             limit
-        };
+        };	
 
         try {
             resultSet = JbdcHelper.query(query, args);
@@ -386,14 +398,24 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
 
         String query = String.format("""
             SELECT COUNT(*)
-            FROM %s
+            FROM %s AS sp
+		LEFT JOIN DanhMuc AS dm ON dm.id = sp.id_danh_muc
+		LEFT JOIN ThuongHieu AS th ON th.id = sp.id_thuong_hieu
+		LEFT JOIN XuatXu AS xx ON xx.id = sp.id_xuat_xu
+		LEFT JOIN KieuDang AS kd ON kd.id = sp.id_kieu_dang
+		LEFT JOIN ChatLieu AS cl ON cl.id = sp.id_chat_lieu
+		LEFT JOIN DeGiay AS dg ON dg.id = sp.id_de_giay
             WHERE
-                trang_thai_xoa = 0 AND  
+                sp.trang_thai_xoa = 0 AND  
                 (
-                    (? IS NULL OR ten LIKE ? OR ma LIKE ?) AND
-                    (COALESCE(?, 0) < 1 OR id_danh_muc = ?) AND
-                    (COALESCE(?, 0) < 1 OR id_thuong_hieu = ?) AND
-                    (COALESCE(?, 0) < 0 OR trang_thai = ?)
+                    (? IS NULL OR sp.ten LIKE ? OR sp.ma LIKE ?) AND
+		    (COALESCE(?, 0) < 1 OR dm.ten LIKE ?) AND
+		    (COALESCE(?, 0) < 1 OR th.ten LIKE ?) AND
+		    (COALESCE(?, 0) < 1 OR xx.ten LIKE ?) AND
+		    (COALESCE(?, 0) < 1 OR kd.ten LIKE ?) AND
+		    (COALESCE(?, 0) < 1 OR cl.ten LIKE ?) AND
+		    (COALESCE(?, 0) < 1 OR dg.ten LIKE ?) AND
+		    (COALESCE(?, -1) < 0 OR sp.trang_thai = ?)
                 ) 
         """, TABLE_NAME);
 
@@ -401,12 +423,20 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
             filter.getKeyword(),
             String.format("%%%s%%", filter.getKeyword()),
             String.format("%%%s%%", filter.getKeyword()),
-            filter.getIdDanhMuc(),
-            filter.getIdDanhMuc(),
-            filter.getIdThuongHieu(),
-            filter.getIdThuongHieu(),
-            filter.getTrangThai(),
-            filter.getTrangThai()
+            filter.getDanhMuc().getValue(),
+            filter.getDanhMuc().getText(),
+            filter.getThuongHieu().getValue(),
+            filter.getThuongHieu().getText(),
+            filter.getXuatXu().getValue(),
+            filter.getXuatXu().getText(),
+	    filter.getKieuDang().getValue(),
+            filter.getKieuDang().getText(),
+	    filter.getChatLieu().getValue(),
+            filter.getChatLieu().getText(),
+	    filter.getDeGiay().getValue(),
+            filter.getDeGiay().getText(),
+            filter.getTrangThai().getValue(),
+            filter.getTrangThai().getValue()
         };
         
         try {

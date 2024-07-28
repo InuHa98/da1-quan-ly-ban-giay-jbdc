@@ -1,14 +1,11 @@
 package com.app.common.controller;
 
 import com.app.views.DashboardView;
-import com.app.views.UI.dialog.LoadingDialog;
 import com.app.views.UI.scroll.ScrollBarCustomUI;
 import com.app.views.UI.sidebarmenu.SidebarMenuContent;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ExecutorService;
 
 /**
  *
@@ -58,7 +55,6 @@ public class DashboardController {
         
 	EventQueue.invokeLater(() -> {
 	    content.removeAll();
-
 	    JScrollPane scroll = new JScrollPane();
 	    scroll.setViewportBorder(null);
 	    scroll.setBorder(null);

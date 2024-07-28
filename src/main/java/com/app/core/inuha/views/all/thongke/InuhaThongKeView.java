@@ -3,16 +3,18 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
 
-package com.app.core.all.views;
+package com.app.core.inuha.views.all.thongke;
+
+import java.awt.*;
 
 /**
  *
  * @author inuHa
  */
-public class BanHangView extends javax.swing.JPanel {
+public class InuhaThongKeView extends javax.swing.JPanel {
 
     /** Creates new form BanHangView */
-    public BanHangView() {
+    public InuhaThongKeView() {
 	initComponents();
     }
 

@@ -26,16 +26,10 @@ CREATE TABLE KhachHang (
 	ho_ten NVARCHAR(250) NOT NULL,
 	sdt VARCHAR(13) NOT NULL,
 	gioi_tinh BIT,
+	dia_chi NVARCHAR(2000),
 	trang_thai_xoa BIT DEFAULT 0
 );
 
-CREATE TABLE DiaChi (
-	id INT IDENTITY(1, 1) PRIMARY KEY,
-	id_khach_hang INT NOT NULL,
-	dia_chi NVARCHAR(2000),
-	trang_thai_xoa BIT DEFAULT 0,
-	FOREIGN KEY(id_khach_hang) REFERENCES dbo.KhachHang(id)
-)
 
 CREATE TABLE DanhMuc (
 	id INT IDENTITY(1, 1) PRIMARY KEY,
