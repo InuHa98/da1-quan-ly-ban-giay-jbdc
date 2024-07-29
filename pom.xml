@@ -20,16 +20,14 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
-                <version>3.1.0</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>java</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                <version>3.3.0</version>
                 <configuration>
-                    <mainClass>com.app.Application</mainClass>
+                    <executable>java</executable>
+                    <arguments>
+                        <argument>-classpath</argument>
+                        <classpath />
+                        <argument>com.app.Application</argument>
+                    </arguments>
                 </configuration>
             </plugin>
         </plugins>

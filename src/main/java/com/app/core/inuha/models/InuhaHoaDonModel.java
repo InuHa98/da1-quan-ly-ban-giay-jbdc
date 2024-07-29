@@ -1,5 +1,6 @@
 package com.app.core.inuha.models;
 
+import com.app.common.infrastructure.constants.TrangThaiHoaDonConstant;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -42,9 +43,26 @@ public class InuhaHoaDonModel {
     
     private boolean trangThaiXoa;
     
-    private List<InuhaHoaDonChiTietModel> hoaDonChiTiets;
+    private InuhaKhachHangModel khachHang;
+    
+    private InuhaTaiKhoanModel taiKhoan;
+        
+    public static String getTrangThai(int trangThai) { 
+	return switch (trangThai) {
+	    case TrangThaiHoaDonConstant.STATUS_DA_THANH_TOAN -> "Đã thanh toán";
+	    case TrangThaiHoaDonConstant.STATUS_DA_HUY -> "Đã huỷ";
+	    case TrangThaiHoaDonConstant.STATUS_CHUA_THANH_TOAN -> "Chưa thanh toán";
+	    default -> "Không xác định";
+	};
+    }
     
     public Object[] toDataRowHoaDonCho() { 
-	return null;
+	return new Object[] { 
+	    stt,
+	    ma,
+	    taiKhoan.getUsername(),
+	    ngayTao,
+	    getTrangThai(trangThai)
+	};
     }
 }

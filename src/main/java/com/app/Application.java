@@ -1,10 +1,13 @@
 package com.app;
 
 import com.app.common.controller.ApplicationController;
+import com.app.common.controller.DashboardController;
 import com.app.common.helper.MessageBox;
 import com.app.common.helper.TestConnection;
+import com.app.core.inuha.views.all.banhang.InuhaBanHangView;
 import com.app.core.inuha.views.guest.LoginView;
 import com.app.utils.ResourceUtils;
+import com.app.views.DashboardView;
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.fonts.roboto.FlatRobotoFont;
 import com.formdev.flatlaf.themes.FlatMacDarkLaf;

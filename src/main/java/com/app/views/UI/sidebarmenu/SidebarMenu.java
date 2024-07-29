@@ -297,19 +297,10 @@ public class SidebarMenu extends JPanel {
                         selectedMenu = menuButton;
                         animator.start();
 			LoadingDialog loading = new LoadingDialog();
-			SwingWorker<Void, Void> worker = new SwingWorker<>() {
-			    @Override
-			    protected Void doInBackground() {
-				menuEvent.menuSelected(menuButton.getIndex());
-				return null;
-			    }
-
-			    @Override
-			    protected void done() {
-				loading.dispose();
-			    }
-			};
-			worker.execute();
+			executor.submit(() -> { 
+			    menuEvent.menuSelected(menuButton.getIndex());
+			    loading.dispose();
+			});
                         loading.setVisible(true);
                     }
                 }

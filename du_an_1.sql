@@ -185,7 +185,6 @@ CREATE TABLE HoaDon (
 	tien_chuyen_khoan MONEY NOT NULL DEFAULT 0,
 	ma VARCHAR(10) NOT NULL,
 	phuong_thuc_thanh_toan BIT NOT NULL,
-	ghi_chu NVARCHAR(2000),
 	trang_thai INT NOT NULL,
 	ngay_tao DATE NOT NULL DEFAULT GETDATE(),
 	ngay_cap_nhat DATE NOT NULL DEFAULT GETDATE(),

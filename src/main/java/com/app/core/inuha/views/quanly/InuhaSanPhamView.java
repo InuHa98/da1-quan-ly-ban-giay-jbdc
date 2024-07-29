@@ -74,7 +74,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
 import jnafilechooser.api.JnaFileChooser;
 
 /**
@@ -224,17 +223,19 @@ public class InuhaSanPhamView extends RoundPanel {
         setupPagination();
 	setupPaginationSPCT();
 	
-	loadDataDanhMuc();
-	loadDataThuongHieu();
-	loadDataXuatXu();
-	loadDataKieuDang();
-	loadDataChatLieu();
-	loadDataDeGiay();
-	loadDataKichCo();
-	loadDataMauSac();
+	executorService.submit(() -> { 
+	    loadDataDanhMuc();
+	    loadDataThuongHieu();
+	    loadDataXuatXu();
+	    loadDataKieuDang();
+	    loadDataChatLieu();
+	    loadDataDeGiay();
+	    loadDataKichCo();
+	    loadDataMauSac();
 
-	loadDataPage(1);
-	loadDataPageSPCT(1);
+	    loadDataPage(1);
+	    loadDataPageSPCT(1);
+	});
     }
     
     private void setupTable(JTable table) { 
@@ -651,6 +652,8 @@ public class InuhaSanPhamView extends RoundPanel {
         btnSearch2 = new javax.swing.JButton();
         btnClear2 = new javax.swing.JButton();
 
+        tbpTab.setForeground(new java.awt.Color(255, 255, 255));
+
         pnlDanhSachSanPham.setOpaque(false);
 
         pnlSearchBox.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -680,6 +683,7 @@ public class InuhaSanPhamView extends RoundPanel {
         });
 
         lblFilter.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
+        lblFilter.setForeground(new java.awt.Color(255, 255, 255));
         lblFilter.setText("Bộ lọc");
 
         javax.swing.GroupLayout splitLine1Layout = new javax.swing.GroupLayout(splitLine1);
@@ -744,6 +748,7 @@ public class InuhaSanPhamView extends RoundPanel {
         );
 
         lblList.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
+        lblList.setForeground(new java.awt.Color(255, 255, 255));
         lblList.setText("Danh sách sản phẩm");
 
         btnThemSanPham.setText("Thêm sản phẩm");
@@ -915,6 +920,7 @@ public class InuhaSanPhamView extends RoundPanel {
         pnlDanhSachSanPhamChiTiet.setOpaque(false);
 
         lblList2.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
+        lblList2.setForeground(new java.awt.Color(255, 255, 255));
         lblList2.setText("Danh sách chi tiết sản phẩm");
 
         javax.swing.GroupLayout splitLine3Layout = new javax.swing.GroupLayout(splitLine3);
@@ -1068,6 +1074,7 @@ public class InuhaSanPhamView extends RoundPanel {
         );
 
         lblFilter2.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
+        lblFilter2.setForeground(new java.awt.Color(255, 255, 255));
         lblFilter2.setText("Bộ lọc");
 
         javax.swing.GroupLayout splitLine4Layout = new javax.swing.GroupLayout(splitLine4);

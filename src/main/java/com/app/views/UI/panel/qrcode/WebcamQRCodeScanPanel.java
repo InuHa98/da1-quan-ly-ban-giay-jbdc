@@ -19,8 +19,11 @@ import com.google.zxing.common.HybridBinarizer;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -33,7 +36,7 @@ import raven.modal.ModalDialog;
  *
  * @author InuHa
  */
-public class WebcamQRCodeScanPanel extends RoundPanel {
+public class WebcamQRCodeScanPanel extends RoundPanel implements Closeable {
 
     private static WebcamQRCodeScanPanel instance;
     
@@ -59,22 +62,14 @@ public class WebcamQRCodeScanPanel extends RoundPanel {
         }
 	
         LoadingDialog loading = new LoadingDialog();
-	SwingWorker<Void, Void> worker = new SwingWorker<>() {
-	    @Override
-	    protected Void doInBackground() {
-		instance.event = event;
-		instance.close();
-		instance.initializeWebcam(WebcamResolution.VGA.getSize());
-		return null;
-	    }
-
-	    @Override
-	    protected void done() {
-		loading.dispose();
-	    }
-	};
-	worker.execute();
-	
+	ExecutorService executorService = Executors.newSingleThreadExecutor();
+	executorService.submit(() -> {
+	    instance.event = event;
+	    instance.close();
+	    instance.initializeWebcam(WebcamResolution.VGA.getSize());
+	    loading.dispose();
+	    executorService.shutdown();
+	});
         loading.setVisible(true);
 
         return instance;
@@ -87,8 +82,7 @@ public class WebcamQRCodeScanPanel extends RoundPanel {
 	instance.event = event;
 	instance.close();
 	instance.isAutoClose = false;
-	instance.initializeWebcam(WebcamResolution.QQVGA.getSize());
-
+	instance.initializeWebcam(WebcamResolution.QVGA.getSize());
         return instance;
     }
 	
@@ -98,83 +92,63 @@ public class WebcamQRCodeScanPanel extends RoundPanel {
     }
 
     private void initializeWebcam(Dimension size) {
+	try {
+	    webcam = Webcam.getDefault();
+	    if (webcam == null) {
+		MessageModal.error("Không tìm thấy webcam của máy tính");
+		return;
+	    }
 
-	SwingWorker<Webcam, Void> worker = new SwingWorker<>() {
-	    @Override
-	    protected Webcam doInBackground() {
+	    if (!webcam.isOpen()) { 
+		webcam.setViewSize(size);
+	    }
+
+	    int check = 0;
+	    while (true) {
 		try {
-		    webcam = Webcam.getDefault();
-		    if (webcam == null) {
-			MessageModal.error("Không tìm thấy webcam của máy tính");
-			return null;
-		    }
-
-		    if (!webcam.isOpen()) { 
-			webcam.setViewSize(size);
-		    }
-
-		    int check = 0;
-		    while (true) {
-			try {
-			    webcam.open();
-			    break;
-			} catch(Exception e) { 
-			    if (check > 3) {
-				break;		    
-			    }
-			}
-			try {
-			    Thread.sleep(500);
-			} catch (InterruptedException ex) {
-			    ex.printStackTrace();
-			}
-			check++;
-		    }
-
-		    if (!webcam.isOpen()) {
+		    webcam.open();
+		    break;
+		} catch(Exception e) { 
+		    if (check > 3) {
 			MessageToast.error("Webcam đang bị tắt hoặc đã được chạy trên ứng dụng khác!!!");
-			return null;
+			return;		    
 		    }
-		} catch (Exception e) {
-		    e.printStackTrace();
 		}
-		return webcam;
-	    }
-
-	    @Override
-	    protected void done() {
 		try {
-		    if (get() == null) {
-			return;
-		    }
-		    panel = new WebcamPanel(get());
-		    panel.setFPSDisplayed(false);
-		    panel.setDisplayDebugInfo(false);
-		    panel.setImageSizeDisplayed(false);
-		    panel.setMirrored(true);
-		    removeAll();
-		    add(panel, BorderLayout.CENTER);
-		    revalidate();
-		    repaint();
-
-		    final Thread daemon = new Thread(new Runnable() {
-			@Override
-			public void run() {
-			    try {
-				scanning();
-			    }  finally {
-				close();
-			    }
-			}
-		    });
-		    daemon.setDaemon(true);
-		    daemon.start();
-		} catch (Exception e) {
-		    e.printStackTrace();
+		    Thread.sleep(500);
+		} catch (InterruptedException ex) {
+		    ex.printStackTrace();
 		}
+		check++;
 	    }
-	};
-	worker.execute();
+	    
+	    panel = new WebcamPanel(webcam);
+	    panel.setFPSDisplayed(false);
+	    panel.setDisplayDebugInfo(false);
+	    panel.setImageSizeDisplayed(false);
+	    panel.setMirrored(true);
+	    removeAll();
+	    add(panel, BorderLayout.CENTER);
+	    revalidate();
+	    repaint();
+
+	    final Thread daemon = new Thread(new Runnable() {
+		@Override
+		public void run() {
+		    try {
+			scanning();
+		    } catch (Exception e) {
+			e.printStackTrace();
+		    }  finally {
+			close();
+		    }
+		}
+	    });
+	    daemon.setDaemon(true);
+	    daemon.start();
+	} catch (Exception e) {
+	    e.printStackTrace();
+	}
     }
 
     private void scanning() {
@@ -192,13 +166,13 @@ public class WebcamQRCodeScanPanel extends RoundPanel {
             }
             
             try {
-                Thread.sleep(300);
+                Thread.sleep(100);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
             
             if (webcam == null || !webcam.isOpen()) {
-                continue;
+                break;
             }
 
             BufferedImage image = webcam.getImage();
@@ -217,12 +191,11 @@ public class WebcamQRCodeScanPanel extends RoundPanel {
         }
     }
         
-    private void close() {
+    @Override
+    public void close() {
 	instance.isAutoClose = true;
 	if (instance.webcam != null && instance.webcam.isOpen()) { 
 	    instance.webcam.close();
-	    instance.webcam = null;
-	    instance.panel = null;
 	}
 
     }

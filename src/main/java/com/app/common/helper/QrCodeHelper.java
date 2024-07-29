@@ -5,6 +5,7 @@ import com.app.utils.QrCodeUtils;
 import com.app.views.UI.panel.qrcode.IQRCodeScanEvent;
 import com.app.views.UI.panel.qrcode.WebcamQRCodeScanPanel;
 import static com.app.views.UI.panel.qrcode.WebcamQRCodeScanPanel.playSound;
+import com.github.sarxos.webcam.WebcamResolution;
 import com.google.zxing.Result;
 import com.google.zxing.WriterException;
 import java.awt.BorderLayout;
@@ -12,6 +13,8 @@ import java.awt.Dimension;
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
@@ -47,26 +50,14 @@ public class QrCodeHelper {
     
     public static void initWebcam(JPanel panel, Dimension size, IQRCodeScanEvent event) { 
 	panel.setLayout(new MigLayout("fill", String.format("[center, %s:%s]", size.getWidth(), size.getWidth()), String.format("[center, %s:%s]", size.getHeight(), size.getHeight())));
-	SwingWorker<JPanel, Void> worker = new SwingWorker<>() {
-	    @Override
-	    protected JPanel doInBackground() {
-		return WebcamQRCodeScanPanel.initPanel(event);
-	    }
+	ExecutorService executorService = Executors.newSingleThreadExecutor();
+	executorService.submit(() -> { 
+	    panel.add(WebcamQRCodeScanPanel.initPanel(event));
+	    panel.revalidate();
+	    panel.repaint();
+	    executorService.shutdown();
+	});
 
-	    @Override
-	    protected void done() {
-		try {
-		    panel.add(get());
-		} catch (InterruptedException ex) {
-		    ex.printStackTrace();
-		} catch (ExecutionException ex) {
-		    ex.printStackTrace();
-		}
-	    }
-	};
-	worker.execute();
-	JPanel webcam = WebcamQRCodeScanPanel.initPanel(event);
-	panel.add(webcam);
     }
 	
     public static void closeWebcam() { 

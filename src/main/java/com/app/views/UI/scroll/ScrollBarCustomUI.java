@@ -18,7 +18,7 @@ public class ScrollBarCustomUI extends BasicScrollBarUI {
     private boolean isMin;
     private boolean isMax;
 
-    private final static Color COLOR_PRIMARY = ColorUtils.PRIMARY_COLOR;
+    private final static Color COLOR_PRIMARY = ColorUtils.hexToColor("#5b5d65");
 
     private final static Color COLOR_HOVER = ColorUtils.lighten(COLOR_PRIMARY, .3f);
 
