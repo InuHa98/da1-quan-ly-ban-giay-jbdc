@@ -136,6 +136,7 @@ public class TableCustomUI {
     }
 
     public static void resizeColumnHeader(JTable table) {
+	table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         JTableHeader header = table.getTableHeader();
         TableColumnModel columnModel = table.getColumnModel();
 

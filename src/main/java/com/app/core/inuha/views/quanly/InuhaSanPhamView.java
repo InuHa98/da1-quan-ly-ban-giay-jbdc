@@ -169,13 +169,9 @@ public class InuhaSanPhamView extends RoundPanel {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) { 
-                    handleClickButtonSearch2();
+                    handleClickButtonSeachChiTiet();
                 }
             }
-
-	    private void handleClickButtonSearch2() {
-		throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-	    }
         });
 		
         pnlContainer.setBackground(ColorUtils.BACKGROUND_PRIMARY);
@@ -188,6 +184,11 @@ public class InuhaSanPhamView extends RoundPanel {
         btnXoaSanPham.setIcon(ResourceUtils.getSVG("/svg/trash.svg", new Dimension(20, 20)));
         btnSearch.setIcon(ResourceUtils.getSVG("/svg/search.svg", new Dimension(20, 20)));
         btnSearch2.setIcon(ResourceUtils.getSVG("/svg/search.svg", new Dimension(20, 20)));
+	btnScanQR.setIcon(ResourceUtils.getSVG("/svg/qr.svg", new Dimension(20, 20)));
+	btnScanQRChiTiet.setIcon(ResourceUtils.getSVG("/svg/qr.svg", new Dimension(20, 20)));
+	btnExport.setIcon(ResourceUtils.getSVG("/svg/export.svg", new Dimension(20, 20)));
+	btnImport.setIcon(ResourceUtils.getSVG("/svg/import.svg", new Dimension(20, 20)));
+	btnSaveAllQR.setIcon(ResourceUtils.getSVG("/svg/save.svg", new Dimension(20, 20)));
 	
         btnClear.setBackground(ColorUtils.BUTTON_GRAY);
 	btnClear2.setBackground(ColorUtils.BUTTON_GRAY);
@@ -217,21 +218,24 @@ public class InuhaSanPhamView extends RoundPanel {
 	cboKichCo.setPreferredSize(cboSize);
 	cboMauSac.setPreferredSize(cboSize);
 	
-        loadDataDanhMuc();
-        loadDataThuongHieu();
-	loadDataXuatXu();
-	loadDataKieuDang();
-	loadDataChatLieu();
-	loadDataDeGiay();
-	loadDataKichCo();
-	loadDataMauSac();
-
         setupTable(tblDanhSach);
 	setupTableSPCT(tblDanhSachChiTiet);
-        loadDataPage(1);
-	loadDataPageSPCT(1);
         setupPagination();
 	setupPaginationSPCT();
+	
+	executorService.submit(() -> { 
+	    loadDataDanhMuc();
+	    loadDataThuongHieu();
+	    loadDataXuatXu();
+	    loadDataKieuDang();
+	    loadDataChatLieu();
+	    loadDataDeGiay();
+	    loadDataKichCo();
+	    loadDataMauSac();
+
+	    loadDataPage(1);
+	    loadDataPageSPCT(1);
+	});
     }
     
     private void setupTable(JTable table) { 
@@ -283,7 +287,6 @@ public class InuhaSanPhamView extends RoundPanel {
         
         pnlDanhSach.setBackground(ColorUtils.BACKGROUND_TABLE);
         TableCustomUI.apply(scrDanhSach, TableCustomUI.TableType.DEFAULT);
-        TableCustomUI.resizeColumnHeader(table);
 	
         table.setRowHeight(50);
         table.getColumnModel().getColumn(0).setHeaderRenderer(new CheckBoxTableHeaderRenderer(table, 0));
@@ -358,7 +361,11 @@ public class InuhaSanPhamView extends RoundPanel {
             ComboBoxItem<Integer> thuongHieu = (ComboBoxItem<Integer>) cboThuongHieu.getSelectedItem();
             ComboBoxItem<Integer> trangThai = (ComboBoxItem<Integer>) cboTrangThai.getSelectedItem();
 
-            InuhaFilterSanPhamRequest request = new InuhaFilterSanPhamRequest(keyword, danhMuc.getValue(), thuongHieu.getValue(), trangThai.getValue());
+            InuhaFilterSanPhamRequest request = new InuhaFilterSanPhamRequest();
+	    request.setKeyword(keyword);
+	    request.setDanhMuc(danhMuc);
+	    request.setThuongHieu(thuongHieu);
+	    request.setTrangThai(trangThai);
             request.setSize(sizePage);
 	    
             int totalPages = sanPhamService.getTotalPage(request);
@@ -406,15 +413,15 @@ public class InuhaSanPhamView extends RoundPanel {
 
             InuhaFilterSanPhamChiTietRequest request = new InuhaFilterSanPhamChiTietRequest();
 	    request.setKeyword(keyword);
-	    request.setIdDanhMuc(danhMuc.getValue());
-	    request.setIdThuongHieu(thuongHieu.getValue());
-	    request.setIdXuatXu(xuatXu.getValue());
-	    request.setIdKieuDang(kieuDang.getValue());
-	    request.setIdChatLieu(chatLieu.getValue());
-	    request.setIdDeGiay(deGiay.getValue());
-	    request.setIdKichCo(kichCo.getValue());
-	    request.setIdMauSac(mauSac.getValue());
-	    request.setTrangThai(trangThai.getValue());
+	    request.setDanhMuc(danhMuc);
+	    request.setThuongHieu(thuongHieu);
+	    request.setXuatXu(xuatXu);
+	    request.setKieuDang(kieuDang);
+	    request.setChatLieu(chatLieu);
+	    request.setDeGiay(deGiay);
+	    request.setKichCo(kichCo);
+	    request.setMauSac(mauSac);
+	    request.setTrangThai(trangThai);
             request.setSize(sizePage);
 	    
             int totalPages = sanPhamChiTietService.getTotalPage(request);
@@ -493,17 +500,11 @@ public class InuhaSanPhamView extends RoundPanel {
     }
 	
     private void rerenderPagination(int currentPage, int totalPages) { 
-        currentPage = currentPage < 1 ? 1 : currentPage;
-        pagination.setCurrentPage(currentPage);
-        pagination.setTotalPages(totalPages);
-        pagination.renderListPage();
+	pagination.rerender(currentPage, totalPages);
     }
     
     private void rerenderPaginationSPCT(int currentPage, int totalPages) { 
-        currentPage = currentPage < 1 ? 1 : currentPage;
-        paginationSPCT.setCurrentPage(currentPage);
-        paginationSPCT.setTotalPages(totalPages);
-        paginationSPCT.renderListPage();
+	paginationSPCT.rerender(currentPage, totalPages);
     }
     
     public void loadDataDanhMuc() { 
@@ -651,6 +652,8 @@ public class InuhaSanPhamView extends RoundPanel {
         btnSearch2 = new javax.swing.JButton();
         btnClear2 = new javax.swing.JButton();
 
+        tbpTab.setForeground(new java.awt.Color(255, 255, 255));
+
         pnlDanhSachSanPham.setOpaque(false);
 
         pnlSearchBox.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -680,6 +683,7 @@ public class InuhaSanPhamView extends RoundPanel {
         });
 
         lblFilter.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
+        lblFilter.setForeground(new java.awt.Color(255, 255, 255));
         lblFilter.setText("Bộ lọc");
 
         javax.swing.GroupLayout splitLine1Layout = new javax.swing.GroupLayout(splitLine1);
@@ -744,6 +748,7 @@ public class InuhaSanPhamView extends RoundPanel {
         );
 
         lblList.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
+        lblList.setForeground(new java.awt.Color(255, 255, 255));
         lblList.setText("Danh sách sản phẩm");
 
         btnThemSanPham.setText("Thêm sản phẩm");
@@ -915,6 +920,7 @@ public class InuhaSanPhamView extends RoundPanel {
         pnlDanhSachSanPhamChiTiet.setOpaque(false);
 
         lblList2.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
+        lblList2.setForeground(new java.awt.Color(255, 255, 255));
         lblList2.setText("Danh sách chi tiết sản phẩm");
 
         javax.swing.GroupLayout splitLine3Layout = new javax.swing.GroupLayout(splitLine3);
@@ -1068,6 +1074,7 @@ public class InuhaSanPhamView extends RoundPanel {
         );
 
         lblFilter2.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
+        lblFilter2.setForeground(new java.awt.Color(255, 255, 255));
         lblFilter2.setText("Bộ lọc");
 
         javax.swing.GroupLayout splitLine4Layout = new javax.swing.GroupLayout(splitLine4);

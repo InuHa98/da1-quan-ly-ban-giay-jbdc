@@ -16,6 +16,7 @@ import com.app.views.UI.ImageRound;
 import com.app.views.UI.dialog.LoadingDialog;
 import com.app.views.UI.scroll.ScrollBarCustomUI;
 import com.app.views.DashboardView;
+import com.app.views.UI.panel.qrcode.WebcamQRCodeScanPanel;
 import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.util.Animator;
 import net.miginfocom.swing.MigLayout;
@@ -90,6 +91,7 @@ public class SidebarMenu extends JPanel {
 	    }
 	    
             try {
+		WebcamQRCodeScanPanel.dispose();
                 Class<?> loadClass = Class.forName(className);
                 DashboardController.getInstance().show((JComponent) loadClass.getDeclaredConstructor().newInstance());
             } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException |
@@ -295,11 +297,9 @@ public class SidebarMenu extends JPanel {
                         selectedMenu = menuButton;
                         animator.start();
 			LoadingDialog loading = new LoadingDialog();
-			ExecutorService executorService = Executors.newSingleThreadExecutor();
-			executorService.submit(() -> {
+			executor.submit(() -> { 
 			    menuEvent.menuSelected(menuButton.getIndex());
 			    loading.dispose();
-			    executorService.shutdown();
 			});
                         loading.setVisible(true);
                     }

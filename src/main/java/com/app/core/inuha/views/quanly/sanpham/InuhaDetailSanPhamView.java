@@ -11,16 +11,10 @@ import com.app.core.inuha.models.InuhaSanPhamChiTietModel;
 import com.app.core.inuha.models.InuhaSanPhamModel;
 import com.app.core.inuha.models.sanpham.InuhaKichCoModel;
 import com.app.core.inuha.models.sanpham.InuhaMauSacModel;
-import com.app.core.inuha.models.sanpham.InuhaThuongHieuModel;
-import com.app.core.inuha.models.sanpham.InuhaXuatXuModel;
 import com.app.core.inuha.request.InuhaFilterSanPhamChiTietRequest;
-import com.app.core.inuha.request.InuhaFilterSanPhamRequest;
 import com.app.core.inuha.services.InuhaKichCoService;
 import com.app.core.inuha.services.InuhaMauSacService;
 import com.app.core.inuha.services.InuhaSanPhamChiTietService;
-import com.app.core.inuha.services.InuhaSanPhamService;
-import com.app.core.inuha.services.InuhaThuongHieuService;
-import com.app.core.inuha.services.InuhaXuatXuService;
 import com.app.core.inuha.views.quanly.InuhaSanPhamView;
 import com.app.core.inuha.views.quanly.components.table.trangthai.InuhaTrangThaiSanPhamTableCellRender;
 import com.app.utils.ColorUtils;
@@ -49,6 +43,7 @@ import com.app.views.UI.table.celll.TableActionCellEditor;
 import com.app.views.UI.table.celll.TableActionCellRender;
 import java.awt.Rectangle;
 import java.awt.Shape;
+import java.awt.event.ItemEvent;
 import static java.time.Instant.now;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.ExecutorService;
@@ -98,7 +93,7 @@ public class InuhaDetailSanPhamView extends JPanel {
         return instance;
     }
 
-    private boolean isReset = true;
+    private boolean reLoad = true;
     
     public InuhaDetailSanPhamView(InuhaSanPhamModel sanPham) {
         initComponents();
@@ -112,6 +107,14 @@ public class InuhaDetailSanPhamView extends JPanel {
 	
 	pnlInfo.setBackground(ColorUtils.BACKGROUND_PRIMARY);
 	pnlInfo.setOpaque(false);
+	
+	lblTenSanPham.setForeground(ColorUtils.PRIMARY_COLOR);
+	
+	btnEdit.setIcon(ResourceUtils.getSVG("/svg/edit.svg", new Dimension(20, 20)));
+	btnSaveQR.setIcon(ResourceUtils.getSVG("/svg/save.svg", new Dimension(20, 20)));
+	btnScanQR.setIcon(ResourceUtils.getSVG("/svg/qr.svg", new Dimension(20, 20)));
+	btnExport.setIcon(ResourceUtils.getSVG("/svg/export.svg", new Dimension(20, 20)));
+	btnReset.setIcon(ResourceUtils.getSVG("/svg/reload.svg", new Dimension(20, 20)));
         
         btnThemSanPhamChiTiet.setIcon(ResourceUtils.getSVG("/svg/plus.svg", new Dimension(20, 20)));
         
@@ -167,7 +170,7 @@ public class InuhaDetailSanPhamView extends JPanel {
 	    setupTable(tblDanhSach);
 	    loadDataPage(1);
 	    setupPagination();
-	    isReset = false;
+	    reLoad = false;
 	    loading.dispose();
 	});
 	loading.setVisible(true);
@@ -252,9 +255,9 @@ public class InuhaDetailSanPhamView extends JPanel {
 
             InuhaFilterSanPhamChiTietRequest request = new InuhaFilterSanPhamChiTietRequest();
 	    request.setIdSanPham(this.sanPham.getId());
-	    request.setIdKichCo(kichCo.getValue());
-	    request.setIdMauSac(mauSac.getValue());
-	    request.setTrangThai(trangThai.getValue());
+	    request.setKichCo(kichCo);
+	    request.setMauSac(mauSac);
+	    request.setTrangThai(trangThai);
 	    
             request.setSize(sizePage);
 	    
@@ -307,14 +310,11 @@ public class InuhaDetailSanPhamView extends JPanel {
     }
         
     private void rerenderPagination(int currentPage, int totalPages) { 
-        currentPage = currentPage < 1 ? 1 : currentPage;
-        pagination.setCurrentPage(currentPage);
-        pagination.setTotalPages(totalPages);
-        pagination.renderListPage();
+	pagination.rerender(currentPage, totalPages);
     }
    
     public void loadDataKichCo() { 
-        isReset = true;
+        reLoad = true;
         dataKichCo = kichCoService.getAll();
         cboKichCo.removeAllItems();
         
@@ -322,11 +322,11 @@ public class InuhaDetailSanPhamView extends JPanel {
         for(InuhaKichCoModel m: dataKichCo) { 
             cboKichCo.addItem(new ComboBoxItem<>(m.getTen(), m.getId()));
         }
-        isReset = false;
+        reLoad = false;
     }
     
     public void loadDataMauSac() { 
-        isReset = true;
+        reLoad = true;
         dataMauSac = mauSacService.getAll();
         cboMauSac.removeAllItems();
         
@@ -334,7 +334,7 @@ public class InuhaDetailSanPhamView extends JPanel {
         for(InuhaMauSacModel m: dataMauSac) { 
             cboMauSac.addItem(new ComboBoxItem<>(m.getTen(), m.getId()));
         }
-        isReset = false;
+        reLoad = false;
     }
     
     /**
@@ -787,17 +787,17 @@ public class InuhaDetailSanPhamView extends JPanel {
 
     private void cboKichCoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cboKichCoItemStateChanged
         // TODO add your handling code here:
-        handleFilter();
+        handleFilter(evt);
     }//GEN-LAST:event_cboKichCoItemStateChanged
 
     private void cboMauSacItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cboMauSacItemStateChanged
         // TODO add your handling code here:
-        handleFilter();
+        handleFilter(evt);
     }//GEN-LAST:event_cboMauSacItemStateChanged
 
     private void cboTrangThaiItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cboTrangThaiItemStateChanged
         // TODO add your handling code here:
-        handleFilter();
+        handleFilter(evt);
     }//GEN-LAST:event_cboTrangThaiItemStateChanged
 
     private void btnExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportActionPerformed
@@ -928,10 +928,11 @@ public class InuhaDetailSanPhamView extends JPanel {
         ModalDialog.showModal(this, new SimpleModalBorder(new InuhaAddSanPhamChiTietView(this.sanPham), "Thêm sản phẩm chi tiết"), ID_MODAL_ADD);
     }
     
-    private void handleFilter() {
-        if (isReset) { 
+    private void handleFilter(ItemEvent evt) {
+        if (reLoad || (evt != null && evt.getStateChange() != ItemEvent.SELECTED)) { 
             return;
         }
+	
         LoadingDialog loading = new LoadingDialog();
         executorService.submit(() -> {
             loadDataPage();
@@ -941,7 +942,7 @@ public class InuhaDetailSanPhamView extends JPanel {
     }
     
     private void handleClickButtonReset() {
-        isReset = true;
+        reLoad = true;
         LoadingDialog loading = new LoadingDialog();
         executorService.submit(() -> {
             cboKichCo.setSelectedIndex(0);
@@ -949,7 +950,7 @@ public class InuhaDetailSanPhamView extends JPanel {
             cboTrangThai.setSelectedIndex(0);
             loadDataPage();
             loading.dispose();
-            isReset = false;
+            reLoad = false;
         });
         loading.setVisible(true);
     }

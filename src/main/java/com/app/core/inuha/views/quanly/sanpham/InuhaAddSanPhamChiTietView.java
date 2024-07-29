@@ -24,6 +24,8 @@ import com.app.views.UI.dialog.LoadingDialog;
 import com.formdev.flatlaf.FlatClientProperties;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -118,6 +120,16 @@ public class InuhaAddSanPhamChiTietView extends javax.swing.JPanel {
 	cboMauSac.setPreferredSize(cboSize);
 	cboKichCo.setPreferredSize(cboSize);
 	
+	KeyAdapter eventEnter = new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) { 
+                    handleClickButtonSubmit();
+                }
+            }
+        };
+	txtSoLuong.addKeyListener(eventEnter);
+		
         LoadingDialog loading = new LoadingDialog();
         executorService.submit(() -> {
             loadDataKichCo();
@@ -139,9 +151,8 @@ public class InuhaAddSanPhamChiTietView extends javax.swing.JPanel {
         
         
         if (!exists) { 
+	    item.setText(item.getText() + " (đã xoá)");
             comboBox.addItem(item);
-            comboBox.setEnabled(false);
-            btn.setEnabled(false);
         }
         
         comboBox.setSelectedItem(item);
@@ -454,8 +465,9 @@ public class InuhaAddSanPhamChiTietView extends javax.swing.JPanel {
 
                     try {
                         if (!isEdited) { 
+			    
                             sanPhamChiTietService.insert(model);
-                            MessageToast.success("Thếm mới sản phẩm chi tiết thành công.");
+                            MessageToast.success("Thêm mới sản phẩm chi tiết thành công.");
                             InuhaDetailSanPhamView.getInstance().loadDataPage(1);
                         } else {
                             sanPhamChiTietService.update(model);

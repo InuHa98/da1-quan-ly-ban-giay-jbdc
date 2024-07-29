@@ -40,6 +40,8 @@ import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Shape;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -170,6 +172,19 @@ public class InuhaAddSanPhamView extends javax.swing.JPanel {
             }
         });
 	
+	KeyAdapter eventEnter = new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) { 
+                    handleClickButtonSubmit();
+                }
+            }
+        };
+	
+	txtTen.addKeyListener(eventEnter);
+	txtGiaNhap.addKeyListener(eventEnter);
+	txtGiaBan.addKeyListener(eventEnter);
+	txtMoTa.addKeyListener(eventEnter);
 	
 	Dimension cboSize = new Dimension(150, 36);
 	cboDanhMuc.setPreferredSize(cboSize);
@@ -201,12 +216,9 @@ public class InuhaAddSanPhamView extends javax.swing.JPanel {
             }
         }
         
-        
-        
         if (!exists) { 
+	    item.setText(item.getText() + " (đã xoá)");
             comboBox.addItem(item);
-            comboBox.setEnabled(false);
-            btn.setEnabled(false);
         }
         
         comboBox.setSelectedItem(item);

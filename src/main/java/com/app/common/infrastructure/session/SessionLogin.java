@@ -79,18 +79,29 @@ public class SessionLogin {
 
     public void logout() {
 	LoadingDialog loading = new LoadingDialog();
-        ExecutorService executorService = Executors.newFixedThreadPool(2);
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
         executorService.submit(() -> {
             if (MessageModal.confirmInfo("Bạn thực sự muốn đăng xuất?")) {
-		executorService.submit(() -> {
-		    clear();
-		    ApplicationController.getInstance().show(new LoginView());
-		    loading.dispose();
-		});
+		
+		SwingWorker<Void, Void> worker = new SwingWorker<>() {
+		    @Override
+		    protected Void doInBackground() {
+			clear();
+			ApplicationController.getInstance().show(new LoginView());
+			return null;
+		    }
+
+		    @Override
+		    protected void done() {
+			loading.dispose();
+			executorService.shutdown();
+		    }
+		};
+		worker.execute();
 		loading.setVisible(true);
-		executorService.shutdown();
             }
         });
+
     }
 
     public void changePassword() {
