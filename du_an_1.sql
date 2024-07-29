@@ -198,6 +198,7 @@ CREATE TABLE HoaDonChiTiet (
 	id INT IDENTITY(1, 1) PRIMARY KEY,
 	id_san_pham_chi_tiet INT NOT NULL,
 	id_hoa_don INT NOT NULL,
+	ma VARCHAR(50) NOT NULL,
 	gia_nhap MONEY NOT NULL DEFAULT 0,
 	gia_ban MONEY NOT NULL DEFAULT 0,
 	gia_giam MONEY NOT NULL DEFAULT 0,

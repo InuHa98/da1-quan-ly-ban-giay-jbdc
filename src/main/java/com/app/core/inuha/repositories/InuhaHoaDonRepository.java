@@ -3,8 +3,8 @@
 //import com.app.common.helper.JbdcHelper;
 //import com.app.common.infrastructure.interfaces.IDAOinterface;
 //import com.app.common.infrastructure.request.FillterRequest;
+//import com.app.common.infrastructure.session.SessionLogin;
 //import com.app.core.inuha.models.InuhaHoaDonModel;
-//import com.app.core.inuha.models.sanpham.InuhaHoaDonModel;
 //import com.app.utils.TimeUtils;
 //import java.sql.ResultSet;
 //import java.sql.SQLException;
@@ -24,13 +24,14 @@
 //    public int insert(InuhaHoaDonModel model) throws SQLException {
 //        int result = 0;
 //        String query = String.format("""
-//            INSERT INTO %s(id_tai_khoan, ngay_tao)
-//            VALUES (?, ?)
+//            INSERT INTO %s(id_tai_khoan, ma, phuong_thuc_thanh_toan, trang_thai, ngay_tao)
+//            VALUES (?, ?, ?, ?, ?)
 //        """, TABLE_NAME);
 //        try {
 //            Object[] args = new Object[] {
-//                model.getTen(),
-//                TimeUtils.currentDate()
+//                SessionLogin.getInstance().getData().getId(),
+//		
+//		TimeUtils.currentDate()
 //            };
 //            result = JbdcHelper.updateAndFlush(query, args);
 //        } catch(Exception e) {
