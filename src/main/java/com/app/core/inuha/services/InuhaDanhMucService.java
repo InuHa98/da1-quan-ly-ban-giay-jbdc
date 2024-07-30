@@ -19,7 +19,20 @@ import java.util.Optional;
  */
 public class InuhaDanhMucService implements IInuhaDanhMucServiceInterface {
 
-    private final InuhaDanhMucRepository repository = new InuhaDanhMucRepository();
+    private final InuhaDanhMucRepository repository = InuhaDanhMucRepository.getInstance();
+    
+    private static InuhaDanhMucService instance = null;
+    
+    public static InuhaDanhMucService getInstance() { 
+	if (instance == null) { 
+	    instance = new InuhaDanhMucService();
+	}
+	return instance;
+    }
+    
+    private InuhaDanhMucService() { 
+	
+    }
     
     @Override
     public InuhaDanhMucModel getById(Integer id) {
@@ -67,7 +80,7 @@ public class InuhaDanhMucService implements IInuhaDanhMucServiceInterface {
             repository.update(model);
         } catch (SQLException ex) {
             ex.printStackTrace();
-            throw new ServiceResponseException("Không thể xoá danh mục này");
+            throw new ServiceResponseException("Không thể cập nhật danh mục này");
         }
     }
 

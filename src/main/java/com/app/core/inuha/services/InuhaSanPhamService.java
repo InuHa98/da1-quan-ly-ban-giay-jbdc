@@ -1,12 +1,10 @@
 package com.app.core.inuha.services;
 
-import com.app.common.helper.JbdcHelper;
 import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.constants.TrangThaiXoaConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
 import com.app.common.infrastructure.request.FillterRequest;
 import com.app.core.inuha.models.InuhaSanPhamModel;
-import com.app.core.inuha.models.sanpham.InuhaKieuDangModel;
 import com.app.core.inuha.repositories.InuhaSanPhamRepository;
 import com.app.core.inuha.services.impl.IInuhaSanPhamServiceInterface;
 import com.app.utils.ProductUtils;
@@ -21,7 +19,20 @@ import java.util.Optional;
  */
 public class InuhaSanPhamService implements IInuhaSanPhamServiceInterface {
 
-    private final InuhaSanPhamRepository repository = new InuhaSanPhamRepository();
+    private final InuhaSanPhamRepository repository = InuhaSanPhamRepository.getInstance();
+    
+    private static InuhaSanPhamService instance = null;
+    
+    public static InuhaSanPhamService getInstance() { 
+	if (instance == null) { 
+	    instance = new InuhaSanPhamService();
+	}
+	return instance;
+    }
+    
+    private InuhaSanPhamService() { 
+	
+    }
     
     @Override
     public InuhaSanPhamModel getById(Integer id) {
@@ -77,7 +88,7 @@ public class InuhaSanPhamService implements IInuhaSanPhamServiceInterface {
             repository.update(model);
         } catch (SQLException ex) {
             ex.printStackTrace();
-            throw new ServiceResponseException("Không thể xoá sản phẩm này");
+            throw new ServiceResponseException("Không thể cập nhật sản phẩm này");
         }
     }
 

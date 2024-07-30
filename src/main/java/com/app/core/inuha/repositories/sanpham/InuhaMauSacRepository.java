@@ -20,6 +20,19 @@ public class InuhaMauSacRepository implements IDAOinterface<InuhaMauSacModel, In
     
     private final static String TABLE_NAME = "MauSac";
     
+    private static InuhaMauSacRepository instance = null;
+    
+    public static InuhaMauSacRepository getInstance() { 
+	if (instance == null) { 
+	    instance = new InuhaMauSacRepository();
+	}
+	return instance;
+    }
+    
+    private InuhaMauSacRepository() { 
+	
+    }
+    
     @Override
     public int insert(InuhaMauSacModel model) throws SQLException {
         int result = 0;
@@ -250,7 +263,7 @@ public class InuhaMauSacRepository implements IDAOinterface<InuhaMauSacModel, In
         String query = String.format("SELECT * FROM %s WHERE ten LIKE ? AND trang_thai_xoa = 0", TABLE_NAME);
 
         try {
-            resultSet = JbdcHelper.query(query, String.format("%%%s%%", name));
+            resultSet = JbdcHelper.query(query, name);
             while(resultSet.next()) {
                 model = buildData(resultSet, false);
             }

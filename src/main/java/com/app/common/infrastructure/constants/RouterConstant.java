@@ -1,7 +1,7 @@
 package com.app.common.infrastructure.constants;
 
 import com.app.core.inuha.views.all.banhang.InuhaBanHangView;
-import com.app.core.inuha.views.all.thongke.InuhaThongKeView;
+import com.app.core.inuha.views.quanly.thongke.InuhaThongKeView;
 import com.app.core.inuha.views.quanly.InuhaSanPhamView;
 import com.app.utils.RouterUtils;
 

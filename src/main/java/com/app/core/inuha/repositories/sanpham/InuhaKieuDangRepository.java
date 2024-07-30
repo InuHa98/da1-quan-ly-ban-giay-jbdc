@@ -5,6 +5,7 @@ import com.app.common.infrastructure.interfaces.IDAOinterface;
 import com.app.common.infrastructure.request.FillterRequest;
 import com.app.core.inuha.models.sanpham.InuhaKichCoModel;
 import com.app.core.inuha.models.sanpham.InuhaKieuDangModel;
+import com.app.core.inuha.services.InuhaKieuDangService;
 import com.app.utils.TimeUtils;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -19,6 +20,19 @@ import java.util.Optional;
 public class InuhaKieuDangRepository implements IDAOinterface<InuhaKieuDangModel, Integer> {
     
     private final static String TABLE_NAME = "KieuDang";
+    
+    private static InuhaKieuDangRepository instance = null;
+    
+    public static InuhaKieuDangRepository getInstance() { 
+	if (instance == null) { 
+	    instance = new InuhaKieuDangRepository();
+	}
+	return instance;
+    }
+    
+    private InuhaKieuDangRepository() { 
+	
+    }
     
     @Override
     public int insert(InuhaKieuDangModel model) throws SQLException {
@@ -250,7 +264,7 @@ public class InuhaKieuDangRepository implements IDAOinterface<InuhaKieuDangModel
         String query = String.format("SELECT * FROM %s WHERE ten LIKE ? AND trang_thai_xoa = 0", TABLE_NAME);
 
         try {
-            resultSet = JbdcHelper.query(query, String.format("%%%s%%", name));
+            resultSet = JbdcHelper.query(query, name);
             while(resultSet.next()) {
                 model = buildData(resultSet, false);
             }

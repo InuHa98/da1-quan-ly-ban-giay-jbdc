@@ -13,8 +13,8 @@ import com.app.core.inuha.services.InuhaMauSacService;
 import com.app.core.inuha.services.InuhaSanPhamChiTietService;
 import com.app.core.inuha.views.quanly.InuhaSanPhamView;
 import static com.app.core.inuha.views.quanly.sanpham.InuhaDetailSanPhamChiTietView.getInstance;
-import com.app.core.inuha.views.quanly.thuoctinhsanpham.kichco.InuhaListKichCoView;
-import com.app.core.inuha.views.quanly.thuoctinhsanpham.mausac.InuhaListMauSacView;
+import com.app.core.inuha.views.quanly.sanpham.thuoctinhsanpham.kichco.InuhaListKichCoView;
+import com.app.core.inuha.views.quanly.sanpham.thuoctinhsanpham.mausac.InuhaListMauSacView;
 import com.app.utils.ColorUtils;
 import com.app.utils.CurrencyUtils;
 import com.app.utils.ProductUtils;
@@ -41,16 +41,18 @@ import raven.modal.component.SimpleModalBorder;
  * @author InuHa
  */
 public class InuhaAddSanPhamChiTietView extends javax.swing.JPanel {
+    
+    private final int MAX = 99999999;
 
     private static InuhaAddSanPhamChiTietView instance;
     
-    private final InuhaSanPhamChiTietService sanPhamChiTietService = new InuhaSanPhamChiTietService();
+    private final InuhaSanPhamChiTietService sanPhamChiTietService = InuhaSanPhamChiTietService.getInstance();
     
     private final ExecutorService executorService = Executors.newFixedThreadPool(2);
        
-    private final static InuhaKichCoService kichCoService = new InuhaKichCoService();
+    private final static InuhaKichCoService kichCoService = InuhaKichCoService.getInstance();
     
-    private final static InuhaMauSacService mauSacService = new InuhaMauSacService();
+    private final static InuhaMauSacService mauSacService = InuhaMauSacService.getInstance();
     
     private List<InuhaKichCoModel> dataKichCo = new ArrayList<>();
     
@@ -106,12 +108,12 @@ public class InuhaAddSanPhamChiTietView extends javax.swing.JPanel {
         roundPanel1.setBackground(ColorUtils.BACKGROUND_PRIMARY);
         btnSubmit.setBackground(ColorUtils.BUTTON_PRIMARY);
         
-        txtSoLuong.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Tối đa " + Integer.MAX_VALUE);
+        txtSoLuong.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Tối đa " + MAX);
         
         btnCmdKichCo.setIcon(ResourceUtils.getSVG("/svg/plus.svg", new Dimension(20, 20)));
         btnCmdMauSac.setIcon(ResourceUtils.getSVG("/svg/plus.svg", new Dimension(20, 20)));
         
-        txtSoLuong.setFormatterFactory(CurrencyUtils.getDefaultFormatVND());
+        txtSoLuong.setFormatterFactory(CurrencyUtils.getDefaultFormat());
         
         cboKichCo.setModel(new DefaultComboBoxModel<ComboBoxItem<Integer>>());
         cboMauSac.setModel(new DefaultComboBoxModel<ComboBoxItem<Integer>>());
@@ -412,6 +414,15 @@ public class InuhaAddSanPhamChiTietView extends javax.swing.JPanel {
             txtSoLuong.requestFocus();
             return;
         }
+	try {
+	    if (CurrencyUtils.parseNumber(soLuong) >= MAX) { 
+		throw new NumberFormatException();
+	    }
+	} catch (NumberFormatException e) { 
+	    MessageToast.error("Số lượng phải nhỏ hơn " + MAX);
+	    txtSoLuong.requestFocus();
+	    return;
+	}
         lblSoLuong.setForeground(currentColor);
         
         lblKichCo.setForeground(ColorUtils.DANGER_COLOR);

@@ -107,6 +107,7 @@ CREATE TABLE SanPham (
 	ma VARCHAR(50) NOT NULL,
 	ten NVARCHAR(250) NOT NULL,
 	mo_ta NVARCHAR(2000),
+	gia_nhap MONEY NOT NULL,
 	gia_ban MONEY NOT NULL,
 	hinh_anh VARCHAR(250),
 	trang_thai BIT NOT NULL,
@@ -149,7 +150,7 @@ CREATE TABLE PhieuGiamGia (
 	don_toi_thieu MONEY NOT NULL DEFAULT 0,
 	giam_toi_da MONEY NOT NULL DEFAULT 0,
 	ngay_tao DATE NOT NULL DEFAULT GETDATE(),
-	ngay_cap_nhat DATE NOT NULL DEFAULT GETDATE(),
+	ngay_cap_nhat DATE DEFAULT GETDATE(),
 	trang_thai BIT NOT NULL,
 	trang_thai_xoa BIT DEFAULT 0
 )
@@ -160,7 +161,7 @@ CREATE TABLE DotGiamGia (
 	thoi_gian_bat_dau DATE NOT NULL,
 	thoi_gian_ket_thuc DATE NOT NULL,
 	ngay_tao DATE NOT NULL DEFAULT GETDATE(),
-	ngay_cap_nhat DATE NOT NULL DEFAULT GETDATE(),
+	ngay_cap_nhat DATE DEFAULT GETDATE(),
 	trang_thai BIT NOT NULL,
 	trang_thai_xoa BIT DEFAULT 0
 )
@@ -187,7 +188,7 @@ CREATE TABLE HoaDon (
 	phuong_thuc_thanh_toan BIT NOT NULL,
 	trang_thai INT NOT NULL,
 	ngay_tao DATE NOT NULL DEFAULT GETDATE(),
-	ngay_cap_nhat DATE NOT NULL DEFAULT GETDATE(),
+	ngay_cap_nhat DATE DEFAULT GETDATE(),
 	trang_thai_xoa BIT DEFAULT 0,
 	FOREIGN KEY(id_tai_khoan) REFERENCES dbo.TaiKhoan(id),
 	FOREIGN KEY(id_khach_hang) REFERENCES dbo.KhachHang(id),
