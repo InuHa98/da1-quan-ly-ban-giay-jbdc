@@ -4,14 +4,11 @@
  */
 package com.app.core.lam.models;
 
-
-
 /**
  *
  * @author Admin
  */
-public class KhachHangModels {
-    
+public class LichSuModels {
     private int idKH;
     
     private String tenKH;
@@ -24,10 +21,10 @@ public class KhachHangModels {
     
     private boolean trangThaiXoa;
 
-    public KhachHangModels() {
+    public LichSuModels() {
     }
 
-    public KhachHangModels( String tenKH, String soDienThoai, boolean gioiTinh, String diaChi, boolean trangThaiXoa) {
+    public LichSuModels(String tenKH, String soDienThoai, boolean gioiTinh, String diaChi, boolean trangThaiXoa) {
         this.tenKH = tenKH;
         this.soDienThoai = soDienThoai;
         this.gioiTinh = gioiTinh;
@@ -85,8 +82,7 @@ public class KhachHangModels {
 
     @Override
     public String toString() {
-        return "KhachHangModels{" + "idKH=" + idKH + ", tenKH=" + tenKH + ", soDienThoai=" + soDienThoai + ", gioiTinh=" + gioiTinh + ", diaChi=" + diaChi + ", trangThaiXoa=" + trangThaiXoa + '}';
+        return "LichSuModels{" + "idKH=" + idKH + ", tenKH=" + tenKH + ", soDienThoai=" + soDienThoai + ", gioiTinh=" + gioiTinh + ", diaChi=" + diaChi + ", trangThaiXoa=" + trangThaiXoa + '}';
     }
-
     
 }
