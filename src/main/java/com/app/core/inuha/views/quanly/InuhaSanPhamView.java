@@ -86,25 +86,25 @@ public class InuhaSanPhamView extends RoundPanel {
         
     private final ExecutorService executorService = Executors.newFixedThreadPool(2);
     
-    private final static InuhaSanPhamService sanPhamService = new InuhaSanPhamService();
+    private final static InuhaSanPhamService sanPhamService = InuhaSanPhamService.getInstance();
     
-    private final static InuhaSanPhamChiTietService sanPhamChiTietService = new InuhaSanPhamChiTietService();
+    private final static InuhaSanPhamChiTietService sanPhamChiTietService = InuhaSanPhamChiTietService.getInstance();
 	
-    private final static InuhaDanhMucService danhMucService = new InuhaDanhMucService();
+    private final static InuhaDanhMucService danhMucService = InuhaDanhMucService.getInstance();
     
-    private final static InuhaThuongHieuService thuongHieuService = new InuhaThuongHieuService();
+    private final static InuhaThuongHieuService thuongHieuService = InuhaThuongHieuService.getInstance();
     
-    private final static InuhaXuatXuService xuatXuService = new InuhaXuatXuService();
+    private final static InuhaXuatXuService xuatXuService = InuhaXuatXuService.getInstance();
     
-    private final static InuhaKieuDangService kieuDangService = new InuhaKieuDangService();
+    private final static InuhaKieuDangService kieuDangService = InuhaKieuDangService.getInstance();
     
-    private final static InuhaChatLieuService chatLieuService = new InuhaChatLieuService();
+    private final static InuhaChatLieuService chatLieuService = InuhaChatLieuService.getInstance();
     
-    private final static InuhaDeGiayService deGiayService = new InuhaDeGiayService();
+    private final static InuhaDeGiayService deGiayService = InuhaDeGiayService.getInstance();
     
-    private final static InuhaKichCoService kichCoService = new InuhaKichCoService();
+    private final static InuhaKichCoService kichCoService = InuhaKichCoService.getInstance();
     
-    private final static InuhaMauSacService mauSacService = new InuhaMauSacService();
+    private final static InuhaMauSacService mauSacService = InuhaMauSacService.getInstance();
     
     private List<InuhaDanhMucModel> dataDanhMuc = new ArrayList<>();
     
@@ -1533,7 +1533,6 @@ public class InuhaSanPhamView extends RoundPanel {
                     if ((id = QrCodeUtils.getIdSanPham(code)) > 0) {
                         sanPhamModel = sanPhamService.getById(id);
                     } else if((id = QrCodeUtils.getIdSanPhamChiTiet(code)) > 0) { 
-			InuhaSanPhamChiTietService sanPhamChiTietService = new InuhaSanPhamChiTietService();
 			InuhaSanPhamChiTietModel sanPhamChiTietModel = sanPhamChiTietService.getById(id);
 			sanPhamModel = sanPhamChiTietModel.getSanPham();
                     } else { 

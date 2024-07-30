@@ -1,5 +1,7 @@
 package com.app.core.inuha.models;
 
+import com.app.utils.CurrencyUtils;
+import com.app.utils.ProductUtils;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,6 +23,8 @@ public class InuhaHoaDonChiTietModel {
         
     private int id;
     
+    private String ma;
+    
     private double giaNhap;
     
     private double giaBan;
@@ -31,7 +35,16 @@ public class InuhaHoaDonChiTietModel {
     
     private InuhaSanPhamChiTietModel sanPhamChiTiet;
     
-    public Object[] toDataRow() { 
-	return null;
+    private InuhaHoaDonModel hoaDon;
+    
+    public Object[] toDataRowBanHang() { 
+	return new Object[] { 
+	    ProductUtils.getImage(sanPhamChiTiet.getSanPham().getHinhAnh()),
+	    "x" + soLuong,
+	    CurrencyUtils.parseString(giaBan - giaGiam),
+	    sanPhamChiTiet.getSanPham().getMa() + " - " + sanPhamChiTiet.getSanPham().getTen(),
+	    sanPhamChiTiet.getMauSac().getTen(),
+	    sanPhamChiTiet.getKichCo().getTen()
+	};
     }
 }

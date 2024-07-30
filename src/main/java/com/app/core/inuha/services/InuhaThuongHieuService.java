@@ -21,7 +21,20 @@ import java.util.Optional;
  */
 public class InuhaThuongHieuService implements IInuhaThuongHieuServiceInterface {
 
-    private final InuhaThuongHieuRepository repository = new InuhaThuongHieuRepository();
+    private final InuhaThuongHieuRepository repository = InuhaThuongHieuRepository.getInstance();
+    
+    private static InuhaThuongHieuService instance = null;
+    
+    public static InuhaThuongHieuService getInstance() { 
+	if (instance == null) { 
+	    instance = new InuhaThuongHieuService();
+	}
+	return instance;
+    }
+    
+    private InuhaThuongHieuService() { 
+	
+    }
     
     @Override
     public InuhaThuongHieuModel getById(Integer id) {
@@ -69,7 +82,7 @@ public class InuhaThuongHieuService implements IInuhaThuongHieuServiceInterface 
             repository.update(model);
         } catch (SQLException ex) {
             ex.printStackTrace();
-            throw new ServiceResponseException("Không thể xoá thương hiệu này");
+            throw new ServiceResponseException("Không thể cập nhật thương hiệu này");
         }
     }
 

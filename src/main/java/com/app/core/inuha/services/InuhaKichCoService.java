@@ -5,8 +5,6 @@ import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.constants.TrangThaiXoaConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
 import com.app.common.infrastructure.request.FillterRequest;
-import com.app.core.inuha.models.sanpham.InuhaDanhMucModel;
-import com.app.core.inuha.models.sanpham.InuhaDeGiayModel;
 import com.app.core.inuha.models.sanpham.InuhaKichCoModel;
 import com.app.core.inuha.repositories.sanpham.InuhaKichCoRepository;
 import com.app.core.inuha.services.impl.IInuhaKichCoServiceInterface;
@@ -21,7 +19,20 @@ import java.util.Optional;
  */
 public class InuhaKichCoService implements IInuhaKichCoServiceInterface {
 
-    private final InuhaKichCoRepository repository = new InuhaKichCoRepository();
+    private final InuhaKichCoRepository repository = InuhaKichCoRepository.getInstance();
+
+    private static InuhaKichCoService instance = null;
+    
+    public static InuhaKichCoService getInstance() { 
+	if (instance == null) { 
+	    instance = new InuhaKichCoService();
+	}
+	return instance;
+    }
+    
+    private InuhaKichCoService() { 
+	
+    }
     
     @Override
     public InuhaKichCoModel getById(Integer id) {
@@ -69,7 +80,7 @@ public class InuhaKichCoService implements IInuhaKichCoServiceInterface {
             repository.update(model);
         } catch (SQLException ex) {
             ex.printStackTrace();
-            throw new ServiceResponseException("Không thể xoá kích cỡ này");
+            throw new ServiceResponseException("Không thể cập nhật kích cỡ này");
         }
     }
 

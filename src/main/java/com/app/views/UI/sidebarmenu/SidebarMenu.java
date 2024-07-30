@@ -45,7 +45,7 @@ public class SidebarMenu extends JPanel {
     
     private final static int MAX_WIDTH = 240;
 
-    private final InuhaTaiKhoanService nhanVienService = new InuhaTaiKhoanService();
+    private final InuhaTaiKhoanService nhanVienService = InuhaTaiKhoanService.getInstance();
 
     private final ExecutorService executor = Executors.newFixedThreadPool(2);
 

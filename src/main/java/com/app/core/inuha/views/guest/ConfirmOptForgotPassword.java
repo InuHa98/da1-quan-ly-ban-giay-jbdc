@@ -26,7 +26,7 @@ import java.util.concurrent.Executors;
  */
 public class ConfirmOptForgotPassword extends javax.swing.JPanel {
 
-    private final InuhaTaiKhoanService nhanVienService = new InuhaTaiKhoanService();
+    private final InuhaTaiKhoanService nhanVienService = InuhaTaiKhoanService.getInstance();
 
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
 

@@ -10,16 +10,27 @@ import com.app.core.inuha.request.InuhaFillterTaiKhoanRequest;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 /**
  *
  * @author InuHa
  */
 public class InuhaTaiKhoanRepository implements IDAOinterface<InuhaTaiKhoanModel, Integer> {
 
+    private static InuhaTaiKhoanRepository instance = null;
+    
+    public static InuhaTaiKhoanRepository getInstance() { 
+	if (instance == null) { 
+	    instance = new InuhaTaiKhoanRepository();
+	}
+	return instance;
+    }
+    
+    private InuhaTaiKhoanRepository() { 
+	
+    }
+    
     @Override
     public int insert(InuhaTaiKhoanModel model) throws SQLException {
         int result = 0;

@@ -5,14 +5,8 @@ import com.app.common.infrastructure.interfaces.IDAOinterface;
 import com.app.common.infrastructure.request.FillterRequest;
 import com.app.core.inuha.models.InuhaSanPhamChiTietModel;
 import com.app.core.inuha.models.InuhaSanPhamModel;
-import com.app.core.inuha.models.sanpham.InuhaChatLieuModel;
-import com.app.core.inuha.models.sanpham.InuhaDanhMucModel;
-import com.app.core.inuha.models.sanpham.InuhaDeGiayModel;
 import com.app.core.inuha.models.sanpham.InuhaKichCoModel;
-import com.app.core.inuha.models.sanpham.InuhaKieuDangModel;
 import com.app.core.inuha.models.sanpham.InuhaMauSacModel;
-import com.app.core.inuha.models.sanpham.InuhaThuongHieuModel;
-import com.app.core.inuha.models.sanpham.InuhaXuatXuModel;
 import com.app.core.inuha.request.InuhaFilterSanPhamChiTietRequest;
 import com.app.utils.TimeUtils;
 import java.sql.ResultSet;
@@ -27,9 +21,22 @@ import java.util.Optional;
  */
 public class InuhaSanPhamChiTietRepository implements IDAOinterface<InuhaSanPhamChiTietModel, Integer> {
     
-    private final InuhaSanPhamRepository sanPhamRepository = new InuhaSanPhamRepository();
+    private final InuhaSanPhamRepository sanPhamRepository = InuhaSanPhamRepository.getInstance();
     
     private final static String TABLE_NAME = "SanPhamChiTiet";
+    
+    private static InuhaSanPhamChiTietRepository instance = null;
+    
+    public static InuhaSanPhamChiTietRepository getInstance() { 
+	if (instance == null) { 
+	    instance = new InuhaSanPhamChiTietRepository();
+	}
+	return instance;
+    }
+    
+    private InuhaSanPhamChiTietRepository() { 
+	
+    }
     
     @Override
     public int insert(InuhaSanPhamChiTietModel model) throws SQLException {

@@ -73,7 +73,7 @@ public class InuhaSanPhamModel {
         };
     }
     
-    public Object[] toDataRowHoaDon() { 
+    public Object[] toDataRowBanHang() { 
         return new Object[] { 
             stt,
             ma,
@@ -86,7 +86,8 @@ public class InuhaSanPhamModel {
 	    xuatXu.getTen(),
 	    kieuDang.getTen(),
 	    chatLieu.getTen(),
-	    deGiay.getTen()
+	    deGiay.getTen(),
+	    moTa
         };
     }
     

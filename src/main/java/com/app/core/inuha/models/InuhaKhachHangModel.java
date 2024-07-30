@@ -32,6 +32,10 @@ public class InuhaKhachHangModel {
     
     private boolean trangThaiXoa;
         
+    public boolean isGioiTinh() { 
+	return gioiTinh;
+    }
+    
     public String getGioiTinh() { 
 	return gioiTinh ? "Nam" : "Nữ";
     }
@@ -39,6 +43,7 @@ public class InuhaKhachHangModel {
     public Object[] toDataRow() { 
 	return new Object[] { 
 	    stt,
+	    null,
 	    sdt,
 	    hoTen,
 	    getGioiTinh(),

@@ -19,6 +19,19 @@ import java.util.Optional;
 public class InuhaKichCoRepository implements IDAOinterface<InuhaKichCoModel, Integer> {
     
     private final static String TABLE_NAME = "KichCo";
+
+    private static InuhaKichCoRepository instance = null;
+    
+    public static InuhaKichCoRepository getInstance() { 
+	if (instance == null) { 
+	    instance = new InuhaKichCoRepository();
+	}
+	return instance;
+    }
+    
+    private InuhaKichCoRepository() { 
+	
+    }
     
     @Override
     public int insert(InuhaKichCoModel model) throws SQLException {
@@ -250,7 +263,7 @@ public class InuhaKichCoRepository implements IDAOinterface<InuhaKichCoModel, In
         String query = String.format("SELECT * FROM %s WHERE ten LIKE ? AND trang_thai_xoa = 0", TABLE_NAME);
 
         try {
-            resultSet = JbdcHelper.query(query, String.format("%%%s%%", name));
+            resultSet = JbdcHelper.query(query, name);
             while(resultSet.next()) {
                 model = buildData(resultSet, false);
             }

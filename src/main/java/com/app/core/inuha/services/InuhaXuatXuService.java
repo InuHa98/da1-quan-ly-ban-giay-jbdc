@@ -21,7 +21,20 @@ import java.util.Optional;
  */
 public class InuhaXuatXuService implements IInuhaXuatXuServiceInterface {
 
-    private final InuhaXuatXuRepository repository = new InuhaXuatXuRepository();
+    private final InuhaXuatXuRepository repository = InuhaXuatXuRepository.getInstance();
+    
+    private static InuhaXuatXuService instance = null;
+    
+    public static InuhaXuatXuService getInstance() { 
+	if (instance == null) { 
+	    instance = new InuhaXuatXuService();
+	}
+	return instance;
+    }
+    
+    private InuhaXuatXuService() { 
+	
+    }
     
     @Override
     public InuhaXuatXuModel getById(Integer id) {
@@ -69,7 +82,7 @@ public class InuhaXuatXuService implements IInuhaXuatXuServiceInterface {
             repository.update(model);
         } catch (SQLException ex) {
             ex.printStackTrace();
-            throw new ServiceResponseException("Không thể xoá xuất xứ này");
+            throw new ServiceResponseException("Không thể cập nhật xuất xứ này");
         }
     }
 

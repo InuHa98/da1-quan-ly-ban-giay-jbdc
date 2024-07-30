@@ -23,12 +23,11 @@ public class ProductUtils {
     public static final int MAX_HEIGHT_UPLOAD = 200;
 
     public static String generateCodeSanPham() {
-        InuhaSanPhamService service = new InuhaSanPhamService();
-        String lastCode = service.getLastCode();
+        String lastCode = InuhaSanPhamService.getInstance().getLastCode();
         
         int number = 1;
         
-        if (lastCode != null) { 
+        if (lastCode != null && !lastCode.equalsIgnoreCase("null")) { 
             int indexOfDash = lastCode.indexOf('-');
             String numberPart = lastCode.substring(indexOfDash + 1);
             number = Integer.parseInt(numberPart);
@@ -38,12 +37,11 @@ public class ProductUtils {
     }
 
     public static String generateCodeSanPhamChiTiet() {
-        InuhaSanPhamChiTietService service = new InuhaSanPhamChiTietService();
-        String lastCode = service.getLastCode();
+        String lastCode = InuhaSanPhamChiTietService.getInstance().getLastCode();
         
         int number = 1;
         
-        if (lastCode != null) { 
+        if (lastCode != null && !lastCode.equalsIgnoreCase("null")) { 
             int indexOfDash = lastCode.indexOf('-');
             String numberPart = lastCode.substring(indexOfDash + 1);
             number = Integer.parseInt(numberPart);

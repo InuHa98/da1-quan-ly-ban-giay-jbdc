@@ -26,6 +26,19 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
     
     private final static String TABLE_NAME = "SanPham";
     
+    private static InuhaSanPhamRepository instance = null;
+    
+    public static InuhaSanPhamRepository getInstance() { 
+	if (instance == null) { 
+	    instance = new InuhaSanPhamRepository();
+	}
+	return instance;
+    }
+    
+    private InuhaSanPhamRepository() { 
+	
+    }
+    
     @Override
     public int insert(InuhaSanPhamModel model) throws SQLException {
         int result = 0;

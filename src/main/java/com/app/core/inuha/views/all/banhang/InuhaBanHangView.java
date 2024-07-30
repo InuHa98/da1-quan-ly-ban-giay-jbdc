@@ -1,28 +1,44 @@
 package com.app.core.inuha.views.all.banhang;
 
+import com.app.common.helper.MessageModal;
+import com.app.common.helper.MessageToast;
 import com.app.common.helper.Pagination;
 import com.app.common.helper.QrCodeHelper;
+import com.app.common.infrastructure.constants.ErrorConstant;
+import com.app.common.infrastructure.constants.PhuongThucThanhToanConstant;
+import com.app.common.infrastructure.constants.TrangThaiHoaDonConstant;
+import com.app.common.infrastructure.exceptions.ServiceResponseException;
+import com.app.core.inuha.models.InuhaHoaDonChiTietModel;
 import com.app.core.inuha.models.InuhaHoaDonModel;
+import com.app.core.inuha.models.InuhaKhachHangModel;
+import com.app.core.inuha.models.InuhaSanPhamChiTietModel;
 import com.app.core.inuha.models.InuhaSanPhamModel;
 import com.app.core.inuha.models.sanpham.InuhaChatLieuModel;
 import com.app.core.inuha.models.sanpham.InuhaDanhMucModel;
 import com.app.core.inuha.models.sanpham.InuhaDeGiayModel;
-import com.app.core.inuha.models.sanpham.InuhaKichCoModel;
 import com.app.core.inuha.models.sanpham.InuhaKieuDangModel;
-import com.app.core.inuha.models.sanpham.InuhaMauSacModel;
 import com.app.core.inuha.models.sanpham.InuhaThuongHieuModel;
 import com.app.core.inuha.models.sanpham.InuhaXuatXuModel;
 import com.app.core.inuha.request.InuhaFilterSanPhamRequest;
 import com.app.core.inuha.services.InuhaChatLieuService;
 import com.app.core.inuha.services.InuhaDanhMucService;
 import com.app.core.inuha.services.InuhaDeGiayService;
+import com.app.core.inuha.services.InuhaHoaDonChiTietService;
+import com.app.core.inuha.services.InuhaHoaDonService;
 import com.app.core.inuha.services.InuhaKichCoService;
 import com.app.core.inuha.services.InuhaKieuDangService;
 import com.app.core.inuha.services.InuhaMauSacService;
+import com.app.core.inuha.services.InuhaSanPhamChiTietService;
 import com.app.core.inuha.services.InuhaSanPhamService;
 import com.app.core.inuha.services.InuhaThuongHieuService;
 import com.app.core.inuha.services.InuhaXuatXuService;
+import com.app.core.inuha.views.all.banhang.components.InuhaAddGioHangView;
+import com.app.core.inuha.views.all.banhang.components.InuhaListKhachHangView;
+import com.app.core.inuha.views.quanly.InuhaSanPhamView;
+import com.app.utils.BillUtils;
 import com.app.utils.ColorUtils;
+import com.app.utils.CurrencyUtils;
+import com.app.utils.QrCodeUtils;
 import com.app.utils.ResourceUtils;
 import com.app.views.UI.combobox.ComboBoxItem;
 import com.app.views.UI.dialog.LoadingDialog;
@@ -35,14 +51,23 @@ import java.awt.Dimension;
 import java.awt.event.ItemEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import javax.swing.JComboBox;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.SwingWorker;
 import javax.swing.table.DefaultTableModel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import raven.modal.ModalDialog;
+import raven.modal.component.SimpleModalBorder;
 
 /**
  *
@@ -54,23 +79,27 @@ public class InuhaBanHangView extends javax.swing.JPanel {
         
     private final ExecutorService executorService = Executors.newFixedThreadPool(2);
     
-    private final static InuhaSanPhamService sanPhamService = new InuhaSanPhamService();
+    private final static InuhaSanPhamService sanPhamService = InuhaSanPhamService.getInstance();
     
-    private final static InuhaDanhMucService danhMucService = new InuhaDanhMucService();
+    private final static InuhaHoaDonService hoaDonService = InuhaHoaDonService.getInstance();
     
-    private final static InuhaThuongHieuService thuongHieuService = new InuhaThuongHieuService();
+    private final static InuhaHoaDonChiTietService hoaDonChiTietService = InuhaHoaDonChiTietService.getInstance();
     
-    private final static InuhaXuatXuService xuatXuService = new InuhaXuatXuService();
+    private final static InuhaDanhMucService danhMucService = InuhaDanhMucService.getInstance();
     
-    private final static InuhaKieuDangService kieuDangService = new InuhaKieuDangService();
+    private final static InuhaThuongHieuService thuongHieuService = InuhaThuongHieuService.getInstance();
     
-    private final static InuhaChatLieuService chatLieuService = new InuhaChatLieuService();
+    private final static InuhaXuatXuService xuatXuService = InuhaXuatXuService.getInstance();
     
-    private final static InuhaDeGiayService deGiayService = new InuhaDeGiayService();
+    private final static InuhaKieuDangService kieuDangService = InuhaKieuDangService.getInstance();
     
-    private final static InuhaKichCoService kichCoService = new InuhaKichCoService();
+    private final static InuhaChatLieuService chatLieuService = InuhaChatLieuService.getInstance();
     
-    private final static InuhaMauSacService mauSacService = new InuhaMauSacService();
+    private final static InuhaDeGiayService deGiayService = InuhaDeGiayService.getInstance();
+    
+    private final static InuhaKichCoService kichCoService = InuhaKichCoService.getInstance();
+    
+    private final static InuhaMauSacService mauSacService = InuhaMauSacService.getInstance();
     
     private List<InuhaDanhMucModel> dataDanhMuc = new ArrayList<>();
     
@@ -84,35 +113,58 @@ public class InuhaBanHangView extends javax.swing.JPanel {
     
     private List<InuhaDeGiayModel> dataDeGiay = new ArrayList<>();
     
-    private List<InuhaKichCoModel> dataKichCo = new ArrayList<>();
-    
-    private List<InuhaMauSacModel> dataMauSac = new ArrayList<>();
-    
     private JTextField txtTuKhoa;
     
     public Pagination pagination = new Pagination();
 	
     private int sizePage = pagination.getLimitItem();
     
-    private List<InuhaHoaDonModel> dataItemsHoaDon = new ArrayList<>();
+    private List<InuhaHoaDonModel> dataItemsHoaDonCho = new ArrayList<>();
     
+    private List<InuhaHoaDonChiTietModel> dataItemsGioHang = new ArrayList<>();
+	
     private List<InuhaSanPhamModel> dataItemsSanPham = new ArrayList<>();
+    
+    private InuhaHoaDonModel currentHoaDon = null;
     
     private boolean reLoad = true;
     
-    private boolean isScanning = false;
+    private ChiTietThanhToan chiTietThanhToan = new ChiTietThanhToan();
     
     /** Creates new form BanHangView */
     public InuhaBanHangView() {
 	initComponents();
 	instance = this;
 		
+	handleClear();
+		
+	txtSoDienThoai.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Số điện thoại");
+	txtTenKhachHang.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Khách lẻ");
+	txtTienMat.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Tiền mặt khách trả");
+	txtTienChuyenKhoan.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Tiền chuyển khoản khách trả");
+	
+	lblTongThanhToan.setForeground(ColorUtils.PRIMARY_COLOR);
+	txtTienMat.setFormatterFactory(CurrencyUtils.getDefaultFormat());
+	txtTienChuyenKhoan.setFormatterFactory(CurrencyUtils.getDefaultFormat());
+	
 	txtTuKhoa = pnlSearchBox.getKeyword();
 	txtTuKhoa.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Tìm theo tên hoặc mã...");
 	pnlHoaDon.setBackground(ColorUtils.BACKGROUND_DASHBOARD);
 	pnlSanPham.setBackground(ColorUtils.BACKGROUND_DASHBOARD);
 	pnlGioHang.setBackground(ColorUtils.BACKGROUND_DASHBOARD);
 	btnSubmit.setBackground(ColorUtils.BUTTON_PRIMARY);
+	
+	lblBill.setForeground(ColorUtils.PRIMARY_COLOR);
+	lblCart.setForeground(ColorUtils.PRIMARY_COLOR);
+	lblProducts.setForeground(ColorUtils.PRIMARY_COLOR);
+	lblThongTinHoaDon.setForeground(ColorUtils.PRIMARY_COLOR);
+	lblMaHoaDon.setForeground(ColorUtils.PRIMARY_COLOR);
+	
+	cboHinhThucThanhToan.removeAllItems();
+	cboHinhThucThanhToan.addItem(new ComboBoxItem<Integer>("Thanh toán tiền mặt", PhuongThucThanhToanConstant.TIEN_MAT));
+	cboHinhThucThanhToan.addItem(new ComboBoxItem<Integer>("Thanh toán chuyển khoản", PhuongThucThanhToanConstant.CHUYEN_KHOAN));
+	cboHinhThucThanhToan.addItem(new ComboBoxItem<Integer>("Thanh toán tiền mặt và chuyển khoản", PhuongThucThanhToanConstant.KET_HOP));
+	
 	
 	lblThongTinHoaDon.setIcon(ResourceUtils.getSVG("/svg/bill.svg", new Dimension(20, 20)));
 	lblBill.setIcon(ResourceUtils.getSVG("/svg/bill.svg", new Dimension(20, 20)));
@@ -146,6 +198,8 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 	setupTableSanPham(tblDanhSachSanPham);
 	setupPagination();
 	
+
+	
 	executorService.submit(() -> {
 	    loadDataDanhMuc();
 	    loadDataThuongHieu();
@@ -154,6 +208,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 	    loadDataChatLieu();
 	    loadDataDeGiay();
 
+	    loadDataHoaDonCho();
 	    loadDataPageSanPham(1);
 	});
     }
@@ -171,13 +226,12 @@ public class InuhaBanHangView extends javax.swing.JPanel {
         //TableCustomUI.resizeColumnHeader(table);
 	
         table.setRowHeight(30);
-        table.getColumnModel().getColumn(2).setCellRenderer(new TableImageCellRender(table));
     }
 
     private void setupTableGioHang(JTable table) { 
         pnlDanhSachGioHang.setBackground(ColorUtils.BACKGROUND_TABLE);
-        TableCustomUI.apply(scrDanhSachGioHang, TableCustomUI.TableType.MULTI_LINE);
-	
+        TableCustomUI.apply(scrDanhSachGioHang, TableCustomUI.TableType.DEFAULT);
+	TableCustomUI.resizeColumnHeader(table);
         table.getColumnModel().getColumn(0).setCellRenderer(new TableImageCellRender(table));
     }
 	
@@ -190,6 +244,50 @@ public class InuhaBanHangView extends javax.swing.JPanel {
         table.getColumnModel().getColumn(2).setCellRenderer(new TableImageCellRender(table));
     }
     
+    public void loadDataHoaDonCho() { 
+        try {
+            DefaultTableModel model = (DefaultTableModel) tblDanhSachHoaDon.getModel();
+            if (tblDanhSachHoaDon.isEditing()) {
+                tblDanhSachHoaDon.getCellEditor().stopCellEditing();
+            }
+            
+            model.setRowCount(0);
+	    
+            dataItemsHoaDonCho = hoaDonService.getAll();
+            
+            for(InuhaHoaDonModel m: dataItemsHoaDonCho) { 
+                model.addRow(m.toDataRowBanHang());
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+	
+    public void loadDataGioHang() { 
+        try {
+            DefaultTableModel model = (DefaultTableModel) tblDanhSachGioHang.getModel();
+            if (tblDanhSachGioHang.isEditing()) {
+                tblDanhSachGioHang.getCellEditor().stopCellEditing();
+            }
+            
+            model.setRowCount(0);
+	    
+            dataItemsGioHang = currentHoaDon == null ? new ArrayList<>() : hoaDonChiTietService.getAll(currentHoaDon.getId());
+            
+	    chiTietThanhToan.setTongTienHang(0);
+            for(InuhaHoaDonChiTietModel m: dataItemsGioHang) { 
+                model.addRow(m.toDataRowBanHang());
+		chiTietThanhToan.setTongTienHang(chiTietThanhToan.getTongTienHang() + ((m.getGiaBan() - m.getGiaGiam()) * m.getSoLuong()));
+            }
+	    lblTongTienHang.setText(CurrencyUtils.parseString(chiTietThanhToan.getTongTienHang()));
+	    lblTongVoucherGiamGia.setText(CurrencyUtils.parseString(chiTietThanhToan.getTongGiamGia()));
+	    lblTongThanhToan.setText(CurrencyUtils.parseString(chiTietThanhToan.getTongThanhToan()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+	
     public void loadDataPageSanPham() { 
         loadDataPageSanPham(pagination.getCurrentPage());
     }
@@ -212,7 +310,8 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 	    ComboBoxItem<Integer> kieuDang = (ComboBoxItem<Integer>) cboKieuDang.getSelectedItem();
 	    ComboBoxItem<Integer> chatLieu = (ComboBoxItem<Integer>) cboChatLieu.getSelectedItem();
 	    ComboBoxItem<Integer> deGiay = (ComboBoxItem<Integer>) cboDeGiay.getSelectedItem();
-
+	    ComboBoxItem<Integer> trangThai = new ComboBoxItem<>("Đang bán", 1);
+	    
             InuhaFilterSanPhamRequest request = new InuhaFilterSanPhamRequest();
 	    request.setKeyword(keyword);
 	    request.setDanhMuc(danhMuc);
@@ -221,6 +320,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 	    request.setKieuDang(kieuDang);
 	    request.setChatLieu(chatLieu);
 	    request.setDeGiay(deGiay);
+	    request.setTrangThai(trangThai);
 	    
             request.setSize(sizePage);
 	    
@@ -236,7 +336,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
             dataItemsSanPham = sanPhamService.getPage(request);
             
             for(InuhaSanPhamModel m: dataItemsSanPham) { 
-                model.addRow(m.toDataRowHoaDon());
+                model.addRow(m.toDataRowBanHang());
             }
 
             rerenderPagination(page, totalPages);
@@ -275,6 +375,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
     private void rerenderPagination(int currentPage, int totalPages) { 
         pagination.rerender(currentPage, totalPages);
     }
+    
 	
     public void loadDataDanhMuc() { 
 	reLoad = true;
@@ -366,7 +467,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
         txtSoDienThoai = new javax.swing.JTextField();
         jLabel13 = new javax.swing.JLabel();
         txtTenKhachHang = new javax.swing.JTextField();
-        jButton3 = new javax.swing.JButton();
+        btnClearKhachHang = new javax.swing.JButton();
         btnSelectKhachHang = new javax.swing.JButton();
         lblThongTinHoaDon = new javax.swing.JLabel();
         splitLine2 = new com.app.views.UI.label.SplitLine();
@@ -381,7 +482,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
         splitLine7 = new com.app.views.UI.label.SplitLine();
         jLabel19 = new javax.swing.JLabel();
         jLabel20 = new javax.swing.JLabel();
-        btnSeletVoucher = new javax.swing.JButton();
+        btnSelectVoucher = new javax.swing.JButton();
         jLabel14 = new javax.swing.JLabel();
         lblTongTienHang = new javax.swing.JLabel();
         jLabel21 = new javax.swing.JLabel();
@@ -389,7 +490,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
         jLabel22 = new javax.swing.JLabel();
         lblTongThanhToan = new javax.swing.JLabel();
         splitLine8 = new com.app.views.UI.label.SplitLine();
-        cboHinhThucThanhToan = new javax.swing.JComboBox<>();
+        cboHinhThucThanhToan = new javax.swing.JComboBox();
         txtTienMat = new javax.swing.JFormattedTextField();
         txtTienChuyenKhoan = new javax.swing.JFormattedTextField();
         jLabel23 = new javax.swing.JLabel();
@@ -446,24 +547,37 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 
         btnCancel.setText("Huỷ");
         btnCancel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnCancel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelActionPerformed(evt);
+            }
+        });
 
         jLabel12.setText("Mã hoá đơn:");
 
-        txtSoDienThoai.setText("số điện thoại");
         txtSoDienThoai.setEnabled(false);
 
         jLabel13.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel13.setForeground(new java.awt.Color(204, 204, 204));
         jLabel13.setText("Thông tin khách hàng:");
 
-        txtTenKhachHang.setText("tên khách hàng");
         txtTenKhachHang.setEnabled(false);
 
-        jButton3.setText("Khách lẻ");
-        jButton3.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnClearKhachHang.setText("Khách lẻ");
+        btnClearKhachHang.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnClearKhachHang.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnClearKhachHangActionPerformed(evt);
+            }
+        });
 
         btnSelectKhachHang.setText("Chọn");
         btnSelectKhachHang.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnSelectKhachHang.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSelectKhachHangActionPerformed(evt);
+            }
+        });
 
         lblThongTinHoaDon.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
         lblThongTinHoaDon.setForeground(new java.awt.Color(255, 255, 255));
@@ -526,8 +640,9 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 
         jLabel20.setText("Voucher:");
 
-        btnSeletVoucher.setText("Chọn hoặc nhập mã");
-        btnSeletVoucher.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnSelectVoucher.setText("Chọn hoặc nhập mã");
+        btnSelectVoucher.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnSelectVoucher.setEnabled(false);
 
         jLabel14.setText("Tổng tiền hàng:");
 
@@ -560,7 +675,12 @@ public class InuhaBanHangView extends javax.swing.JPanel {
             .addGap(0, 12, Short.MAX_VALUE)
         );
 
-        cboHinhThucThanhToan.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Thanh toán tiền mặt", "Thanh toán chuyển khoản", "Thanh toán tiền mặt và chuyển khoản" }));
+        cboHinhThucThanhToan.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Thanh toán tiền mặt", "Thanh toán chuyển khoản", "Thanh toán tiền mặt và chuyển khoản" }));
+        cboHinhThucThanhToan.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cboHinhThucThanhToanItemStateChanged(evt);
+            }
+        });
 
         jLabel23.setText("Tiền trả lại");
 
@@ -581,7 +701,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
                     .addGroup(pnlThongTinHoaDonLayout.createSequentialGroup()
                         .addComponent(jLabel20)
                         .addGap(18, 18, 18)
-                        .addComponent(btnSeletVoucher, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(btnSelectVoucher, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(pnlThongTinHoaDonLayout.createSequentialGroup()
                         .addComponent(jLabel12)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -645,7 +765,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, pnlThongTinHoaDonLayout.createSequentialGroup()
                         .addComponent(txtTenKhachHang, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(btnClearKhachHang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, pnlThongTinHoaDonLayout.createSequentialGroup()
                         .addComponent(jLabel14)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -667,7 +787,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(pnlThongTinHoaDonLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(txtTenKhachHang)
-                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, 27, Short.MAX_VALUE))
+                    .addComponent(btnClearKhachHang, javax.swing.GroupLayout.DEFAULT_SIZE, 27, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(splitLine2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -691,7 +811,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlThongTinHoaDonLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel20, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnSeletVoucher))
+                    .addComponent(btnSelectVoucher))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(splitLine7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -802,11 +922,11 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 
             },
             new String [] {
-                "#", "Mã sản phẩm", "", "Tên sản phẩm", "Giá bán", "Số lượng tồn", "Danh mục", "Thương hiệu", "Xuất xứ", "Kiểu dáng", "Chất liệu", "Đế giày"
+                "#", "Mã sản phẩm", "", "Tên sản phẩm", "Giá bán", "Số lượng tồn", "Danh mục", "Thương hiệu", "Xuất xứ", "Kiểu dáng", "Chất liệu", "Đế giày", "Mô tả"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -815,7 +935,15 @@ public class InuhaBanHangView extends javax.swing.JPanel {
         });
         tblDanhSachSanPham.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         tblDanhSachSanPham.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        tblDanhSachSanPham.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblDanhSachSanPhamMouseClicked(evt);
+            }
+        });
         scrDanhSachSanPham.setViewportView(tblDanhSachSanPham);
+        if (tblDanhSachSanPham.getColumnModel().getColumnCount() > 0) {
+            tblDanhSachSanPham.getColumnModel().getColumn(12).setMinWidth(240);
+        }
 
         javax.swing.GroupLayout pnlDanhSachSanPhamLayout = new javax.swing.GroupLayout(pnlDanhSachSanPham);
         pnlDanhSachSanPham.setLayout(pnlDanhSachSanPhamLayout);
@@ -1000,6 +1128,13 @@ public class InuhaBanHangView extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
+        tblDanhSachHoaDon.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        tblDanhSachHoaDon.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        tblDanhSachHoaDon.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblDanhSachHoaDonMouseClicked(evt);
+            }
+        });
         scrDanhSachHoaDon.setViewportView(tblDanhSachHoaDon);
         if (tblDanhSachHoaDon.getColumnModel().getColumnCount() > 0) {
             tblDanhSachHoaDon.getColumnModel().getColumn(0).setMaxWidth(40);
@@ -1065,24 +1200,24 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 
             },
             new String [] {
-                "", "Sản phẩm", "Màu sắc", "Đơn giá", "Số lượng", ""
+                "", "Số lượng", "Đơn giá", "Sản phẩm", "Màu sắc", "Kích cỡ"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, true, true
+                false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
+        tblDanhSachGioHang.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        tblDanhSachGioHang.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         scrDanhSachGioHang.setViewportView(tblDanhSachGioHang);
         if (tblDanhSachGioHang.getColumnModel().getColumnCount() > 0) {
             tblDanhSachGioHang.getColumnModel().getColumn(0).setMinWidth(60);
             tblDanhSachGioHang.getColumnModel().getColumn(0).setMaxWidth(60);
-            tblDanhSachGioHang.getColumnModel().getColumn(1).setMinWidth(150);
-            tblDanhSachGioHang.getColumnModel().getColumn(5).setMinWidth(40);
-            tblDanhSachGioHang.getColumnModel().getColumn(5).setMaxWidth(40);
+            tblDanhSachGioHang.getColumnModel().getColumn(3).setMinWidth(150);
         }
 
         javax.swing.GroupLayout pnlDanhSachGioHangLayout = new javax.swing.GroupLayout(pnlDanhSachGioHang);
@@ -1206,25 +1341,58 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 
     private void btnScanQrActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnScanQrActionPerformed
         // TODO add your handling code here:
+	handleClickButtonScanQr();
     }//GEN-LAST:event_btnScanQrActionPerformed
+
+    private void tblDanhSachSanPhamMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblDanhSachSanPhamMouseClicked
+        // TODO add your handling code here:
+	handleClickDuplicateSanPham(evt);
+    }//GEN-LAST:event_tblDanhSachSanPhamMouseClicked
+
+    private void tblDanhSachHoaDonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblDanhSachHoaDonMouseClicked
+        // TODO add your handling code here:
+	handleSelectBill(tblDanhSachHoaDon.getSelectedRow());
+    }//GEN-LAST:event_tblDanhSachHoaDonMouseClicked
+
+    private void cboHinhThucThanhToanItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cboHinhThucThanhToanItemStateChanged
+        // TODO add your handling code here:
+	if (evt.getStateChange() == ItemEvent.SELECTED) { 
+	    handleSelectHinhThucThanhToan();
+	}
+    }//GEN-LAST:event_cboHinhThucThanhToanItemStateChanged
+
+    private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
+        // TODO add your handling code here:
+	handleClickButtonCancel();
+    }//GEN-LAST:event_btnCancelActionPerformed
+
+    private void btnSelectKhachHangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelectKhachHangActionPerformed
+        // TODO add your handling code here:
+	handleClickButtonSelectKhachHang();
+    }//GEN-LAST:event_btnSelectKhachHangActionPerformed
+
+    private void btnClearKhachHangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearKhachHangActionPerformed
+        // TODO add your handling code here:
+	handleClickButtonClearKhachHang();
+    }//GEN-LAST:event_btnClearKhachHangActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddBill;
     private javax.swing.JButton btnCancel;
+    private javax.swing.JButton btnClearKhachHang;
     private javax.swing.ButtonGroup btnGroupHinhThucThanhToan;
     private javax.swing.JButton btnReset;
     private javax.swing.JButton btnScanQr;
     private javax.swing.JButton btnSelectKhachHang;
-    private javax.swing.JButton btnSeletVoucher;
+    private javax.swing.JButton btnSelectVoucher;
     private javax.swing.JButton btnSubmit;
     private javax.swing.JComboBox cboChatLieu;
     private javax.swing.JComboBox cboDanhMuc;
     private javax.swing.JComboBox cboDeGiay;
-    private javax.swing.JComboBox<String> cboHinhThucThanhToan;
+    private javax.swing.JComboBox cboHinhThucThanhToan;
     private javax.swing.JComboBox cboKieuDang;
     private javax.swing.JComboBox cboThuongHieu;
     private javax.swing.JComboBox cboXuatXu;
-    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
@@ -1315,6 +1483,324 @@ public class InuhaBanHangView extends javax.swing.JPanel {
     }
 
     private void handleClickButtonCreateBill() {
+	LoadingDialog loading = new LoadingDialog();
+	executorService.submit(() -> {
+	    try {
+		InuhaHoaDonModel model = new InuhaHoaDonModel();
+		model.setMa(BillUtils.generateCodeHoaDon());
+		System.out.println(model.getMa());
+		hoaDonService.insert(model);
+		loadDataHoaDonCho();
+		handleSelectBill(0);
+		MessageToast.success("Tạo mới hoá đơn thành công.");
+	    } catch (ServiceResponseException e) {
+		MessageToast.error(e.getMessage());
+	    } catch (Exception e) {
+		MessageToast.error(ErrorConstant.DEFAULT_ERROR);
+	    } finally {
+		loading.dispose();
+	    }
+	});
+	loading.setVisible(true);
+    }
+
+    private void handleClickDuplicateSanPham(MouseEvent evt) {
+	if (evt.getClickCount() < 2) { 
+	    return;
+	}
+	
+	if (currentHoaDon == null) { 
+	    MessageToast.warning("Vui lòng chọn một hoá đơn trước!");
+	    return;
+	}
+	
+	InuhaSanPhamModel sanPham = dataItemsSanPham.get(tblDanhSachSanPham.getSelectedRow());
+	if (sanPham.getSoLuong() < 1) { 
+	    MessageToast.warning("Sản phẩm đã hết hàng. Vui lòng chọn sản phẩm khác!");
+	    return;
+	}
+	
+	showModalAddToCart(sanPham);
+    }
+    
+    private void showModalAddToCart(InuhaSanPhamModel sanPham) { 
+	ModalDialog.showModal(this, new SimpleModalBorder(new InuhaAddGioHangView(sanPham), sanPham.getTen()));
+    }
+
+    private void handleSelectBill(int i) {
+	if (i < 0) {
+	    handleClear();
+	    return;
+	}
+	
+	currentHoaDon = dataItemsHoaDonCho.get(i);
+	
+	LoadingDialog loading = new LoadingDialog();
+	executorService.submit(() -> {
+	    loadDataGioHang();
+	    loading.dispose();
+	});
+	loading.setVisible(true);
+	
+	
+	InuhaKhachHangModel khachHang = currentHoaDon.getKhachHang();
+	if (khachHang != null) { 
+	    txtSoDienThoai.setText(khachHang.getSdt());
+	    txtTenKhachHang.setText(khachHang.getHoTen());
+	    btnSelectVoucher.setEnabled(true);
+	} else {
+	    txtSoDienThoai.setText(null);
+	    txtTenKhachHang.setText(null);
+	    btnSelectVoucher.setEnabled(false);
+	}
+	
+	lblMaHoaDon.setText("#" + currentHoaDon.getMa());
+	lblNgayTao.setText(currentHoaDon.getNgayTao());
+	lblNguoiTao.setText(currentHoaDon.getTaiKhoan().getUsername());
+	lblTrangThai.setText(BillUtils.getTrangThai(currentHoaDon.getTrangThai()));
+	
+	btnSelectKhachHang.setEnabled(true);
+	btnClearKhachHang.setEnabled(true);
+	cboHinhThucThanhToan.setEnabled(true);
+	btnCancel.setEnabled(true);
+	btnSubmit.setEnabled(true);
+    }
+
+    private void handleClear() {
+	currentHoaDon = null;
+	dataItemsGioHang = new ArrayList<>();
+	txtSoDienThoai.setText(null);
+	txtTenKhachHang.setText(null);
+	lblMaHoaDon.setText(null);
+	lblNgayTao.setText(null);
+	lblNguoiTao.setText(null);
+	lblTrangThai.setText(null);
+	btnSelectVoucher.setText("Chọn hoặc nhập mã");
+	btnSelectVoucher.setEnabled(false);
+	lblTongTienHang.setText("đ0");
+	lblTongVoucherGiamGia.setText("đ0");
+	lblTongThanhToan.setText("đ0");
+	cboHinhThucThanhToan.setSelectedIndex(0);
+	txtTienMat.setText(null);
+	txtTienChuyenKhoan.setText(null);
+	lblTienTraLai.setText("đ0");
+	
+	txtTienMat.setEnabled(false);
+	txtTienChuyenKhoan.setEnabled(false);
+	
+	btnSelectKhachHang.setEnabled(false);
+	btnClearKhachHang.setEnabled(false);
+	cboHinhThucThanhToan.setEnabled(false);
+	btnCancel.setEnabled(false);
+	btnSubmit.setEnabled(false);
+	
+	loadDataGioHang();
+    }
+
+    private void handleSelectHinhThucThanhToan() {
+	ComboBoxItem<Integer> hinhThucThanhToan = (ComboBoxItem<Integer>) cboHinhThucThanhToan.getSelectedItem();
+	if (currentHoaDon == null) { 
+	    txtTienMat.setEnabled(false);
+	    txtTienChuyenKhoan.setEnabled(false);
+	    return;
+	}
+	switch (hinhThucThanhToan.getValue()) {
+	    case PhuongThucThanhToanConstant.CHUYEN_KHOAN -> {
+		txtTienMat.setText(null);
+		txtTienMat.setEnabled(false);
+		txtTienChuyenKhoan.setEnabled(true);
+	    }
+	    case PhuongThucThanhToanConstant.KET_HOP -> {
+		txtTienMat.setEnabled(true);
+		txtTienChuyenKhoan.setEnabled(true);
+	    }
+	    default -> {
+		txtTienMat.setEnabled(true);
+		txtTienChuyenKhoan.setText(null);
+		txtTienChuyenKhoan.setEnabled(false);
+	    }
+	}
+    }
+
+    private void handleClickButtonCancel() {
+	SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
+	    @Override
+	    protected Boolean doInBackground() throws Exception {
+		return MessageModal.confirmWarning("Không thể hoàn tác. Bạn thực sự muốn huỷ đơn hàng này?");
+	    }
+
+	    @Override
+	    protected void done() {
+		try {
+		    if (get()) {
+			LoadingDialog loading = new LoadingDialog();
+			try {
+			    currentHoaDon.setTrangThai(TrangThaiHoaDonConstant.STATUS_DA_HUY);
+			    hoaDonService.update(currentHoaDon);
+			    
+			    for(InuhaHoaDonChiTietModel m: dataItemsGioHang) { 
+		                InuhaSanPhamChiTietModel sanPhamChiTiet = m.getSanPhamChiTiet();
+				sanPhamChiTiet.setSoLuong(sanPhamChiTiet.getSoLuong() + m.getSoLuong());
+				InuhaSanPhamChiTietService.getInstance().update(sanPhamChiTiet);
+			    }
+			    
+			    
+			    loadDataHoaDonCho();
+			    loadDataPageSanPham();
+			    MessageToast.success("Huỷ thành công đơn hàng #" + currentHoaDon.getMa());
+			    handleClear();
+			} catch (ServiceResponseException e) {
+			    e.printStackTrace();
+			    MessageToast.error(e.getMessage());
+			} catch (Exception e) {
+			    e.printStackTrace();
+			    MessageModal.error(ErrorConstant.DEFAULT_ERROR);
+			} finally {
+			    loading.dispose();
+			}
+		    }
+		} catch (InterruptedException ex) {
+		} catch (ExecutionException ex) {
+		}
+	    }
+	    
+	};
+	worker.execute();
+    }
+
+    private void handleClickButtonSelectKhachHang() {
+	ModalDialog.showModal(this, new SimpleModalBorder(new InuhaListKhachHangView(), "Danh sách khách hàng"));
+    }
+
+    public void setKhachHang(InuhaKhachHangModel khachHang) {
+	LoadingDialog loading = new LoadingDialog();
+	executorService.submit(() -> {
+	    try {
+		currentHoaDon.setKhachHang(khachHang);
+		hoaDonService.update(currentHoaDon);
+		txtSoDienThoai.setText(khachHang.getSdt());
+		txtTenKhachHang.setText(khachHang.getHoTen());
+		btnSelectVoucher.setEnabled(true);
+	    } catch (ServiceResponseException e) {
+		e.printStackTrace();
+		MessageToast.error(e.getMessage());
+	    } catch (Exception e) {
+		e.printStackTrace();
+		MessageToast.error(ErrorConstant.DEFAULT_ERROR);
+	    } finally {
+		loading.dispose();
+	    }
+	});
+	loading.setVisible(true);
+    }
+	
+    private void handleClickButtonClearKhachHang() {
+	LoadingDialog loading = new LoadingDialog();
+	executorService.submit(() -> {
+	    try {
+		currentHoaDon.setKhachHang(null);
+		currentHoaDon.setPhieuGiamGia(null);
+		hoaDonService.update(currentHoaDon);
+		txtSoDienThoai.setText(null);
+		txtTenKhachHang.setText(null);
+		btnSelectVoucher.setEnabled(false);
+	    } catch (ServiceResponseException e) {
+		e.printStackTrace();
+		MessageToast.error(e.getMessage());
+	    } catch (Exception e) {
+		e.printStackTrace();
+		MessageToast.error(ErrorConstant.DEFAULT_ERROR);
+	    } finally {
+		loading.dispose();
+	    }
+	});
+	loading.setVisible(true);
+    }
+
+    private void handleClickButtonScanQr() {
+	if (currentHoaDon == null) {
+	    MessageToast.warning("Vui lòng chọn một hoá đơn để sử dụng tính năng này!");
+	    return;
+	}
+	
+	QrCodeHelper.showWebcam(result -> { 
+            LoadingDialog loading = new LoadingDialog();
+            executorService.submit(() -> {
+                try {
+                    String code = result.getText();
+
+                    InuhaSanPhamModel sanPhamModel = null;
+                    int id;
+                    if ((id = QrCodeUtils.getIdSanPham(code)) > 0) {
+                        sanPhamModel = sanPhamService.getById(id);
+			if (sanPhamModel.getSoLuong() < 1 || !sanPhamModel.isTrangThai()) { 
+			    MessageToast.warning("Sản phẩm đã hết hàng hoặc đã ngừng bán!");
+			    return;
+			}
+			showModalAddToCart(sanPhamModel);
+                    } else if((id = QrCodeUtils.getIdSanPhamChiTiet(code)) > 0) { 
+			InuhaSanPhamChiTietModel sanPhamChiTietModel = InuhaSanPhamChiTietService.getInstance().getById(id);
+			addToCart(sanPhamChiTietModel, 1);
+                    } else { 
+                        MessageToast.error("QRCode không hợp lệ!!!");
+                        return;
+                    }             
+                } catch (ServiceResponseException e) {
+                    MessageModal.error(e.getMessage());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    MessageModal.error(ErrorConstant.DEFAULT_ERROR);
+                } finally { 
+		    loading.dispose();
+		}
+            });
+            loading.setVisible(true);
+	});
+    }
+
+    private void addToCart(InuhaSanPhamChiTietModel sanPhamChiTietModel, int soLuong) {
+	if (sanPhamChiTietModel.getSoLuong() < soLuong || !sanPhamChiTietModel.isTrangThai() || !sanPhamChiTietModel.getSanPham().isTrangThai()) { 
+	    MessageToast.warning("Sản phẩm đã hết hàng hoặc đã ngừng bán!");
+	    return;
+	}
+	LoadingDialog loading = new LoadingDialog();
+	executorService.submit(() -> {
+	    try {
+		InuhaHoaDonChiTietModel hoaDonChiTiet = new InuhaHoaDonChiTietModel();
+		hoaDonChiTiet.setMa(BillUtils.generateCodeHoaDonChiTiet());
+		hoaDonChiTiet.setSanPhamChiTiet(sanPhamChiTietModel);
+		hoaDonChiTiet.setHoaDon(currentHoaDon);
+		hoaDonChiTiet.setGiaGiam(0);
+		hoaDonChiTiet.setSoLuong(soLuong);
+		hoaDonChiTietService.insert(hoaDonChiTiet);
+		loadDataGioHang();
+		loadDataPageSanPham();
+	    } catch (ServiceResponseException e) {
+		e.printStackTrace();
+		MessageToast.error(e.getMessage());
+	    } catch (Exception e) {
+		e.printStackTrace();
+		MessageToast.error(ErrorConstant.DEFAULT_ERROR);
+	    } finally {
+		loading.dispose();
+	    }
+	});
+	loading.setVisible(true);
+    }
+    
+    @Setter
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    private class ChiTietThanhToan {
+	
+	private double tongTienHang = 0;
+	
+	private double tongGiamGia = 0;
+	
+	public double getTongThanhToan() {
+	    return tongTienHang - tongGiamGia;
+	}
 	
     }
 }

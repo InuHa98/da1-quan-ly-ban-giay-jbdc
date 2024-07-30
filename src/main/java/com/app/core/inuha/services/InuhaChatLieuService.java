@@ -6,7 +6,6 @@ import com.app.common.infrastructure.constants.TrangThaiXoaConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
 import com.app.common.infrastructure.request.FillterRequest;
 import com.app.core.inuha.models.sanpham.InuhaChatLieuModel;
-import com.app.core.inuha.models.sanpham.InuhaDanhMucModel;
 import com.app.core.inuha.repositories.sanpham.InuhaChatLieuRepository;
 import com.app.core.inuha.services.impl.IInuhaChatLieuServiceInterface;
 import java.sql.SQLException;
@@ -20,7 +19,20 @@ import java.util.Optional;
  */
 public class InuhaChatLieuService implements IInuhaChatLieuServiceInterface {
 
-    private final InuhaChatLieuRepository repository = new InuhaChatLieuRepository();
+    private final InuhaChatLieuRepository repository = InuhaChatLieuRepository.getInstance();
+    
+    private static InuhaChatLieuService instance = null;
+    
+    public static InuhaChatLieuService getInstance() { 
+	if (instance == null) { 
+	    instance = new InuhaChatLieuService();
+	}
+	return instance;
+    }
+    
+    private InuhaChatLieuService() { 
+	
+    }
     
     @Override
     public InuhaChatLieuModel getById(Integer id) {
@@ -68,7 +80,7 @@ public class InuhaChatLieuService implements IInuhaChatLieuServiceInterface {
             repository.update(model);
         } catch (SQLException ex) {
             ex.printStackTrace();
-            throw new ServiceResponseException("Không thể xoá chất liệu này");
+            throw new ServiceResponseException("Không thể cập nhật chất liệu này");
         }
     }
 

@@ -37,7 +37,7 @@ import net.miginfocom.swing.MigLayout;
 
 public class LoginView extends javax.swing.JPanel {
 
-    private final InuhaTaiKhoanService nhanVienService = new InuhaTaiKhoanService();
+    private final InuhaTaiKhoanService nhanVienService = InuhaTaiKhoanService.getInstance();
 
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 

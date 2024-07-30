@@ -20,6 +20,19 @@ public class InuhaXuatXuRepository implements IDAOinterface<InuhaXuatXuModel, In
     
     private final static String TABLE_NAME = "XuatXu";
     
+    private static InuhaXuatXuRepository instance = null;
+    
+    public static InuhaXuatXuRepository getInstance() { 
+	if (instance == null) { 
+	    instance = new InuhaXuatXuRepository();
+	}
+	return instance;
+    }
+    
+    private InuhaXuatXuRepository() { 
+	
+    }
+    
     @Override
     public int insert(InuhaXuatXuModel model) throws SQLException {
         int result = 0;
@@ -250,7 +263,7 @@ public class InuhaXuatXuRepository implements IDAOinterface<InuhaXuatXuModel, In
         String query = String.format("SELECT * FROM %s WHERE ten LIKE ? AND trang_thai_xoa = 0", TABLE_NAME);
 
         try {
-            resultSet = JbdcHelper.query(query, String.format("%%%s%%", name));
+            resultSet = JbdcHelper.query(query, name);
             while(resultSet.next()) {
                 model = buildData(resultSet, false);
             }

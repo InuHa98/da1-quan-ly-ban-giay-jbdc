@@ -23,8 +23,21 @@ import java.util.Set;
 
 public class InuhaTaiKhoanService implements IInuhaNhanVienServiceInterface {
 
-    private final InuhaTaiKhoanRepository nhanVienRepository = new InuhaTaiKhoanRepository();
+    private final InuhaTaiKhoanRepository nhanVienRepository = InuhaTaiKhoanRepository.getInstance();
 
+    private static InuhaTaiKhoanService instance = null;
+    
+    public static InuhaTaiKhoanService getInstance() { 
+	if (instance == null) { 
+	    instance = new InuhaTaiKhoanService();
+	}
+	return instance;
+    }
+    
+    private InuhaTaiKhoanService() { 
+	
+    }
+    
     @Override
     public List<InuhaTaiKhoanModel> getPage(FillterRequest request) {
 	return null;
