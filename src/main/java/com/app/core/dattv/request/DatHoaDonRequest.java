@@ -14,7 +14,7 @@ import java.util.Date;
  */
 
 public class DatHoaDonRequest {
-    private int id;
+   
     private String maHd;
     private Date thoiGian;
     private String khachHang;
@@ -22,12 +22,13 @@ public class DatHoaDonRequest {
     private double giamGia;
     private double thanhTien;
     private boolean trangThai;
-    private boolean phuongThucTT;
+    private int phuongThucTT;
+    private boolean trangThaixoa;
 
     public DatHoaDonRequest() {
     }
 
-    public DatHoaDonRequest(String maHd, Date thoiGian, String khachHang, double tongTienhang, double giamGia, double thanhTien, boolean trangThai, boolean phuongThucTT) {
+    public DatHoaDonRequest(String maHd, Date thoiGian, String khachHang, double tongTienhang, double giamGia, double thanhTien, boolean trangThai, int phuongThucTT) {
         this.maHd = maHd;
         this.thoiGian = thoiGian;
         this.khachHang = khachHang;
@@ -36,16 +37,14 @@ public class DatHoaDonRequest {
         this.thanhTien = thanhTien;
         this.trangThai = trangThai;
         this.phuongThucTT = phuongThucTT;
-        this.id=id;
+        
     }
 
-    public int getId() {
-        return id;
+    public DatHoaDonRequest(boolean trangThaixoa) {
+        this.trangThaixoa = trangThaixoa;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+ 
 
     public String getMaHd() {
         return maHd;
@@ -103,13 +102,32 @@ public class DatHoaDonRequest {
         this.trangThai = trangThai;
     }
 
-    public boolean isPhuongThucTT() {
+    public int getPhuongThucTT() {
         return phuongThucTT;
     }
 
-    public void setPhuongThucTT(boolean phuongThucTT) {
+    public void setPhuongThucTT(int phuongThucTT) {
         this.phuongThucTT = phuongThucTT;
     }
+
+    public boolean isTrangThaixoa() {
+        return trangThaixoa;
+    }
+
+    public void setTrangThaixoa(boolean trangThaixoa) {
+        this.trangThaixoa = trangThaixoa;
+    }
+
+    
+
+    
+
+    @Override
+    public String toString() {
+        return "DatHoaDonRequest{" + "trangThaixoa=" + trangThaixoa + ", maHd=" + maHd + ", thoiGian=" + thoiGian + ", khachHang=" + khachHang + ", tongTien=" + tongTienhang + ", giamGia=" + giamGia + ", thanhTien=" + thanhTien + ", trangThai=" + trangThai +", phuongThucthanhtoan= "+ phuongThucTT + '}';
+    }
+
+    
 
     
     
