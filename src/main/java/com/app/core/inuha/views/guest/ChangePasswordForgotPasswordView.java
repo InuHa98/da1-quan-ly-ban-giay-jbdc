@@ -56,6 +56,8 @@ public class ChangePasswordForgotPasswordView extends javax.swing.JPanel {
 
     private void setupComponents() {
         setLayout(new MigLayout("fill, insets 20", "[center]", "[center]"));
+	
+	lblTitle.setForeground(ColorUtils.PRIMARY_COLOR);
         pnlLogin.setBackground(ColorUtils.BACKGROUND_PRIMARY);
         lbLogin.setForeground(ColorUtils.PRIMARY_COLOR);
 
@@ -100,7 +102,7 @@ public class ChangePasswordForgotPasswordView extends javax.swing.JPanel {
     private void initComponents() {
 
         pnlLogin = new com.app.views.UI.panel.RoundPanel();
-        jLabel1 = new javax.swing.JLabel();
+        lblTitle = new javax.swing.JLabel();
         lbDesc = new javax.swing.JLabel();
         lbPassword = new javax.swing.JLabel();
         lbConfirmPassword = new javax.swing.JLabel();
@@ -112,10 +114,10 @@ public class ChangePasswordForgotPasswordView extends javax.swing.JPanel {
 
         pnlLogin.setBackground(new java.awt.Color(51, 51, 51));
 
-        jLabel1.setFont(jLabel1.getFont().deriveFont(jLabel1.getFont().getStyle() | java.awt.Font.BOLD, jLabel1.getFont().getSize()+10));
-        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabel1.setText("Thay đổi mật khẩu!");
+        lblTitle.setFont(lblTitle.getFont().deriveFont(lblTitle.getFont().getStyle() | java.awt.Font.BOLD, lblTitle.getFont().getSize()+10));
+        lblTitle.setForeground(new java.awt.Color(255, 255, 255));
+        lblTitle.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lblTitle.setText("Thay đổi mật khẩu!");
 
         lbDesc.setFont(lbDesc.getFont().deriveFont(lbDesc.getFont().getSize()+1f));
         lbDesc.setForeground(new java.awt.Color(204, 204, 204));
@@ -169,14 +171,14 @@ public class ChangePasswordForgotPasswordView extends javax.swing.JPanel {
                     .addComponent(lbConfirmPassword, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(lbPassword, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(lbDesc, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(lblTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(42, Short.MAX_VALUE))
         );
         pnlLoginLayout.setVerticalGroup(
             pnlLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlLoginLayout.createSequentialGroup()
                 .addGap(42, 42, 42)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lbDesc)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -220,12 +222,12 @@ public class ChangePasswordForgotPasswordView extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnSubmit;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel lbConfirmPassword;
     private javax.swing.JLabel lbDesc;
     private javax.swing.JLabel lbLogin;
     private javax.swing.JLabel lbPassword;
+    private javax.swing.JLabel lblTitle;
     private com.app.views.UI.panel.RoundPanel pnlLogin;
     private javax.swing.JPasswordField txtConfirmPassword;
     private javax.swing.JPasswordField txtPassword;

@@ -33,6 +33,7 @@ import com.app.core.inuha.services.InuhaSanPhamService;
 import com.app.core.inuha.services.InuhaThuongHieuService;
 import com.app.core.inuha.services.InuhaXuatXuService;
 import com.app.core.inuha.views.all.banhang.components.InuhaAddGioHangView;
+import com.app.core.inuha.views.all.banhang.components.InuhaEditGioHangView;
 import com.app.core.inuha.views.all.banhang.components.InuhaListKhachHangView;
 import com.app.core.inuha.views.quanly.InuhaSanPhamView;
 import com.app.utils.BillUtils;
@@ -127,6 +128,8 @@ public class InuhaBanHangView extends javax.swing.JPanel {
     
     private InuhaHoaDonModel currentHoaDon = null;
     
+    private InuhaHoaDonChiTietModel currentHoaDonChiTiet = null;
+    
     private boolean reLoad = true;
     
     private ChiTietThanhToan chiTietThanhToan = new ChiTietThanhToan();
@@ -175,6 +178,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 	btnAddBill.setIcon(ResourceUtils.getSVG("/svg/plus-c.svg", new Dimension(20, 20)));
 	btnCancel.setIcon(ResourceUtils.getSVG("/svg/times.svg", new Dimension(32, 32)));
 	btnScanQr.setIcon(ResourceUtils.getSVG("/svg/qr.svg", new Dimension(20, 20)));
+	btnRemoveSanPham.setIcon(ResourceUtils.getSVG("/svg/times.svg", new Dimension(20, 20)));
 	
 	txtTuKhoa.addKeyListener(new KeyAdapter() {
             @Override
@@ -275,6 +279,10 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 	    
             dataItemsGioHang = currentHoaDon == null ? new ArrayList<>() : hoaDonChiTietService.getAll(currentHoaDon.getId());
             
+	    if (dataItemsGioHang.size() < 1) {
+		btnRemoveSanPham.setEnabled(false);
+	    }
+	    
 	    chiTietThanhToan.setTongTienHang(0);
             for(InuhaHoaDonChiTietModel m: dataItemsGioHang) { 
                 model.addRow(m.toDataRowBanHang());
@@ -530,6 +538,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
         pnlDanhSachGioHang = new javax.swing.JPanel();
         scrDanhSachGioHang = new javax.swing.JScrollPane();
         tblDanhSachGioHang = new javax.swing.JTable();
+        btnRemoveSanPham = new javax.swing.JButton();
 
         javax.swing.GroupLayout splitLine1Layout = new javax.swing.GroupLayout(splitLine1);
         splitLine1.setLayout(splitLine1Layout);
@@ -544,6 +553,11 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 
         btnSubmit.setText("Thanh toán");
         btnSubmit.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnSubmit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSubmitActionPerformed(evt);
+            }
+        });
 
         btnCancel.setText("Huỷ");
         btnCancel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -1213,6 +1227,11 @@ public class InuhaBanHangView extends javax.swing.JPanel {
         });
         tblDanhSachGioHang.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         tblDanhSachGioHang.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        tblDanhSachGioHang.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblDanhSachGioHangMouseClicked(evt);
+            }
+        });
         scrDanhSachGioHang.setViewportView(tblDanhSachGioHang);
         if (tblDanhSachGioHang.getColumnModel().getColumnCount() > 0) {
             tblDanhSachGioHang.getColumnModel().getColumn(0).setMinWidth(60);
@@ -1224,7 +1243,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
         pnlDanhSachGioHang.setLayout(pnlDanhSachGioHangLayout);
         pnlDanhSachGioHangLayout.setHorizontalGroup(
             pnlDanhSachGioHangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scrDanhSachGioHang, javax.swing.GroupLayout.DEFAULT_SIZE, 478, Short.MAX_VALUE)
+            .addComponent(scrDanhSachGioHang, javax.swing.GroupLayout.DEFAULT_SIZE, 534, Short.MAX_VALUE)
         );
         pnlDanhSachGioHangLayout.setVerticalGroup(
             pnlDanhSachGioHangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1233,22 +1252,35 @@ public class InuhaBanHangView extends javax.swing.JPanel {
                 .addComponent(scrDanhSachGioHang, javax.swing.GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE))
         );
 
+        btnRemoveSanPham.setText("Xoá sản phẩm");
+        btnRemoveSanPham.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnRemoveSanPham.setEnabled(false);
+        btnRemoveSanPham.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRemoveSanPhamActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout pnlGioHangLayout = new javax.swing.GroupLayout(pnlGioHang);
         pnlGioHang.setLayout(pnlGioHangLayout);
         pnlGioHangLayout.setHorizontalGroup(
             pnlGioHangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(splitLine5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(pnlGioHangLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlGioHangLayout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addComponent(lblCart, javax.swing.GroupLayout.PREFERRED_SIZE, 412, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(lblCart, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnRemoveSanPham, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(20, 20, 20))
             .addComponent(pnlDanhSachGioHang, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         pnlGioHangLayout.setVerticalGroup(
             pnlGioHangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlGioHangLayout.createSequentialGroup()
-                .addComponent(lblCart, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(11, 11, 11)
+                .addGroup(pnlGioHangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblCart, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnRemoveSanPham))
+                .addGap(7, 7, 7)
                 .addComponent(splitLine5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(pnlDanhSachGioHang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1376,11 +1408,27 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 	handleClickButtonClearKhachHang();
     }//GEN-LAST:event_btnClearKhachHangActionPerformed
 
+    private void tblDanhSachGioHangMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblDanhSachGioHangMouseClicked
+        // TODO add your handling code here:
+	handleClickRowGioHang(evt);
+    }//GEN-LAST:event_tblDanhSachGioHangMouseClicked
+
+    private void btnRemoveSanPhamActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoveSanPhamActionPerformed
+        // TODO add your handling code here:
+	handleClickButtonRemoveItemCart();
+    }//GEN-LAST:event_btnRemoveSanPhamActionPerformed
+
+    private void btnSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSubmitActionPerformed
+        // TODO add your handling code here:
+	handleClickButtonSubmit();
+    }//GEN-LAST:event_btnSubmitActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddBill;
     private javax.swing.JButton btnCancel;
     private javax.swing.JButton btnClearKhachHang;
     private javax.swing.ButtonGroup btnGroupHinhThucThanhToan;
+    private javax.swing.JButton btnRemoveSanPham;
     private javax.swing.JButton btnReset;
     private javax.swing.JButton btnScanQr;
     private javax.swing.JButton btnSelectKhachHang;
@@ -1440,7 +1488,6 @@ public class InuhaBanHangView extends javax.swing.JPanel {
     private com.app.views.UI.label.SplitLine splitLine3;
     private com.app.views.UI.label.SplitLine splitLine4;
     private com.app.views.UI.label.SplitLine splitLine5;
-    private com.app.views.UI.label.SplitLine splitLine6;
     private com.app.views.UI.label.SplitLine splitLine7;
     private com.app.views.UI.label.SplitLine splitLine8;
     private javax.swing.JTable tblDanhSachGioHang;
@@ -1524,15 +1571,20 @@ public class InuhaBanHangView extends javax.swing.JPanel {
     }
     
     private void showModalAddToCart(InuhaSanPhamModel sanPham) { 
-	ModalDialog.showModal(this, new SimpleModalBorder(new InuhaAddGioHangView(sanPham), sanPham.getTen()));
+	ModalDialog.showModal(this, new SimpleModalBorder(new InuhaAddGioHangView(sanPham), sanPham.getMa() + " - " + sanPham.getTen()));
     }
 
+    private void showModalEditCart(InuhaHoaDonChiTietModel hoaDonChiTiet) { 
+	ModalDialog.showModal(this, new SimpleModalBorder(new InuhaEditGioHangView(hoaDonChiTiet), hoaDonChiTiet.getSanPhamChiTiet().getMa() + " - " + hoaDonChiTiet.getSanPhamChiTiet().getSanPham().getTen()));
+    }
+	
     private void handleSelectBill(int i) {
 	if (i < 0) {
 	    handleClear();
 	    return;
 	}
 	
+	tblDanhSachHoaDon.setRowSelectionInterval(i, i);
 	currentHoaDon = dataItemsHoaDonCho.get(i);
 	
 	LoadingDialog loading = new LoadingDialog();
@@ -1559,6 +1611,9 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 	lblNguoiTao.setText(currentHoaDon.getTaiKhoan().getUsername());
 	lblTrangThai.setText(BillUtils.getTrangThai(currentHoaDon.getTrangThai()));
 	
+	cboHinhThucThanhToan.setSelectedIndex(0);
+	txtTienMat.setEnabled(true);
+	
 	btnSelectKhachHang.setEnabled(true);
 	btnClearKhachHang.setEnabled(true);
 	cboHinhThucThanhToan.setEnabled(true);
@@ -1568,6 +1623,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 
     private void handleClear() {
 	currentHoaDon = null;
+	currentHoaDonChiTiet = null;
 	dataItemsGioHang = new ArrayList<>();
 	txtSoDienThoai.setText(null);
 	txtTenKhachHang.setText(null);
@@ -1593,6 +1649,11 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 	cboHinhThucThanhToan.setEnabled(false);
 	btnCancel.setEnabled(false);
 	btnSubmit.setEnabled(false);
+	
+	btnRemoveSanPham.setEnabled(false);
+	
+	chiTietThanhToan.setTongGiamGia(0);
+	chiTietThanhToan.setTongTienHang(0);
 	
 	loadDataGioHang();
     }
@@ -1639,11 +1700,10 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 			    hoaDonService.update(currentHoaDon);
 			    
 			    for(InuhaHoaDonChiTietModel m: dataItemsGioHang) { 
-		                InuhaSanPhamChiTietModel sanPhamChiTiet = m.getSanPhamChiTiet();
+				InuhaSanPhamChiTietModel sanPhamChiTiet = m.getSanPhamChiTiet();
 				sanPhamChiTiet.setSoLuong(sanPhamChiTiet.getSoLuong() + m.getSoLuong());
 				InuhaSanPhamChiTietService.getInstance().update(sanPhamChiTiet);
 			    }
-			    
 			    
 			    loadDataHoaDonCho();
 			    loadDataPageSanPham();
@@ -1662,12 +1722,11 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 		} catch (InterruptedException ex) {
 		} catch (ExecutionException ex) {
 		}
-	    }
-	    
+	    } 
 	};
 	worker.execute();
     }
-
+    
     private void handleClickButtonSelectKhachHang() {
 	ModalDialog.showModal(this, new SimpleModalBorder(new InuhaListKhachHangView(), "Danh sách khách hàng"));
     }
@@ -1786,6 +1845,146 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 	    }
 	});
 	loading.setVisible(true);
+    }
+
+    private void handleClickRowGioHang(MouseEvent evt) {
+	int index = tblDanhSachGioHang.getSelectedRow();
+	
+	if (index < 0) {
+	    currentHoaDonChiTiet = null;
+	    btnRemoveSanPham.setEnabled(false);
+	    return;
+	} 
+	
+	currentHoaDonChiTiet = dataItemsGioHang.get(index);
+	btnRemoveSanPham.setEnabled(true);
+	
+	if (evt.getClickCount() > 1) { 
+	    showModalEditCart(currentHoaDonChiTiet);
+	}
+    }
+
+    private void handleClickButtonRemoveItemCart() {
+	if (currentHoaDonChiTiet == null) { 
+	    return;
+	}
+	
+	LoadingDialog loading = new LoadingDialog();
+	executorService.submit(() -> {
+	    try {
+		hoaDonChiTietService.delete(currentHoaDonChiTiet.getId());
+
+		InuhaSanPhamChiTietModel sanPhamChiTiet = currentHoaDonChiTiet.getSanPhamChiTiet();
+		sanPhamChiTiet.setSoLuong(sanPhamChiTiet.getSoLuong() + currentHoaDonChiTiet.getSoLuong());
+		InuhaSanPhamChiTietService.getInstance().update(sanPhamChiTiet);
+
+		loadDataPageSanPham();
+		loadDataGioHang();
+		MessageToast.success("Xoá thành công sản phẩm khỏi giỏ hàng: " + sanPhamChiTiet.getMa());
+	    } catch (ServiceResponseException e) {
+		e.printStackTrace();
+		MessageToast.error(e.getMessage());
+	    } catch (Exception e) {
+		e.printStackTrace();
+		MessageModal.error(ErrorConstant.DEFAULT_ERROR);
+	    } finally {
+		loading.dispose();
+	    }
+	});
+	loading.setVisible(true);
+    }
+
+    private void handleClickButtonSubmit() {
+	if (currentHoaDon == null) { 
+	    MessageToast.warning("Vui lòng chọn một hoá đơn");
+	    return;
+	}
+	
+	if (dataItemsGioHang.size() < 1) { 
+	    MessageToast.warning("Vui lòng thêm ít nhất một sản phẩm");
+	    return;
+	}
+	
+	String tienMat = txtTienMat.getText().trim();
+	String tienChuyenKhoan = txtTienChuyenKhoan.getText().trim();
+	
+	int tienMatValue = 0;
+	int tienChuyenKhoanValue = 0;
+		
+	ComboBoxItem<Integer> hinhThucThanhToan = (ComboBoxItem<Integer>) cboHinhThucThanhToan.getSelectedItem();
+	
+	if (hinhThucThanhToan.getValue() == PhuongThucThanhToanConstant.TIEN_MAT || hinhThucThanhToan.getValue() == PhuongThucThanhToanConstant.KET_HOP) { 
+	    if (tienMat.isEmpty()) { 
+		MessageToast.error("Tiền mặt không được bỏ trống");
+		txtTienMat.requestFocus();
+		return;
+	    }
+	    try {
+		tienMatValue = (int) CurrencyUtils.parseNumber(tienMat);
+	    } catch (NumberFormatException e) { 
+		MessageToast.error("Tiền mặt vượt quá giới hạn cho phép");
+		txtTienMat.requestFocus();
+		return;
+	    }
+	}
+
+	if (hinhThucThanhToan.getValue() == PhuongThucThanhToanConstant.CHUYEN_KHOAN || hinhThucThanhToan.getValue() == PhuongThucThanhToanConstant.KET_HOP) { 
+	    if (tienChuyenKhoan.isEmpty()) { 
+		MessageToast.error("Tiền chuyển khoản không được bỏ trống");
+		txtTienChuyenKhoan.requestFocus();
+		return;
+	    }
+	    try {
+		tienChuyenKhoanValue = (int) CurrencyUtils.parseNumber(tienChuyenKhoan);
+	    } catch (NumberFormatException e) { 
+		MessageToast.error("Tiền chuyển khoản vượt quá giới hạn cho phép");
+		txtTienChuyenKhoan.requestFocus();
+		return;
+	    }
+	}
+	
+	if ((tienMatValue + tienChuyenKhoanValue) < chiTietThanhToan.getTongThanhToan()) { 
+	    MessageToast.error("Tiền khách trả phải lớn hơn hoặc bằng tổng thanh toán");
+	    txtTienMat.requestFocus();
+	    txtTienChuyenKhoan.requestFocus();
+	    return;
+	}
+	
+	SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
+	    @Override
+	    protected Boolean doInBackground() throws Exception {
+		return MessageModal.confirmWarning("Xác nhận thanh toán đơn hàng?");
+	    }
+
+	    @Override
+	    protected void done() {
+		try {
+		    if (get()) {
+			LoadingDialog loading = new LoadingDialog();
+			try {
+			    currentHoaDon.setTrangThai(TrangThaiHoaDonConstant.STATUS_DA_THANH_TOAN);
+			    hoaDonService.update(currentHoaDon);
+			   
+			    loadDataHoaDonCho();
+			    MessageToast.success("Xác nhận thanh toán đơn hàng thành công #" + currentHoaDon.getMa());
+			    handleClear();
+			    loadDataGioHang();
+			} catch (ServiceResponseException e) {
+			    e.printStackTrace();
+			    MessageToast.error(e.getMessage());
+			} catch (Exception e) {
+			    e.printStackTrace();
+			    MessageModal.error(ErrorConstant.DEFAULT_ERROR);
+			} finally {
+			    loading.dispose();
+			}
+		    }
+		} catch (InterruptedException ex) {
+		} catch (ExecutionException ex) {
+		}
+	    } 
+	};
+	worker.execute();
     }
     
     @Setter

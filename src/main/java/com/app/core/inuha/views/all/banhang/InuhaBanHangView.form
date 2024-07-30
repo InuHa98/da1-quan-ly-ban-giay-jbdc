@@ -276,6 +276,9 @@
               <Color id="Hand Cursor"/>
             </Property>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnSubmitActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="btnCancel">
           <Properties>
@@ -1171,10 +1174,12 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Component id="splitLine5" alignment="1" max="32767" attributes="0"/>
-              <Group type="102" attributes="0">
+              <Group type="102" alignment="1" attributes="0">
                   <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
-                  <Component id="lblCart" min="-2" pref="412" max="-2" attributes="0"/>
+                  <Component id="lblCart" min="-2" pref="187" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
+                  <Component id="btnRemoveSanPham" min="-2" pref="141" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
               </Group>
               <Component id="pnlDanhSachGioHang" alignment="1" max="32767" attributes="0"/>
           </Group>
@@ -1182,8 +1187,11 @@
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
-                  <Component id="lblCart" min="-2" pref="33" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="lblCart" alignment="3" min="-2" pref="33" max="-2" attributes="0"/>
+                      <Component id="btnRemoveSanPham" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
                   <Component id="splitLine5" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                   <Component id="pnlDanhSachGioHang" min="-2" max="-2" attributes="0"/>
@@ -1225,7 +1233,7 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="scrDanhSachGioHang" alignment="0" pref="478" max="32767" attributes="0"/>
+                  <Component id="scrDanhSachGioHang" alignment="0" pref="534" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
@@ -1299,11 +1307,26 @@
                       <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
                     </Property>
                   </Properties>
+                  <Events>
+                    <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="tblDanhSachGioHangMouseClicked"/>
+                  </Events>
                 </Component>
               </SubComponents>
             </Container>
           </SubComponents>
         </Container>
+        <Component class="javax.swing.JButton" name="btnRemoveSanPham">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Xo&#xe1; s&#x1ea3;n ph&#x1ea9;m"/>
+            <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
+              <Color id="Hand Cursor"/>
+            </Property>
+            <Property name="enabled" type="boolean" value="false"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnRemoveSanPhamActionPerformed"/>
+          </Events>
+        </Component>
       </SubComponents>
     </Container>
   </SubComponents>

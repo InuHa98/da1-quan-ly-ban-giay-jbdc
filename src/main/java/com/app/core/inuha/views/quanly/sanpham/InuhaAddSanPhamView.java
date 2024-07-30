@@ -1165,4 +1165,5 @@ public class InuhaAddSanPhamView extends javax.swing.JPanel {
         ModalDialog.closeAllModal();
         ModalDialog.showModal(instance, new SimpleModalBorder(new InuhaDetailSanPhamView(this.sanPham), "Chi tiết sản phẩm"));
     }
+    
 }

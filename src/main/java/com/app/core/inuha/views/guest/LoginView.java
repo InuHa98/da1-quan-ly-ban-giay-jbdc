@@ -55,6 +55,7 @@ public class LoginView extends javax.swing.JPanel {
     public LoginView() {
         initComponents();
         setLayout(new MigLayout("fill, insets 20", "[center]", "[center]"));
+	lblTitle.setForeground(ColorUtils.PRIMARY_COLOR);
         pnlLogin.setBackground(ColorUtils.BACKGROUND_PRIMARY);
         lbForgotPassword.setForeground(ColorUtils.PRIMARY_COLOR);
 
@@ -95,7 +96,7 @@ public class LoginView extends javax.swing.JPanel {
     private void initComponents() {
 
         pnlLogin = new com.app.views.UI.panel.RoundPanel();
-        jLabel1 = new javax.swing.JLabel();
+        lblTitle = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         lbUsername = new javax.swing.JLabel();
         txtUsername = new javax.swing.JTextField();
@@ -107,10 +108,10 @@ public class LoginView extends javax.swing.JPanel {
 
         pnlLogin.setBackground(new java.awt.Color(51, 51, 51));
 
-        jLabel1.setFont(jLabel1.getFont().deriveFont(jLabel1.getFont().getStyle() | java.awt.Font.BOLD, jLabel1.getFont().getSize()+10));
-        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabel1.setText("Chào mừng trở lại!");
+        lblTitle.setFont(lblTitle.getFont().deriveFont(lblTitle.getFont().getStyle() | java.awt.Font.BOLD, lblTitle.getFont().getSize()+10));
+        lblTitle.setForeground(new java.awt.Color(255, 255, 255));
+        lblTitle.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lblTitle.setText("Chào mừng trở lại!");
 
         jLabel2.setFont(jLabel2.getFont().deriveFont(jLabel2.getFont().getSize()+1f));
         jLabel2.setForeground(new java.awt.Color(204, 204, 204));
@@ -154,7 +155,7 @@ public class LoginView extends javax.swing.JPanel {
             .addGroup(pnlLoginLayout.createSequentialGroup()
                 .addGap(42, 42, 42)
                 .addGroup(pnlLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(lbUsername, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(txtUsername)
@@ -171,7 +172,7 @@ public class LoginView extends javax.swing.JPanel {
             pnlLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlLoginLayout.createSequentialGroup()
                 .addGap(42, 42, 42)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -217,12 +218,12 @@ public class LoginView extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnSubmit;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel lbForgotPassword;
     private javax.swing.JLabel lbPassword;
     private javax.swing.JLabel lbUsername;
+    private javax.swing.JLabel lblTitle;
     private com.app.views.UI.panel.RoundPanel pnlLogin;
     private javax.swing.JPasswordField txtPassword;
     private javax.swing.JTextField txtUsername;
