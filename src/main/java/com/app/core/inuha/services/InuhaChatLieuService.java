@@ -1,5 +1,6 @@
 package com.app.core.inuha.services;
 
+import com.app.common.helper.JbdcHelper;
 import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.constants.TrangThaiXoaConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
@@ -18,7 +19,20 @@ import java.util.Optional;
  */
 public class InuhaChatLieuService implements IInuhaChatLieuServiceInterface {
 
-    private final InuhaChatLieuRepository repository = new InuhaChatLieuRepository();
+    private final InuhaChatLieuRepository repository = InuhaChatLieuRepository.getInstance();
+    
+    private static InuhaChatLieuService instance = null;
+    
+    public static InuhaChatLieuService getInstance() { 
+	if (instance == null) { 
+	    instance = new InuhaChatLieuService();
+	}
+	return instance;
+    }
+    
+    private InuhaChatLieuService() { 
+	
+    }
     
     @Override
     public InuhaChatLieuModel getById(Integer id) {
@@ -66,7 +80,7 @@ public class InuhaChatLieuService implements IInuhaChatLieuServiceInterface {
             repository.update(model);
         } catch (SQLException ex) {
             ex.printStackTrace();
-            throw new ServiceResponseException("Không thể xoá chất liệu này");
+            throw new ServiceResponseException("Không thể cập nhật chất liệu này");
         }
     }
 
@@ -125,4 +139,18 @@ public class InuhaChatLieuService implements IInuhaChatLieuServiceInterface {
         return 0;
     }
     
+    public InuhaChatLieuModel insertByExcel(String name) {
+        try {
+	    Optional<InuhaChatLieuModel> find = repository.getByName(name);
+	    if (find.isPresent()) { 
+		return find.get();
+	    }
+	    InuhaChatLieuModel model = new InuhaChatLieuModel();
+	    model.setTen(name);
+	    insert(model);
+            return getById(JbdcHelper.getLastInsertedId());
+        } catch (Exception ex) {
+	    throw new ServiceResponseException("Không thể thêm dữ liệu");
+        }
+    }
 }

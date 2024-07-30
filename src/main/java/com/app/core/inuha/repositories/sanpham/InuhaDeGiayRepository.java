@@ -3,7 +3,9 @@ package com.app.core.inuha.repositories.sanpham;
 import com.app.common.helper.JbdcHelper;
 import com.app.common.infrastructure.interfaces.IDAOinterface;
 import com.app.common.infrastructure.request.FillterRequest;
+import com.app.core.inuha.models.sanpham.InuhaChatLieuModel;
 import com.app.core.inuha.models.sanpham.InuhaDeGiayModel;
+import com.app.core.inuha.services.InuhaDanhMucService;
 import com.app.utils.TimeUtils;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,6 +20,19 @@ import java.util.Optional;
 public class InuhaDeGiayRepository implements IDAOinterface<InuhaDeGiayModel, Integer> {
     
     private final static String TABLE_NAME = "DeGiay";
+
+    private static InuhaDeGiayRepository instance = null;
+    
+    public static InuhaDeGiayRepository getInstance() { 
+	if (instance == null) { 
+	    instance = new InuhaDeGiayRepository();
+	}
+	return instance;
+    }
+    
+    private InuhaDeGiayRepository() { 
+	
+    }
     
     @Override
     public int insert(InuhaDeGiayModel model) throws SQLException {
@@ -241,6 +256,30 @@ public class InuhaDeGiayRepository implements IDAOinterface<InuhaDeGiayModel, In
         }
         return totalPages;
     }
+    
+    
+    public Optional<InuhaDeGiayModel> getByName(String name) throws SQLException {
+        ResultSet resultSet = null;
+        InuhaDeGiayModel model = null;
+
+        String query = String.format("SELECT * FROM %s WHERE ten LIKE ? AND trang_thai_xoa = 0", TABLE_NAME);
+
+        try {
+            resultSet = JbdcHelper.query(query, name);
+            while(resultSet.next()) {
+                model = buildData(resultSet, false);
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+            throw new SQLException(e.getMessage());
+        }
+        finally {
+            JbdcHelper.close(resultSet);
+        }
+
+        return Optional.ofNullable(model);
+    }
+    
     
     private InuhaDeGiayModel buildData(ResultSet resultSet) throws SQLException { 
         return buildData(resultSet, true);

@@ -5,8 +5,11 @@ import com.app.common.infrastructure.constants.TrangThaiXoaConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
 import com.app.common.infrastructure.request.FillterRequest;
 import com.app.core.inuha.models.InuhaSanPhamChiTietModel;
+import com.app.core.inuha.models.InuhaSanPhamModel;
 import com.app.core.inuha.repositories.InuhaSanPhamChiTietRepository;
+import com.app.core.inuha.repositories.InuhaSanPhamRepository;
 import com.app.core.inuha.services.impl.IInuhaSanPhamChiTietServiceInterface;
+import com.app.utils.ProductUtils;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +21,21 @@ import java.util.Optional;
  */
 public class InuhaSanPhamChiTietService implements IInuhaSanPhamChiTietServiceInterface {
 
-    private final InuhaSanPhamChiTietRepository repository = new InuhaSanPhamChiTietRepository();
+    private final InuhaSanPhamChiTietRepository repository = InuhaSanPhamChiTietRepository.getInstance();
+    
+    private static InuhaSanPhamChiTietService instance = null;
+    
+    public static InuhaSanPhamChiTietService getInstance() { 
+	if (instance == null) { 
+	    instance = new InuhaSanPhamChiTietService();
+	}
+	return instance;
+    }
+    
+    private InuhaSanPhamChiTietService() { 
+	
+    }
+    
     
     @Override
     public InuhaSanPhamChiTietModel getById(Integer id) {
@@ -36,8 +53,8 @@ public class InuhaSanPhamChiTietService implements IInuhaSanPhamChiTietServiceIn
     @Override
     public Integer insert(InuhaSanPhamChiTietModel model) {
         try {
-            if (repository.has(model.getKichCo().getId(), model.getMauSac().getId())) { 
-                throw new ServiceResponseException("Tên sản phẩm chi tiết đã tồn tại trên hệ thống");
+            if (repository.has(model.getSanPham().getId(), model.getKichCo().getId(), model.getMauSac().getId())) { 
+                throw new ServiceResponseException("Sản phẩm chi tiết đã tồn tại trên hệ thống");
             }
             int rows = repository.insert(model);
             if (rows < 1) { 
@@ -69,12 +86,12 @@ public class InuhaSanPhamChiTietService implements IInuhaSanPhamChiTietServiceIn
             }
             
             if (repository.has(model)) { 
-                throw new ServiceResponseException("Tên sản phẩm chi tiết đã tồn tại trên hệ thống");
+                throw new ServiceResponseException("Sản phẩm chi tiết đã tồn tại trên hệ thống");
             }
             repository.update(model);
         } catch (SQLException ex) {
             ex.printStackTrace();
-            throw new ServiceResponseException("Không thể xoá sản phẩm chi tiết này");
+            throw new ServiceResponseException("Không thể cập nhật sản phẩm chi tiết này");
         }
     }
 
@@ -125,6 +142,15 @@ public class InuhaSanPhamChiTietService implements IInuhaSanPhamChiTietServiceIn
             throw new ServiceResponseException("Không thể lấy danh sách sản phẩm chi tiết");
         }
     }
+    
+    public List<InuhaSanPhamChiTietModel> getAll(int id) {
+        try {
+            return repository.selectAll(id);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            throw new ServiceResponseException("Không thể lấy danh sách sản phẩm chi tiết");
+        }
+    }
 
     @Override
     public List<InuhaSanPhamChiTietModel> getPage(FillterRequest request) {
@@ -156,4 +182,29 @@ public class InuhaSanPhamChiTietService implements IInuhaSanPhamChiTietServiceIn
         return null;
     }
     
+    public boolean insertByExcel(InuhaSanPhamChiTietModel model) {
+        try {
+	    if (model.getMa() == null && model.getSanPham().getMa() == null) {
+		return false;
+	    }
+	    
+	    Optional<InuhaSanPhamChiTietModel> findChiTiet = repository.getByCode(model.getMa());
+	    if (findChiTiet.isPresent()) {
+		model.setId(findChiTiet.get().getId());
+		update(model);
+		return true;
+	    }
+	    
+	    Optional<InuhaSanPhamModel> findSanPham = InuhaSanPhamRepository.getInstance().getByCode(model.getSanPham().getMa());
+	    if (findSanPham.isEmpty()) {
+		throw new IllegalArgumentException();
+	    }
+	    model.getSanPham().setId(findSanPham.get().getId());
+	    model.setMa(ProductUtils.generateCodeSanPhamChiTiet());
+	    insert(model);
+	    return true;
+        } catch (Exception ex) {
+	    throw new ServiceResponseException("Không thể thêm dữ liệu");
+        }
+    }
 }

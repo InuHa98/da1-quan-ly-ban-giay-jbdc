@@ -1,5 +1,6 @@
 package com.app.core.inuha.services;
 
+import com.app.common.helper.JbdcHelper;
 import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.constants.TrangThaiXoaConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
@@ -18,7 +19,20 @@ import java.util.Optional;
  */
 public class InuhaDeGiayService implements IInuhaDeGiayServiceInterface {
 
-    private final InuhaDeGiayRepository repository = new InuhaDeGiayRepository();
+    private final InuhaDeGiayRepository repository = InuhaDeGiayRepository.getInstance();
+    
+    private static InuhaDeGiayService instance = null;
+    
+    public static InuhaDeGiayService getInstance() { 
+	if (instance == null) { 
+	    instance = new InuhaDeGiayService();
+	}
+	return instance;
+    }
+    
+    private InuhaDeGiayService() { 
+	
+    }
     
     @Override
     public InuhaDeGiayModel getById(Integer id) {
@@ -66,7 +80,7 @@ public class InuhaDeGiayService implements IInuhaDeGiayServiceInterface {
             repository.update(model);
         } catch (SQLException ex) {
             ex.printStackTrace();
-            throw new ServiceResponseException("Không thể xoá đế giày này");
+            throw new ServiceResponseException("Không thể cập nhật đế giày này");
         }
     }
 
@@ -125,4 +139,18 @@ public class InuhaDeGiayService implements IInuhaDeGiayServiceInterface {
         return 0;
     }
     
+    public InuhaDeGiayModel insertByExcel(String name) {
+        try {
+	    Optional<InuhaDeGiayModel> find = repository.getByName(name);
+	    if (find.isPresent()) { 
+		return find.get();
+	    }
+	    InuhaDeGiayModel model = new InuhaDeGiayModel();
+	    model.setTen(name);
+	    insert(model);
+            return getById(JbdcHelper.getLastInsertedId());
+        } catch (Exception ex) {
+	    throw new ServiceResponseException("Không thể thêm dữ liệu");
+        }
+    }
 }

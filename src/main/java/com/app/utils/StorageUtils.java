@@ -1,5 +1,6 @@
 package com.app.utils;
 
+import com.app.core.inuha.models.InuhaSanPhamChiTietModel;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -54,6 +55,14 @@ public class StorageUtils {
         } catch (IOException e) {
             throw new NullPointerException("Không tìm thấy hình ảnh: " + FOLDER + "/" + path);
         }
+    }
+    
+    public static boolean deleteFile(String filePath) { 
+        File file = new File(filePath);
+	if (!file.exists()) {
+	    return false;
+	}
+        return file.delete();
     }
 
     public static String uploadImage(ImageIcon imageIcon, String path, String fileName) {

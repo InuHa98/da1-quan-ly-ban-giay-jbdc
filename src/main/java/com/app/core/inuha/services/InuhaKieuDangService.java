@@ -1,5 +1,6 @@
 package com.app.core.inuha.services;
 
+import com.app.common.helper.JbdcHelper;
 import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.constants.TrangThaiXoaConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
@@ -18,7 +19,20 @@ import java.util.Optional;
  */
 public class InuhaKieuDangService implements IInuhaKieuDangServiceInterface {
 
-    private final InuhaKieuDangRepository repository = new InuhaKieuDangRepository();
+    private final InuhaKieuDangRepository repository = InuhaKieuDangRepository.getInstance();
+    
+    private static InuhaKieuDangService instance = null;
+    
+    public static InuhaKieuDangService getInstance() { 
+	if (instance == null) { 
+	    instance = new InuhaKieuDangService();
+	}
+	return instance;
+    }
+    
+    private InuhaKieuDangService() { 
+	
+    }
     
     @Override
     public InuhaKieuDangModel getById(Integer id) {
@@ -66,7 +80,7 @@ public class InuhaKieuDangService implements IInuhaKieuDangServiceInterface {
             repository.update(model);
         } catch (SQLException ex) {
             ex.printStackTrace();
-            throw new ServiceResponseException("Không thể xoá kiểu dáng này");
+            throw new ServiceResponseException("Không thể cập nhật kiểu dáng này");
         }
     }
 
@@ -125,4 +139,18 @@ public class InuhaKieuDangService implements IInuhaKieuDangServiceInterface {
         return 0;
     }
     
+    public InuhaKieuDangModel insertByExcel(String name) {
+        try {
+	    Optional<InuhaKieuDangModel> find = repository.getByName(name);
+	    if (find.isPresent()) { 
+		return find.get();
+	    }
+	    InuhaKieuDangModel model = new InuhaKieuDangModel();
+	    model.setTen(name);
+	    insert(model);
+            return getById(JbdcHelper.getLastInsertedId());
+        } catch (Exception ex) {
+	    throw new ServiceResponseException("Không thể thêm dữ liệu");
+        }
+    }
 }

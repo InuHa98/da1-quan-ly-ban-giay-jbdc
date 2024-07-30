@@ -7,6 +7,7 @@ import com.app.common.infrastructure.request.FillterRequest;
 import com.app.core.inuha.models.InuhaSanPhamModel;
 import com.app.core.inuha.repositories.InuhaSanPhamRepository;
 import com.app.core.inuha.services.impl.IInuhaSanPhamServiceInterface;
+import com.app.utils.ProductUtils;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +19,20 @@ import java.util.Optional;
  */
 public class InuhaSanPhamService implements IInuhaSanPhamServiceInterface {
 
-    private final InuhaSanPhamRepository repository = new InuhaSanPhamRepository();
+    private final InuhaSanPhamRepository repository = InuhaSanPhamRepository.getInstance();
+    
+    private static InuhaSanPhamService instance = null;
+    
+    public static InuhaSanPhamService getInstance() { 
+	if (instance == null) { 
+	    instance = new InuhaSanPhamService();
+	}
+	return instance;
+    }
+    
+    private InuhaSanPhamService() { 
+	
+    }
     
     @Override
     public InuhaSanPhamModel getById(Integer id) {
@@ -74,7 +88,7 @@ public class InuhaSanPhamService implements IInuhaSanPhamServiceInterface {
             repository.update(model);
         } catch (SQLException ex) {
             ex.printStackTrace();
-            throw new ServiceResponseException("Không thể xoá sản phẩm này");
+            throw new ServiceResponseException("Không thể cập nhật sản phẩm này");
         }
     }
 
@@ -86,12 +100,13 @@ public class InuhaSanPhamService implements IInuhaSanPhamServiceInterface {
                 throw new ServiceResponseException("Không tìm thấy sản phẩm");
             }
             
+	    InuhaSanPhamModel item = find.get();
             if (repository.hasUse(id)) { 
-                InuhaSanPhamModel item = find.get();
                 item.setTrangThaiXoa(TrangThaiXoaConstant.DA_XOA);
                 repository.update(item);
             } else { 
                 repository.delete(id);
+		ProductUtils.removeImageProduct(item.getHinhAnh());
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -154,6 +169,18 @@ public class InuhaSanPhamService implements IInuhaSanPhamServiceInterface {
             ex.printStackTrace();
         }
         return null;
+    }
+    
+    public InuhaSanPhamModel getByCode(String ma) {
+        try {
+            Optional<InuhaSanPhamModel> find = repository.getByCode(ma);
+            if (find.isEmpty()) { 
+                throw new SQLException();
+            }
+            return find.get();
+        } catch (SQLException ex) {
+            throw new ServiceResponseException("Không tìm thấy sản phẩm");
+        }
     }
     
 }

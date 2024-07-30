@@ -3,6 +3,7 @@ package com.app.core.inuha.repositories.sanpham;
 import com.app.common.helper.JbdcHelper;
 import com.app.common.infrastructure.interfaces.IDAOinterface;
 import com.app.common.infrastructure.request.FillterRequest;
+import com.app.core.inuha.models.sanpham.InuhaDeGiayModel;
 import com.app.core.inuha.models.sanpham.InuhaKichCoModel;
 import com.app.utils.TimeUtils;
 import java.sql.ResultSet;
@@ -18,6 +19,19 @@ import java.util.Optional;
 public class InuhaKichCoRepository implements IDAOinterface<InuhaKichCoModel, Integer> {
     
     private final static String TABLE_NAME = "KichCo";
+
+    private static InuhaKichCoRepository instance = null;
+    
+    public static InuhaKichCoRepository getInstance() { 
+	if (instance == null) { 
+	    instance = new InuhaKichCoRepository();
+	}
+	return instance;
+    }
+    
+    private InuhaKichCoRepository() { 
+	
+    }
     
     @Override
     public int insert(InuhaKichCoModel model) throws SQLException {
@@ -240,6 +254,28 @@ public class InuhaKichCoRepository implements IDAOinterface<InuhaKichCoModel, In
             throw new SQLException(e.getMessage());
         }
         return totalPages;
+    }
+
+    public Optional<InuhaKichCoModel> getByName(String name) throws SQLException {
+        ResultSet resultSet = null;
+        InuhaKichCoModel model = null;
+
+        String query = String.format("SELECT * FROM %s WHERE ten LIKE ? AND trang_thai_xoa = 0", TABLE_NAME);
+
+        try {
+            resultSet = JbdcHelper.query(query, name);
+            while(resultSet.next()) {
+                model = buildData(resultSet, false);
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+            throw new SQLException(e.getMessage());
+        }
+        finally {
+            JbdcHelper.close(resultSet);
+        }
+
+        return Optional.ofNullable(model);
     }
     
     private InuhaKichCoModel buildData(ResultSet resultSet) throws SQLException { 

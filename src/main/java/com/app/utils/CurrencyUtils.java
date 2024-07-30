@@ -18,7 +18,7 @@ public class CurrencyUtils {
     }
     
     public static String parseString(long price) {
-        return new DecimalFormat("#,###").format(price).replace(",", ".") + "đ";
+        return "đ" + (new DecimalFormat("#,###")).format(price).replace(",", ".");
     }
     
     public static String parseString(int price) {
@@ -33,7 +33,7 @@ public class CurrencyUtils {
         return Long.parseLong(price.replace(".", "").replace("đ", ""));
     }
 
-    public static DefaultFormatterFactory getDefaultFormatVND() {
+    public static DefaultFormatterFactory getDefaultFormat() {
         DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.getDefault());
         symbols.setGroupingSeparator('.');
         symbols.setDecimalSeparator(',');

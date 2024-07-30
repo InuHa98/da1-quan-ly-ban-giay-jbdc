@@ -1,5 +1,6 @@
 package com.app.core.inuha.services;
 
+import com.app.common.helper.JbdcHelper;
 import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.constants.TrangThaiXoaConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
@@ -18,7 +19,20 @@ import java.util.Optional;
  */
 public class InuhaKichCoService implements IInuhaKichCoServiceInterface {
 
-    private final InuhaKichCoRepository repository = new InuhaKichCoRepository();
+    private final InuhaKichCoRepository repository = InuhaKichCoRepository.getInstance();
+
+    private static InuhaKichCoService instance = null;
+    
+    public static InuhaKichCoService getInstance() { 
+	if (instance == null) { 
+	    instance = new InuhaKichCoService();
+	}
+	return instance;
+    }
+    
+    private InuhaKichCoService() { 
+	
+    }
     
     @Override
     public InuhaKichCoModel getById(Integer id) {
@@ -66,7 +80,7 @@ public class InuhaKichCoService implements IInuhaKichCoServiceInterface {
             repository.update(model);
         } catch (SQLException ex) {
             ex.printStackTrace();
-            throw new ServiceResponseException("Không thể xoá kích cỡ này");
+            throw new ServiceResponseException("Không thể cập nhật kích cỡ này");
         }
     }
 
@@ -125,4 +139,19 @@ public class InuhaKichCoService implements IInuhaKichCoServiceInterface {
         return 0;
     }
     
+
+    public InuhaKichCoModel insertByExcel(String name) {
+        try {
+	    Optional<InuhaKichCoModel> find = repository.getByName(name);
+	    if (find.isPresent()) { 
+		return find.get();
+	    }
+	    InuhaKichCoModel model = new InuhaKichCoModel();
+	    model.setTen(name);
+	    insert(model);
+            return getById(JbdcHelper.getLastInsertedId());
+        } catch (Exception ex) {
+	    throw new ServiceResponseException("Không thể thêm dữ liệu");
+        }
+    }
 }

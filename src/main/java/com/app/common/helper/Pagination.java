@@ -73,7 +73,7 @@ public class Pagination {
         return panel;
     }
 
-    public void renderListPage() {
+    private void renderListPage() {
 
         listPage.removeAll();
 
@@ -193,6 +193,13 @@ public class Pagination {
         listPage.repaint();
     }
 
+    public void rerender(int currentPage, int totalPages) { 
+        currentPage = currentPage < 1 ? 1 : currentPage;
+        setCurrentPage(currentPage);
+        setTotalPages(totalPages);
+        renderListPage();
+    }
+    
     public interface Callback {
 
         void onChangeLimitItem(JComboBox<Integer> comboBox);

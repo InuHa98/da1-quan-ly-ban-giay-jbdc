@@ -7,10 +7,13 @@ import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
+import java.awt.Color;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.swing.ImageIcon;
 import jnafilechooser.api.JnaFileChooser;
 
 
@@ -28,13 +31,15 @@ public class QrCodeUtils {
     
     public final static String TYPE_SANPHAM = "product";
     
+    public final static String TYPE_HOADON = "bill";
+    
     public final static String TYPE_SANPHAMCHITIET = "productdetail";
     
     private static final int WIDTH = 600;
     
     private static final int HEIGHT = 600;
     
-    private static final String IMAGE_FORMAT = "PNG";
+    public static final String IMAGE_FORMAT = "PNG";
     
     
     public static String generateCodeSanPham(int id) { 
@@ -45,6 +50,10 @@ public class QrCodeUtils {
         return PREFIX_CODE + SEPERATOR + TYPE_SANPHAMCHITIET + SEPERATOR + id;
     }
     
+    public static String generateCodeHoaDon(int id) { 
+        return PREFIX_CODE + SEPERATOR + TYPE_HOADON + SEPERATOR + id;
+    }
+	
     public static int getIdSanPham(String code) { 
         String regex = String.format("^%s\\%s%s\\%s(\\d+)$", PREFIX_CODE, SEPERATOR, TYPE_SANPHAM, SEPERATOR);
         Pattern pattern = Pattern.compile(regex);
@@ -64,7 +73,17 @@ public class QrCodeUtils {
         }
         return -1;
     }
-       
+     
+    public static int getIdHoaDon(String code) { 
+        String regex = String.format("^%s\\%s%s\\%s(\\d+)$", PREFIX_CODE, SEPERATOR, TYPE_HOADON, SEPERATOR);
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(code);
+        if (matcher.matches()) { 
+            return Integer.parseInt(matcher.group(1));
+        }
+        return -1;
+    }
+	
     public static boolean isValidCanCuocCongDan(String code) { 
         String regex = "^\\d{12}\\|\\d{9}\\|[\\p{L}\\s]+\\|\\d{8}\\|(Nam|Nữ)\\|[\\p{L}\\s,]+\\|\\d{8}$";
         Pattern pattern = Pattern.compile(regex);
@@ -72,27 +91,23 @@ public class QrCodeUtils {
         return matcher.matches();
     }
         
-    private static void generateQRCodeImage(String text, File file) throws WriterException, IOException {
+    public static void generateQRCodeImage(String text, File file) throws WriterException, IOException {
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
         BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, WIDTH, HEIGHT);
         MatrixToImageWriter.writeToPath(bitMatrix, IMAGE_FORMAT, file.toPath());
     }
+    
+    public static ImageIcon generateQRCodeImage(String text) throws WriterException {
+        QRCodeWriter qrCodeWriter = new QRCodeWriter();
+        BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, WIDTH, HEIGHT);
 
-    public static void save(String code, String fileName) {
-        JnaFileChooser ch = new JnaFileChooser();
-        ch.setMode(JnaFileChooser.Mode.Directories);
-        boolean act = ch.showOpenDialog(Application.app);
-        if (act) {
-            File folder = ch.getSelectedFile();
-            File file = new File(folder, fileName + "." + IMAGE_FORMAT.toLowerCase());
-            try {
-                generateQRCodeImage(code, file);
-                MessageToast.success("Lưu QR Code thành công!");
-            } catch (WriterException | IOException e) {
-                e.printStackTrace();
-                MessageToast.error("Không thể lưu QR Code!!!!");
+        BufferedImage bufferedImage = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
+        for (int y = 0; y < HEIGHT; y++) {
+            for (int x = 0; x < WIDTH; x++) {
+                bufferedImage.setRGB(x, y, bitMatrix.get(x, y) ? Color.BLACK.getRGB() : Color.WHITE.getRGB());
             }
         }
+        return new ImageIcon(bufferedImage);
     }
-    
+	
 }
