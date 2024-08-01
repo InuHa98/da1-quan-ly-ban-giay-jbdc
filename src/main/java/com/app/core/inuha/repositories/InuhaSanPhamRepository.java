@@ -214,7 +214,7 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
                 dg.ten AS ten_de_giay,
                 dg.ngay_tao AS ngay_tao_de_giay,
                 dg.ngay_cap_nhat AS ngay_cap_nhat_de_giay,
-                (SELECT SUM(so_luong) FROM SanPhamChiTiet WHERE id_san_pham = sp.id) AS so_luong
+                (SELECT SUM(so_luong) FROM SanPhamChiTiet WHERE id_san_pham = sp.id AND trang_thai = 1) AS so_luong
             FROM %s AS sp
                 LEFT JOIN DanhMuc AS dm ON dm.id = sp.id_danh_muc
                 LEFT JOIN ThuongHieu AS th ON th.id = sp.id_thuong_hieu
@@ -270,7 +270,7 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
                 dg.ten AS ten_de_giay,
                 dg.ngay_tao AS ngay_tao_de_giay,
                 dg.ngay_cap_nhat AS ngay_cap_nhat_de_giay,
-                (SELECT SUM(so_luong) FROM SanPhamChiTiet WHERE id_san_pham = sp.id) AS so_luong
+                (SELECT SUM(so_luong) FROM SanPhamChiTiet WHERE id_san_pham = sp.id AND trang_thai = 1) AS so_luong
             FROM %s AS sp
                 LEFT JOIN DanhMuc AS dm ON dm.id = sp.id_danh_muc
                 LEFT JOIN ThuongHieu AS th ON th.id = sp.id_thuong_hieu
@@ -331,7 +331,7 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
                     dg.ten AS ten_de_giay,
                     dg.ngay_tao AS ngay_tao_de_giay,
                     dg.ngay_cap_nhat AS ngay_cap_nhat_de_giay,
-                    (SELECT SUM(so_luong) FROM SanPhamChiTiet WHERE id_san_pham = sp.id) AS so_luong
+                    (SELECT SUM(so_luong) FROM SanPhamChiTiet WHERE id_san_pham = sp.id AND trang_thai = 1) AS so_luong
                 FROM %s AS sp
                     LEFT JOIN DanhMuc AS dm ON dm.id = sp.id_danh_muc
                     LEFT JOIN ThuongHieu AS th ON th.id = sp.id_thuong_hieu
@@ -487,7 +487,7 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
                 dg.ten AS ten_de_giay,
                 dg.ngay_tao AS ngay_tao_de_giay,
                 dg.ngay_cap_nhat AS ngay_cap_nhat_de_giay,
-                (SELECT SUM(so_luong) FROM SanPhamChiTiet WHERE id_san_pham = sp.id) AS so_luong
+                (SELECT SUM(so_luong) FROM SanPhamChiTiet WHERE id_san_pham = sp.id AND trang_thai = 1) AS so_luong
             FROM %s AS sp
                 LEFT JOIN DanhMuc AS dm ON dm.id = sp.id_danh_muc
                 LEFT JOIN ThuongHieu AS th ON th.id = sp.id_thuong_hieu

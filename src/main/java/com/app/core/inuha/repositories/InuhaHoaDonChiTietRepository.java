@@ -2,6 +2,8 @@ package com.app.core.inuha.repositories;
 
 import com.app.common.helper.JbdcHelper;
 import com.app.common.infrastructure.constants.PhuongThucThanhToanConstant;
+import com.app.common.infrastructure.constants.TrangThaiHoaDonConstant;
+import com.app.common.infrastructure.exceptions.ServiceResponseException;
 import com.app.common.infrastructure.interfaces.IDAOinterface;
 import com.app.common.infrastructure.request.FillterRequest;
 import com.app.common.infrastructure.session.SessionLogin;
@@ -11,6 +13,7 @@ import com.app.core.inuha.models.InuhaKhachHangModel;
 import com.app.core.inuha.models.InuhaPhieuGiamGiaModel;
 import com.app.core.inuha.models.InuhaSanPhamChiTietModel;
 import com.app.core.inuha.models.InuhaTaiKhoanModel;
+import com.app.core.inuha.models.sanpham.InuhaKichCoModel;
 import com.app.core.inuha.request.InuhaFilterHoaDonChiTietRequest;
 import com.app.utils.TimeUtils;
 import java.sql.ResultSet;
@@ -48,8 +51,8 @@ public class InuhaHoaDonChiTietRepository implements IDAOinterface<InuhaHoaDonCh
     public int insert(InuhaHoaDonChiTietModel model) throws SQLException {
         int result = 0;
         String query = String.format("""
-            INSERT INTO %s(id_san_pham_chi_tiet, id_hoa_don, ma, gia_nhap, gia_ban, gia_giam, so_luong)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO %s(id_san_pham_chi_tiet, id_hoa_don, ma, gia_nhap, gia_ban, so_luong)
+            VALUES (?, ?, ?, ?, ?, ?)
         """, TABLE_NAME);
         try {
             Object[] args = new Object[] {
@@ -58,7 +61,6 @@ public class InuhaHoaDonChiTietRepository implements IDAOinterface<InuhaHoaDonCh
 		model.getMa(),
 		model.getSanPhamChiTiet().getSanPham().getGiaNhap(),
 		model.getSanPhamChiTiet().getSanPham().getGiaBan(),
-		model.getGiaGiam(),
 		model.getSoLuong()
             };
             result = JbdcHelper.updateAndFlush(query, args);
@@ -198,6 +200,64 @@ public class InuhaHoaDonChiTietRepository implements IDAOinterface<InuhaHoaDonCh
         return list;
     }
 
+    public List<Integer> getAllIdsByIdSanPham(int idSanPham) throws SQLException {
+        List<Integer> list = new ArrayList<>();
+        ResultSet resultSet = null;
+
+        String query = String.format("""
+            SELECT 
+                hdct.id
+            FROM %s AS hdct
+            JOIN HoaDon AS hd ON hd.id = hdct.id_hoa_don
+            JOIN SanPhamChiTiet AS spct ON spct.id = hdct.id_san_pham_chi_tiet
+            WHERE spct.id_san_pham = ? AND hd.trang_thai = %d
+        """, TABLE_NAME, TrangThaiHoaDonConstant.STATUS_CHO_THANH_TOAN);
+
+        try {
+            resultSet = JbdcHelper.query(query, idSanPham);
+            while(resultSet.next()) {
+                list.add(resultSet.getInt("id"));
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+            throw new SQLException(e.getMessage());
+        }
+        finally {
+            JbdcHelper.close(resultSet);
+        }
+
+        return list;
+    }
+	
+    public List<Integer> getAllIdsByIdSanPhamChiTiet(int idSanPhamChiTiet) throws SQLException {
+        List<Integer> list = new ArrayList<>();
+        ResultSet resultSet = null;
+
+        String query = String.format("""
+            SELECT 
+                hdct.id
+            FROM %s AS hdct
+            JOIN HoaDon AS hd ON hd.id = hdct.id_hoa_don
+            JOIN SanPhamChiTiet AS spct ON spct.id = hdct.id_san_pham_chi_tiet
+            WHERE spct.id = ? AND hd.trang_thai = %d
+        """, TABLE_NAME, TrangThaiHoaDonConstant.STATUS_CHO_THANH_TOAN);
+
+        try {
+            resultSet = JbdcHelper.query(query, idSanPhamChiTiet);
+            while(resultSet.next()) {
+                list.add(resultSet.getInt("id"));
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+            throw new SQLException(e.getMessage());
+        }
+        finally {
+            JbdcHelper.close(resultSet);
+        }
+
+        return list;
+    }
+	
     @Override
     public List<InuhaHoaDonChiTietModel> selectPage(FillterRequest request) throws SQLException {
 	InuhaFilterHoaDonChiTietRequest filter = (InuhaFilterHoaDonChiTietRequest) request;
@@ -313,7 +373,6 @@ public class InuhaHoaDonChiTietRepository implements IDAOinterface<InuhaHoaDonCh
             .ma(resultSet.getString("ma"))
 	    .giaNhap(resultSet.getDouble("gia_nhap"))
 	    .giaBan(resultSet.getDouble("gia_ban"))
-	    .giaGiam(resultSet.getDouble("gia_giam"))
 	    .soLuong(resultSet.getInt("so_luong"))
             .build();
     }
@@ -327,4 +386,6 @@ public class InuhaHoaDonChiTietRepository implements IDAOinterface<InuhaHoaDonCh
             throw new SQLException(e.getMessage());
         }
     }
+    
+
 }

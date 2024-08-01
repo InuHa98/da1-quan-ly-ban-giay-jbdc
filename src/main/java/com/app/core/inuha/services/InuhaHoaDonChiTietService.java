@@ -51,21 +51,23 @@ public class InuhaHoaDonChiTietService implements IInuhaHoaDonChiTietServiceInte
     public Integer insert(InuhaHoaDonChiTietModel model) {
         try {
 	    int rows = -1;
-	    int soLuong = 1;
 	    Optional<InuhaHoaDonChiTietModel> check = repository.getDuplicate(model);
 	    if (check.isPresent()) { 
-		model.setSoLuong(check.get().getSoLuong() + soLuong);
+		model.setSoLuong(check.get().getSoLuong() + model.getSoLuong());
 		model.setId(check.get().getId());
 		rows = repository.update(model);
 	    } else {
-		soLuong = model.getSoLuong();
 		rows = repository.insert(model);
 	    }
             if (rows < 1) { 
                 throw new ServiceResponseException("Không thể thêm sản phẩm vào giỏ hàng");
             }
 	    InuhaSanPhamChiTietModel sanPhamChiTiet = model.getSanPhamChiTiet();
-	    sanPhamChiTiet.setSoLuong(sanPhamChiTiet.getSoLuong() - soLuong);
+	    int soLuongTon = sanPhamChiTiet.getSoLuong() - model.getSoLuong();
+	    if (soLuongTon < 0) { 
+		soLuongTon = 0;
+	    }
+	    sanPhamChiTiet.setSoLuong(soLuongTon);
 	    InuhaSanPhamChiTietService.getInstance().update(sanPhamChiTiet);
             return rows;
         } catch (SQLException ex) {
@@ -99,6 +101,18 @@ public class InuhaHoaDonChiTietService implements IInuhaHoaDonChiTietServiceInte
         }
     }
 
+    public void update(InuhaHoaDonChiTietModel model, int soLuongChenhLech) {
+	model.setSoLuong(model.getSoLuong() + soLuongChenhLech);
+        update(model);
+	InuhaSanPhamChiTietModel sanPhamChiTiet = model.getSanPhamChiTiet();
+	int soLuongTon = sanPhamChiTiet.getSoLuong() - soLuongChenhLech;
+	if (soLuongTon < 0) { 
+	    soLuongTon = 0;
+	}
+	sanPhamChiTiet.setSoLuong(soLuongTon);
+	InuhaSanPhamChiTietService.getInstance().update(sanPhamChiTiet);
+    }
+	
     @Override
     public void delete(Integer id) {
         try {
@@ -114,6 +128,13 @@ public class InuhaHoaDonChiTietService implements IInuhaHoaDonChiTietServiceInte
         }
     }
 
+    public void delete(InuhaHoaDonChiTietModel model) {
+        delete(model.getId());
+	InuhaSanPhamChiTietModel sanPhamChiTiet = model.getSanPhamChiTiet();
+	sanPhamChiTiet.setSoLuong(sanPhamChiTiet.getSoLuong() + model.getSoLuong());
+	InuhaSanPhamChiTietService.getInstance().update(sanPhamChiTiet);
+    }
+	
     @Override
     public void deleteAll(List<Integer> ids) {
         int errors = 0;
@@ -175,4 +196,21 @@ public class InuhaHoaDonChiTietService implements IInuhaHoaDonChiTietServiceInte
         return null;
     }
     
+    public List<Integer> getAllIdsByIdSanPham(int idSanPham) {
+        try {
+            return repository.getAllIdsByIdSanPham(idSanPham);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return new ArrayList<>();
+    }
+	
+    public List<Integer> getAllIdsByIdSanPhamChiTiet(int idSanPhamChiTiet) {
+        try {
+            return repository.getAllIdsByIdSanPhamChiTiet(idSanPhamChiTiet);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return new ArrayList<>();
+    }
 }

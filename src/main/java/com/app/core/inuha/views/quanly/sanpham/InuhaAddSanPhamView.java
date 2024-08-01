@@ -11,9 +11,11 @@ import com.app.core.inuha.models.sanpham.InuhaDeGiayModel;
 import com.app.core.inuha.models.sanpham.InuhaKieuDangModel;
 import com.app.core.inuha.models.sanpham.InuhaThuongHieuModel;
 import com.app.core.inuha.models.sanpham.InuhaXuatXuModel;
+import com.app.core.inuha.repositories.InuhaHoaDonChiTietRepository;
 import com.app.core.inuha.services.InuhaChatLieuService;
 import com.app.core.inuha.services.InuhaDanhMucService;
 import com.app.core.inuha.services.InuhaDeGiayService;
+import com.app.core.inuha.services.InuhaHoaDonChiTietService;
 import com.app.core.inuha.services.InuhaKieuDangService;
 import com.app.core.inuha.services.InuhaSanPhamService;
 import com.app.core.inuha.services.InuhaThuongHieuService;
@@ -445,7 +447,7 @@ public class InuhaAddSanPhamView extends javax.swing.JPanel {
                 .addComponent(lblTen)
                 .addGap(10, 10, 10)
                 .addComponent(txtTen, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(roundPanel1Layout.createSequentialGroup()
                         .addComponent(lblGiaBan)
@@ -455,7 +457,7 @@ public class InuhaAddSanPhamView extends javax.swing.JPanel {
                         .addComponent(lblGiaNhap)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtGiaNhap, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(25, 25, 25)
+                .addGap(18, 18, 18)
                 .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
                     .addComponent(rdoDangBan)
@@ -463,7 +465,7 @@ public class InuhaAddSanPhamView extends javax.swing.JPanel {
                 .addGap(18, 18, 18)
                 .addComponent(lblMoTa)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1)
                 .addGap(20, 20, 20))
         );
 
@@ -1134,13 +1136,17 @@ public class InuhaAddSanPhamView extends javax.swing.JPanel {
                     try {
                         if (!isEdited) { 
                             sanPhamService.insert(model);
-                            loading.dispose();
                             MessageToast.success("Thêm mới sản phẩm thành công.");
                             InuhaSanPhamView.getInstance().loadDataPage(1);
 			    InuhaSanPhamView.getInstance().loadDataPageSPCT(1);
                         } else {
                             sanPhamService.update(model);
-                            loading.dispose();
+			    if (sanPham.isTrangThai() != trangThai && !trangThai) { 
+				List<Integer> idsSanPhamCho = InuhaHoaDonChiTietRepository.getInstance().getAllIdsByIdSanPham(sanPham.getId());
+				for(int id: idsSanPhamCho) { 
+				    InuhaHoaDonChiTietService.getInstance().delete(id);
+				}
+			    }
                             MessageToast.success("Lưu chỉnh sửa sản phẩm thành công.");
                             InuhaSanPhamView.getInstance().loadDataPage();
 			    InuhaSanPhamView.getInstance().loadDataPageSPCT();
@@ -1148,12 +1154,12 @@ public class InuhaAddSanPhamView extends javax.swing.JPanel {
 
                         ModalDialog.closeAllModal();
                     } catch (ServiceResponseException e) {
-                        loading.dispose();
                         MessageToast.error(e.getMessage());
                     } catch (Exception e) {
-                        loading.dispose();
                         MessageToast.error(ErrorConstant.DEFAULT_ERROR);
-                    }
+                    } finally {
+			loading.dispose();
+		    }
                 });
                 loading.setVisible(true);
             }

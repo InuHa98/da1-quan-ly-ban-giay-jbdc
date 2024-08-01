@@ -151,29 +151,7 @@ CREATE TABLE PhieuGiamGia (
 	giam_toi_da MONEY NOT NULL DEFAULT 0,
 	ngay_tao DATE NOT NULL DEFAULT GETDATE(),
 	ngay_cap_nhat DATE DEFAULT GETDATE(),
-	trang_thai BIT NOT NULL,
 	trang_thai_xoa BIT DEFAULT 0
-)
-
-CREATE TABLE DotGiamGia (
-	id INT IDENTITY(1, 1) PRIMARY KEY,
-	ten NVARCHAR(250) NOT NULL,
-	thoi_gian_bat_dau DATE NOT NULL,
-	thoi_gian_ket_thuc DATE NOT NULL,
-	ngay_tao DATE NOT NULL DEFAULT GETDATE(),
-	ngay_cap_nhat DATE DEFAULT GETDATE(),
-	trang_thai BIT NOT NULL,
-	trang_thai_xoa BIT DEFAULT 0
-)
-
-CREATE TABLE DotGiamGiaSanPham (
-	id INT IDENTITY(1, 1) PRIMARY KEY,
-	id_dot_giam_gia INT NOT NULL,
-	id_san_pham INT NOT NULL,
-	phan_tram_giam FLOAT DEFAULT 0,
-	giam_toi_da MONEY DEFAULT 0,
-	FOREIGN KEY(id_dot_giam_gia) REFERENCES dbo.DotGiamGia(id),
-	FOREIGN KEY(id_san_pham) REFERENCES dbo.SanPham(id)
 )
 
 CREATE TABLE HoaDon (
@@ -181,7 +159,7 @@ CREATE TABLE HoaDon (
 	id_tai_khoan INT NOT NULL,
 	id_khach_hang INT,
 	id_phieu_giam_gia INT,
-	tien_giam MONEY NOT NULL DEFAULT 0,
+	tien_giam MONEY DEFAULT 0,
 	tien_mat MONEY NOT NULL DEFAULT 0,
 	tien_chuyen_khoan MONEY NOT NULL DEFAULT 0,
 	ma VARCHAR(10) NOT NULL,

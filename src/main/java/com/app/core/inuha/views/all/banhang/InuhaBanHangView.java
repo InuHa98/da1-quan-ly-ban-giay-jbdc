@@ -3,14 +3,18 @@ package com.app.core.inuha.views.all.banhang;
 import com.app.common.helper.MessageModal;
 import com.app.common.helper.MessageToast;
 import com.app.common.helper.Pagination;
+import com.app.common.helper.PdfHelper;
 import com.app.common.helper.QrCodeHelper;
 import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.constants.PhuongThucThanhToanConstant;
 import com.app.common.infrastructure.constants.TrangThaiHoaDonConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
+import com.app.core.common.models.invoice.InvoiceDataModel;
+import com.app.core.common.models.invoice.InvoiceProduct;
 import com.app.core.inuha.models.InuhaHoaDonChiTietModel;
 import com.app.core.inuha.models.InuhaHoaDonModel;
 import com.app.core.inuha.models.InuhaKhachHangModel;
+import com.app.core.inuha.models.InuhaPhieuGiamGiaModel;
 import com.app.core.inuha.models.InuhaSanPhamChiTietModel;
 import com.app.core.inuha.models.InuhaSanPhamModel;
 import com.app.core.inuha.models.sanpham.InuhaChatLieuModel;
@@ -33,35 +37,48 @@ import com.app.core.inuha.services.InuhaSanPhamService;
 import com.app.core.inuha.services.InuhaThuongHieuService;
 import com.app.core.inuha.services.InuhaXuatXuService;
 import com.app.core.inuha.views.all.banhang.components.InuhaAddGioHangView;
+import com.app.core.inuha.views.all.banhang.components.InuhaConfirmHoaDonView;
 import com.app.core.inuha.views.all.banhang.components.InuhaEditGioHangView;
 import com.app.core.inuha.views.all.banhang.components.InuhaListKhachHangView;
+import com.app.core.inuha.views.all.banhang.components.InuhaListPhieuGiamGiaView;
 import com.app.core.inuha.views.quanly.InuhaSanPhamView;
 import com.app.utils.BillUtils;
 import com.app.utils.ColorUtils;
 import com.app.utils.CurrencyUtils;
 import com.app.utils.QrCodeUtils;
 import com.app.utils.ResourceUtils;
+import com.app.utils.VoucherUtils;
 import com.app.views.UI.combobox.ComboBoxItem;
 import com.app.views.UI.dialog.LoadingDialog;
 import com.app.views.UI.panel.qrcode.IQRCodeScanEvent;
 import com.app.views.UI.panel.qrcode.WebcamQRCodeScanPanel;
 import com.app.views.UI.table.TableCustomUI;
+import com.app.views.UI.table.celll.TableAlignCenterCellRender;
 import com.app.views.UI.table.celll.TableImageCellRender;
 import com.formdev.flatlaf.FlatClientProperties;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JComboBox;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -129,6 +146,8 @@ public class InuhaBanHangView extends javax.swing.JPanel {
     private InuhaHoaDonModel currentHoaDon = null;
     
     private InuhaHoaDonChiTietModel currentHoaDonChiTiet = null;
+    
+    private InuhaPhieuGiamGiaModel currentPhieuGiamGia = null;
     
     private boolean reLoad = true;
     
@@ -202,7 +221,25 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 	setupTableSanPham(tblDanhSachSanPham);
 	setupPagination();
 	
+	DocumentListener documentListener = new DocumentListener() {
+	    @Override
+	    public void insertUpdate(DocumentEvent e) {
+		updateTienTraLai();
+	    }
 
+	    @Override
+	    public void removeUpdate(DocumentEvent e) {
+		updateTienTraLai();
+	    }
+
+	    @Override
+	    public void changedUpdate(DocumentEvent e) {
+		updateTienTraLai();
+	    }
+	};
+	
+	txtTienMat.getDocument().addDocumentListener(documentListener);
+	txtTienChuyenKhoan.getDocument().addDocumentListener(documentListener);
 	
 	executorService.submit(() -> {
 	    loadDataDanhMuc();
@@ -236,15 +273,18 @@ public class InuhaBanHangView extends javax.swing.JPanel {
         pnlDanhSachGioHang.setBackground(ColorUtils.BACKGROUND_TABLE);
         TableCustomUI.apply(scrDanhSachGioHang, TableCustomUI.TableType.DEFAULT);
 	TableCustomUI.resizeColumnHeader(table);
+	table.getColumnModel().getColumn(1).setCellRenderer(new TableAlignCenterCellRender(table));
         table.getColumnModel().getColumn(0).setCellRenderer(new TableImageCellRender(table));
     }
 	
     private void setupTableSanPham(JTable table) { 
+
         pnlDanhSachSanPham.setBackground(ColorUtils.BACKGROUND_TABLE);
         TableCustomUI.apply(scrDanhSachSanPham, TableCustomUI.TableType.DEFAULT);
         TableCustomUI.resizeColumnHeader(table);
 	
         table.setRowHeight(50);
+	table.getColumnModel().getColumn(5).setCellRenderer(new TableAlignCenterCellRender(table));
         table.getColumnModel().getColumn(2).setCellRenderer(new TableImageCellRender(table));
     }
     
@@ -286,7 +326,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 	    chiTietThanhToan.setTongTienHang(0);
             for(InuhaHoaDonChiTietModel m: dataItemsGioHang) { 
                 model.addRow(m.toDataRowBanHang());
-		chiTietThanhToan.setTongTienHang(chiTietThanhToan.getTongTienHang() + ((m.getGiaBan() - m.getGiaGiam()) * m.getSoLuong()));
+		chiTietThanhToan.setTongTienHang(chiTietThanhToan.getTongTienHang() + (m.getGiaBan() * m.getSoLuong()));
             }
 	    lblTongTienHang.setText(CurrencyUtils.parseString(chiTietThanhToan.getTongTienHang()));
 	    lblTongVoucherGiamGia.setText(CurrencyUtils.parseString(chiTietThanhToan.getTongGiamGia()));
@@ -657,6 +697,11 @@ public class InuhaBanHangView extends javax.swing.JPanel {
         btnSelectVoucher.setText("Chọn hoặc nhập mã");
         btnSelectVoucher.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnSelectVoucher.setEnabled(false);
+        btnSelectVoucher.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSelectVoucherActionPerformed(evt);
+            }
+        });
 
         jLabel14.setText("Tổng tiền hàng:");
 
@@ -1236,6 +1281,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
         if (tblDanhSachGioHang.getColumnModel().getColumnCount() > 0) {
             tblDanhSachGioHang.getColumnModel().getColumn(0).setMinWidth(60);
             tblDanhSachGioHang.getColumnModel().getColumn(0).setMaxWidth(60);
+            tblDanhSachGioHang.getColumnModel().getColumn(1).setMaxWidth(100);
             tblDanhSachGioHang.getColumnModel().getColumn(3).setMinWidth(150);
         }
 
@@ -1422,6 +1468,11 @@ public class InuhaBanHangView extends javax.swing.JPanel {
         // TODO add your handling code here:
 	handleClickButtonSubmit();
     }//GEN-LAST:event_btnSubmitActionPerformed
+
+    private void btnSelectVoucherActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelectVoucherActionPerformed
+        // TODO add your handling code here:
+	handleClickButtonSelectVoucher();
+    }//GEN-LAST:event_btnSelectVoucherActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddBill;
@@ -1622,6 +1673,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
     }
 
     private void handleClear() {
+	
 	currentHoaDon = null;
 	currentHoaDonChiTiet = null;
 	dataItemsGioHang = new ArrayList<>();
@@ -1631,10 +1683,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 	lblNgayTao.setText(null);
 	lblNguoiTao.setText(null);
 	lblTrangThai.setText(null);
-	btnSelectVoucher.setText("Chọn hoặc nhập mã");
-	btnSelectVoucher.setEnabled(false);
 	lblTongTienHang.setText("đ0");
-	lblTongVoucherGiamGia.setText("đ0");
 	lblTongThanhToan.setText("đ0");
 	cboHinhThucThanhToan.setSelectedIndex(0);
 	txtTienMat.setText(null);
@@ -1652,9 +1701,8 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 	
 	btnRemoveSanPham.setEnabled(false);
 	
-	chiTietThanhToan.setTongGiamGia(0);
 	chiTietThanhToan.setTongTienHang(0);
-	
+	clearVoucher();
 	loadDataGioHang();
     }
 
@@ -1757,6 +1805,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 	LoadingDialog loading = new LoadingDialog();
 	executorService.submit(() -> {
 	    try {
+		clearVoucher();
 		currentHoaDon.setKhachHang(null);
 		currentHoaDon.setPhieuGiamGia(null);
 		hoaDonService.update(currentHoaDon);
@@ -1776,6 +1825,19 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 	loading.setVisible(true);
     }
 
+    public void setVoucher(InuhaPhieuGiamGiaModel phieuGiamGia) {
+	if (phieuGiamGia == null) {
+	    return;
+	}
+	double tongGiamGia = VoucherUtils.getTienGiam(chiTietThanhToan.getTongTienHang(), phieuGiamGia);
+	lblTongVoucherGiamGia.setText("-" + CurrencyUtils.parseString(tongGiamGia));
+	currentPhieuGiamGia = phieuGiamGia;
+	btnSelectVoucher.setText(phieuGiamGia.getMa() + " - " + VoucherUtils.getTextGiaTriGiam(phieuGiamGia));
+	chiTietThanhToan.setTongGiamGia(tongGiamGia);
+	lblTongThanhToan.setText(CurrencyUtils.parseString(chiTietThanhToan.getTongThanhToan()));
+	btnSelectVoucher.setEnabled(true);
+    }
+	
     private void handleClickButtonScanQr() {
 	if (currentHoaDon == null) {
 	    MessageToast.warning("Vui lòng chọn một hoá đơn để sử dụng tính năng này!");
@@ -1817,7 +1879,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 	});
     }
 
-    private void addToCart(InuhaSanPhamChiTietModel sanPhamChiTietModel, int soLuong) {
+    public void addToCart(InuhaSanPhamChiTietModel sanPhamChiTietModel, int soLuong) {
 	if (sanPhamChiTietModel.getSoLuong() < soLuong || !sanPhamChiTietModel.isTrangThai() || !sanPhamChiTietModel.getSanPham().isTrangThai()) { 
 	    MessageToast.warning("Sản phẩm đã hết hàng hoặc đã ngừng bán!");
 	    return;
@@ -1829,11 +1891,12 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 		hoaDonChiTiet.setMa(BillUtils.generateCodeHoaDonChiTiet());
 		hoaDonChiTiet.setSanPhamChiTiet(sanPhamChiTietModel);
 		hoaDonChiTiet.setHoaDon(currentHoaDon);
-		hoaDonChiTiet.setGiaGiam(0);
 		hoaDonChiTiet.setSoLuong(soLuong);
 		hoaDonChiTietService.insert(hoaDonChiTiet);
 		loadDataGioHang();
 		loadDataPageSanPham();
+		setVoucher(currentPhieuGiamGia);
+		MessageToast.success("Thêm vào giỏ hàng thành công!");
 	    } catch (ServiceResponseException e) {
 		e.printStackTrace();
 		MessageToast.error(e.getMessage());
@@ -1847,6 +1910,33 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 	loading.setVisible(true);
     }
 
+    public void editCart(InuhaHoaDonChiTietModel hoaDonChiTiet, int soLuongChenhLech) {
+	if (soLuongChenhLech == 0) { 
+	    return;
+	}
+	
+	LoadingDialog loading = new LoadingDialog();
+	executorService.submit(() -> {
+	    try {
+		hoaDonChiTietService.update(hoaDonChiTiet, soLuongChenhLech);
+		loadDataGioHang();
+		loadDataPageSanPham();
+		setVoucher(currentPhieuGiamGia);
+		MessageToast.success("Cập nhật giỏ hàng thành công!");
+	    } catch (ServiceResponseException e) {
+		e.printStackTrace();
+		MessageToast.error(e.getMessage());
+	    } catch (Exception e) {
+		e.printStackTrace();
+		MessageToast.error(ErrorConstant.DEFAULT_ERROR);
+	    } finally {
+		loading.dispose();
+	    }
+	});
+	loading.setVisible(true);
+    }
+
+	
     private void handleClickRowGioHang(MouseEvent evt) {
 	int index = tblDanhSachGioHang.getSelectedRow();
 	
@@ -1872,15 +1962,12 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 	LoadingDialog loading = new LoadingDialog();
 	executorService.submit(() -> {
 	    try {
-		hoaDonChiTietService.delete(currentHoaDonChiTiet.getId());
-
-		InuhaSanPhamChiTietModel sanPhamChiTiet = currentHoaDonChiTiet.getSanPhamChiTiet();
-		sanPhamChiTiet.setSoLuong(sanPhamChiTiet.getSoLuong() + currentHoaDonChiTiet.getSoLuong());
-		InuhaSanPhamChiTietService.getInstance().update(sanPhamChiTiet);
+		hoaDonChiTietService.delete(currentHoaDonChiTiet);
 
 		loadDataPageSanPham();
 		loadDataGioHang();
-		MessageToast.success("Xoá thành công sản phẩm khỏi giỏ hàng: " + sanPhamChiTiet.getMa());
+		setVoucher(currentPhieuGiamGia);
+		MessageToast.success("Xoá thành công sản phẩm khỏi giỏ hàng!");
 	    } catch (ServiceResponseException e) {
 		e.printStackTrace();
 		MessageToast.error(e.getMessage());
@@ -1950,48 +2037,105 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 	    return;
 	}
 	
-	SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
-	    @Override
-	    protected Boolean doInBackground() throws Exception {
-		return MessageModal.confirmWarning("Xác nhận thanh toán đơn hàng?");
-	    }
+	ModalDialog.showModal(this, new SimpleModalBorder(new InuhaConfirmHoaDonView(), null));
+    }
+    
+    public void submitSave(boolean printInvoice) { 
+	LoadingDialog loading = new LoadingDialog();
+	try {
+	    String tienMat = txtTienMat.getText().trim();
+	    String tienChuyenKhoan = txtTienChuyenKhoan.getText().trim();
+	
+	    currentHoaDon.setTrangThai(TrangThaiHoaDonConstant.STATUS_DA_THANH_TOAN);
+	    currentHoaDon.setPhieuGiamGia(currentPhieuGiamGia);
+	    currentHoaDon.setTienGiam(chiTietThanhToan.getTongGiamGia());
+	    currentHoaDon.setTienMat(CurrencyUtils.parseNumber(tienMat));
+	    currentHoaDon.setTienChuyenKhoan(CurrencyUtils.parseNumber(tienChuyenKhoan));
+	    hoaDonService.update(currentHoaDon);
 
-	    @Override
-	    protected void done() {
-		try {
-		    if (get()) {
-			LoadingDialog loading = new LoadingDialog();
-			try {
-			    currentHoaDon.setTrangThai(TrangThaiHoaDonConstant.STATUS_DA_THANH_TOAN);
-			    hoaDonService.update(currentHoaDon);
-			   
-			    loadDataHoaDonCho();
-			    MessageToast.success("Xác nhận thanh toán đơn hàng thành công #" + currentHoaDon.getMa());
-			    handleClear();
-			    loadDataGioHang();
-			} catch (ServiceResponseException e) {
-			    e.printStackTrace();
-			    MessageToast.error(e.getMessage());
-			} catch (Exception e) {
-			    e.printStackTrace();
-			    MessageModal.error(ErrorConstant.DEFAULT_ERROR);
-			} finally {
-			    loading.dispose();
-			}
-		    }
-		} catch (InterruptedException ex) {
-		} catch (ExecutionException ex) {
+	    loadDataHoaDonCho();
+	    loadDataGioHang();
+
+	    MessageToast.success("Xác nhận thanh toán thành công đơn hàng #" + currentHoaDon.getMa());
+	    loading.dispose();
+	    
+	    if (printInvoice) {
+		InvoiceDataModel invoiceData = new InvoiceDataModel();
+		invoiceData.setMaHoaDon(currentHoaDon.getMa());
+		invoiceData.setTenKhachHang(currentHoaDon.getKhachHang() != null ? currentHoaDon.getKhachHang().getHoTen() : "Khách lẻ");
+		invoiceData.setSoDienThoai(currentHoaDon.getKhachHang() != null ? currentHoaDon.getKhachHang().getSdt(): "");
+		invoiceData.setTaiKhoan(currentHoaDon.getTaiKhoan().getHoTen());
+		List<InvoiceProduct> products = new ArrayList<>();
+		for(InuhaHoaDonChiTietModel m: dataItemsGioHang) { 
+		    products.add(new InvoiceProduct(m.getSanPhamChiTiet().getSanPham().getTen() + " - " + m.getSanPhamChiTiet().getKichCo().getTen() + " - " + m.getSanPhamChiTiet().getMauSac().getTen(), m.getSoLuong(), (float) m.getGiaBan()));
 		}
-	    } 
-	};
-	worker.execute();
+		invoiceData.setHoaDonChiTiet(products);
+		invoiceData.setTongTienHang(chiTietThanhToan.getTongTienHang());
+		invoiceData.setTongTienGiam(chiTietThanhToan.getTongGiamGia());
+		invoiceData.setTienKhachTra(currentHoaDon.getTienMat() + currentHoaDon.getTienChuyenKhoan());
+		
+		File folder = PdfHelper.selectFolder();
+		if (folder != null) {
+		    File invoiceFile = PdfHelper.createPDF(invoiceData, folder);
+		    PdfHelper.openFile(invoiceFile);
+		}
+	    }
+	    handleClear();
+	} catch (ServiceResponseException e) {
+	    e.printStackTrace();
+	    MessageToast.error(e.getMessage());
+	} catch (Exception e) {
+	    e.printStackTrace();
+	    MessageModal.error(ErrorConstant.DEFAULT_ERROR);
+	} finally {
+	    loading.dispose();
+	}
+    }
+    
+    private void updateTienTraLai() {
+	int tienKhachTra = (int) CurrencyUtils.parseNumber(txtTienMat.getText().trim()) + (int) CurrencyUtils.parseNumber(txtTienChuyenKhoan.getText().trim());
+	int tienTraLai = (int) (tienKhachTra - chiTietThanhToan.getTongThanhToan());
+	if (tienTraLai > 0) {
+	    lblTienTraLai.setText("-" + CurrencyUtils.parseString(tienTraLai));
+	    lblTienTraLai.setForeground(ColorUtils.DANGER_COLOR);
+	} else {
+	    lblTienTraLai.setText(CurrencyUtils.parseString(0));
+	    lblTienTraLai.setForeground(ColorUtils.PRIMARY_TEXT);
+	}
+    }
+
+    private void handleClickButtonSelectVoucher() {
+	if (currentPhieuGiamGia != null) { 
+	    executorService.submit(() -> {
+		if (MessageModal.confirmWarning("Sẽ huỷ áp dụng mã giảm giá hiện tại. Vẫn sẽ tiếp tục?")) {
+		    currentPhieuGiamGia = null;
+		    clearVoucher();
+		    showSelectVoucher();
+		}
+	    });
+	    return;
+	}
+	showSelectVoucher();
+    }
+    
+    private void showSelectVoucher() {
+	ModalDialog.showModal(instance, new SimpleModalBorder(new InuhaListPhieuGiamGiaView(chiTietThanhToan), "Danh sách Voucher"));
+    }
+
+    private void clearVoucher() {
+	currentPhieuGiamGia = null;
+	btnSelectVoucher.setText("Chọn hoặc nhập mã");
+	btnSelectVoucher.setEnabled(currentHoaDon != null && currentHoaDon.getKhachHang() != null);
+	chiTietThanhToan.setTongGiamGia(0);
+	lblTongVoucherGiamGia.setText("đ0");
+	lblTongThanhToan.setText(CurrencyUtils.parseString(chiTietThanhToan.getTongThanhToan()));
     }
     
     @Setter
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    private class ChiTietThanhToan {
+    public class ChiTietThanhToan {
 	
 	private double tongTienHang = 0;
 	

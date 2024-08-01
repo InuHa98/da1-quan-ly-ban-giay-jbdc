@@ -1,17 +1,14 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
-
 package com.app.core.inuha.views.all.banhang.components;
 
 import com.app.core.inuha.models.InuhaHoaDonChiTietModel;
+import com.app.core.inuha.views.all.banhang.InuhaBanHangView;
 import com.app.utils.ColorUtils;
 import com.app.utils.ResourceUtils;
 import java.awt.Dimension;
 import javax.swing.JFormattedTextField;
 import javax.swing.JSpinner;
 import javax.swing.text.NumberFormatter;
+import raven.modal.ModalDialog;
 
 /**
  *
@@ -26,19 +23,23 @@ public class InuhaEditGioHangView extends javax.swing.JPanel {
 	this.hoaDonChiTiet = hoaDonChiTiet;
 	
 	btnSubmit.setBackground(ColorUtils.BUTTON_PRIMARY);
-	btnSubmit.setIcon(ResourceUtils.getSVG("/svg/plus.svg", new Dimension(20, 20)));
 	
-        JSpinner.NumberEditor editor = new JSpinner.NumberEditor(spnSoLuong, "#");
-        JFormattedTextField textField = editor.getTextField();
+	setLimit(hoaDonChiTiet.getSanPhamChiTiet().getSoLuong() + hoaDonChiTiet.getSoLuong());
+	spnSoLuong.setValue(hoaDonChiTiet.getSoLuong());
+    }
+
+    private void setLimit(int maxSoLuong) { 
+	JSpinner.NumberEditor editor = new JSpinner.NumberEditor(spnSoLuong, "#");
+	JFormattedTextField textField = editor.getTextField();
         NumberFormatter formatter = (NumberFormatter) textField.getFormatter();
         formatter.setAllowsInvalid(false);
         formatter.setCommitsOnValidEdit(true);
-
-        formatter.setMaximum(10);
+        formatter.setMaximum(maxSoLuong);
         formatter.setMinimum(1);
-        spnSoLuong.setEditor(editor);
+	spnSoLuong.setEditor(editor);
+	lblLimit.setText("(Tối đa " + maxSoLuong + ")");
     }
-
+	
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -51,9 +52,15 @@ public class InuhaEditGioHangView extends javax.swing.JPanel {
         btnSubmit = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         spnSoLuong = new javax.swing.JSpinner();
+        lblLimit = new javax.swing.JLabel();
 
-        btnSubmit.setText("Cập nhật giỏ hàng");
+        btnSubmit.setText("Cập nhật số lượng");
         btnSubmit.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnSubmit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSubmitActionPerformed(evt);
+            }
+        });
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel3.setText("Số lượng");
@@ -61,35 +68,56 @@ public class InuhaEditGioHangView extends javax.swing.JPanel {
         spnSoLuong.setModel(new javax.swing.SpinnerNumberModel(1, 1, null, 1));
         spnSoLuong.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
+        lblLimit.setText("(Tối đa 1)");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(80, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(btnSubmit, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(spnSoLuong)
-                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 318, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(80, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(40, 40, 40)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lblLimit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(spnSoLuong)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(0, 195, Short.MAX_VALUE)
+                        .addComponent(btnSubmit, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(40, 40, 40))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(30, 30, 30)
-                .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(20, 20, 20)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(lblLimit))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(spnSoLuong, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
                 .addComponent(btnSubmit, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSubmitActionPerformed
+        // TODO add your handling code here:
+	handleClickButtonSubmit();
+    }//GEN-LAST:event_btnSubmitActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnSubmit;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel lblLimit;
     private javax.swing.JSpinner spnSoLuong;
     // End of variables declaration//GEN-END:variables
+
+    private void handleClickButtonSubmit() {
+	int soLuongMoi = (int) spnSoLuong.getValue();
+	int soLuongChenhLech = soLuongMoi - hoaDonChiTiet.getSoLuong();
+	InuhaBanHangView.getInstance().editCart(hoaDonChiTiet, soLuongChenhLech);
+	ModalDialog.closeAllModal();
+    }
 
 }

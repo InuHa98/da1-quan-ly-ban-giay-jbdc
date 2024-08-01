@@ -73,6 +73,14 @@ public class RoundPanel extends JPanel {
         this.roundBottomRight = roundBottomRight;
         repaint();
     }
+    
+    public void setRound(int roundTopLeft, int roundTopRight, int roundBottomLeft, int roundBottomRight) { 
+	this.roundTopLeft = roundTopLeft;
+	this.roundTopRight = roundTopRight;
+	this.roundBottomLeft = roundBottomLeft;
+	this.roundBottomRight = roundBottomRight;
+	repaint();
+    }
 
     @Override
     protected void paintComponent(Graphics grphcs) {

@@ -5,6 +5,8 @@ import com.app.common.infrastructure.constants.TrangThaiXoaConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
 import com.app.common.infrastructure.request.FillterRequest;
 import com.app.core.inuha.models.InuhaSanPhamModel;
+import com.app.core.inuha.models.sanpham.InuhaKichCoModel;
+import com.app.core.inuha.models.sanpham.InuhaMauSacModel;
 import com.app.core.inuha.repositories.InuhaSanPhamRepository;
 import com.app.core.inuha.services.impl.IInuhaSanPhamServiceInterface;
 import com.app.utils.ProductUtils;

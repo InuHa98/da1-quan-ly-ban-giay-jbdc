@@ -9,14 +9,11 @@ import com.app.utils.SessionUtils;
 import com.app.views.UI.sidebarmenu.SidebarMenu;
 import com.app.views.UI.sidebarmenu.SidebarMenuContent;
 import com.app.views.UI.sidebarmenu.SidebarMenuItem;
-import java.awt.Dimension;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import java.util.List;
-import java.util.TimerTask;
+
 
 /**
  *
@@ -54,7 +51,7 @@ public class DashboardView extends JPanel {
 
     private void initComponents() {
         this.setBackground(ColorUtils.BACKGROUND_DASHBOARD);
-        this.setLayout(new MigLayout("fill, insets 0 0 0 0", "[left]0[grow,fill]", "[top]"));
+        this.setLayout(new MigLayout("fill, insets 0 0 -10 0", "[left]0[grow,fill]", "[top]"));
     }
 
 }

@@ -6,6 +6,8 @@ import com.app.common.infrastructure.exceptions.ServiceResponseException;
 import com.app.common.infrastructure.request.FillterRequest;
 import com.app.core.inuha.models.InuhaSanPhamChiTietModel;
 import com.app.core.inuha.models.InuhaSanPhamModel;
+import com.app.core.inuha.models.sanpham.InuhaKichCoModel;
+import com.app.core.inuha.models.sanpham.InuhaMauSacModel;
 import com.app.core.inuha.repositories.InuhaSanPhamChiTietRepository;
 import com.app.core.inuha.repositories.InuhaSanPhamRepository;
 import com.app.core.inuha.services.impl.IInuhaSanPhamChiTietServiceInterface;
@@ -207,4 +209,24 @@ public class InuhaSanPhamChiTietService implements IInuhaSanPhamChiTietServiceIn
 	    throw new ServiceResponseException("Không thể thêm dữ liệu");
         }
     }
+    
+            
+    public List<InuhaKichCoModel> getAllKichCo(int idSanPham) { 
+        try {
+            return repository.getAllKichCo(idSanPham);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            throw new ServiceResponseException("Không thể lấy danh sách kích cỡ");
+        }
+    }
+    
+    public List<InuhaSanPhamChiTietModel> getAllByKichCo(int idSanPham, int idKichCo) { 
+        try {
+            return repository.getAllByKichCo(idSanPham, idKichCo);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            throw new ServiceResponseException("Không thể lấy danh sách sản phẩm chi tiết");
+        }
+    }
+    
 }

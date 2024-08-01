@@ -27,7 +27,7 @@ public class InuhaHoaDonModel {
     private String ma;
     
     private double tienGiam;
-    
+        
     private double tienMat;
     
     private double tienChuyenKhoan;
@@ -41,6 +41,10 @@ public class InuhaHoaDonModel {
     private String ngayCapNhat;
     
     private boolean trangThaiXoa;
+    
+    private double tongTienHang;
+    
+    private double tongTienGiam;
     
     private InuhaKhachHangModel khachHang;
     

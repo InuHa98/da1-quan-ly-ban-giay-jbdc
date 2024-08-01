@@ -520,7 +520,92 @@ public class InuhaSanPhamChiTietRepository implements IDAOinterface<InuhaSanPham
 
         return Optional.ofNullable(model);
     }
-	
+
+        
+    public List<InuhaKichCoModel> getAllKichCo(int idSanPham) throws SQLException {
+        List<InuhaKichCoModel> list = new ArrayList<>();
+        ResultSet resultSet = null;
+
+        String query = String.format("""
+	    SELECT 
+                DISTINCT kc.ten,
+                kc.id
+            FROM %s AS spct
+            JOIN KichCo AS kc ON kc.id = spct.id_kich_co
+            WHERE
+                spct.id_san_pham = ? AND
+                spct.trang_thai_xoa = 0 AND
+                spct.so_luong > 0 AND
+                spct.trang_thai = 1
+        """, TABLE_NAME);
+
+        try {
+            resultSet = JbdcHelper.query(query, idSanPham);
+            while(resultSet.next()) {
+                InuhaKichCoModel model = new InuhaKichCoModel();
+		model.setId(resultSet.getInt("id"));
+		model.setTen(resultSet.getString("ten"));
+                list.add(model);
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+            throw new SQLException(e.getMessage());
+        }
+        finally {
+            JbdcHelper.close(resultSet);
+        }
+
+        return list;
+    }
+    
+    public List<InuhaSanPhamChiTietModel> getAllByKichCo(int idSanPham, int idKichCo) throws SQLException {
+        List<InuhaSanPhamChiTietModel> list = new ArrayList<>();
+        ResultSet resultSet = null;
+
+        String query = String.format("""
+            SELECT
+		spct.*,
+		ROW_NUMBER() OVER (ORDER BY spct.id DESC) AS stt,
+		kc.ten AS ten_kich_co,
+		kc.ngay_tao AS ngay_tao_kich_co,
+		kc.ngay_cap_nhat AS ngay_cap_nhat_kich_co,
+		ms.ten AS ten_mau_sac,
+		ms.ngay_tao AS ngay_tao_mau_sac,
+		ms.ngay_cap_nhat AS ngay_cap_nhat_mau_sac
+	    FROM %s AS spct
+		LEFT JOIN KichCo AS kc ON kc.id = spct.id_kich_co
+		LEFT JOIN MauSac AS ms ON ms.id = spct.id_mau_sac
+	    WHERE
+		spct.id_san_pham = ? AND
+                spct.id_kich_co = ? AND
+		spct.trang_thai_xoa = 0 AND
+                spct.so_luong > 0 AND
+                spct.trang_thai = 1                
+	    ORDER BY spct.id DESC
+        """, TABLE_NAME);
+
+        try {
+            resultSet = JbdcHelper.query(query, idSanPham, idKichCo);
+            while(resultSet.next()) {
+                InuhaSanPhamChiTietModel model = buildData(resultSet);
+                Optional<InuhaSanPhamModel> sanPham = sanPhamRepository.getById(resultSet.getInt("id_san_pham"));
+                if (sanPham.isPresent()) { 
+                    model.setSanPham(sanPham.get());
+                }
+                list.add(model);
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+            throw new SQLException(e.getMessage());
+        }
+        finally {
+            JbdcHelper.close(resultSet);
+        }
+
+        return list;
+    }
+    
+    
     private InuhaSanPhamChiTietModel buildData(ResultSet resultSet) throws SQLException { 
         return buildData(resultSet, true);
     }
