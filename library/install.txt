@@ -6,4 +6,4 @@ mvn install:install-file -Dfile=modal-dialog-1.0.5.jar -DgroupId=raven.modaldial
 
 mvn install:install-file -Dfile=swing-jnafilechooser-1.0.0.jar -DgroupId=jnafilechooser -DartifactId=jnafilechooser-api -Dversion=1.0.0 -Dpackaging=jar
 
-mvn install:install-file -Dfile=pdfbox-3.0.2.jar -DgroupId=org.apache.pdfbox -DartifactId=pdfbox -Dversion=3.0.2 -Dpackaging=jar
+mvn install:install-file -Dfile=TimingFramework-0.55.jar -DgroupId=raven.jdesktop -DartifactId=timingFramework -Dversion=1.0.0 -Dpackaging=jar

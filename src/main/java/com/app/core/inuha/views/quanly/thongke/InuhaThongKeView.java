@@ -5,6 +5,7 @@
 
 package com.app.core.inuha.views.quanly.thongke;
 
+import com.app.views.UI.curvelinechart.chart.ModelChart;
 import java.awt.*;
 
 /**
@@ -16,8 +17,24 @@ public class InuhaThongKeView extends javax.swing.JPanel {
     /** Creates new form BanHangView */
     public InuhaThongKeView() {
 	initComponents();
+	chartDoanhThu.setTitle("Chart Data");
+        chartDoanhThu.addLegend("Amount", Color.decode("#7b4397"), Color.decode("#dc2430"));
+        chartDoanhThu.addLegend("Cost", Color.decode("#e65c00"), Color.decode("#F9D423"));
+        chartDoanhThu.addLegend("Profit", Color.decode("#0099F7"), Color.decode("#F11712"));
+	test();
     }
 
+    private void test() {
+        chartDoanhThu.clear();
+        chartDoanhThu.addData(new ModelChart("January", new double[]{500, 50, 100}));
+        chartDoanhThu.addData(new ModelChart("February", new double[]{600, 300, 150}));
+        chartDoanhThu.addData(new ModelChart("March", new double[]{200, 50, 900}));
+        chartDoanhThu.addData(new ModelChart("April", new double[]{480, 700, 100}));
+        chartDoanhThu.addData(new ModelChart("May", new double[]{350, 540, 500}));
+        chartDoanhThu.addData(new ModelChart("June", new double[]{450, 800, 100}));
+        chartDoanhThu.start();
+    }
+	
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -32,6 +49,8 @@ public class InuhaThongKeView extends javax.swing.JPanel {
         roundPanel1 = new com.app.views.UI.panel.RoundPanel();
         roundPanel2 = new com.app.views.UI.panel.RoundPanel();
         roundPanel3 = new com.app.views.UI.panel.RoundPanel();
+        roundPanel4 = new com.app.views.UI.panel.RoundPanel();
+        chartDoanhThu = new com.app.views.UI.curvelinechart.chart.CurveLineChart();
         jPanel2 = new javax.swing.JPanel();
 
         javax.swing.GroupLayout roundPanel1Layout = new javax.swing.GroupLayout(roundPanel1);
@@ -67,6 +86,23 @@ public class InuhaThongKeView extends javax.swing.JPanel {
             .addGap(0, 182, Short.MAX_VALUE)
         );
 
+        javax.swing.GroupLayout roundPanel4Layout = new javax.swing.GroupLayout(roundPanel4);
+        roundPanel4.setLayout(roundPanel4Layout);
+        roundPanel4Layout.setHorizontalGroup(
+            roundPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(roundPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(chartDoanhThu, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        roundPanel4Layout.setVerticalGroup(
+            roundPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(roundPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(chartDoanhThu, javax.swing.GroupLayout.DEFAULT_SIZE, 344, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -77,6 +113,7 @@ public class InuhaThongKeView extends javax.swing.JPanel {
                 .addComponent(roundPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addComponent(roundPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(roundPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -86,7 +123,8 @@ public class InuhaThongKeView extends javax.swing.JPanel {
                     .addComponent(roundPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(roundPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(roundPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(277, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(roundPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Thống kê doanh thu", jPanel1);
@@ -99,7 +137,7 @@ public class InuhaThongKeView extends javax.swing.JPanel {
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 479, Short.MAX_VALUE)
+            .addGap(0, 590, Short.MAX_VALUE)
         );
 
         jTabbedPane1.addTab("Thống kê sản phẩm", jPanel2);
@@ -117,18 +155,20 @@ public class InuhaThongKeView extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 509, Short.MAX_VALUE)
+                .addComponent(jTabbedPane1)
                 .addGap(20, 20, 20))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private com.app.views.UI.curvelinechart.chart.CurveLineChart chartDoanhThu;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JTabbedPane jTabbedPane1;
     private com.app.views.UI.panel.RoundPanel roundPanel1;
     private com.app.views.UI.panel.RoundPanel roundPanel2;
     private com.app.views.UI.panel.RoundPanel roundPanel3;
+    private com.app.views.UI.panel.RoundPanel roundPanel4;
     // End of variables declaration//GEN-END:variables
 
 }

@@ -190,9 +190,9 @@
         </dependency>
         
         <dependency>
-            <groupId>org.apache.pdfbox</groupId>
-            <artifactId>pdfbox</artifactId>
-            <version>3.0.2</version>
+            <groupId>raven.jdesktop</groupId>
+            <artifactId>timingFramework</artifactId>
+            <version>1.0.0</version>
         </dependency>
 
         <dependency>
