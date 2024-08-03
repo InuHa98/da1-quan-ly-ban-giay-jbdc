@@ -153,10 +153,6 @@ public class InuhaSanPhamView extends RoundPanel {
 	pnlSearchBox.setPlaceholder("Nhập tên hoặc mã sản phẩm ...");
         txtTuKhoa = pnlSearchBox.getKeyword();
         
-//	lblList.setForeground(ColorUtils.PRIMARY_COLOR);
-//	lblFilter.setForeground(ColorUtils.PRIMARY_COLOR);
-//	lblList2.setForeground(ColorUtils.PRIMARY_COLOR);
-//	lblFilter2.setForeground(ColorUtils.PRIMARY_COLOR);
 	
 	pnlSearchBox2.setPlaceholder("Nhập tên hoặc mã sản phẩm ...");
         txtTuKhoa2 = pnlSearchBox2.getKeyword();
