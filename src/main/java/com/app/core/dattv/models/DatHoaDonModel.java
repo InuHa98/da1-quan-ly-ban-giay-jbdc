@@ -27,7 +27,7 @@ public class DatHoaDonModel {
         private int id_phieu_giam_gia;
         private String maHd;
         private int tienGiam;
-        private int phuong_thuc_thanh_toan;
+        private boolean phuong_thuc_thanh_toan;
         private int trangThai;
         private Date ngayTao;
         private Date ngayCapnhat;
@@ -36,7 +36,7 @@ public class DatHoaDonModel {
     public DatHoaDonModel() {
     }
 
-    public DatHoaDonModel(int id, int stt, int id_tai_khoan, int id_khach_hang, int id_phieu_giam_gia, String maHd, int tienGiam, int phuong_thuc_thanh_toan, int trangThai, Date ngayTao, Date ngayCapnhat, boolean trangThaixoa) {
+    public DatHoaDonModel(int id, int stt, int id_tai_khoan, int id_khach_hang, int id_phieu_giam_gia, String maHd, int tienGiam, boolean phuong_thuc_thanh_toan, int trangThai, Date ngayTao, Date ngayCapnhat, boolean trangThaixoa) {
         this.id = id;
         this.stt = stt;
         this.id_tai_khoan = id_tai_khoan;
@@ -107,13 +107,15 @@ public class DatHoaDonModel {
         this.tienGiam = tienGiam;
     }
 
-    public int getPhuong_thuc_thanh_toan() {
+    public boolean isPhuong_thuc_thanh_toan() {
         return phuong_thuc_thanh_toan;
     }
 
-    public void setPhuong_thuc_thanh_toan(int phuong_thuc_thanh_toan) {
+    public void setPhuong_thuc_thanh_toan(boolean phuong_thuc_thanh_toan) {
         this.phuong_thuc_thanh_toan = phuong_thuc_thanh_toan;
     }
+
+   
 
     public int getTrangThai() {
         return trangThai;

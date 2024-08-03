@@ -255,7 +255,7 @@ public class InuhaSanPhamView extends RoundPanel {
                 InuhaSanPhamModel item = dataItems.get(row);
                 
                 LoadingDialog loadingDialog = new LoadingDialog();
-                
+
                 executorService.submit(() -> {
                     if (MessageModal.confirmWarning("Xoá: " + item.getTen(), "Bạn thực sự muốn xoá sản phẩm này?")) {
                         executorService.submit(() -> {
@@ -704,36 +704,10 @@ public class InuhaSanPhamView extends RoundPanel {
         pnlFilterLayout.setHorizontalGroup(
             pnlFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlFilterLayout.createSequentialGroup()
-                .addGap(20, 20, 20)
                 .addGroup(pnlFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 799, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(pnlFilterLayout.createSequentialGroup()
-                        .addGroup(pnlFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 252, Short.MAX_VALUE)
-                            .addComponent(pnlSearchBox, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                            .addComponent(splitLine1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(18, 18, 18)
-                        .addGroup(pnlFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(pnlFilterLayout.createSequentialGroup()
-                                .addComponent(cboDanhMuc, 0, 152, Short.MAX_VALUE)
-                                .addGap(20, 20, 20))
-                            .addGroup(pnlFilterLayout.createSequentialGroup()
-                                .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGap(21, 21, 21)))
-                        .addGroup(pnlFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(cboThuongHieu, 0, 164, Short.MAX_VALUE))
                         .addGap(20, 20, 20)
                         .addGroup(pnlFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-<<<<<<< HEAD
-                            .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(cboTrangThai, 0, 151, Short.MAX_VALUE))
-                        .addGap(18, 18, 18)
-                        .addComponent(btnSearch)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnClear)
-                        .addGap(26, 26, 26))))
-=======
                             .addComponent(lblFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 799, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(pnlFilterLayout.createSequentialGroup()
                                 .addComponent(pnlSearchBox, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -752,26 +726,14 @@ public class InuhaSanPhamView extends RoundPanel {
                         .addContainerGap()
                         .addComponent(splitLine1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
->>>>>>> dev
         );
         pnlFilterLayout.setVerticalGroup(
             pnlFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlFilterLayout.createSequentialGroup()
                 .addGap(5, 5, 5)
                 .addComponent(lblFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-<<<<<<< HEAD
-                .addGap(10, 10, 10)
-                .addComponent(splitLine1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pnlFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel4))
-=======
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(splitLine1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
->>>>>>> dev
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(pnlFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(pnlSearchBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -1340,11 +1302,6 @@ public class InuhaSanPhamView extends RoundPanel {
         handleClickButtonScanQrCode();
     }//GEN-LAST:event_btnScanQRActionPerformed
 
-<<<<<<< HEAD
-    private void cboDanhMucActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboDanhMucActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_cboDanhMucActionPerformed
-=======
     private void btnSaveAllQRActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveAllQRActionPerformed
         // TODO add your handling code here:
 	handleClickButtonSaveAllQR();
@@ -1403,7 +1360,6 @@ public class InuhaSanPhamView extends RoundPanel {
         // TODO add your handling code here:
 	handleClickButtonImport();
     }//GEN-LAST:event_btnImportActionPerformed
->>>>>>> dev
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

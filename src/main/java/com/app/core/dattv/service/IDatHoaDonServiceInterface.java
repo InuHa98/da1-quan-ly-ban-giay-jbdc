@@ -6,11 +6,12 @@ package com.app.core.dattv.service;
 
 import com.app.common.infrastructure.interfaces.IServiceInterface;
 import com.app.core.dattv.models.DatHoaDonModel;
+import com.app.core.dattv.request.DatHoaDonRequest;
 
 /**
  *
  * @author WIN
  */
-public interface IDatHoaDonServiceInterface extends IServiceInterface<DatHoaDonModel, Integer>{
+public interface IDatHoaDonServiceInterface extends IServiceInterface<DatHoaDonRequest, Integer>{
     String getLastCode();
 }

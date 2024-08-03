@@ -9,6 +9,7 @@ import com.app.common.infrastructure.exceptions.ServiceResponseException;
 import com.app.common.infrastructure.request.FillterRequest;
 import com.app.core.dattv.models.DatHoaDonModel;
 import com.app.core.dattv.repositoris.DatHoaDonRepository;
+import com.app.core.dattv.request.DatHoaDonRequest;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
@@ -18,57 +19,50 @@ import java.util.Optional;
  * @author WIN
  */
 public class DatHoaDonService implements IDatHoaDonServiceInterface{
-    private  final DatHoaDonRepository repository=new DatHoaDonRepository();
+    
+    private final DatHoaDonRepository repository = DatHoaDonRepository.getInstance();
+    
+    private static DatHoaDonService instance = null;
+    
+    public static DatHoaDonService getInstance() { 
+	if (instance == null) { 
+	    instance = new DatHoaDonService();
+	}
+	return instance;
+    }
 
     @Override
     public String getLastCode() {
-try {
-            return repository.getLastCode();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-        return null;    }
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 
     @Override
-    public DatHoaDonModel getById(Integer id) {
-try {
-            Optional<DatHoaDonModel> find = repository.getById(id);
+    public DatHoaDonRequest getById(Integer id) {
+        try {
+            Optional<DatHoaDonRequest> find = repository.getById(id);
             if (find.isEmpty()) { 
                 throw new SQLException();
             }
             return find.get();
         } catch (SQLException ex) {
             throw new ServiceResponseException("Không tìm thấy sản phẩm");
-        }    }
+        }
+    }
 
     @Override
-    public Integer insert(DatHoaDonModel model) {
-        return null;
+    public Integer insert(DatHoaDonRequest model) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
     public boolean has(Integer id) {
-try {
-            return repository.has(id);
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-            throw new ServiceResponseException("Không thể tìm kiếm sản phẩm");
-        }    }
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 
     @Override
-    public void update(DatHoaDonModel model) {
-try {
-            Optional<DatHoaDonModel> find = repository.getById(model.getId());
-            if (find.isEmpty()) { 
-                throw new ServiceResponseException("Không tìm thấy sản phẩm");
-            }
-            
-            
-            repository.update(model);
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-            throw new ServiceResponseException("Không thể xoá sản phẩm này");
-        }    }
+    public void update(DatHoaDonRequest model) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 
     @Override
     public void delete(Integer id) {
@@ -81,22 +75,18 @@ try {
     }
 
     @Override
-    public List<DatHoaDonModel> getAll() {
+    public List<DatHoaDonRequest> getAll() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public List<DatHoaDonModel> getPage(FillterRequest request) {
+    public List<DatHoaDonRequest> getPage(FillterRequest request) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
     public Integer getTotalPage(FillterRequest request) {
-try {
-            return repository.count(request);
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-        return 0;    }
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
     
 }

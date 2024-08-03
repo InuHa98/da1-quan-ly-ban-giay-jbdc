@@ -6,20 +6,26 @@ package com.app.core.dattv.views;
 
 
 import com.app.Application;
+import com.app.common.configs.DBConnect;
+import com.app.common.helper.MessageModal;
+import com.app.common.helper.MessageToast;
 import com.app.common.helper.Pagination;
+import com.app.common.helper.QrCodeHelper;
+import com.app.common.infrastructure.constants.ErrorConstant;
+import com.app.common.infrastructure.exceptions.ServiceResponseException;
 import com.app.core.dattv.models.DatHoaDonChiTietModel;
 import com.app.core.dattv.models.DatHoaDonModel;
 import com.app.core.dattv.models.DatKhachHangModel;
 import com.app.core.dattv.models.DatNhanvienModel;
-import com.app.core.dattv.models.DatPhuongThucThanhToanModel;
 import java.util.ArrayList;
 import com.app.core.dattv.repositoris.DatHoaDonRepository;
 import com.app.core.dattv.repositoris.DatHoaDonRepository2;
 import com.app.core.dattv.repositoris.DatNhanVienRepository;
-import com.app.core.dattv.repositoris.DatPhuongThucThanhToanRepository;
-import com.app.core.dattv.request.DatFillerHoaDonRequest;
 import com.app.core.dattv.request.DatHoaDonRequest;
+import com.app.core.dattv.service.DatHoaDonService;
+import com.app.utils.QrCodeUtils;
 import com.app.views.UI.combobox.ComboBoxItem;
+import com.app.views.UI.dialog.LoadingDialog;
 import com.app.views.UI.panel.RoundPanel;
 import com.app.views.UI.table.ITableActionEvent;
 import com.app.views.UI.table.TableCustomUI;
@@ -30,7 +36,15 @@ import com.app.views.UI.table.celll.TableImageCellRender;
 import com.toedter.calendar.JDateChooser;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -39,10 +53,16 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import raven.modal.ModalDialog;
 import raven.modal.component.SimpleModalBorder;
 
@@ -53,11 +73,14 @@ import raven.modal.component.SimpleModalBorder;
  */
 public class DatHoaDonView  extends RoundPanel{
     DatHoaDonRepository2 datHoaDonRepository=new DatHoaDonRepository2();
-    ArrayList<DatHoaDonRequest> list=datHoaDonRepository.getAll();
-    
+    DatHoaDonService datHoaDonService=new DatHoaDonService();
+    ArrayList<DatHoaDonRequest> list;
+    Date curentDate=new Date();
     private static DatHoaDonView instance;
     private Pagination pagination =new Pagination();
-   
+    private final ExecutorService executorService = Executors.newFixedThreadPool(2);
+    int count,soTrang,trang=1;
+    
     /**
      * Creates new form DatHoaDon
      */
@@ -65,57 +88,18 @@ public class DatHoaDonView  extends RoundPanel{
     public DatHoaDonView() {
         initComponents();
         instance = this;
-        ArrayList<DatHoaDonRequest> lists=datHoaDonRepository.getAll();
-        loadData(lists);
+        
+        tblHoadon.setRowHeight(50);
         loadCbbNguoitaoHD();
+        ckoToanthoigian.setSelected(true);
+        dateNgaybatdau.setDate(curentDate);
+        dateNgayketthuc.setDate(curentDate);
         
-        setupTable(tblHoadon);
-        renderPagination();
-    }
-    private void setupTable(JTable table){
-        ITableActionEvent event = new ITableActionEvent(){
-            @Override
-            public void onEdit(int row) {
-                System.out.println("aaaaaaaaaaaaa");
-            }
-
-            @Override
-            public void onDelete(int row) {
-                System.out.println("bbbbbbb");     
-            }
-
-            @Override
-            public void onView(int row) {
-                System.out.println("cccccc"); 
-                ModalDialog.showModal(Application.app, new SimpleModalBorder(new DatHoaDonChiTietView(list.get(tblHoadon.getSelectedRow())),"Chi tiết hóa đơn"));
-            }
-            
-        };
-        TableCustomUI.apply(scrDanhsach, TableCustomUI.TableType.DEFAULT);
-        table.setRowHeight(50);
-        table.getColumnModel().getColumn(7).setCellRenderer(new TableActionCellRender(table));
-        table.getColumnModel().getColumn(7).setCellEditor(new TableActionCellEditor(event));
-    }
-    public void renderPagination(){
-        pagination.setPanel(plnPhantrang);
-        pagination.setCurrentPage(1);
-        pagination.setTotalPages(3);
-        pagination.setCallback(new Pagination.Callback(){
-            @Override
-            public void onChangeLimitItem(JComboBox<Integer> comboBox) {
-                System.err.println(comboBox.getSelectedItem());
-            }
-
-            @Override
-            public void onClickPage(int page) {
-                System.err.println(page);
-            }
+        loadDataPage1(trang);
         
-        });
-    pagination.render();
     }
-    
-    
+   
+ 
     public void loadCbbNguoitaoHD() {
         DatNhanVienRepository datNhanVienRepository=new DatNhanVienRepository();
         ArrayList<DatNhanvienModel> listNv=datNhanVienRepository.getAll();
@@ -125,140 +109,477 @@ public class DatHoaDonView  extends RoundPanel{
             cbbNguoitao.addItem(datNhanvienModel);
         }
     }
-    
-
-    public void loadCbbTrangThai() {
+     public void count() {
+        //SUA LAI CAU QUERY
+        String sql = """
+                    SELECT    count(*) from hoadon
+                     """;
+        try (Connection con = DBConnect.getInstance().getConnect();
+                PreparedStatement ps = con.prepareStatement(sql)) {
+                ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                
+              count= rs.getInt(1);
+              
+            }
+            rs.close();
+            ps.close();
+            con.close();
+        } catch (Exception e) {
+            e.printStackTrace(System.out); // nem loi khi xay ra 
+        }
+       
+    }
+     public void countPage1(int phuongThucTT,int trangThai,int idNv) {
+        //SUA LAI CAU QUERY
+        String sql = """
+                       WITH CTE_HoaDon AS (
+                                         SELECT
+                                             hd.ma,
+                                             hd.ngay_tao,
+                                             kh.ho_ten,
+                                             SUM(hdct.gia_ban * so_luong) AS tong_gia_ban,
+                                             hd.tien_giam,
+                                             SUM((hdct.gia_ban * so_luong) - hd.tien_giam) AS tong_sau_giam,
+                                             hd.trang_thai,
+                                             hd.trang_thai_xoa,
+                                             hd.phuong_thuc_thanh_toan,
+                                             hd.id,
+                                             ROW_NUMBER() OVER (ORDER BY hd.ngay_tao DESC) AS row_num
+                                         FROM 
+                                             HoaDon hd
+                                         INNER JOIN 
+                                             HoaDonChiTiet hdct ON hd.id = hdct.id_hoa_don
+                                         INNER JOIN 
+                                             KhachHang kh ON hd.id_khach_hang = kh.id
+                                         INNER JOIN 
+                                             TaiKhoan tk ON hd.id_tai_khoan = tk.id 
+                                     	Where hd.trang_thai_xoa =0 and
+                                              (COALESCE( ?, 0) < 0 OR hd.phuong_thuc_thanh_toan = ?) AND
+                                              (COALESCE( ?, 0 )< 0  OR hd.trang_thai = ?) AND
+                                              (COALESCE(?, 0) < 1 OR tk.id = ?) 
+                                         GROUP BY 
+                                             hd.ma,
+                                             hd.ngay_tao,
+                                             kh.ho_ten,
+                                             hd.tien_giam,
+                                             hd.trang_thai,
+                                             hd.trang_thai_xoa,
+                                             hd.phuong_thuc_thanh_toan,
+                                             hd.id
+                                     ) Select count (*) from CTE_HoaDon;
+                     
+                     """;
+        try (Connection con = DBConnect.getInstance().getConnect();
+                PreparedStatement ps = con.prepareStatement(sql)) {
+                ps.setObject(1, phuongThucTT);
+                ps.setObject(2, phuongThucTT);
+                ps.setObject(3, trangThai);
+                ps.setObject(4, trangThai);
+                ps.setObject(5, idNv);
+                ps.setObject(6, idNv);
+                ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+                
+              count= rs.getInt(1);
+              
+            }
+           
+        } catch (Exception e) {
+            e.printStackTrace(System.out); // nem loi khi xay ra 
+        }
+       
+    }
+     public void countPage2(int phuongThucTT,int trangThai,int idNv,Date startDate,Date endDate) {
+        String sqlCount = """
+                WITH CTE_HoaDon AS (
+                     SELECT
+                         hd.ma,
+                         hd.ngay_tao,
+                         kh.ho_ten,
+                         SUM(hdct.gia_ban * so_luong) AS tong_gia_ban,
+                         hd.tien_giam,
+                         SUM((hdct.gia_ban * so_luong) - hd.tien_giam) AS tong_sau_giam,
+                         hd.trang_thai,
+                         hd.trang_thai_xoa,
+                         hd.phuong_thuc_thanh_toan,
+                         hd.id,
+                         ROW_NUMBER() OVER (ORDER BY hd.ngay_tao DESC) AS row_num
+                     FROM 
+                         HoaDon hd
+                     INNER JOIN 
+                         HoaDonChiTiet hdct ON hd.id = hdct.id_hoa_don
+                     INNER JOIN 
+                         KhachHang kh ON hd.id_khach_hang = kh.id
+                     INNER JOIN 
+                         TaiKhoan tk ON hd.id_tai_khoan = tk.id 
+                 	Where hd.trang_thai_xoa =0 and
+                          hd.trang_thai_xoa = 0
+                           AND (hd.ngay_tao >= ? OR ? IS NULL)
+                           AND (hd.ngay_tao <= ? OR ? IS NULL)
+                           AND (COALESCE(?, -1) < 0 OR hd.phuong_thuc_thanh_toan = ?)
+                           AND (COALESCE(?, -1) < 0 OR hd.trang_thai = ?)
+                           AND (COALESCE(?, 0) = 0 OR tk3.id = ?)
+                     GROUP BY 
+                         hd.ma,
+                         hd.ngay_tao,
+                         kh.ho_ten,
+                         hd.tien_giam,
+                         hd.trang_thai,
+                         hd.trang_thai_xoa,
+                         hd.phuong_thuc_thanh_toan,
+                         hd.id
+                 )
+                 SELECT  count(*)  FROM CTE_HoaDon
+                
+                     """;
+ 
+        try (Connection con = DBConnect.getInstance().getConnect();
+            PreparedStatement ps = con.prepareStatement(sqlCount)) {
+            
+        ps.setDate(1, new java.sql.Date(startDate.getTime())); // Ngày bắt đầu
+        ps.setDate(2, new java.sql.Date(startDate.getTime())); // Ngày bắt đầu (sử dụng lại cho điều kiện IS NULL)
+        ps.setDate(3, new java.sql.Date(endDate.getTime()));   // Ngày kết thúc
+        ps.setDate(4, new java.sql.Date(endDate.getTime()));   // Ngày kết thúc (sử dụng lại cho điều kiện IS NULL)
+        ps.setInt(5, phuongThucTT); // Phương thức thanh toán
+        ps.setInt(6, phuongThucTT); // Phương thức thanh toán
+        ps.setInt(7, trangThai); // Trạng thái
+        ps.setInt(8, trangThai); // Trạng thái
+        ps.setInt(9, idNv); // ID tài khoản
+        ps.setInt(10, idNv); // ID tài khoản
+     
+      
+            
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+               long count=rs.getLong(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace(System.out); // nem loi khi xay ra 
+        }
         
     }
-    public void loadCbbPhuongthucTT() {
-       DatPhuongThucThanhToanRepository datPhuongThucThanhToanRepository=new DatPhuongThucThanhToanRepository();
-        ArrayList<DatPhuongThucThanhToanModel> list=datPhuongThucThanhToanRepository.getAll();
-        cbbPhuongthucTT.removeAllItems();
-        cbbPhuongthucTT.addItem("---Chọn phương thứ thanh toán---");
-        for (DatPhuongThucThanhToanModel datPhuongThucThanhToanModel : list) {
-            cbbPhuongthucTT.addItem(datPhuongThucThanhToanModel);
-        }
-    }
-    
+     
     void loadData(ArrayList<DatHoaDonRequest> list) {
         DefaultTableModel tableModel = (DefaultTableModel) tblHoadon.getModel();
         tableModel.setRowCount(0);
-        for (DatHoaDonRequest datHoaDonRequest : list) {
-           Object[] row={
-               datHoaDonRequest.getMaHd(),
-               datHoaDonRequest.getThoiGian(),
-               datHoaDonRequest.getKhachHang(),
-               datHoaDonRequest.getTongTienhang(),
-               datHoaDonRequest.getGiamGia(),
-               datHoaDonRequest.getThanhTien(),
-               datHoaDonRequest.isTrangThai()?"Đã thanh toán":"Chưa thanh toán"};
-           
-               tableModel.addRow(row);
-        }
-    }
-    void fillComBo() {
-        DefaultTableModel model = (DefaultTableModel) tblHoadon.getModel();
-        model.setRowCount(0);
-        int mahd = 0;
-        switch (cbbTrangthai.getSelectedItem().toString()) {
-            case "Đã thanh toán":
-                mahd = 1;
 
+    for (DatHoaDonRequest datHoaDonRequest : list) {
+        String trangThaiString;
+        switch (datHoaDonRequest.getTrangThai()) {
+            case 0:
+                trangThaiString = "Chưa thanh toán";
                 break;
-            case "Chưa thanh toán":
-                mahd = 0;
-
+            case 1:
+               trangThaiString = "Đã thanh toán";
                 break;
-            case "Đã hủy":
-                mahd=2;
-               
-
+            case 2:
+                trangThaiString = "Đã hủy";
                 break;
             default:
-                throw new AssertionError();
+                trangThaiString = "Trạng thái không xác định";
+                break;
         }
-        try {
 
-            List<DatHoaDonRequest> list = datHoaDonRepository.selectTrangThai(mahd);
+        Object[] row = {
+            datHoaDonRequest.getMaHd(),
+            datHoaDonRequest.getThoiGian(),
+            datHoaDonRequest.getKhachHang(),
+            datHoaDonRequest.getTongTienhang(),
+            datHoaDonRequest.getGiamGia(),
+            datHoaDonRequest.getThanhTien(),
+            trangThaiString
+        };
 
-            for (DatHoaDonRequest hd : list) {
-
-                Object[] row = {
-                    hd.getMaHd(),
-                    hd.getThoiGian(),
-                    hd.getKhachHang(),
-                    hd.getTongTienhang(),
-                    hd.getGiamGia(),
-                    hd.getThanhTien(),
-                    hd.isTrangThai()?"Đã thanh toán":"Chưa thanh toán"
-                    
-                };
-                model.addRow(row);
-            }
-        } catch (Exception e) {
-            
-            e.printStackTrace();
-        }
+        tableModel.addRow(row);
     }
-  void fillComBoThanhToan() {
-        DefaultTableModel model = (DefaultTableModel) tblHoadon.getModel();
-        model.setRowCount(0);
-        int pt = 0;
-        int trangThai=0;
-        switch (cbbPhuongthucTT.getSelectedItem().toString()) {
-            case "Tiền mặt":
-                pt = 0;
-
-                break;
-            case "Chuyển khoản":
-                pt = 1;
-           
-                break;
-            case "Tiền mặt +Chuyển khoản":
-                pt=2;
-                break;
-               
-
-               
-            default:
-                throw new AssertionError();
-        }
-        switch (cbbTrangthai.getSelectedItem().toString()) {
-            case "Đã thanh toán":
-                trangThai = 1;
-
-                break;
-            case "Chưa thanh toán":
-                trangThai = 0;
-
-                break;
-            
-            default:
-                throw new AssertionError();
-        }
-        try {
-
-            List<DatHoaDonRequest> list = datHoaDonRepository.selectThanhToan(pt,trangThai);
-
-            for (DatHoaDonRequest hd : list) {
-
-                Object[] row = {
-                    hd.getMaHd(),
-                    hd.getThoiGian(),
-                    hd.getKhachHang(),
-                    hd.getTongTienhang(),
-                    hd.getGiamGia(),
-                    hd.getThanhTien(),
-                    hd.isTrangThai()?"Đã thanh toán":"Chưa thanh toán"
-                };
-                model.addRow(row);
-            }
-        } catch (Exception e) {
-            
-            e.printStackTrace();
-        }
     }
+
+  public void loadDataPage1(long trang) {
+    DefaultTableModel model = (DefaultTableModel) tblHoadon.getModel();
+    model.setRowCount(0);
+
+    int pt = -1;
+    int trangThai = -1;
+    int idNv = cbbNguoitao.getSelectedIndex();
+
+    // Xác định phương thức thanh toán
+    switch (cbbPhuongthucTT.getSelectedItem().toString()) {
+        case "Tiền mặt":
+            pt = 0;
+            break;
+        case "Chuyển khoản":
+            pt = 1;
+            break;
+        case "Tiền mặt + Chuyển khoản":
+            pt = 2;
+            break;
+    }
+
+    // Xác định trạng thái thanh toán
+    switch (cbbTrangthai.getSelectedItem().toString()) {
+        case "Đã thanh toán":
+            trangThai = 1;
+            break;
+        case "Chưa thanh toán":
+            trangThai = 0;
+            break;
+        case "Đã hủy":
+            trangThai = 2;
+            break;
+    }
+
+    Date startDate = dateNgaybatdau.getDate();
+    Date endDate = dateNgayketthuc.getDate();
     
+    if (pt == -1 && trangThai == -1 && idNv == 0 && ckoToanthoigian.isSelected()) {
+        // Trường hợp không có bộ lọc
+        this.count();
+
+        if (count % 15 == 0) {
+            soTrang = count / 15;
+        } else {
+            soTrang = count / 15 + 1;
+        }
+
+        list = datHoaDonRepository.getTop15(trang);
+        for (DatHoaDonRequest datHoaDonRequest : list) {
+            String trangThaiString = getTrangThaiString(datHoaDonRequest.getTrangThai());
+
+            Object[] row = {
+                datHoaDonRequest.getMaHd(),
+                datHoaDonRequest.getThoiGian(),
+                datHoaDonRequest.getKhachHang(),
+                datHoaDonRequest.getTongTienhang(),
+                datHoaDonRequest.getGiamGia(),
+                datHoaDonRequest.getThanhTien(),
+                trangThaiString
+            };
+
+            model.addRow(row);
+        }
+        lblTrang.setText(""+trang);
+        lblSotrang.setText(trang +" / " + soTrang);
+    } else {
+        if ((pt != -1 || trangThai != -1 || idNv != 0 )&&ckoToanthoigian.isSelected()) {
+        // Trường hợp có bộ lọc
+        Date curentDate = new Date();
+        dateNgaybatdau.setDate(curentDate);
+        dateNgayketthuc.setDate(curentDate);
+        startDate = null; // Đặt ngày bắt đầu về null
+        endDate = null;   // Đặt ngày kết thúc về null
+
+        this.countPage1(pt, trangThai, idNv);
+        if (count % 15 == 0) {
+            soTrang = count / 15;
+        } else {
+            soTrang = count / 15 + 1;
+        }
+      
+        list = datHoaDonRepository.locDataPage(pt, trangThai, idNv, trang);
+        try {
+            if (list.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Không tìm thấy hóa đơn");
+            } else {
+                for (DatHoaDonRequest hd : list) {
+                    String trangThaiString = getTrangThaiString(hd.getTrangThai());
+
+                    Object[] row = {
+                        hd.getMaHd(),
+                        hd.getThoiGian(),
+                        hd.getKhachHang(),
+                        hd.getTongTienhang(),
+                        hd.getGiamGia(),
+                        hd.getThanhTien(),
+                        trangThaiString
+                    };
+                    model.addRow(row);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Lỗi khi tải dữ liệu hóa đơn");
+        }
+        lblTrang.setText(""+trang);
+        lblSotrang.setText(trang + " / " + soTrang);
+    } else {
+        // Nếu không chọn toàn thời gian, đảm bảo ngày không null và chuyển đổi sang java.sql.Date
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        startDate = startDate != null ? new java.sql.Date(startDate.getTime()) : null;
+        endDate = endDate != null ? new java.sql.Date(endDate.getTime()) : null;
+
+        this.countPage2(pt, trangThai, idNv, startDate, endDate);
+        if (count % 15 == 0) {
+            soTrang = count / 15;
+        } else {
+            soTrang = count / 15 + 1;
+        }
+        list = datHoaDonRepository.locDataPage2(pt, trangThai, idNv, startDate, endDate, trang);
+        try {
+            if (list.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Không tìm thấy hóa đơn");
+            } else {
+                for (DatHoaDonRequest hd : list) {
+                    String trangThaiString = getTrangThaiString(hd.getTrangThai());
+
+                    Object[] row = {
+                        hd.getMaHd(),
+                        hd.getThoiGian(),
+                        hd.getKhachHang(),
+                        hd.getTongTienhang(),
+                        hd.getGiamGia(),
+                        hd.getThanhTien(),
+                        trangThaiString
+                    };
+                    model.addRow(row);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Lỗi khi tải dữ liệu hóa đơn");
+        }
+        lblTrang.setText(""+trang);
+        lblSotrang.setText(trang + " / " + soTrang);
+    }
+    }
+}
+
+private String getTrangThaiString(int trangThai) {
+    switch (trangThai) {
+        case 0:
+            return "Chưa thanh toán";
+        case 1:
+            return "Đã thanh toán";
+        case 2:
+            return "Đã hủy";
+        default:
+            return "Trạng thái không xác định";
+    }
+}
+private void handleClickButtonScanQrCode() {
+        QrCodeHelper.showWebcam("Tìm kiếm hóa đơn bằng QR", result -> {
+
+            LoadingDialog loading = new LoadingDialog();
+            executorService.submit(() -> {
+                try {
+                    String code = result.getText();
+
+                   DatHoaDonRequest hoaDonRequest = null;
+                    int id;
+                    if ((id = QrCodeUtils.getIdHoaDon(code)) > 0) {
+                        hoaDonRequest = datHoaDonService.getById(id);
+                    
+                    } else { 
+                        loading.dispose();
+                        MessageToast.error("QRCode không hợp lệ!!!");
+                        return;
+                    }
+                    loading.dispose();
+                    showHoadonchitiet();
+                } catch (ServiceResponseException e) {
+                    loading.dispose();
+                    MessageModal.error(e.getMessage());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    loading.dispose();
+                    MessageModal.error(ErrorConstant.DEFAULT_ERROR);
+                }
+            });
+            loading.setVisible(true);
+        });
+
+    }
+    public void inDanhSach(){
+        try {
+            XSSFWorkbook workBook=new XSSFWorkbook();
+            XSSFSheet sheet=workBook.createSheet("Danh sách hóa đơn");
+            XSSFRow row=null;
+            Cell cell=null;
+            
+            row=sheet.createRow(3);
+            cell=row.createCell(0, CellType.STRING);
+            cell.setCellValue("STT");
+            
+            cell=row.createCell(1, CellType.STRING);
+            cell.setCellValue("Mã HĐ");
+            
+            cell=row.createCell(2, CellType.STRING);
+            cell.setCellValue("Thời gian");
+            
+            cell=row.createCell(3, CellType.STRING);
+            cell.setCellValue("Khách Hàng");
+            
+            cell=row.createCell(4, CellType.STRING);
+            cell.setCellValue("Tổng tiền hàng");
+            
+            cell=row.createCell(5, CellType.STRING);
+            cell.setCellValue("Giảm giá");
+            
+            cell=row.createCell(6, CellType.STRING);
+            cell.setCellValue("Thành Tiền");
+            
+            cell=row.createCell(7, CellType.STRING);
+            cell.setCellValue("Nhân viên");
+            
+            cell=row.createCell(8, CellType.STRING);
+            cell.setCellValue("Trạng thái");
+            
+            
+            ArrayList<DatHoaDonRequest> list=datHoaDonRepository.getAll();
+            for (int i = 0; i < list.size(); i++) {
+                DatHoaDonRequest datHoaDonRequest=list.get(i);
+                row=sheet.createRow(4+i);
+                
+                cell=row.createCell(0,CellType.NUMERIC);
+                cell.setCellValue(i+1);
+                
+                cell=row.createCell(1, CellType.STRING);
+                cell.setCellValue(list.get(i).getMaHd());
+                
+                cell=row.createCell(2, CellType.STRING);
+                cell.setCellValue(list.get(i).getThoiGian());
+            
+                cell=row.createCell(3, CellType.STRING);
+                cell.setCellValue(list.get(i).getKhachHang());
+
+                cell=row.createCell(4, CellType.STRING);
+                cell.setCellValue(list.get(i).getTongTienhang());
+
+                cell=row.createCell(5, CellType.STRING);
+                cell.setCellValue(list.get(i).getGiamGia());
+
+                cell=row.createCell(6, CellType.STRING);
+                cell.setCellValue(list.get(i).getThanhTien());
+
+                cell=row.createCell(7, CellType.STRING);
+                cell.setCellValue(list.get(i).getTrangThai());
+                
+                
+            }
+            
+            JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Chọn nơi lưu file Excel");
+        fileChooser.setSelectedFile(new File("DefaultFilename.xlsx")); // Tên mặc định của file
+        
+        int userSelection = fileChooser.showSaveDialog(null);
+        
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToSave = fileChooser.getSelectedFile();
+            try (FileOutputStream fileOut = new FileOutputStream(fileToSave)) {
+                workBook.write(fileOut);
+                JOptionPane.showMessageDialog(this, "Lưu thành công !");
+                workBook.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Lỗi khi lưu file Excel.");
+            }
+        }
+           
+        } catch (Exception e) {
+        }
+    }
+        
+  
     
     
      
@@ -289,6 +610,7 @@ public class DatHoaDonView  extends RoundPanel{
         jLabel10 = new javax.swing.JLabel();
         dateNgaybatdau = new com.toedter.calendar.JDateChooser();
         dateNgayketthuc = new com.toedter.calendar.JDateChooser();
+        ckoToanthoigian = new javax.swing.JCheckBox();
         jLabel7 = new javax.swing.JLabel();
         plnTrangthai = new javax.swing.JPanel();
         jLabel11 = new javax.swing.JLabel();
@@ -305,9 +627,14 @@ public class DatHoaDonView  extends RoundPanel{
         tblHoadon = new javax.swing.JTable();
         jPanel10 = new javax.swing.JPanel();
         jLabel13 = new javax.swing.JLabel();
-        btnThem = new javax.swing.JButton();
         btnXuatdanhsach = new javax.swing.JButton();
         plnPhantrang = new javax.swing.JPanel();
+        btnNext = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
+        jButton4 = new javax.swing.JButton();
+        lblTrang = new javax.swing.JLabel();
+        btnPreview = new javax.swing.JButton();
+        lblSotrang = new javax.swing.JLabel();
         btnLoadhoadon = new javax.swing.JButton();
 
         jPanel3.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -382,8 +709,11 @@ public class DatHoaDonView  extends RoundPanel{
         jLabel10.setText("Đến ngày :");
 
         dateNgaybatdau.setDateFormatString("yyyy-MM-dd");
+        dateNgaybatdau.setDebugGraphicsOptions(javax.swing.DebugGraphics.NONE_OPTION);
 
         dateNgayketthuc.setDateFormatString("yyyy-MM-dd");
+
+        ckoToanthoigian.setText("Toàn thời gian");
 
         javax.swing.GroupLayout plnTimeLayout = new javax.swing.GroupLayout(plnTime);
         plnTime.setLayout(plnTimeLayout);
@@ -392,28 +722,30 @@ public class DatHoaDonView  extends RoundPanel{
             .addGroup(plnTimeLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(plnTimeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(plnTimeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(plnTimeLayout.createSequentialGroup()
+                            .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(plnTimeLayout.createSequentialGroup()
+                            .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGap(18, 18, 18)))
                     .addGroup(plnTimeLayout.createSequentialGroup()
-                        .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(dateNgayketthuc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, plnTimeLayout.createSequentialGroup()
-                        .addGroup(plnTimeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(plnTimeLayout.createSequentialGroup()
-                                .addComponent(jLabel4)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGroup(plnTimeLayout.createSequentialGroup()
-                                .addGap(0, 14, Short.MAX_VALUE)
-                                .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(53, 53, 53)))
-                        .addComponent(dateNgaybatdau, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(30, 30, 30)))
+                .addGroup(plnTimeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(dateNgayketthuc, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(dateNgaybatdau, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(ckoToanthoigian, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         plnTimeLayout.setVerticalGroup(
             plnTimeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(plnTimeLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel8)
-                .addGap(18, 18, 18)
+                .addGroup(plnTimeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel8)
+                    .addComponent(ckoToanthoigian))
+                .addGap(23, 23, 23)
                 .addGroup(plnTimeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel4)
                     .addComponent(dateNgaybatdau, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -433,7 +765,7 @@ public class DatHoaDonView  extends RoundPanel{
         jLabel11.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel11.setText("Trạng Thái");
 
-        cbbTrangthai.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Chưa thanh toán", "Đã thanh toán", "Đã hủy" }));
+        cbbTrangthai.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "--- Tất cả trạng thái ---", "Chưa thanh toán", "Đã thanh toán", "Đã hủy" }));
         cbbTrangthai.setAutoscrolls(true);
         cbbTrangthai.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -469,7 +801,7 @@ public class DatHoaDonView  extends RoundPanel{
         jLabel12.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel12.setText("Phương thức thanh toán");
 
-        cbbPhuongthucTT.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Tiền mặt", "Chuyển khoản", "Tiền mặt +Chuyển khoản" }));
+        cbbPhuongthucTT.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "--- Tất cả phương thức  ---", "Tiền mặt", "Chuyển khoản", "Tiền mặt +Chuyển khoản" }));
         cbbPhuongthucTT.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cbbPhuongthucTTActionPerformed(evt);
@@ -513,7 +845,7 @@ public class DatHoaDonView  extends RoundPanel{
             .addGroup(plnNguoitaoLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(plnNguoitaoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 264, Short.MAX_VALUE)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(cbbNguoitao, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -551,10 +883,10 @@ public class DatHoaDonView  extends RoundPanel{
                         .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(20, 20, 20)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnLoc, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(23, 23, 23))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -571,37 +903,37 @@ public class DatHoaDonView  extends RoundPanel{
                 .addComponent(plnPhuongthucTT, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(plnNguoitao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnLoc)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(12, Short.MAX_VALUE))
         );
 
         plnTable.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         tblHoadon.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null}
             },
             new String [] {
-                "Mã hóa đơn", "Thời gian", "Khách hàng", "Tổng tiền hàng", "Giảm giá", "Thành tiền", "Trạng thái", "Hành động"
+                "Mã hóa đơn", "Thời gian", "Khách hàng", "Tổng tiền hàng", "Giảm giá", "Thành tiền", "Trạng thái"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, true
+                false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -619,7 +951,7 @@ public class DatHoaDonView  extends RoundPanel{
         plnTable.setLayout(plnTableLayout);
         plnTableLayout.setHorizontalGroup(
             plnTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scrDanhsach, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 700, Short.MAX_VALUE)
+            .addComponent(scrDanhsach, javax.swing.GroupLayout.Alignment.TRAILING)
         );
         plnTableLayout.setVerticalGroup(
             plnTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -632,14 +964,12 @@ public class DatHoaDonView  extends RoundPanel{
         jLabel13.setForeground(new java.awt.Color(51, 102, 255));
         jLabel13.setText("Hóa Đơn");
 
-        btnThem.setText("Tạo mới");
-        btnThem.addActionListener(new java.awt.event.ActionListener() {
+        btnXuatdanhsach.setText("Xuất dánh sách");
+        btnXuatdanhsach.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnThemActionPerformed(evt);
+                btnXuatdanhsachActionPerformed(evt);
             }
         });
-
-        btnXuatdanhsach.setText("Xuất dánh sách");
 
         javax.swing.GroupLayout jPanel10Layout = new javax.swing.GroupLayout(jPanel10);
         jPanel10.setLayout(jPanel10Layout);
@@ -649,8 +979,6 @@ public class DatHoaDonView  extends RoundPanel{
                 .addContainerGap()
                 .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnThem)
-                .addGap(22, 22, 22)
                 .addComponent(btnXuatdanhsach)
                 .addContainerGap())
         );
@@ -660,20 +988,68 @@ public class DatHoaDonView  extends RoundPanel{
                 .addContainerGap()
                 .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnThem)
                     .addComponent(btnXuatdanhsach))
                 .addContainerGap())
         );
+
+        btnNext.setText("Last");
+        btnNext.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNextActionPerformed(evt);
+            }
+        });
+
+        jButton3.setText("jButton1");
+
+        jButton4.setText("Fisrt");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
+
+        lblTrang.setText("trang");
+
+        btnPreview.setText("Prev");
+        btnPreview.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPreviewActionPerformed(evt);
+            }
+        });
+
+        lblSotrang.setText("jLabel2");
 
         javax.swing.GroupLayout plnPhantrangLayout = new javax.swing.GroupLayout(plnPhantrang);
         plnPhantrang.setLayout(plnPhantrangLayout);
         plnPhantrangLayout.setHorizontalGroup(
             plnPhantrangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 479, Short.MAX_VALUE)
+            .addGroup(plnPhantrangLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnPreview, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(24, 24, 24)
+                .addComponent(lblTrang)
+                .addGap(27, 27, 27)
+                .addComponent(btnNext, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(lblSotrang, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(35, Short.MAX_VALUE))
         );
         plnPhantrangLayout.setVerticalGroup(
             plnPhantrangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 44, Short.MAX_VALUE)
+            .addGroup(plnPhantrangLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(plnPhantrangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnNext, javax.swing.GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
+                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
+                    .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
+                    .addComponent(lblTrang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnPreview, javax.swing.GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
+                    .addComponent(lblSotrang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         btnLoadhoadon.setText("Tất cả HD");
@@ -688,20 +1064,19 @@ public class DatHoaDonView  extends RoundPanel{
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(plnTable, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jPanel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addContainerGap())
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(plnPhantrang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 149, Short.MAX_VALUE)
                         .addComponent(btnLoadhoadon, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(24, 24, 24))))
+                        .addGap(24, 24, 24))
+                    .addComponent(plnTable, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -711,31 +1086,30 @@ public class DatHoaDonView  extends RoundPanel{
                         .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(plnTable, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(plnPhantrang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnLoadhoadon)))
+                            .addComponent(btnLoadhoadon)
+                            .addComponent(plnPhantrang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(23, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 12, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 0, 0)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addGap(0, 0, 0)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(0, 0, 0))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -745,41 +1119,60 @@ public class DatHoaDonView  extends RoundPanel{
 
     private void btnLoadhoadonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoadhoadonActionPerformed
         // TODO add your handling code here:
-        ArrayList<DatHoaDonRequest> list=datHoaDonRepository.getAll();
-        loadData(list);
         
+        cbbNguoitao.setSelectedIndex(0);
+        cbbPhuongthucTT.setSelectedIndex(0);
+        cbbTrangthai.setSelectedIndex(0);
+        dateNgaybatdau.setDate(curentDate);
+        dateNgayketthuc.setDate(curentDate);
+        ckoToanthoigian.setSelected(true);
+        txtTimkiem.setText(null);
+        trang=1;
+        loadDataPage1(trang);
     }//GEN-LAST:event_btnLoadhoadonActionPerformed
-
-    private void btnThemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThemActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnThemActionPerformed
 
     private void btnQrcodeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnQrcodeActionPerformed
         // TODO add your handling code here:
-        
+        handleClickButtonScanQrCode();
     }//GEN-LAST:event_btnQrcodeActionPerformed
 
     private void btnTimkiemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTimkiemActionPerformed
         // TODO add your handling code here: 
-        try {
-            
-            String keyword = txtTimkiem.getText();
-            ArrayList<DatHoaDonRequest> list = datHoaDonRepository.search(keyword);
-            
-            if(list.isEmpty()){
-                 JOptionPane.showMessageDialog(btnTimkiem, "Không tìm thấy hóa đơn !");
-            }else{
-                loadData(list);
-            }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(btnTimkiem, "Không tìm thấy hóa đơn !");
+        cbbNguoitao.setSelectedIndex(0);
+        cbbPhuongthucTT.setSelectedIndex(0);
+        cbbTrangthai.setSelectedIndex(0);
+        ckoToanthoigian.setSelected(true);
+        String keyword = txtTimkiem.getText();
+        int index=tblHoadon.getSelectedRow();
+        list = datHoaDonRepository.search(keyword);
+        if(keyword.trim()==null){
+            JOptionPane.showMessageDialog(this, "Nhập thông tin hóa đơn hoặc tên khách hàng !");
         }
+        if(!list.isEmpty()){
+            loadData(list);
+
+        } else  {
+            JOptionPane.showMessageDialog(this, "Không tìm thấy hóa đơn");
+        }
+        if(index!=-1){
+             showHoadonchitiet();   
+        }
+       
+            
+           
+            
+
+
+            
+            
+        
         
     }//GEN-LAST:event_btnTimkiemActionPerformed
 
     private void btnLocActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLocActionPerformed
         // TODO add your handling code here:   
-       fillComBoThanhToan();
+        loadDataPage1(trang);
+        txtTimkiem.setText(null);
     }//GEN-LAST:event_btnLocActionPerformed
 
     private void cbbTrangthaiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbbTrangthaiActionPerformed
@@ -797,24 +1190,58 @@ public class DatHoaDonView  extends RoundPanel{
     private void tblHoadonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblHoadonMouseClicked
         // TODO add your handling code here:
         if(evt.getClickCount()>1){
-            ModalDialog.showModal(Application.app, new SimpleModalBorder(new DatHoaDonChiTietView(list.get(tblHoadon.getSelectedRow())),"Chi tiết hóa đơn"));
-            
+            showHoadonchitiet();
         }
     }//GEN-LAST:event_tblHoadonMouseClicked
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        // TODO add your handling code here:
+     
+       
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void btnPreviewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPreviewActionPerformed
+        // TODO add your handling code here:
+        if(trang>1){
+            trang--;
+            loadDataPage1(trang);
+        }else{
+            JOptionPane.showMessageDialog(this, "aaaaaaaaaa");
+        }
+    }//GEN-LAST:event_btnPreviewActionPerformed
+
+    private void btnNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNextActionPerformed
+        // TODO add your handling code here:
+        
+        if(trang<soTrang){
+            trang++;   
+            loadDataPage1(trang);
+        }
+    }//GEN-LAST:event_btnNextActionPerformed
+
+    private void btnXuatdanhsachActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXuatdanhsachActionPerformed
+        // TODO add your handling code here:
+        JOptionPane.showConfirmDialog(this, "In thành công !");
+        inDanhSach();
+    }//GEN-LAST:event_btnXuatdanhsachActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnLoadhoadon;
     private javax.swing.JButton btnLoc;
+    private javax.swing.JButton btnNext;
+    private javax.swing.JButton btnPreview;
     private javax.swing.JButton btnQrcode;
-    private javax.swing.JButton btnThem;
     private javax.swing.JButton btnTimkiem;
     private javax.swing.JButton btnXuatdanhsach;
     private javax.swing.JComboBox<Object> cbbNguoitao;
     private javax.swing.JComboBox<Object> cbbPhuongthucTT;
     private javax.swing.JComboBox<String> cbbTrangthai;
+    private javax.swing.JCheckBox ckoToanthoigian;
     private com.toedter.calendar.JDateChooser dateNgaybatdau;
     private com.toedter.calendar.JDateChooser dateNgayketthuc;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
@@ -827,6 +1254,8 @@ public class DatHoaDonView  extends RoundPanel{
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JLabel lblSotrang;
+    private javax.swing.JLabel lblTrang;
     private javax.swing.JPanel plnNguoitao;
     private javax.swing.JPanel plnPhantrang;
     private javax.swing.JPanel plnPhuongthucTT;
@@ -841,6 +1270,10 @@ public class DatHoaDonView  extends RoundPanel{
     
    
     
-    private void showDetailSanPham(DatHoaDonRequest item) {
+    private void showHoadonchitiet() {
+        
+            ModalDialog.showModal(Application.app, new SimpleModalBorder(new DatHoaDonChiTietView(list.get(tblHoadon.getSelectedRow())),"Chi tiết hóa đơn"));
+            
+        
     }
 }
