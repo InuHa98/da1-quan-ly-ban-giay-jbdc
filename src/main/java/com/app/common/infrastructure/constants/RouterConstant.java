@@ -4,6 +4,7 @@ import com.app.core.inuha.views.all.banhang.InuhaBanHangView;
 import com.app.core.inuha.views.quanly.thongke.InuhaThongKeView;
 import com.app.core.inuha.views.quanly.InuhaSanPhamView;
 import com.app.core.inuha.views.quanly.phieugiamgia.InuhaPhieuGiamGiaView;
+import com.app.core.lam.views.KhachHangView;
 import com.app.utils.RouterUtils;
 
 /**
@@ -24,7 +25,7 @@ public class RouterConstant {
     
     public final static String HOA_DON = "com.app.core.dattv.views.DatHoaDonView";
     
-    public final static String KHACH_HANG = "com.app.core.lam.views.LamKhachHangViews";
+    public final static String KHACH_HANG = RouterUtils.getPackageName(KhachHangView.class);
     
     public final static String NHAN_VIEN = "com.app.core.dung.views.DungNhanVienView";
     

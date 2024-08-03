@@ -8,6 +8,7 @@ import com.app.common.helper.TestConnection;
 import com.app.core.inuha.views.all.banhang.InuhaBanHangView;
 import com.app.core.inuha.views.guest.LoginView;
 import com.app.utils.ResourceUtils;
+import com.app.core.inuha.views.quanly.InuhaSanPhamView;
 import com.app.views.DashboardView;
 import com.app.views.UI.dialog.LoadingDialog;
 import com.formdev.flatlaf.FlatLaf;
@@ -30,8 +31,10 @@ public class Application extends JFrame {
 
     public static Application app;
 
-    public final static int MIN_WIDTH = 1400;
+    public final static int MIN_WIDTH = 1200;
 
+
+    
     public final static int MIN_HEIGHT = 800;
     
     public static void main(String[] args) {
@@ -50,7 +53,7 @@ public class Application extends JFrame {
             }
 
 	    app = new Application();
-	    
+
 	    ApplicationController.getInstance().setContext(app);
 	    ApplicationController.getInstance().show(new LoginView());
 
