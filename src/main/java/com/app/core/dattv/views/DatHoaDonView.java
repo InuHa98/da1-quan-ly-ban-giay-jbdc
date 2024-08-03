@@ -19,7 +19,6 @@ import com.app.core.dattv.models.DatKhachHangModel;
 import com.app.core.dattv.models.DatNhanvienModel;
 import java.util.ArrayList;
 import com.app.core.dattv.repositoris.DatHoaDonRepository;
-import com.app.core.dattv.repositoris.DatHoaDonRepository2;
 import com.app.core.dattv.repositoris.DatNhanVienRepository;
 import com.app.core.dattv.request.DatHoaDonRequest;
 import com.app.core.dattv.service.DatHoaDonService;
@@ -72,7 +71,7 @@ import raven.modal.component.SimpleModalBorder;
  * @author WIN
  */
 public class DatHoaDonView  extends RoundPanel{
-    DatHoaDonRepository2 datHoaDonRepository=new DatHoaDonRepository2();
+    DatHoaDonRepository datHoaDonRepository=new DatHoaDonRepository();
     DatHoaDonService datHoaDonService=new DatHoaDonService();
     ArrayList<DatHoaDonRequest> list;
     Date curentDate=new Date();

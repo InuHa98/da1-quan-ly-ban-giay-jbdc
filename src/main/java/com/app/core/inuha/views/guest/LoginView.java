@@ -259,8 +259,8 @@ public class LoginView extends javax.swing.JPanel {
             try {
                 InuhaTaiKhoanModel user = nhanVienService.login(username, password);
                 SessionLogin.getInstance().create(username, password, user);
-                loadingDialog.dispose();
                 ApplicationController.getInstance().show(new DashboardView());
+		loadingDialog.dispose();
             } catch(ServiceResponseException e) {
                 loadingDialog.dispose();
                 MessageModal.error(e.getMessage());

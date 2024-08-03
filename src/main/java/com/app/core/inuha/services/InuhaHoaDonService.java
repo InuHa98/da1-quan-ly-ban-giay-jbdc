@@ -5,6 +5,7 @@ import com.app.common.infrastructure.constants.TrangThaiXoaConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
 import com.app.common.infrastructure.request.FillterRequest;
 import com.app.core.inuha.models.InuhaHoaDonModel;
+import com.app.core.inuha.models.InuhaPhieuGiamGiaModel;
 import com.app.core.inuha.repositories.InuhaHoaDonRepository;
 import com.app.core.inuha.services.impl.IInuhaHoaDonServiceInterface;
 import java.sql.SQLException;
@@ -81,8 +82,20 @@ public class InuhaHoaDonService implements IInuhaHoaDonServiceInterface {
             if (find.isEmpty()) { 
                 throw new ServiceResponseException("Không tìm thấy hoá đơn");
             }
-            
+	    
+	    InuhaPhieuGiamGiaModel phieuGiamGia = null;
+	    if (model.getPhieuGiamGia() != null) {
+		phieuGiamGia = InuhaPhieuGiamGiaService.getInstance().getByCode(model.getPhieuGiamGia().getMa());
+	    }
+
             repository.update(model);
+	    
+	    if (phieuGiamGia != null) {
+		int soLuongPhieuGiamGia = phieuGiamGia.getSoLuong() - 1;
+		phieuGiamGia.setSoLuong(Math.max(0, soLuongPhieuGiamGia));
+		InuhaPhieuGiamGiaService.getInstance().update(phieuGiamGia);
+	    }
+
         } catch (SQLException ex) {
             ex.printStackTrace();
             throw new ServiceResponseException("Không thể xoá hoá đơn này");

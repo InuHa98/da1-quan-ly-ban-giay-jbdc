@@ -57,7 +57,7 @@ public class InuhaSanPhamChiTietModel {
             ma,
             kichCo.getTen(),
             mauSac.getTen(),
-            CurrencyUtils.parseString(soLuong),
+            CurrencyUtils.parseNumber(soLuong),
             getTrangThai()
 	};
     }
@@ -80,7 +80,7 @@ public class InuhaSanPhamChiTietModel {
 	    mauSac.getTen(),
 	    CurrencyUtils.parseString(sanPham.getGiaNhap()),
 	    CurrencyUtils.parseString(sanPham.getGiaBan()),
-            CurrencyUtils.parseString(soLuong),
+            CurrencyUtils.parseNumber(soLuong),
             getTrangThai(),
 	    sanPham.getMoTa()
 	};

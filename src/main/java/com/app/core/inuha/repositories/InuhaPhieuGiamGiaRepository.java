@@ -1,9 +1,11 @@
 package com.app.core.inuha.repositories;
 
 import com.app.common.helper.JbdcHelper;
+import com.app.common.infrastructure.constants.TrangThaiPhieuGiamGiaConstant;
 import com.app.common.infrastructure.interfaces.IDAOinterface;
 import com.app.common.infrastructure.request.FillterRequest;
 import com.app.core.inuha.models.InuhaPhieuGiamGiaModel;
+import com.app.core.inuha.request.InuhaFilterPhieuGiamGiaRequest;
 import com.app.utils.TimeUtils;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -35,8 +37,8 @@ public class InuhaPhieuGiamGiaRepository implements IDAOinterface<InuhaPhieuGiam
     public int insert(InuhaPhieuGiamGiaModel model) throws SQLException {
         int result = 0;
         String query = String.format("""
-            INSERT INTO %s(ma, ten, so_luong, ngay_bat_dau, ngay_ket_thuc, giam_theo_phan_tram, gia_tri_giam, giam_toi_da, don_toi_thieu, ngay_tao, trang_thai)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO %s(ma, ten, so_luong, ngay_bat_dau, ngay_ket_thuc, giam_theo_phan_tram, gia_tri_giam, giam_toi_da, don_toi_thieu, ngay_tao)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, TABLE_NAME);
         try {
             Object[] args = new Object[] {
@@ -49,8 +51,7 @@ public class InuhaPhieuGiamGiaRepository implements IDAOinterface<InuhaPhieuGiam
 		model.getGiaTriGiam(),
 		model.getGiamToiDa(),
 		model.getDonToiThieu(),
-                TimeUtils.currentDate(),
-		model.isTrangThai()
+                TimeUtils.currentDate()
             };
             result = JbdcHelper.updateAndFlush(query, args);
         } catch(Exception e) {
@@ -76,7 +77,6 @@ public class InuhaPhieuGiamGiaRepository implements IDAOinterface<InuhaPhieuGiam
 		giam_toi_da = ?,
 		don_toi_thieu = ?,
 		ngay_cap_nhat = ?,
-		trang_thai = ?,
                 trang_thai_xoa = ?
             WHERE id = ?
         """, TABLE_NAME);
@@ -92,7 +92,6 @@ public class InuhaPhieuGiamGiaRepository implements IDAOinterface<InuhaPhieuGiam
 		model.getGiamToiDa(),
 		model.getDonToiThieu(),
 		TimeUtils.currentDate(),
-		model.isTrangThai(),
 		model.isTrangThaiXoa(),
 		model.getId()
             };
@@ -227,6 +226,7 @@ public class InuhaPhieuGiamGiaRepository implements IDAOinterface<InuhaPhieuGiam
 
     @Override
     public List<InuhaPhieuGiamGiaModel> selectPage(FillterRequest request) throws SQLException {
+	InuhaFilterPhieuGiamGiaRequest filter = (InuhaFilterPhieuGiamGiaRequest) request;
         List<InuhaPhieuGiamGiaModel> list = new ArrayList<>();
         ResultSet resultSet = null;
 
@@ -236,18 +236,41 @@ public class InuhaPhieuGiamGiaRepository implements IDAOinterface<InuhaPhieuGiam
                     *,
                     ROW_NUMBER() OVER (ORDER BY id DESC) AS stt
                 FROM %s
-                WHERE trang_thai_xoa = 0
+                WHERE 
+		    trang_thai_xoa = 0 AND
+		    (
+                        (? IS NULL OR ma LIKE ? OR ten LIKE ?) AND
+                        (COALESCE(?, NULL) IS NULL OR ngay_bat_dau >= ?) AND
+			(COALESCE(?, NULL) IS NULL OR ngay_ket_thuc <= ?) AND
+                        (
+                            COALESCE(?, 0) < 1 OR
+                            (? = %d AND ngay_bat_dau <= GETDATE() AND ngay_ket_thuc >= GETDATE()) OR
+                            (? = %d AND ngay_bat_dau >= GETDATE()) OR 
+                            (? = %d AND ngay_ket_thuc <= GETDATE())
+                        )
+		    )
             )
             SELECT *
             FROM TableCTE
             WHERE stt BETWEEN ? AND ?
-        """, TABLE_NAME);
+        """, TABLE_NAME, TrangThaiPhieuGiamGiaConstant.DANG_DIEN_RA, TrangThaiPhieuGiamGiaConstant.SAP_DIEN_RA, TrangThaiPhieuGiamGiaConstant.DA_DIEN_RA);
 
         int[] offset = FillterRequest.getOffset(request.getPage(), request.getSize());
         int start = offset[0];
         int limit = offset[1];
 
         Object[] args = new Object[] {
+	    filter.getKeyword(),
+            String.format("%%%s%%", filter.getKeyword()),
+            String.format("%%%s%%", filter.getKeyword()),
+	    filter.getNgayBatDau(),
+	    filter.getNgayBatDau(),
+	    filter.getNgayKetThuc(),
+	    filter.getNgayKetThuc(),
+	    filter.getTrangThai().getValue(),
+	    filter.getTrangThai().getValue(),
+	    filter.getTrangThai().getValue(),
+	    filter.getTrangThai().getValue(),
             start,
             limit
         };
@@ -271,13 +294,45 @@ public class InuhaPhieuGiamGiaRepository implements IDAOinterface<InuhaPhieuGiam
 
     @Override
     public int count(FillterRequest request) throws SQLException {
+	InuhaFilterPhieuGiamGiaRequest filter = (InuhaFilterPhieuGiamGiaRequest) request;
+	
         int totalPages = 0;
         int totalRows = 0;
 
-        String query = String.format("SELECT COUNT(*) FROM %s WHERE trang_thai_xoa = 0", TABLE_NAME);
+        String query = String.format("""
+            SELECT COUNT(*)
+            FROM %s
+            WHERE
+                trang_thai_xoa = 0 AND
+		(
+		    (? IS NULL OR ma LIKE ? OR ten LIKE ?) AND
+		    (COALESCE(?, NULL) IS NULL OR ngay_bat_dau >= ?) AND
+		    (COALESCE(?, NULL) IS NULL OR ngay_ket_thuc <= ?) AND
+		    (
+			COALESCE(?, 0) < 1 OR
+			(? = %d AND ngay_bat_dau <= GETDATE() AND ngay_ket_thuc >= GETDATE()) OR
+			(? = %d AND ngay_bat_dau >= GETDATE()) OR 
+			(? = %d AND ngay_ket_thuc <= GETDATE())
+		    )
+		)
+        """, TABLE_NAME, TrangThaiPhieuGiamGiaConstant.DANG_DIEN_RA, TrangThaiPhieuGiamGiaConstant.SAP_DIEN_RA, TrangThaiPhieuGiamGiaConstant.DA_DIEN_RA);
 
+	Object[] args = new Object[] {
+	    filter.getKeyword(),
+            String.format("%%%s%%", filter.getKeyword()),
+            String.format("%%%s%%", filter.getKeyword()),
+	    filter.getNgayBatDau(),
+	    filter.getNgayBatDau(),
+	    filter.getNgayKetThuc(),
+	    filter.getNgayKetThuc(),
+	    filter.getTrangThai().getValue(),
+	    filter.getTrangThai().getValue(),
+	    filter.getTrangThai().getValue(),
+	    filter.getTrangThai().getValue()
+        };
+		
         try {
-            totalRows = (int) JbdcHelper.value(query);
+            totalRows = (int) JbdcHelper.value(query, args);
             totalPages = (int) Math.ceil((double) totalRows / request.getSize());
         } catch(Exception e) {
             e.printStackTrace();
@@ -286,6 +341,34 @@ public class InuhaPhieuGiamGiaRepository implements IDAOinterface<InuhaPhieuGiam
         return totalPages;
     }
     
+    public Optional<InuhaPhieuGiamGiaModel> getByCode(String ma) throws SQLException {
+        ResultSet resultSet = null;
+        InuhaPhieuGiamGiaModel model = null;
+
+        String query = String.format("""
+            SELECT * 
+            FROM %s 
+            WHERE 
+                ma LIKE ? AND
+                trang_thai_xoa = 0
+        """, TABLE_NAME);
+
+        try {
+            resultSet = JbdcHelper.query(query, ma);
+            while(resultSet.next()) {
+                model = buildData(resultSet, false);
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+            throw new SQLException(e.getMessage());
+        }
+        finally {
+            JbdcHelper.close(resultSet);
+        }
+
+        return Optional.ofNullable(model);
+    }
+	
     private InuhaPhieuGiamGiaModel buildData(ResultSet resultSet) throws SQLException { 
         return buildData(resultSet, true);
     }
@@ -305,7 +388,6 @@ public class InuhaPhieuGiamGiaRepository implements IDAOinterface<InuhaPhieuGiam
 	    .donToiThieu(resultSet.getDouble("don_toi_thieu"))
 	    .ngayTao(resultSet.getString("ngay_tao"))
 	    .ngayCapNhat(resultSet.getString("ngay_cap_nhat"))
-	    .trangThai(resultSet.getBoolean("trang_thai"))
 	    .trangThaiXoa(resultSet.getBoolean("trang_thai_xoa"))
 	    .build();
     }

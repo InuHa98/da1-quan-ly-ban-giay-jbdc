@@ -4,10 +4,9 @@
  */
 package com.app.core.dattv.service;
 
-import com.app.common.infrastructure.constants.ErrorConstant;
+
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
 import com.app.common.infrastructure.request.FillterRequest;
-import com.app.core.dattv.models.DatHoaDonModel;
 import com.app.core.dattv.repositoris.DatHoaDonRepository;
 import com.app.core.dattv.request.DatHoaDonRequest;
 import java.sql.SQLException;
@@ -18,7 +17,7 @@ import java.util.Optional;
  *
  * @author WIN
  */
-public class DatHoaDonService implements IDatHoaDonServiceInterface{
+public class DatHoaDonService {
     
     private final DatHoaDonRepository repository = DatHoaDonRepository.getInstance();
     
@@ -31,12 +30,7 @@ public class DatHoaDonService implements IDatHoaDonServiceInterface{
 	return instance;
     }
 
-    @Override
-    public String getLastCode() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
 
-    @Override
     public DatHoaDonRequest getById(Integer id) {
         try {
             Optional<DatHoaDonRequest> find = repository.getById(id);
@@ -47,46 +41,6 @@ public class DatHoaDonService implements IDatHoaDonServiceInterface{
         } catch (SQLException ex) {
             throw new ServiceResponseException("Không tìm thấy sản phẩm");
         }
-    }
-
-    @Override
-    public Integer insert(DatHoaDonRequest model) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public boolean has(Integer id) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public void update(DatHoaDonRequest model) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public void delete(Integer id) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public void deleteAll(List<Integer> ids) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public List<DatHoaDonRequest> getAll() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public List<DatHoaDonRequest> getPage(FillterRequest request) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public Integer getTotalPage(FillterRequest request) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
     
 }
