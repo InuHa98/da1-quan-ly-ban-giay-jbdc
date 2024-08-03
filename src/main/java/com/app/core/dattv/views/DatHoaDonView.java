@@ -458,33 +458,33 @@ private String getTrangThaiString(int trangThai) {
 private void handleClickButtonScanQrCode() {
         QrCodeHelper.showWebcam("Tìm kiếm hóa đơn bằng QR", result -> {
 
-            LoadingDialog loading = new LoadingDialog();
-            executorService.submit(() -> {
-                try {
-                    String code = result.getText();
-
-                   DatHoaDonRequest hoaDonRequest = null;
-                    int id;
-                    if ((id = QrCodeUtils.getIdHoaDon(code)) > 0) {
-                        hoaDonRequest = datHoaDonService.getById(id);
-                    
-                    } else { 
-                        loading.dispose();
-                        MessageToast.error("QRCode không hợp lệ!!!");
-                        return;
-                    }
-                    loading.dispose();
-                    showHoadonchitiet();
-                } catch (ServiceResponseException e) {
-                    loading.dispose();
-                    MessageModal.error(e.getMessage());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    loading.dispose();
-                    MessageModal.error(ErrorConstant.DEFAULT_ERROR);
-                }
-            });
-            loading.setVisible(true);
+//            LoadingDialog loading = new LoadingDialog();
+//            executorService.submit(() -> {
+//                try {
+//                    String code = result.getText();
+//
+//                   DatHoaDonRequest hoaDonRequest = null;
+//                    int id;
+//                    if ((id = QrCodeUtils.getIdHoaDon(code)) > 0) {
+//                        hoaDonRequest = datHoaDonService.getById(id);
+//                    
+//                    } else { 
+//                        loading.dispose();
+//                        MessageToast.error("QRCode không hợp lệ!!!");
+//                        return;
+//                    }
+//                    loading.dispose();
+//                    showHoadonchitiet();
+//                } catch (ServiceResponseException e) {
+//                    loading.dispose();
+//                    MessageModal.error(e.getMessage());
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                    loading.dispose();
+//                    MessageModal.error(ErrorConstant.DEFAULT_ERROR);
+//                }
+//            });
+//            loading.setVisible(true);
         });
 
     }
