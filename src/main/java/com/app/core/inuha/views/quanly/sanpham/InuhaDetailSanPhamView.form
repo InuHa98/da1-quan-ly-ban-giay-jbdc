@@ -398,12 +398,11 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="1" attributes="0">
-                      <Component id="pnlDanhSach" max="32767" attributes="0"/>
-                      <Component id="pnlPhanTrang" max="32767" attributes="0"/>
-                      <Group type="102" attributes="0">
+              <Component id="pnlDanhSach" alignment="1" max="32767" attributes="0"/>
+              <Group type="102" attributes="0">
+                  <EmptySpace min="20" pref="20" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" alignment="1" attributes="0">
                           <Component id="cboKichCo" min="-2" pref="163" max="-2" attributes="0"/>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Component id="cboMauSac" min="-2" max="-2" attributes="0"/>
@@ -416,6 +415,7 @@
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Component id="btnThemSanPhamChiTiet" min="-2" max="-2" attributes="0"/>
                       </Group>
+                      <Component id="pnlPhanTrang" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace min="20" pref="20" max="-2" attributes="0"/>
               </Group>
@@ -426,13 +426,17 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="btnReset" alignment="1" min="-2" pref="32" max="-2" attributes="0"/>
+                      <Group type="103" alignment="1" groupAlignment="0" attributes="0">
+                          <Group type="103" alignment="0" groupAlignment="3" attributes="0">
+                              <Component id="btnThemSanPhamChiTiet" alignment="3" min="-2" pref="32" max="-2" attributes="0"/>
+                              <Component id="btnExport" alignment="3" min="-2" pref="31" max="-2" attributes="0"/>
+                          </Group>
+                          <Component id="btnReset" min="-2" pref="32" max="-2" attributes="0"/>
+                      </Group>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="cboTrangThai" alignment="3" min="-2" pref="32" max="-2" attributes="0"/>
                           <Component id="cboMauSac" alignment="3" min="-2" pref="32" max="-2" attributes="0"/>
                           <Component id="cboKichCo" alignment="3" min="-2" pref="32" max="-2" attributes="0"/>
-                          <Component id="btnThemSanPhamChiTiet" alignment="3" min="-2" pref="32" max="-2" attributes="0"/>
-                          <Component id="btnExport" alignment="3" min="-2" pref="31" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>

@@ -52,7 +52,7 @@ public class BillUtils {
 	return switch (trangThai) {
 	    case TrangThaiHoaDonConstant.STATUS_DA_THANH_TOAN -> "Đã thanh toán";
 	    case TrangThaiHoaDonConstant.STATUS_DA_HUY -> "Đã huỷ";
-	    case TrangThaiHoaDonConstant.STATUS_CHUA_THANH_TOAN -> "Chờ thanh toán";
+	    case TrangThaiHoaDonConstant.STATUS_CHO_THANH_TOAN -> "Chờ thanh toán";
 	    default -> "Không xác định";
 	};
     }

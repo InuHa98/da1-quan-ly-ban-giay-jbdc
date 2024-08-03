@@ -150,9 +150,14 @@ public class InuhaSanPhamView extends RoundPanel {
     public InuhaSanPhamView() {
         initComponents();
         instance = this;
-        pnlSearchBox.setPlaceholder("Nhập tên hoặc mã sản phẩm ...");
+	pnlSearchBox.setPlaceholder("Nhập tên hoặc mã sản phẩm ...");
         txtTuKhoa = pnlSearchBox.getKeyword();
         
+//	lblList.setForeground(ColorUtils.PRIMARY_COLOR);
+//	lblFilter.setForeground(ColorUtils.PRIMARY_COLOR);
+//	lblList2.setForeground(ColorUtils.PRIMARY_COLOR);
+//	lblFilter2.setForeground(ColorUtils.PRIMARY_COLOR);
+	
 	pnlSearchBox2.setPlaceholder("Nhập tên hoặc mã sản phẩm ...");
         txtTuKhoa2 = pnlSearchBox2.getKeyword();
 	
@@ -175,6 +180,12 @@ public class InuhaSanPhamView extends RoundPanel {
         });
 		
         pnlContainer.setBackground(ColorUtils.BACKGROUND_PRIMARY);
+	pnlContainer.setRound(0, 0, 0, 0);
+	pnlList.setBackground(ColorUtils.BACKGROUND_DASHBOARD);
+	pnlList2.setBackground(ColorUtils.BACKGROUND_DASHBOARD);
+	pnlDanhSachChiTiet.setRound(0, 0, 0, 0);
+	pnlDanhSach.setRound(0, 0, 0, 0);
+	
         tbpTab.setBackground(ColorUtils.BACKGROUND_PRIMARY);
         lblFilter.setIcon(ResourceUtils.getSVG("/svg/filter.svg", new Dimension(20, 20)));
 	lblFilter2.setIcon(ResourceUtils.getSVG("/svg/filter.svg", new Dimension(20, 20)));
@@ -261,16 +272,16 @@ public class InuhaSanPhamView extends RoundPanel {
                         executorService.submit(() -> {
                             try {
                                 sanPhamService.delete(item.getId());
-                                loadingDialog.dispose();
                                 loadDataPage();
+				loadDataPageSPCT();
                                 MessageToast.success("Xoá thành công sản phẩm: " + item.getTen());
                             } catch (ServiceResponseException e) {
-                                loadingDialog.dispose();
                                 MessageToast.error(e.getMessage());
                             } catch (Exception e) {
-                                loadingDialog.dispose();
                                 MessageModal.error(ErrorConstant.DEFAULT_ERROR);
-                            } 
+                            } finally {
+				loadingDialog.dispose();
+			    }
                         });
                         loadingDialog.setVisible(true);
                     }
@@ -625,7 +636,7 @@ public class InuhaSanPhamView extends RoundPanel {
         tblDanhSach = new javax.swing.JTable();
         btnScanQR = new javax.swing.JButton();
         pnlDanhSachSanPhamChiTiet = new javax.swing.JPanel();
-        roundPanel1 = new com.app.views.UI.panel.RoundPanel();
+        pnlList2 = new com.app.views.UI.panel.RoundPanel();
         lblList2 = new javax.swing.JLabel();
         splitLine3 = new com.app.views.UI.label.SplitLine();
         btnSaveAllQR = new javax.swing.JButton();
@@ -683,7 +694,6 @@ public class InuhaSanPhamView extends RoundPanel {
         });
 
         lblFilter.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
-        lblFilter.setForeground(new java.awt.Color(255, 255, 255));
         lblFilter.setText("Bộ lọc");
 
         javax.swing.GroupLayout splitLine1Layout = new javax.swing.GroupLayout(splitLine1);
@@ -786,7 +796,6 @@ public class InuhaSanPhamView extends RoundPanel {
         );
 
         lblList.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
-        lblList.setForeground(new java.awt.Color(255, 255, 255));
         lblList.setText("Danh sách sản phẩm");
 
         btnThemSanPham.setText("Thêm sản phẩm");
@@ -806,7 +815,7 @@ public class InuhaSanPhamView extends RoundPanel {
         );
         splitLine2Layout.setVerticalGroup(
             splitLine2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 13, Short.MAX_VALUE)
+            .addGap(0, 2, Short.MAX_VALUE)
         );
 
         btnXoaSanPham.setText("Xoá");
@@ -836,7 +845,7 @@ public class InuhaSanPhamView extends RoundPanel {
 
             },
             new String [] {
-                "", "#", "Mã", "", "Tên", "Danh mục", "Thương hiệu", "Số lượng", "Giá bán", "Trạng thái", "Hành động"
+                "", "#", "Mã", "", "Tên", "Danh mục", "Thương hiệu", "Số lượng tồn", "Giá bán", "Trạng thái", "Hành động"
             }
         ) {
             Class[] types = new Class [] {
@@ -878,13 +887,13 @@ public class InuhaSanPhamView extends RoundPanel {
         pnlDanhSach.setLayout(pnlDanhSachLayout);
         pnlDanhSachLayout.setHorizontalGroup(
             pnlDanhSachLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scrDanhSach, javax.swing.GroupLayout.Alignment.TRAILING)
+            .addComponent(scrDanhSach, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1011, Short.MAX_VALUE)
         );
         pnlDanhSachLayout.setVerticalGroup(
             pnlDanhSachLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlDanhSachLayout.createSequentialGroup()
-                .addGap(8, 8, 8)
-                .addComponent(scrDanhSach, javax.swing.GroupLayout.DEFAULT_SIZE, 258, Short.MAX_VALUE)
+                .addGap(10, 10, 10)
+                .addComponent(scrDanhSach, javax.swing.GroupLayout.DEFAULT_SIZE, 293, Short.MAX_VALUE)
                 .addGap(8, 8, 8))
         );
 
@@ -900,24 +909,21 @@ public class InuhaSanPhamView extends RoundPanel {
         pnlList.setLayout(pnlListLayout);
         pnlListLayout.setHorizontalGroup(
             pnlListLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlListLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(splitLine2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(pnlDanhSach, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlListLayout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addGroup(pnlListLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(pnlDanhSach, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(pnlPhanTrang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(pnlListLayout.createSequentialGroup()
+                .addGroup(pnlListLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlListLayout.createSequentialGroup()
                         .addComponent(lblList, javax.swing.GroupLayout.PREFERRED_SIZE, 598, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 100, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnXoaSanPham, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(12, 12, 12)
                         .addComponent(btnScanQR)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnThemSanPham, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(btnThemSanPham, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(pnlPhanTrang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(20, 20, 20))
+            .addComponent(splitLine2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         pnlListLayout.setVerticalGroup(
             pnlListLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -930,9 +936,9 @@ public class InuhaSanPhamView extends RoundPanel {
                     .addComponent(btnScanQR, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(splitLine2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(0, 0, 0)
                 .addComponent(pnlDanhSach, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
+                .addGap(10, 10, 10)
                 .addComponent(pnlPhanTrang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0))
         );
@@ -969,7 +975,7 @@ public class InuhaSanPhamView extends RoundPanel {
         );
         splitLine3Layout.setVerticalGroup(
             splitLine3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 11, Short.MAX_VALUE)
+            .addGap(0, 4, Short.MAX_VALUE)
         );
 
         btnSaveAllQR.setText("Tải danh sách QR Code");
@@ -1001,7 +1007,7 @@ public class InuhaSanPhamView extends RoundPanel {
 
             },
             new String [] {
-                "", "#", "Mã chi tiết", "Mã sản phẩm", "", "Tên sản phẩm", "Danh mục", "Thương hiệu", "Xuất xứ", "Kiểu dáng", "Chất liệu", "Đế giày", "Kích cỡ", "Màu sắc", "Giá nhập", "Giá bán", "Số lượng", "Trạng thái"
+                "", "#", "Mã chi tiết", "Mã sản phẩm", "", "Tên sản phẩm", "Danh mục", "Thương hiệu", "Xuất xứ", "Kiểu dáng", "Chất liệu", "Đế giày", "Kích cỡ", "Màu sắc", "Giá nhập", "Giá bán", "Số lượng tồn", "Trạng thái"
             }
         ) {
             Class[] types = new Class [] {
@@ -1039,13 +1045,13 @@ public class InuhaSanPhamView extends RoundPanel {
         pnlDanhSachChiTiet.setLayout(pnlDanhSachChiTietLayout);
         pnlDanhSachChiTietLayout.setHorizontalGroup(
             pnlDanhSachChiTietLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scrDanhSachChiTiet)
+            .addComponent(scrDanhSachChiTiet, javax.swing.GroupLayout.DEFAULT_SIZE, 1011, Short.MAX_VALUE)
         );
         pnlDanhSachChiTietLayout.setVerticalGroup(
             pnlDanhSachChiTietLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlDanhSachChiTietLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(scrDanhSachChiTiet, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
+                .addGap(10, 10, 10)
+                .addComponent(scrDanhSachChiTiet, javax.swing.GroupLayout.DEFAULT_SIZE, 199, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -1068,15 +1074,16 @@ public class InuhaSanPhamView extends RoundPanel {
             }
         });
 
-        javax.swing.GroupLayout roundPanel1Layout = new javax.swing.GroupLayout(roundPanel1);
-        roundPanel1.setLayout(roundPanel1Layout);
-        roundPanel1Layout.setHorizontalGroup(
-            roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout pnlList2Layout = new javax.swing.GroupLayout(pnlList2);
+        pnlList2.setLayout(pnlList2Layout);
+        pnlList2Layout.setHorizontalGroup(
+            pnlList2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(splitLine3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(roundPanel1Layout.createSequentialGroup()
+            .addComponent(pnlDanhSachChiTiet, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(pnlList2Layout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(roundPanel1Layout.createSequentialGroup()
+                .addGroup(pnlList2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlList2Layout.createSequentialGroup()
                         .addComponent(lblList2, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnScanQRChiTiet)
@@ -1086,26 +1093,23 @@ public class InuhaSanPhamView extends RoundPanel {
                         .addComponent(btnImport)
                         .addGap(18, 18, 18)
                         .addComponent(btnSaveAllQR))
-                    .addComponent(pnlDanhSachChiTiet, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(pnlPhanTrangChiTiet, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(20, 20, 20))
         );
-        roundPanel1Layout.setVerticalGroup(
-            roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(roundPanel1Layout.createSequentialGroup()
+        pnlList2Layout.setVerticalGroup(
+            pnlList2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlList2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(pnlList2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlList2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(btnExport, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btnScanQRChiTiet, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(btnScanQRChiTiet, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(lblList2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addComponent(btnImport, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnSaveAllQR, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(roundPanel1Layout.createSequentialGroup()
-                        .addComponent(lblList2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(4, 4, 4)))
+                    .addComponent(btnSaveAllQR, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(splitLine3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(0, 0, 0)
                 .addComponent(pnlDanhSachChiTiet, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pnlPhanTrangChiTiet, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -1262,7 +1266,7 @@ public class InuhaSanPhamView extends RoundPanel {
         pnlDanhSachSanPhamChiTietLayout.setHorizontalGroup(
             pnlDanhSachSanPhamChiTietLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(roundPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(roundPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(pnlList2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         pnlDanhSachSanPhamChiTietLayout.setVerticalGroup(
             pnlDanhSachSanPhamChiTietLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1270,7 +1274,7 @@ public class InuhaSanPhamView extends RoundPanel {
                 .addGap(15, 15, 15)
                 .addComponent(roundPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(roundPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(pnlList2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         tbpTab.addTab("Danh sách sản phẩm chi tiết", pnlDanhSachSanPhamChiTiet);
@@ -1441,11 +1445,11 @@ public class InuhaSanPhamView extends RoundPanel {
     private javax.swing.JPanel pnlDanhSachSanPhamChiTiet;
     private com.app.views.UI.panel.RoundPanel pnlFilter;
     private com.app.views.UI.panel.RoundPanel pnlList;
+    private com.app.views.UI.panel.RoundPanel pnlList2;
     private javax.swing.JPanel pnlPhanTrang;
     private javax.swing.JPanel pnlPhanTrangChiTiet;
     private com.app.views.UI.panel.SearchBox pnlSearchBox;
     private com.app.views.UI.panel.SearchBox pnlSearchBox2;
-    private com.app.views.UI.panel.RoundPanel roundPanel1;
     private com.app.views.UI.panel.RoundPanel roundPanel2;
     private javax.swing.JScrollPane scrDanhSach;
     private javax.swing.JScrollPane scrDanhSachChiTiet;

@@ -28,9 +28,7 @@ public class InuhaHoaDonChiTietModel {
     private double giaNhap;
     
     private double giaBan;
-    
-    private double giaGiam;
-	
+    	
     private int soLuong;
     
     private InuhaSanPhamChiTietModel sanPhamChiTiet;
@@ -41,8 +39,8 @@ public class InuhaHoaDonChiTietModel {
 	return new Object[] { 
 	    ProductUtils.getImage(sanPhamChiTiet.getSanPham().getHinhAnh()),
 	    "x" + soLuong,
-	    CurrencyUtils.parseString(giaBan - giaGiam),
-	    sanPhamChiTiet.getSanPham().getMa() + " - " + sanPhamChiTiet.getSanPham().getTen(),
+	    CurrencyUtils.parseString(giaBan),
+	    sanPhamChiTiet.getMa() + " - " + sanPhamChiTiet.getSanPham().getTen(),
 	    sanPhamChiTiet.getMauSac().getTen(),
 	    sanPhamChiTiet.getKichCo().getTen()
 	};

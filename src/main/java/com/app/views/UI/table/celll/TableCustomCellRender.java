@@ -37,7 +37,7 @@ public class TableCustomCellRender extends DefaultTableCellRenderer {
             if (row == hoverRow.getIndex()) {
                 com.setBackground(ColorUtils.BACKGROUND_HOVER);
             } else {
-                setBackground(row % 2 == 0 ? ColorUtils.BACKGROUND_TABLE_ODD : table.getBackground());
+                com.setBackground(row % 2 == 0 ? ColorUtils.BACKGROUND_TABLE_ODD : table.getBackground());
             }
         }
 

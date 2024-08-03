@@ -1,5 +1,6 @@
 package com.app.utils;
 
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -20,9 +21,15 @@ public class TimeUtils {
         return now.format(formatter);
     }
     
-    public static String date(String format, long miliTime) { 
-	Instant instant = Instant.ofEpochMilli(miliTime);
-	LocalDateTime dateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+    public static String date(String format, Timestamp timestamp) { 
+	LocalDateTime dateTime = timestamp.toLocalDateTime();
+	DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
+        return dateTime.format(formatter);
+    }
+	
+    public static String date(String format, String timestamp) { 
+        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S");
+        LocalDateTime dateTime = LocalDateTime.parse(timestamp, inputFormatter);
 	DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
         return dateTime.format(formatter);
     }
@@ -32,4 +39,9 @@ public class TimeUtils {
         return dateFormat.format(new Date());
     }
     
+    public static String currentDateTime() { 
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        return dateFormat.format(new Date());
+    }
+	
 }

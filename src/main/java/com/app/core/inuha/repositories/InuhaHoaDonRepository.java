@@ -58,8 +58,8 @@ public class InuhaHoaDonRepository implements IDAOinterface<InuhaHoaDonModel, In
                 SessionLogin.getInstance().getData().getId(),
 		model.getMa(),
 		PhuongThucThanhToanConstant.TIEN_MAT,
-		TrangThaiHoaDonConstant.STATUS_CHUA_THANH_TOAN,
-		TimeUtils.currentDate()
+		TrangThaiHoaDonConstant.STATUS_CHO_THANH_TOAN,
+		TimeUtils.currentDateTime()
             };
             result = JbdcHelper.updateAndFlush(query, args);
         } catch(Exception e) {
@@ -148,11 +148,12 @@ public class InuhaHoaDonRepository implements IDAOinterface<InuhaHoaDonModel, In
         InuhaHoaDonModel model = null;
 
         String query = String.format("""
-            SELECT * 
-            FROM %s
+            SELECT * ,
+		(SELECT ISNULL(SUM(gia_ban), 0) FROM HoaDonChiTiet WHERE id_hoa_don = hd.id) AS tong_tien_hang
+            FROM %s AS hd
             WHERE 
-                id = ? AND
-                trang_thai_xoa = 0
+                hd.id = ? AND
+                hd.trang_thai_xoa = 0
         """, TABLE_NAME);
 
         try {
@@ -192,14 +193,15 @@ public class InuhaHoaDonRepository implements IDAOinterface<InuhaHoaDonModel, In
 
         String query = String.format("""
             SELECT TOP(%d)
-                *,
-                ROW_NUMBER() OVER (ORDER BY id DESC) AS stt
-            FROM %s
+                hd.*,
+                ROW_NUMBER() OVER (ORDER BY hd.id DESC) AS stt,
+                (SELECT ISNULL(SUM(gia_ban), 0) FROM HoaDonChiTiet WHERE id_hoa_don = hd.id) AS tong_tien_hang
+            FROM %s AS hd
             WHERE 
-                trang_thai_xoa = 0 AND
-                trang_thai = %d
-            ORDER BY id DESC 
-        """, MAX_WAIT_BILL, TABLE_NAME, TrangThaiHoaDonConstant.STATUS_CHUA_THANH_TOAN);
+                hd.trang_thai_xoa = 0 AND
+                hd.trang_thai = %d
+            ORDER BY hd.id DESC 
+        """, MAX_WAIT_BILL, TABLE_NAME, TrangThaiHoaDonConstant.STATUS_CHO_THANH_TOAN);
 
         try {
             resultSet = JbdcHelper.query(query);
@@ -236,10 +238,11 @@ public class InuhaHoaDonRepository implements IDAOinterface<InuhaHoaDonModel, In
         String query = String.format("""
             WITH TableCTE AS (
                 SELECT
-                    *,
-                    ROW_NUMBER() OVER (ORDER BY id DESC) AS stt
-                FROM %s
-                WHERE trang_thai_xoa = 0
+                    hd.*,
+                    ROW_NUMBER() OVER (ORDER BY hd.id DESC) AS stt,
+		    (SELECT ISNULL(SUM(gia_ban), 0) FROM HoaDonChiTiet WHERE id_hoa_don = hd.id) AS tong_tien_hang
+                FROM %s AS hd
+                WHERE hd.trang_thai_xoa = 0
             )
             SELECT *
             FROM TableCTE
@@ -305,7 +308,7 @@ public class InuhaHoaDonRepository implements IDAOinterface<InuhaHoaDonModel, In
     
     public boolean isMaxHoaDonCho() throws SQLException {
 
-        String query = String.format("SELECT COUNT(*) FROM %s WHERE trang_thai = %d", TABLE_NAME, TrangThaiHoaDonConstant.STATUS_CHUA_THANH_TOAN);
+        String query = String.format("SELECT COUNT(*) FROM %s WHERE trang_thai = %d", TABLE_NAME, TrangThaiHoaDonConstant.STATUS_CHO_THANH_TOAN);
 
         try {
             return (int) JbdcHelper.value(query) >= MAX_WAIT_BILL;
@@ -332,7 +335,8 @@ public class InuhaHoaDonRepository implements IDAOinterface<InuhaHoaDonModel, In
 	    .trangThaiXoa(resultSet.getBoolean("trang_thai_xoa"))
             .ngayTao(resultSet.getString("ngay_tao"))
             .ngayCapNhat(resultSet.getString("ngay_cap_nhat"))
-            .build();
+	    .tongTienHang(resultSet.getDouble("tong_tien_hang"))
+	    .build();
     }
     
     public String getLastCode() throws SQLException {

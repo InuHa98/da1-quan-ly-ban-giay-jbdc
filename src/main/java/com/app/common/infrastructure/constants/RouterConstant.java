@@ -3,6 +3,7 @@ package com.app.common.infrastructure.constants;
 import com.app.core.inuha.views.all.banhang.InuhaBanHangView;
 import com.app.core.inuha.views.quanly.thongke.InuhaThongKeView;
 import com.app.core.inuha.views.quanly.InuhaSanPhamView;
+import com.app.core.inuha.views.quanly.phieugiamgia.InuhaPhieuGiamGiaView;
 import com.app.utils.RouterUtils;
 
 /**
@@ -17,7 +18,7 @@ public class RouterConstant {
 	
     public final static String SAN_PHAM = RouterUtils.getPackageName(InuhaSanPhamView.class);
     
-    public final static String PHIEU_GIAM_GIA = "com.app.core.khoi.views.KhoiPhieuGiamGiaView";
+    public final static String PHIEU_GIAM_GIA = RouterUtils.getPackageName(InuhaPhieuGiamGiaView.class);
     
     public final static String DOT_GIAM_GIA = "com.app.core.kienhacker.views.KienDotGiamGiaView";
     

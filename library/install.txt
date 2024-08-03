@@ -6,4 +6,6 @@ mvn install:install-file -Dfile=modal-dialog-1.0.5.jar -DgroupId=raven.modaldial
 
 mvn install:install-file -Dfile=swing-jnafilechooser-1.0.0.jar -DgroupId=jnafilechooser -DartifactId=jnafilechooser-api -Dversion=1.0.0 -Dpackaging=jar
 
-mvn install:install-file -Dfile=swing-datetime-picker-1.3.0.jar -DgroupId=raven.datetime -DartifactId=swing-datetime-picker -Dversion=1.3.0 -Dpackaging=jar
+mvn install:install-file -Dfile=swing-datetime-picker-1.2.3.jar -DgroupId=raven.datetime -DartifactId=swing-datetime-picker -Dversion=1.2.3 -Dpackaging=jar
+
+mvn install:install-file -Dfile=TimingFramework-0.55.jar -DgroupId=raven.jdesktop -DartifactId=timingFramework -Dversion=1.0.0 -Dpackaging=jar
