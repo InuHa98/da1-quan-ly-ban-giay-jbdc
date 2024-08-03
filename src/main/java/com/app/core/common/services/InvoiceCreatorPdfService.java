@@ -121,7 +121,7 @@ public class InvoiceCreatorPdfService {
 	Table threeColTable8 = new Table(threeColumnWidth);
         threeColTable8.addCell(new Cell().add(new Paragraph("")).setBorder(Border.NO_BORDER).setMarginLeft(10f));
         threeColTable8.addCell(new Cell().add(new Paragraph(InvoiceConstant.PRICE_CHANGE)).setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER));
-        threeColTable8.addCell(new Cell().add(new Paragraph(String.valueOf(Math.abs(data.getTienKhachTra() - totalSum)))).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER).setMarginRight(15f));
+        threeColTable8.addCell(new Cell().add(new Paragraph(String.valueOf(Math.abs(data.getTienKhachTra() - (totalSum - data.getTongTienGiam()))))).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER).setMarginRight(15f));
         document.add(threeColTable8);
 	
         document.add(fullwidthDashedBorder(fullwidth));

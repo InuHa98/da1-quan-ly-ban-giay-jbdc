@@ -1,4 +1,4 @@
-package raven.spline;
+package com.app.views.UI.curvelinechart.spline;
 
 import java.util.ArrayList;
 import java.util.List;

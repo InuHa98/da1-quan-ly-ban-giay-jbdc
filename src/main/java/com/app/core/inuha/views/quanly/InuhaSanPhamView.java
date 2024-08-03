@@ -153,6 +153,11 @@ public class InuhaSanPhamView extends RoundPanel {
 	pnlSearchBox.setPlaceholder("Nhập tên hoặc mã sản phẩm ...");
         txtTuKhoa = pnlSearchBox.getKeyword();
         
+//	lblList.setForeground(ColorUtils.PRIMARY_COLOR);
+//	lblFilter.setForeground(ColorUtils.PRIMARY_COLOR);
+//	lblList2.setForeground(ColorUtils.PRIMARY_COLOR);
+//	lblFilter2.setForeground(ColorUtils.PRIMARY_COLOR);
+	
 	pnlSearchBox2.setPlaceholder("Nhập tên hoặc mã sản phẩm ...");
         txtTuKhoa2 = pnlSearchBox2.getKeyword();
 	
@@ -267,16 +272,16 @@ public class InuhaSanPhamView extends RoundPanel {
                         executorService.submit(() -> {
                             try {
                                 sanPhamService.delete(item.getId());
-                                loadingDialog.dispose();
                                 loadDataPage();
+				loadDataPageSPCT();
                                 MessageToast.success("Xoá thành công sản phẩm: " + item.getTen());
                             } catch (ServiceResponseException e) {
-                                loadingDialog.dispose();
                                 MessageToast.error(e.getMessage());
                             } catch (Exception e) {
-                                loadingDialog.dispose();
                                 MessageModal.error(ErrorConstant.DEFAULT_ERROR);
-                            } 
+                            } finally {
+				loadingDialog.dispose();
+			    }
                         });
                         loadingDialog.setVisible(true);
                     }
@@ -689,7 +694,6 @@ public class InuhaSanPhamView extends RoundPanel {
         });
 
         lblFilter.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
-        lblFilter.setForeground(new java.awt.Color(255, 255, 255));
         lblFilter.setText("Bộ lọc");
 
         javax.swing.GroupLayout splitLine1Layout = new javax.swing.GroupLayout(splitLine1);
@@ -754,7 +758,6 @@ public class InuhaSanPhamView extends RoundPanel {
         );
 
         lblList.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
-        lblList.setForeground(new java.awt.Color(255, 255, 255));
         lblList.setText("Danh sách sản phẩm");
 
         btnThemSanPham.setText("Thêm sản phẩm");
@@ -852,7 +855,7 @@ public class InuhaSanPhamView extends RoundPanel {
             pnlDanhSachLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlDanhSachLayout.createSequentialGroup()
                 .addGap(10, 10, 10)
-                .addComponent(scrDanhSach, javax.swing.GroupLayout.DEFAULT_SIZE, 278, Short.MAX_VALUE)
+                .addComponent(scrDanhSach, javax.swing.GroupLayout.DEFAULT_SIZE, 293, Short.MAX_VALUE)
                 .addGap(8, 8, 8))
         );
 
@@ -897,9 +900,9 @@ public class InuhaSanPhamView extends RoundPanel {
                 .addComponent(splitLine2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(pnlDanhSach, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(10, 10, 10)
                 .addComponent(pnlPhanTrang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(12, 12, 12))
+                .addGap(0, 0, 0))
         );
 
         javax.swing.GroupLayout pnlDanhSachSanPhamLayout = new javax.swing.GroupLayout(pnlDanhSachSanPham);

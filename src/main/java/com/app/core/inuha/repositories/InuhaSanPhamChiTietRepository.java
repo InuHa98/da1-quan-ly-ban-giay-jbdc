@@ -1,6 +1,7 @@
 package com.app.core.inuha.repositories;
 
 import com.app.common.helper.JbdcHelper;
+import com.app.common.infrastructure.constants.TrangThaiHoaDonConstant;
 import com.app.common.infrastructure.interfaces.IDAOinterface;
 import com.app.common.infrastructure.request.FillterRequest;
 import com.app.core.inuha.models.InuhaSanPhamChiTietModel;
@@ -100,10 +101,11 @@ public class InuhaSanPhamChiTietRepository implements IDAOinterface<InuhaSanPham
     public int delete(Integer id) throws SQLException {
         int result = 0;
         String query = String.format("""
+            DELETE FROM HoaDonChiTiet WHERE id_san_pham_chi_tiet = ?;
             DELETE FROM %s WHERE id = ?
         """, TABLE_NAME);
         try {
-            result = JbdcHelper.updateAndFlush(query, id);
+            result = JbdcHelper.updateAndFlush(query, id, id);
         } catch(Exception e) {
             e.printStackTrace();
             throw new SQLException(e.getMessage());
@@ -133,11 +135,12 @@ public class InuhaSanPhamChiTietRepository implements IDAOinterface<InuhaSanPham
     }
         
     public boolean hasUse(Integer id) throws SQLException {
-        String query = """
+        String query = String.format("""
             SELECT TOP(1) 1
-            FROM HoaDonChitiet
-            WHERE id_san_pham_chi_tiet = ?
-        """;
+            FROM HoaDonChitiet AS hdct
+                JOIN HoaDon AS hd ON hd.id = hdct.id_hoa_don
+            WHERE hdct.id_san_pham_chi_tiet = ? AND hd.trang_thai != %d
+        """, TrangThaiHoaDonConstant.STATUS_CHO_THANH_TOAN);
         try {
             return JbdcHelper.value(query, id) != null;
         } catch (Exception e) {
@@ -332,6 +335,7 @@ public class InuhaSanPhamChiTietRepository implements IDAOinterface<InuhaSanPham
                     LEFT JOIN MauSac AS ms ON ms.id = spct.id_mau_sac
                 WHERE
                     (COALESCE(?, 0) < 1 OR spct.id_san_pham = ?) AND
+                    sp.trang_thai_xoa = 0 AND
                     spct.trang_thai_xoa = 0 AND
                     (
 			(COALESCE(?, NULL) IS NULL OR spct.ma LIKE ? OR sp.ma LIKE ? OR sp.ten LIKE ?) AND
@@ -427,6 +431,7 @@ public class InuhaSanPhamChiTietRepository implements IDAOinterface<InuhaSanPham
 		LEFT JOIN MauSac AS ms ON ms.id = spct.id_mau_sac
             WHERE
                 (COALESCE(?, 0) < 1 OR spct.id_san_pham = ?) AND
+                sp.trang_thai_xoa = 0 AND
                 spct.trang_thai_xoa = 0 AND  
                 (
                     (COALESCE(?, NULL) IS NULL OR spct.ma LIKE ? OR sp.ma LIKE ? OR sp.ten LIKE ?) AND

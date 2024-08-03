@@ -2,6 +2,8 @@ package com.app.views.UI.curvelinechart.chart;
 
 import com.app.views.UI.curvelinechart.chart.blankchart.BlankPlotChart;
 import com.app.views.UI.curvelinechart.chart.blankchart.BlankPlotChatRender;
+import com.app.views.UI.curvelinechart.spline.Spline;
+import com.app.views.UI.curvelinechart.spline.SplinePoint;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -26,8 +28,6 @@ import org.jdesktop.animation.timing.Animator;
 import org.jdesktop.animation.timing.TimingTarget;
 import org.jdesktop.animation.timing.TimingTargetAdapter;
 import org.jdesktop.animation.timing.interpolation.PropertySetter;
-import raven.spline.Spline;
-import raven.spline.SplinePoint;
 
 public class CurveLineChart extends JComponent {
 
@@ -52,6 +52,8 @@ public class CurveLineChart extends JComponent {
     private int index = 0;
     private Color color1;
     private Color color2;
+    private Color colorLabel;
+    private String labelName;
     private boolean fillColor = false;
     private TimingTarget timingColor1;
     private TimingTarget timingColor2;
@@ -142,11 +144,17 @@ public class CurveLineChart extends JComponent {
             @Override
             public void mouseMove(Rectangle2D rectangle, MouseEvent mouse) {
                 if (!model.isEmpty()) {
+
                     int per = (int) (rectangle.getWidth() / model.size());
+
                     int index = -1;
                     for (int i = 0; i < per; i++) {
                         double x = i * per + rectangle.getX();
-                        if (mouse.getX() >= x && mouse.getX() <= x + per && mouse.getY() >= rectangle.getY() && mouse.getY() <= rectangle.getY() + rectangle.getHeight()) {
+
+                        if (mouse.getX() >= x &&
+				mouse.getX() <= x + per &&
+				mouse.getY() >= rectangle.getY() &&
+				mouse.getY() <= rectangle.getY() + rectangle.getHeight()) {
                             index = i;
                             break;
                         }
@@ -184,6 +192,7 @@ public class CurveLineChart extends JComponent {
 
     private void draw(Graphics2D g2, Rectangle2D rec, int index, double maxValue) {
         SplinePoint points[];
+	
         if (lastPoint == null || !animatorChange.isRunning()) {
             points = toPoint(rec, index, maxValue);
         } else {
@@ -196,6 +205,9 @@ public class CurveLineChart extends JComponent {
                 points[i].setY(points[i].getY() + (b * animateChange));
             }
         }
+
+
+		    
         g2.setColor(legends.get(index).getColor1());
         current = copyPoint(points);
         List<SplinePoint> list = spline.createSpline(animate, points);
@@ -209,7 +221,7 @@ public class CurveLineChart extends JComponent {
                 path.lineTo(p.getX(), p.getY());
             }
         }
-        float size = 6;
+        float size = 4;
         g2.setPaint(new GradientPaint((int) rec.getX(), 0, color1, (int) (rec.getX() + rec.getWidth()), 0, color2));
         g2.setStroke(new BasicStroke(size, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
         if (fillColor && !list.isEmpty()) {
@@ -235,15 +247,17 @@ public class CurveLineChart extends JComponent {
     }
 
     private void drawLabel(Graphics2D g2, SplinePoint s) {
+	Color color = colorLabel == null ? getForeground() : colorLabel;
         g2.setStroke(new BasicStroke(1f));
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alphaLable * 0.3f));
         g2.fill(new Ellipse2D.Double(s.getX() - 13, s.getY() - 13, 26, 26));
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alphaLable));
         g2.fill(new Ellipse2D.Double(s.getX() - 8, s.getY() - 8, 16, 16));
-        g2.setColor(getForeground());
+        g2.setColor(color);
         g2.fill(new Ellipse2D.Double(s.getX() - 5, s.getY() - 5, 10, 10));
         if (selectedIndex >= 0) {
             String text = blankPlotChart.getFormat().format(model.get(selectedIndex).getValues()[index]);
+	    text = text + (labelName != null ? labelName : "");
             FontMetrics fm = g2.getFontMetrics();
             Rectangle2D r2 = fm.getStringBounds(text, g2);
             double space = 5;
@@ -256,7 +270,7 @@ public class CurveLineChart extends JComponent {
             g2.fill(new RoundRectangle2D.Double(0, 0, w, h, 5, 5));
             g2.setColor(new Color(200, 200, 200, 100));
             g2.draw(new RoundRectangle2D.Double(0, 0, w, h, 5, 5));
-            g2.setColor(getForeground());
+            g2.setColor(color);
             double fx = (w - r2.getWidth()) / 2;
             double fy = (h - r2.getHeight()) / 2;
             fy += fm.getAscent();
@@ -418,6 +432,24 @@ public class CurveLineChart extends JComponent {
     public Color getTitleColor() {
         return labelTitle.getForeground();
     }
+
+    public Color getColorLabel() {
+	return colorLabel;
+    }
+
+    public void setColorLabel(Color colorLabel) {
+	this.colorLabel = colorLabel;
+    }
+
+    public String getLabelName() {
+	return labelName;
+    }
+
+    public void setLabelName(String labelName) {
+	this.labelName = labelName;
+    }
+    
+    
 
     @Override
     public void setForeground(Color fg) {

@@ -1,6 +1,7 @@
 package com.app.core.inuha.repositories;
 
 import com.app.common.helper.JbdcHelper;
+import com.app.common.infrastructure.constants.TrangThaiHoaDonConstant;
 import com.app.common.infrastructure.interfaces.IDAOinterface;
 import com.app.common.infrastructure.request.FillterRequest;
 import com.app.core.inuha.models.InuhaSanPhamModel;
@@ -91,8 +92,18 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
                 trang_thai = ?,
                 trang_thai_xoa = ?,
                 ngay_cap_nhat = ?
-            WHERE id = ?
-        """, TABLE_NAME);
+            WHERE id = ?;
+                                     
+            UPDATE HoaDonChiTiet 
+	    SET gia_nhap = ?, gia_ban = ?
+            WHERE
+                id_san_pham_chi_tiet IN (
+		    SELECT id FROM SanPhamChiTiet WHERE id_san_pham = ?
+		) AND
+                id_hoa_don IN (
+                    SELECT id FROM HoaDon WHERE trang_thai = %d
+                )
+        """, TABLE_NAME, TrangThaiHoaDonConstant.STATUS_CHO_THANH_TOAN);
         try {
             Object[] args = new Object[] {
                 model.getDanhMuc().getId(),
@@ -109,7 +120,11 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
                 model.isTrangThai(),
                 model.isTrangThaiXoa(),
                 TimeUtils.currentDate(),
-                model.getId()
+                model.getId(),
+		
+		model.getGiaNhap(),
+		model.getGiaBan(),
+		model.getId()
             };
             result = JbdcHelper.updateAndFlush(query, args);
         } catch(Exception e) {
@@ -123,11 +138,12 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
     public int delete(Integer id) throws SQLException {
         int result = 0;
         String query = String.format("""
+            DELETE FROM HoaDonChiTiet WHERE id_san_pham_chi_tiet IN (SELECT id FROM SanPhamChiTiet WHERE id_san_pham = ?);
             DELETE FROM SanPhamChiTiet WHERE id_san_pham = ?;
             DELETE FROM %s WHERE id = ?
         """, TABLE_NAME);
         try {
-            result = JbdcHelper.updateAndFlush(query, id, id);
+            result = JbdcHelper.updateAndFlush(query, id, id, id);
         } catch(Exception e) {
             e.printStackTrace();
             throw new SQLException(e.getMessage());
@@ -157,12 +173,13 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
     }
         
     public boolean hasUse(Integer id) throws SQLException {
-        String query = """
+        String query = String.format("""
             SELECT TOP(1) 1
             FROM HoaDonChitiet AS hdct
-                LEFT JOIN SanPhamChiTiet AS spct ON spct.id = hdct.id_san_pham_chi_tiet
-            WHERE spct.id_san_pham = ?
-        """;
+                JOIN SanPhamChiTiet AS spct ON spct.id = hdct.id_san_pham_chi_tiet
+                JOIN HoaDon AS hd ON hd.id = hdct.id_hoa_don
+            WHERE spct.id_san_pham = ? AND hd.trang_thai != %d
+        """, TrangThaiHoaDonConstant.STATUS_CHO_THANH_TOAN);
         try {
             return JbdcHelper.value(query, id) != null;
         } catch (Exception e) {

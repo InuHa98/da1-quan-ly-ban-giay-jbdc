@@ -1,4 +1,4 @@
-package raven.spline;
+package com.app.views.UI.curvelinechart.spline;
 
 public class SplinePoint {
 

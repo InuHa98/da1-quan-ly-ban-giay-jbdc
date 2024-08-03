@@ -4,6 +4,7 @@ import com.app.common.helper.MessageModal;
 import com.app.common.helper.MessageToast;
 import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
+import com.app.core.inuha.models.InuhaHoaDonChiTietModel;
 import com.app.core.inuha.models.InuhaSanPhamChiTietModel;
 import com.app.core.inuha.models.InuhaSanPhamModel;
 import com.app.core.inuha.models.sanpham.InuhaKichCoModel;
@@ -486,9 +487,9 @@ public class InuhaAddSanPhamChiTietView extends javax.swing.JPanel {
                             sanPhamChiTietService.update(model);
 			    
 			    if (sanPhamChiTiet.isTrangThai() != trangThai && !trangThai) { 
-				List<Integer> idsSanPhamCho = InuhaHoaDonChiTietRepository.getInstance().getAllIdsByIdSanPhamChiTiet(sanPhamChiTiet.getId());
-				for(int id: idsSanPhamCho) { 
-				    InuhaHoaDonChiTietService.getInstance().delete(id);
+				List<InuhaHoaDonChiTietModel> sanPhamCho = InuhaHoaDonChiTietRepository.getInstance().getAllIdsByIdSanPhamChiTiet(sanPhamChiTiet.getId());
+				for(InuhaHoaDonChiTietModel m: sanPhamCho) { 
+				    InuhaHoaDonChiTietService.getInstance().delete(m);
 				}
 			    }
 			    

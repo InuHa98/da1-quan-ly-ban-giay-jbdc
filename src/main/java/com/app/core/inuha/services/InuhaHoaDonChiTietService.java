@@ -51,9 +51,10 @@ public class InuhaHoaDonChiTietService implements IInuhaHoaDonChiTietServiceInte
     public Integer insert(InuhaHoaDonChiTietModel model) {
         try {
 	    int rows = -1;
+	    int soLuong = model.getSoLuong();
 	    Optional<InuhaHoaDonChiTietModel> check = repository.getDuplicate(model);
 	    if (check.isPresent()) { 
-		model.setSoLuong(check.get().getSoLuong() + model.getSoLuong());
+		model.setSoLuong(check.get().getSoLuong() + soLuong);
 		model.setId(check.get().getId());
 		rows = repository.update(model);
 	    } else {
@@ -63,7 +64,7 @@ public class InuhaHoaDonChiTietService implements IInuhaHoaDonChiTietServiceInte
                 throw new ServiceResponseException("Không thể thêm sản phẩm vào giỏ hàng");
             }
 	    InuhaSanPhamChiTietModel sanPhamChiTiet = model.getSanPhamChiTiet();
-	    int soLuongTon = sanPhamChiTiet.getSoLuong() - model.getSoLuong();
+	    int soLuongTon = sanPhamChiTiet.getSoLuong() - soLuong;
 	    if (soLuongTon < 0) { 
 		soLuongTon = 0;
 	    }
@@ -196,7 +197,7 @@ public class InuhaHoaDonChiTietService implements IInuhaHoaDonChiTietServiceInte
         return null;
     }
     
-    public List<Integer> getAllIdsByIdSanPham(int idSanPham) {
+    public List<InuhaHoaDonChiTietModel> getAllIdsByIdSanPham(int idSanPham) {
         try {
             return repository.getAllIdsByIdSanPham(idSanPham);
         } catch (SQLException ex) {
@@ -205,7 +206,7 @@ public class InuhaHoaDonChiTietService implements IInuhaHoaDonChiTietServiceInte
         return new ArrayList<>();
     }
 	
-    public List<Integer> getAllIdsByIdSanPhamChiTiet(int idSanPhamChiTiet) {
+    public List<InuhaHoaDonChiTietModel> getAllIdsByIdSanPhamChiTiet(int idSanPhamChiTiet) {
         try {
             return repository.getAllIdsByIdSanPhamChiTiet(idSanPhamChiTiet);
         } catch (SQLException ex) {

@@ -59,7 +59,7 @@ public class InuhaHoaDonRepository implements IDAOinterface<InuhaHoaDonModel, In
 		model.getMa(),
 		PhuongThucThanhToanConstant.TIEN_MAT,
 		TrangThaiHoaDonConstant.STATUS_CHO_THANH_TOAN,
-		TimeUtils.currentDate()
+		TimeUtils.currentDateTime()
             };
             result = JbdcHelper.updateAndFlush(query, args);
         } catch(Exception e) {

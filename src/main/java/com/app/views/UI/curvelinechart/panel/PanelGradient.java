@@ -1,4 +1,4 @@
-package raven.panel;
+package com.app.views.UI.curvelinechart.panel;
 
 import java.awt.Color;
 import java.awt.GradientPaint;

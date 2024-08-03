@@ -2,6 +2,7 @@ package com.app.core.inuha.models;
 
 import com.app.common.infrastructure.constants.TrangThaiHoaDonConstant;
 import com.app.utils.BillUtils;
+import com.app.utils.TimeUtils;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -57,7 +58,7 @@ public class InuhaHoaDonModel {
 	    stt,
 	    ma,
 	    taiKhoan.getUsername(),
-	    ngayTao,
+	    TimeUtils.date("dd-MM-yyy HH:mm", ngayTao),
 	    BillUtils.getTrangThai(trangThai)
 	};
     }

@@ -4,6 +4,7 @@ import com.app.common.helper.MessageModal;
 import com.app.common.helper.MessageToast;
 import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
+import com.app.core.inuha.models.InuhaHoaDonChiTietModel;
 import com.app.core.inuha.models.InuhaSanPhamModel;
 import com.app.core.inuha.models.sanpham.InuhaChatLieuModel;
 import com.app.core.inuha.models.sanpham.InuhaDanhMucModel;
@@ -1142,9 +1143,9 @@ public class InuhaAddSanPhamView extends javax.swing.JPanel {
                         } else {
                             sanPhamService.update(model);
 			    if (sanPham.isTrangThai() != trangThai && !trangThai) { 
-				List<Integer> idsSanPhamCho = InuhaHoaDonChiTietRepository.getInstance().getAllIdsByIdSanPham(sanPham.getId());
-				for(int id: idsSanPhamCho) { 
-				    InuhaHoaDonChiTietService.getInstance().delete(id);
+				List<InuhaHoaDonChiTietModel> sanPhamCho = InuhaHoaDonChiTietRepository.getInstance().getAllIdsByIdSanPham(sanPham.getId());
+				for(InuhaHoaDonChiTietModel m: sanPhamCho) { 
+				    InuhaHoaDonChiTietService.getInstance().delete(m);
 				}
 			    }
                             MessageToast.success("Lưu chỉnh sửa sản phẩm thành công.");

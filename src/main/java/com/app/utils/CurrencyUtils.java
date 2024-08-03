@@ -21,11 +21,15 @@ public class CurrencyUtils {
         return "đ" + (new DecimalFormat("#,###")).format(price).replace(",", ".");
     }
     
-    public static String parseString(int price) {
-        return "đ" + (new DecimalFormat("#,###")).format(price).replace(",", ".");
+    public static String parseTextField(double price) {
+        return new DecimalFormat("#,###").format(price).replace(",", ".");
+    }
+    
+    public static String parseNumber(int price) {
+        return new DecimalFormat("#,###").format(price).replace(",", ".");
     }
 
-    public static String parseTextField(double price) {
+    public static String parseNumber(double price) {
         return new DecimalFormat("#,###").format(price).replace(",", ".");
     }
         

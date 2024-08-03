@@ -167,11 +167,16 @@ public class InuhaHoaDonChiTietRepository implements IDAOinterface<InuhaHoaDonCh
 
         String query = String.format("""
             SELECT 
-                *,
-                ROW_NUMBER() OVER (ORDER BY id DESC) AS stt
-            FROM %s
-            WHERE id_hoa_don = ?
-	    ORDER BY id DESC 
+                hdct.*,
+                ROW_NUMBER() OVER (ORDER BY hdct.id DESC) AS stt
+            FROM %s AS hdct
+                JOIN SanPhamChiTiet AS spct ON spct.id = hdct.id_san_pham_chi_tiet
+                JOIN SanPham AS sp ON sp.id = spct.id_san_pham
+            WHERE 
+                hdct.id_hoa_don = ? AND
+                sp.trang_thai_xoa = 0 AND
+                spct.trang_thai_xoa = 0
+	    ORDER BY hdct.id DESC 
         """, TABLE_NAME);
 
         try {
@@ -200,23 +205,28 @@ public class InuhaHoaDonChiTietRepository implements IDAOinterface<InuhaHoaDonCh
         return list;
     }
 
-    public List<Integer> getAllIdsByIdSanPham(int idSanPham) throws SQLException {
-        List<Integer> list = new ArrayList<>();
+    public List<InuhaHoaDonChiTietModel> getAllIdsByIdSanPham(int idSanPham) throws SQLException {
+        List<InuhaHoaDonChiTietModel> list = new ArrayList<>();
         ResultSet resultSet = null;
 
         String query = String.format("""
             SELECT 
-                hdct.id
+                hdct.*
             FROM %s AS hdct
-            JOIN HoaDon AS hd ON hd.id = hdct.id_hoa_don
-            JOIN SanPhamChiTiet AS spct ON spct.id = hdct.id_san_pham_chi_tiet
+		JOIN HoaDon AS hd ON hd.id = hdct.id_hoa_don
+		JOIN SanPhamChiTiet AS spct ON spct.id = hdct.id_san_pham_chi_tiet
             WHERE spct.id_san_pham = ? AND hd.trang_thai = %d
         """, TABLE_NAME, TrangThaiHoaDonConstant.STATUS_CHO_THANH_TOAN);
 
         try {
             resultSet = JbdcHelper.query(query, idSanPham);
             while(resultSet.next()) {
-                list.add(resultSet.getInt("id"));
+                InuhaHoaDonChiTietModel model = buildData(resultSet, false);
+                Optional<InuhaSanPhamChiTietModel> sanPhamChiTiet = sanPhamChiTietRepository.getById(resultSet.getInt("id_san_pham_chi_tiet"));
+                if (sanPhamChiTiet.isPresent()) { 
+                    model.setSanPhamChiTiet(sanPhamChiTiet.get());
+                }
+                list.add(model);
             }
         } catch(Exception e) {
             e.printStackTrace();
@@ -229,23 +239,28 @@ public class InuhaHoaDonChiTietRepository implements IDAOinterface<InuhaHoaDonCh
         return list;
     }
 	
-    public List<Integer> getAllIdsByIdSanPhamChiTiet(int idSanPhamChiTiet) throws SQLException {
-        List<Integer> list = new ArrayList<>();
+    public List<InuhaHoaDonChiTietModel> getAllIdsByIdSanPhamChiTiet(int idSanPhamChiTiet) throws SQLException {
+        List<InuhaHoaDonChiTietModel> list = new ArrayList<>();
         ResultSet resultSet = null;
 
         String query = String.format("""
             SELECT 
                 hdct.id
             FROM %s AS hdct
-            JOIN HoaDon AS hd ON hd.id = hdct.id_hoa_don
-            JOIN SanPhamChiTiet AS spct ON spct.id = hdct.id_san_pham_chi_tiet
+		JOIN HoaDon AS hd ON hd.id = hdct.id_hoa_don
+		JOIN SanPhamChiTiet AS spct ON spct.id = hdct.id_san_pham_chi_tiet
             WHERE spct.id = ? AND hd.trang_thai = %d
         """, TABLE_NAME, TrangThaiHoaDonConstant.STATUS_CHO_THANH_TOAN);
 
         try {
             resultSet = JbdcHelper.query(query, idSanPhamChiTiet);
             while(resultSet.next()) {
-                list.add(resultSet.getInt("id"));
+                InuhaHoaDonChiTietModel model = buildData(resultSet, false);
+                Optional<InuhaSanPhamChiTietModel> sanPhamChiTiet = sanPhamChiTietRepository.getById(resultSet.getInt("id_san_pham_chi_tiet"));
+                if (sanPhamChiTiet.isPresent()) { 
+                    model.setSanPhamChiTiet(sanPhamChiTiet.get());
+                }
+                list.add(model);
             }
         } catch(Exception e) {
             e.printStackTrace();

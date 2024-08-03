@@ -47,6 +47,7 @@ import com.app.utils.ColorUtils;
 import com.app.utils.CurrencyUtils;
 import com.app.utils.QrCodeUtils;
 import com.app.utils.ResourceUtils;
+import com.app.utils.TimeUtils;
 import com.app.utils.VoucherUtils;
 import com.app.views.UI.combobox.ComboBoxItem;
 import com.app.views.UI.dialog.LoadingDialog;
@@ -199,6 +200,8 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 	btnScanQr.setIcon(ResourceUtils.getSVG("/svg/qr.svg", new Dimension(20, 20)));
 	btnRemoveSanPham.setIcon(ResourceUtils.getSVG("/svg/times.svg", new Dimension(20, 20)));
 	
+	pnlDanhSachSanPham.setRound(0, 0, 0, 0);
+	
 	txtTuKhoa.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
@@ -264,7 +267,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
     private void setupTableHoaDon(JTable table) { 
         pnlDanhSachHoaDon.setBackground(ColorUtils.BACKGROUND_TABLE);
         TableCustomUI.apply(scrDanhSachHoaDon, TableCustomUI.TableType.DEFAULT);
-        //TableCustomUI.resizeColumnHeader(table);
+        TableCustomUI.resizeColumnHeader(table);
 	
         table.setRowHeight(30);
     }
@@ -1008,7 +1011,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
         pnlDanhSachSanPham.setLayout(pnlDanhSachSanPhamLayout);
         pnlDanhSachSanPhamLayout.setHorizontalGroup(
             pnlDanhSachSanPhamLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scrDanhSachSanPham)
+            .addComponent(scrDanhSachSanPham, javax.swing.GroupLayout.DEFAULT_SIZE, 863, Short.MAX_VALUE)
         );
         pnlDanhSachSanPhamLayout.setVerticalGroup(
             pnlDanhSachSanPhamLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1064,49 +1067,46 @@ public class InuhaBanHangView extends javax.swing.JPanel {
         pnlSanPhamLayout.setHorizontalGroup(
             pnlSanPhamLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(splitLine4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlSanPhamLayout.createSequentialGroup()
+            .addComponent(pnlDanhSachSanPham, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(pnlSanPhamLayout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addGroup(pnlSanPhamLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pnlSanPhamLayout.createSequentialGroup()
-                        .addGroup(pnlSanPhamLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(pnlDanhSachSanPham, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(pnlSanPhamLayout.createSequentialGroup()
-                                .addComponent(pnlSearchBox, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 68, Short.MAX_VALUE)
-                                .addGroup(pnlSanPhamLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(cboDanhMuc, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(pnlSanPhamLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(cboThuongHieu, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(pnlSanPhamLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(cboXuatXu, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(pnlSanPhamLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addGroup(pnlSanPhamLayout.createSequentialGroup()
-                                        .addComponent(cboKieuDang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(cboChatLieu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(pnlSanPhamLayout.createSequentialGroup()
-                                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(pnlSanPhamLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(cboDeGiay, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                            .addComponent(pnlPhanTrang, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(20, 20, 20))
-                    .addGroup(pnlSanPhamLayout.createSequentialGroup()
-                        .addComponent(lblProducts, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlSanPhamLayout.createSequentialGroup()
+                        .addComponent(pnlSearchBox, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(pnlSanPhamLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(cboDanhMuc, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(pnlSanPhamLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(cboThuongHieu, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(pnlSanPhamLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(cboXuatXu, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(pnlSanPhamLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(pnlSanPhamLayout.createSequentialGroup()
+                                .addComponent(cboKieuDang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(cboChatLieu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(pnlSanPhamLayout.createSequentialGroup()
+                                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(pnlSanPhamLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(cboDeGiay, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(pnlSanPhamLayout.createSequentialGroup()
+                        .addComponent(lblProducts, javax.swing.GroupLayout.PREFERRED_SIZE, 590, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnScanQr, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(12, 12, 12)
-                        .addComponent(btnReset, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(13, 13, 13))))
+                        .addComponent(btnReset, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(pnlPhanTrang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(20, 20, 20))
         );
         pnlSanPhamLayout.setVerticalGroup(
             pnlSanPhamLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1197,6 +1197,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
         scrDanhSachHoaDon.setViewportView(tblDanhSachHoaDon);
         if (tblDanhSachHoaDon.getColumnModel().getColumnCount() > 0) {
             tblDanhSachHoaDon.getColumnModel().getColumn(0).setMaxWidth(40);
+            tblDanhSachHoaDon.getColumnModel().getColumn(3).setMinWidth(180);
         }
 
         javax.swing.GroupLayout pnlDanhSachHoaDonLayout = new javax.swing.GroupLayout(pnlDanhSachHoaDon);
@@ -1352,7 +1353,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(20, 20, 20)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -1586,7 +1587,6 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 	    try {
 		InuhaHoaDonModel model = new InuhaHoaDonModel();
 		model.setMa(BillUtils.generateCodeHoaDon());
-		System.out.println(model.getMa());
 		hoaDonService.insert(model);
 		loadDataHoaDonCho();
 		handleSelectBill(0);
@@ -1658,7 +1658,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 	}
 	
 	lblMaHoaDon.setText("#" + currentHoaDon.getMa());
-	lblNgayTao.setText(currentHoaDon.getNgayTao());
+	lblNgayTao.setText(TimeUtils.date("dd-MM-yyyy HH:mm", currentHoaDon.getNgayTao()));
 	lblNguoiTao.setText(currentHoaDon.getTaiKhoan().getUsername());
 	lblTrangThai.setText(BillUtils.getTrangThai(currentHoaDon.getTrangThai()));
 	
@@ -2056,10 +2056,8 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 	    loadDataHoaDonCho();
 	    loadDataGioHang();
 
-	    MessageToast.success("Xác nhận thanh toán thành công đơn hàng #" + currentHoaDon.getMa());
-	    loading.dispose();
-	    
 	    if (printInvoice) {
+		loading.dispose();
 		InvoiceDataModel invoiceData = new InvoiceDataModel();
 		invoiceData.setMaHoaDon(currentHoaDon.getMa());
 		invoiceData.setTenKhachHang(currentHoaDon.getKhachHang() != null ? currentHoaDon.getKhachHang().getHoTen() : "Khách lẻ");
@@ -2080,7 +2078,9 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 		    PdfHelper.openFile(invoiceFile);
 		}
 	    }
+	    MessageToast.success("Xác nhận thanh toán thành công đơn hàng #" + currentHoaDon.getMa());
 	    handleClear();
+	    ModalDialog.closeAllModal();
 	} catch (ServiceResponseException e) {
 	    e.printStackTrace();
 	    MessageToast.error(e.getMessage());

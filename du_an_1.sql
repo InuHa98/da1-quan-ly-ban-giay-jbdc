@@ -27,6 +27,7 @@ CREATE TABLE KhachHang (
 	sdt VARCHAR(13) NOT NULL,
 	gioi_tinh BIT,
 	dia_chi NVARCHAR(2000),
+	ngay_tao DATETIME NOT NULL DEFAULT GETDATE(),
 	trang_thai_xoa BIT DEFAULT 0
 );
 
@@ -165,7 +166,7 @@ CREATE TABLE HoaDon (
 	ma VARCHAR(10) NOT NULL,
 	phuong_thuc_thanh_toan BIT NOT NULL,
 	trang_thai INT NOT NULL,
-	ngay_tao DATE NOT NULL DEFAULT GETDATE(),
+	ngay_tao DATETIME NOT NULL DEFAULT GETDATE(),
 	ngay_cap_nhat DATE DEFAULT GETDATE(),
 	trang_thai_xoa BIT DEFAULT 0,
 	FOREIGN KEY(id_tai_khoan) REFERENCES dbo.TaiKhoan(id),

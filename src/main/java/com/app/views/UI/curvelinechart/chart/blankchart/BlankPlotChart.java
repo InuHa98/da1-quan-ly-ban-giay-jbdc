@@ -9,6 +9,7 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.text.DecimalFormat;
 import javax.swing.JComponent;
@@ -62,6 +63,7 @@ public class BlankPlotChart extends JComponent {
     private int labelCount;
     private String valuesFormat = "#,##0.##";
     private BlankPlotChatRender blankPlotChatRender;
+    private int paddingText = 0;
 
     public BlankPlotChart() {
         setBackground(Color.WHITE);
@@ -96,9 +98,9 @@ public class BlankPlotChart extends JComponent {
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
             g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
+	    createLabelText(g2);
             createLine(g2);
             createValues(g2);
-            createLabelText(g2);
             renderSeries(g2);
         }
     }
@@ -109,7 +111,7 @@ public class BlankPlotChart extends JComponent {
         double textHeight = getLabelTextHeight(g2);
         double height = getHeight() - (insets.top + insets.bottom) - textHeight;
         double space = height / niceScale.getMaxTicks();
-        double locationY = insets.bottom + textHeight;
+        double locationY = insets.bottom + textHeight + paddingText;
         double textWidth = getMaxValuesTextWidth(g2);
         double spaceText = 5;
         for (int i = 0; i <= niceScale.getMaxTicks(); i++) {
@@ -127,7 +129,7 @@ public class BlankPlotChart extends JComponent {
         double height = getHeight() - (insets.top + insets.bottom) - textHeight;
         double space = height / niceScale.getMaxTicks();
         double valuesCount = niceScale.getNiceMin();
-        double locationY = insets.bottom + textHeight;
+        double locationY = insets.bottom + textHeight + paddingText;
         FontMetrics ft = g2.getFontMetrics();
         for (int i = 0; i <= niceScale.getMaxTicks(); i++) {
             String text = format.format(valuesCount);
@@ -141,22 +143,38 @@ public class BlankPlotChart extends JComponent {
     }
 
     private void createLabelText(Graphics2D g2) {
+	
         if (labelCount > 0) {
+	    boolean isManys = labelCount > 10;
+	    paddingText = 0;
             Insets insets = getInsets();
             double textWidth = getMaxValuesTextWidth(g2);
+	    if (isManys) {
+		double textHeight = getMaxValuesTextWidth(g2) / 2;
+		paddingText += (int) textHeight + 10;
+	    }
             double spaceText = 5;
             double width = getWidth() - insets.left - insets.right - textWidth - spaceText;
             double space = width / labelCount;
             double locationX = insets.left + textWidth + spaceText;
             double locationText = getHeight() - insets.bottom + 5;
             FontMetrics ft = g2.getFontMetrics();
+	    AffineTransform originalTransform = g2.getTransform();
+	    double angle = Math.toRadians(-45);
+	    
             for (int i = 0; i < labelCount; i++) {
                 double centerX = ((locationX + space / 2));
                 g2.setColor(getForeground());
                 String text = getChartText(i);
                 Rectangle2D r2 = ft.getStringBounds(text, g2);
                 double textX = centerX - r2.getWidth() / 2;
+		if (isManys) {
+		    g2.rotate(angle, textX, locationText);
+		}
                 g2.drawString(text, (int) textX, (int) locationText);
+		if (isManys) {
+		    g2.setTransform(originalTransform);
+		}
                 locationX += space;
             }
         }
@@ -166,7 +184,7 @@ public class BlankPlotChart extends JComponent {
         if (blankPlotChatRender != null) {
             Insets inset = getInsets();
             double textWidth = getMaxValuesTextWidth(g2);
-            double textHeight = getLabelTextHeight(g2);
+            double textHeight = getLabelTextHeight(g2) + paddingText;
             Rectangle2D.Double rectangle = new Rectangle.Double(inset.left + textWidth, inset.top, getWidth() - (inset.left + inset.right + textWidth), getHeight() - (inset.top + inset.bottom + textHeight));
             blankPlotChatRender.renderGraphics(this, g2, rectangle);
         }
@@ -198,6 +216,22 @@ public class BlankPlotChart extends JComponent {
         return width;
     }
 
+    private double getMaxValuesTextHeight(Graphics2D g2) {
+        double height = 0;
+        FontMetrics ft = g2.getFontMetrics();
+        double valuesCount = niceScale.getNiceMin();
+        for (int i = 0; i <= niceScale.getMaxTicks(); i++) {
+            String text = format.format(valuesCount);
+            Rectangle2D r2 = ft.getStringBounds(text, g2);
+            double h = r2.getHeight();
+            if (h > height) {
+                height = h;
+            }
+            valuesCount += niceScale.getTickSpacing();
+        }
+        return height;
+    }
+	
     private int getLabelTextHeight(Graphics2D g2) {
         FontMetrics ft = g2.getFontMetrics();
         return ft.getHeight();

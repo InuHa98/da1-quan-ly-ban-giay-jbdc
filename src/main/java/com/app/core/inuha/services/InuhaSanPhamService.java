@@ -87,6 +87,8 @@ public class InuhaSanPhamService implements IInuhaSanPhamServiceInterface {
             if (repository.has(model)) { 
                 throw new ServiceResponseException("Tên sản phẩm đã tồn tại trên hệ thống");
             }
+	    
+	    
             repository.update(model);
         } catch (SQLException ex) {
             ex.printStackTrace();

@@ -767,6 +767,11 @@ public class InuhaDetailSanPhamView extends JPanel {
 
     private void tblDanhSachMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblDanhSachMouseClicked
         // TODO add your handling code here:
+	if (evt.getClickCount() > 1) {
+            InuhaSanPhamChiTietModel item = dataItems.get(tblDanhSach.getSelectedRow());
+            showEdit(item);
+	    return;
+	}
         List<Integer> columns = List.of(0, 7);
         if (SwingUtilities.isLeftMouseButton(evt)) { 
             int row = tblDanhSach.rowAtPoint(evt.getPoint());

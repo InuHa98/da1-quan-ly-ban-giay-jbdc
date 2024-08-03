@@ -1,4 +1,4 @@
-package raven.shadow;
+package com.app.views.UI.curvelinechart.shadow;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
