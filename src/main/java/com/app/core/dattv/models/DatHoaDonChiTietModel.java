@@ -28,11 +28,12 @@ public class DatHoaDonChiTietModel {
     private String maHd;
     private Date ngayTao;
     private int trangThai;
+    private int tongSoluong;
 
     public DatHoaDonChiTietModel() {
     }
 
-    public DatHoaDonChiTietModel(int id, int giaGiam, String maSp, String tenSP, int soLuong, int giaNhap, int giaBan, int thanhTien, int tongTienhang, String tenKhachHang, String tenNV, String maHd, Date ngayTao, int trangThai) {
+    public DatHoaDonChiTietModel(int id, int giaGiam, String maSp, String tenSP, int soLuong, int giaNhap, int giaBan, int thanhTien, int tongTienhang, String tenKhachHang, String tenNV, String maHd, Date ngayTao, int trangThai,int tongSoluong) {
         this.id = id;
         this.giaGiam=giaGiam;
         this.maSp = maSp;
@@ -47,6 +48,15 @@ public class DatHoaDonChiTietModel {
         this.maHd = maHd;
         this.ngayTao = ngayTao;
         this.trangThai = trangThai;
+        this.tongSoluong=tongSoluong;
+    }
+
+    public int getTongSoluong() {
+        return tongSoluong;
+    }
+
+    public void setTongSoluong(int tongSoluong) {
+        this.tongSoluong = tongSoluong;
     }
 
     public int getId() {

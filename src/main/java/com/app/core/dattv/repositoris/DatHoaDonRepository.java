@@ -20,326 +20,552 @@ import com.app.common.infrastructure.interfaces.IDAOinterface;
 import com.app.common.infrastructure.request.FillterRequest;
 import com.app.core.dattv.request.DatFillerHoaDonRequest;
 import com.app.utils.TimeUtils;
+import java.util.Date;
 import java.util.Optional;
 
 /**
  *
  * @author WIN
  */
-public class DatHoaDonRepository implements IDAOinterface<DatHoaDonModel, Integer> {
-
-    private final static String TABLE_NAME = "HoaDon";
-
-    @Override
-    public int insert(DatHoaDonModel model) throws SQLException {
-        int result = 0;
-        String query = String.format("""
-            INSERT INTO %s( id_tai_khoan,
-                            id_khach_hang,
-                            id_phieu_giam_gia,
-                            ma,
-                            tien_giam, 
-                            phuong_thuc_thanh_toan,
-                            trang_thai,
-                            trang_thai_xoa,
-                            ngay_tao,ngay_cap_nhat
-                             )
-            VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """, TABLE_NAME);
-        try {
-            Object[] args = new Object[]{
-                model.getId_tai_khoan(),
-                model.getId_khach_hang(),
-                model.getId_phieu_giam_gia(),
-                model.getMaHd(),
-                model.getPhuong_thuc_thanh_toan(),
-                model.getTrangThai(),
-                model.isTrangThaixoa(),
-                TimeUtils.currentDate(),
-                TimeUtils.currentDate(),};
-            result = JbdcHelper.updateAndFlush(query, args);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new SQLException(e.getMessage());
-        }
-
-        return result;
+public class DatHoaDonRepository {
+    private static DatHoaDonRepository instance = null;
+    
+    public static DatHoaDonRepository getInstance() { 
+	if (instance == null) { 
+	    instance = new DatHoaDonRepository();
+	}
+	return instance;
     }
 
-    @Override
-    public int update(DatHoaDonModel model) throws SQLException {
-        int result = 0;
-        String query = String.format("""
-            UPDATE %s SET
-                id_tai_khoan=?,
-                id_khach_hang=?,
-                id_phieu_giam_gia=?,
-                ma=?,
-                tien_giam=?, 
-                phuong_thuc_thanh_toan=?,
-                trang_thai=?,
-                trang_thai_xoa=?,
-                ngay_tao,ngay_cap_nhat=?
-            WHERE id = ?
-        """, TABLE_NAME);
-        try {
-            Object[] args = new Object[]{
-                model.getId_tai_khoan(),
-                model.getId_khach_hang(),
-                model.getId_phieu_giam_gia(),
-                model.getMaHd(),
-                model.getPhuong_thuc_thanh_toan(),
-                model.getTrangThai(),
-                model.isTrangThaixoa(),
-                TimeUtils.currentDate(),
-                TimeUtils.currentDate(),
-                model.getId()
-            };
-            result = JbdcHelper.updateAndFlush(query, args);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new SQLException(e.getMessage());
-        }
-
-        return result;
+    public DatHoaDonRepository() {
     }
 
-    @Override
-    public int delete(Integer id) throws SQLException {
-    int result = 0;
-        String query = String.format("""
-            DELETE FROM Hoadonchitiet WHERE id_san_pham = ?;
-            DELETE FROM %s WHERE id = ?
-        """, TABLE_NAME);// hoi? %s
-        try {
-            result = JbdcHelper.updateAndFlush(query, id, id);
-        } catch(Exception e) {
-            e.printStackTrace();
-            throw new SQLException(e.getMessage());
-        }
-        return result;    }
+    public ArrayList<DatHoaDonRequest> getAll() {
+        //SUA LAI CAU QUERY
+        String sql = """
+                    SELECT    
+                              hd.ma,
+                              hd.ngay_tao,
+                              kh.ho_ten,
+                              SUM(hdct.gia_ban * so_luong) AS tong_gia_ban,
+                              hd.tien_giam,
+                              (SUM(hdct.gia_ban * so_luong) - hd.tien_giam) AS tong_sau_giam,
+                              hd.trang_thai,
+                              hd.trang_thai_xoa,
+                              hd.phuong_thuc_thanh_toan,
+                              hd.id
+                          FROM 
+                              HoaDon hd
+                          INNER JOIN 
+                              HoaDonChiTiet hdct ON hd.id = hdct.id_hoa_don
+                          INNER JOIN 
+                              KhachHang kh ON hd.id_khach_hang = kh.id
+                          INNER JOIN 
+                              TaiKhoan tk ON hd.id_tai_khoan = tk.id 
+                          GROUP BY 
+                              
+                              hd.ma,
+                              hd.ngay_tao,
+                              kh3.ho_ten,
+                              hd.tien_giam,
+                              hd.trang_thai,
+                              hd.trang_thai_xoa,
+                              hd.phuong_thuc_thanh_toan,
+                              hd.id
+                          ORDER BY 
+                              hd.ngay_tao DESC;
+                     """;
+        ArrayList<DatHoaDonRequest> lists = new ArrayList<>();
+        try (Connection con = DBConnect.getInstance().getConnect();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                DatHoaDonRequest datHoaDonRequest=new DatHoaDonRequest();
 
-    @Override
-    public boolean has(Integer id) throws SQLException {
-        String query = String.format("SELECT TOP(1) 1 FROM %s WHERE id = ? AND trang_thai_xoa = 0", TABLE_NAME);
-        try {
-            return JbdcHelper.value(query, id) != null;
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new SQLException(e.getMessage());
-        }    }
+                datHoaDonRequest.setMaHd(rs.getString(1));
+                datHoaDonRequest.setThoiGian(rs.getDate(2));
+                datHoaDonRequest.setKhachHang(rs.getString(3));
+                datHoaDonRequest.setTongTienhang(rs.getDouble(4));
+                datHoaDonRequest.setGiamGia(rs.getDouble(5));
+                datHoaDonRequest.setThanhTien(rs.getDouble(6));
+                datHoaDonRequest.setTrangThai(rs.getInt(7));
+                datHoaDonRequest.setTrangThaixoa(rs.getBoolean(8));
+                datHoaDonRequest.setPhuongThucTT(rs.getInt(9));
+                datHoaDonRequest.setId(rs.getInt(10));
+                lists.add(datHoaDonRequest);
 
-    public boolean has(String name) throws SQLException {
-        String query = String.format("SELECT TOP(1) 1 FROM %s WHERE ten LIKE ? AND trang_thai_xoa = 0", TABLE_NAME);
-        try {
-            return JbdcHelper.value(query, name) != null;
+            }
         } catch (Exception e) {
-            e.printStackTrace();
-            throw new SQLException(e.getMessage());
+            e.printStackTrace(System.out); // nem loi khi xay ra
         }
+        return lists;
     }
-     
 
-    @Override
-    public Optional<DatHoaDonModel> getById(Integer id) throws SQLException {
-ResultSet resultSet = null;
-        DatHoaDonModel model = null;
+    public Optional<DatHoaDonRequest> getById(Integer id) throws SQLException {
+        ResultSet rs = null;
+        DatHoaDonRequest model = null;
 
-        String query = String.format("""
-            SELECT
-                
-                
-            FROM %s AS hd
-                
-            WHERE
-                hd.id = ? AND
-                hd.trang_thai_xoa = 0
-        """, TABLE_NAME);// chua viet query
-
+        String sql = ("""
+          WITH CTE_HoaDon AS (
+                                   SELECT
+                                       hd.ma,
+                                       hd.ngay_tao,
+                                       kh3.ho_ten,
+                                       SUM(hdct.gia_ban * so_luong) AS tong_gia_ban,
+                                       hd.tien_giam,
+                                       SUM((hdct.gia_ban * so_luong) - hd.tien_giam) AS tong_sau_giam,
+                                       hd.trang_thai,
+                                       hd.trang_thai_xoa,
+                                       hd.phuong_thuc_thanh_toan,
+                                       hd.id,
+                                   FROM 
+                                       HoaDon3 hd
+                                   INNER JOIN 
+                                       HoaDonChiTiet3 hdct ON hd.id = hdct.id_hoa_don
+                                   INNER JOIN 
+                                       KhachHang3 kh3 ON hd.id_khach_hang = kh3.id
+                                   INNER JOIN 
+                                       TaiKhoan3 tk3 ON hd.id_tai_khoan = tk3.id 
+                                   WHERE 
+                                       hd.trang_thai_xoa = 0 AND
+                                       hd.id=?
+                                   GROUP BY 
+                                       hd.ma,
+                                       hd.ngay_tao,
+                                       kh3.ho_ten,
+                                       hd.tien_giam,
+                                       hd.trang_thai,
+                                       hd.trang_thai_xoa,
+                                       hd.phuong_thuc_thanh_toan,
+                                       hd.id
+                               )
+                              
+        """);
+        ArrayList<DatHoaDonRequest> lists = new ArrayList<>();
         try {
-            resultSet = JbdcHelper.query(query, id);
-            while(resultSet.next()) {
-                model = buildData(resultSet, false);
+            Connection con = DBConnect.getInstance().getConnect();
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setObject(1, id);
+            rs = ps.executeQuery();
+            while(rs.next()) {
+                DatHoaDonRequest datHoaDonRequest=new DatHoaDonRequest();
+                
+                datHoaDonRequest.setMaHd(rs.getString(1));
+                datHoaDonRequest.setThoiGian(rs.getDate(2));
+                datHoaDonRequest.setKhachHang(rs.getString(3));
+                datHoaDonRequest.setTongTienhang(rs.getDouble(4));
+                datHoaDonRequest.setGiamGia(rs.getDouble(5));
+                datHoaDonRequest.setThanhTien(rs.getDouble(6));
+                datHoaDonRequest.setTrangThai(rs.getInt(7));
+                datHoaDonRequest.setTrangThaixoa(rs.getBoolean(8));
+                datHoaDonRequest.setPhuongThucTT(rs.getInt(9));
+                datHoaDonRequest.setId(rs.getInt(10));
+                
+                lists.add(datHoaDonRequest);
             }
         } catch(Exception e) {
             e.printStackTrace();
             throw new SQLException(e.getMessage());
         }
         finally {
-            JbdcHelper.close(resultSet);
+            JbdcHelper.close(rs);
         }
 
-        return Optional.ofNullable(model);    }
+        return Optional.ofNullable(model);
+    }
 
-    @Override
-    public List<DatHoaDonModel> selectAll() throws SQLException {
-        List<DatHoaDonModel> list = new ArrayList<>();
-        ResultSet resultSet = null;
+    public ArrayList<DatHoaDonRequest> search(String keyword ) {
+       
+        String sql = """
+                 SELECT 
+                                       hd.ma,
+                                       hd.ngay_tao,
+                                       kh.ho_ten,
+                                       SUM(hdct.gia_ban * so_luong) AS tong_gia_ban,
+                                       hd.tien_giam,
+                                       (SUM(hdct.gia_ban * so_luong) - hd.tien_giam) AS tong_sau_giam,
+                                       hd.trang_thai,
+                                       hd.trang_thai_xoa,
+                                       hd.phuong_thuc_thanh_toan,
+                                        hd.id,
+                                        tk.ho_ten as tennv
+                                   FROM 
+                                       HoaDon hd
+                                   INNER JOIN 
+                                       HoaDonChiTiet hdct ON hd.id = hdct.id_hoa_don
+                                   INNER JOIN 
+                                       KhachHang kh ON hd.id_khach_hang = kh.id
+                                   INNER JOIN 
+                                       TaiKhoan tk ON hd.id_tai_khoan = tk.id 
+                                   WHERE  
+                                       hd.trang_thai_xoa = 0
+                                       AND (hd.ma like ?) OR (kh.ho_ten like ?)
+                                   GROUP BY 
+                                       hd.ma,
+                                       hd.ngay_tao,
+                                       kh.ho_ten,
+                                       hd.tien_giam,
+                                       hd.trang_thai,
+                                       hd.trang_thai_xoa,
+                                       hd.phuong_thuc_thanh_toan,
+                                       hd.id,
+                                       tk.ho_ten 
+                 		   ORDER BY hd.ngay_tao desc
+                     """;
+        ArrayList<DatHoaDonRequest> lists = new ArrayList<>();
+        try (Connection con = DBConnect.getInstance().getConnect();
+                PreparedStatement ps = con.prepareStatement(sql)) {
+                ps.setObject(1, keyword);
+                ps.setObject(2, keyword);
+                //ps.setObject(3, keyword);
 
-        String query = String.format("""
-            SELECT
-                sp.*,
-                ROW_NUMBER() OVER (ORDER BY sp.id DESC) AS stt,
                 
-            FROM %s AS hd
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                DatHoaDonRequest datHoaDonRequest=new DatHoaDonRequest();
                 
-            WHERE
-                hd.trang_thai_xoa = 0
-            ORDER BY hd.id DESC 
-        """, TABLE_NAME);
-
-        try {
-            resultSet = JbdcHelper.query(query);
-            while(resultSet.next()) {
-                DatHoaDonModel model = buildData(resultSet);
-                list.add(model);
+                datHoaDonRequest.setMaHd(rs.getString(1));
+                datHoaDonRequest.setThoiGian(rs.getDate(2));
+                datHoaDonRequest.setKhachHang(rs.getString(3));
+                datHoaDonRequest.setTongTienhang(rs.getDouble(4));
+                datHoaDonRequest.setGiamGia(rs.getDouble(5));
+                datHoaDonRequest.setThanhTien(rs.getDouble(6));
+                datHoaDonRequest.setTrangThai(rs.getInt(7));
+                datHoaDonRequest.setTrangThaixoa(rs.getBoolean(8));
+                datHoaDonRequest.setPhuongThucTT(rs.getInt(9));
+                datHoaDonRequest.setId(rs.getInt(10));
+                datHoaDonRequest.setTenNv(rs.getString(11));
+                lists.add(datHoaDonRequest);
             }
-        } catch(Exception e) {
-            e.printStackTrace();
-            throw new SQLException(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace(System.out); // nem loi khi xay ra 
         }
-        finally {
-            JbdcHelper.close(resultSet);
-        }
-
-        return list;    }
-
-    @Override
-    public List<DatHoaDonModel> selectPage(FillterRequest request) throws SQLException {
-        DatFillerHoaDonRequest filter = (DatFillerHoaDonRequest) request;
+        return lists;
+    }
+    
+    private DatHoaDonRequest readFromResultSet(ResultSet rs) throws SQLException {
+        DatHoaDonRequest datHoaDonRequest = new DatHoaDonRequest();
         
-        List<DatHoaDonModel> list = new ArrayList<>();
-        ResultSet resultSet = null;
+                datHoaDonRequest.setMaHd(rs.getString(1));
+                datHoaDonRequest.setThoiGian(rs.getDate(2));
+                datHoaDonRequest.setKhachHang(rs.getString(3));
+                datHoaDonRequest.setTongTienhang(rs.getDouble(4));
+                datHoaDonRequest.setGiamGia(rs.getDouble(5));
+                datHoaDonRequest.setThanhTien(rs.getDouble(6));
+                datHoaDonRequest.setTrangThai(rs.getInt(7));
+                datHoaDonRequest.setTrangThaixoa(rs.getBoolean(8));
+                datHoaDonRequest.setPhuongThucTT(rs.getInt(9));
+                datHoaDonRequest.setId(rs.getInt(10));
         
-        String query = String.format("""
-            WITH TableCTE AS (
-                SELECT
-                    sp.*,
-                    ROW_NUMBER() OVER (ORDER BY sp.id DESC) AS stt,
-                    
-                FROM %s AS sp
-                    LEFT JOIN 
-                    LEFT JOIN 
-                    LEFT JOIN 
-                    LEFT JOIN 
-                    LEFT JOIN 
-                WHERE
-                    sp.trang_thai_xoa = 0 AND
-                    (
-                        (? IS NULL OR sp.ten LIKE ? OR sp.ma LIKE ?) AND
-                        (COALESCE(?, 0) < 1 OR hd.id_danh_muc = ?) AND
-                        (COALESCE(?, 0) < 1 OR hd.id_thuong_hieu = ?) AND
-                        (COALESCE(?, 0) < 0 OR hd.trang_thai = ?)
-                    )
-            )
-            SELECT *
-            FROM TableCTE
-            WHERE stt BETWEEN ? AND ?
-        """, TABLE_NAME);
 
-        int[] offset = FillterRequest.getOffset(filter.getPage(), filter.getSize());
-        int start = offset[0];
-        int limit = offset[1];
+                
+       
 
-        Object[] args = new Object[] {
-            filter.getKeyword(),
-            String.format("%%%s%%", filter.getKeyword()),
-            String.format("%%%s%%", filter.getKeyword()),
-            filter.getIdNguoitao(),
-            filter.getIdPhuongThucthanhtoan(),
-            filter.getTrangThai(),
-            filter.getTrangThai(),
-            start,
-            limit
-        };
-
+        return datHoaDonRequest;
+    }
+    
+    private List<DatHoaDonRequest> select(String sql, Object... args) {
+        List<DatHoaDonRequest> list = new ArrayList<>();
         try {
-            resultSet = JbdcHelper.query(query, args);
-            while(resultSet.next()) {
-                DatHoaDonModel model = buildData(resultSet);
-                list.add(model);
+            ResultSet rs = null;
+            try {
+                rs = JbdcHelper.query(sql, args);
+                while (rs.next()) {
+                    DatHoaDonRequest model = readFromResultSet(rs);
+                    list.add(model);
+                }
+            } finally {
+                rs.getStatement().getConnection().close();
             }
-        } catch(Exception e) {
-            e.printStackTrace();
-            throw new SQLException(e.getMessage());
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
         }
-        finally {
-            JbdcHelper.close(resultSet);
-        }
-
         return list;
-}
-
-    @Override
-    public int count(FillterRequest request) throws SQLException {
-    DatFillerHoaDonRequest filter = (DatFillerHoaDonRequest) request;
-        
-        int totalPages = 0;
-        int totalRows = 0;
-
-        String query = String.format("""
-            SELECT COUNT(*)
-            FROM %s
-            WHERE
-                trang_thai_xoa = 0 AND  
-                (
-                    (? IS NULL OR ten LIKE ? OR ma LIKE ?) AND
-                    (COALESCE(?, 0) < 1 OR id_danh_muc = ?) AND
-                    (COALESCE(?, 0) < 1 OR id_thuong_hieu = ?) AND
-                    (COALESCE(?, 0) < 0 OR trang_thai = ?)
-                ) 
-        """, TABLE_NAME);
-
-        Object[] args = new Object[] { 
-            filter.getKeyword(),
-            String.format("%%%s%%", filter.getKeyword()),
-            String.format("%%%s%%", filter.getKeyword()),
-            filter.getIdNguoitao(),
-            filter.getIdPhuongThucthanhtoan(),
-            filter.getTrangThai(),
-            filter.getTrangThai()
-        };
-        
-        try {
-            totalRows = (int) JbdcHelper.value(query, args);
-            totalPages = (int) Math.ceil((double) totalRows / request.getSize());
-        } catch(Exception e) {
-            e.printStackTrace();
-            throw new SQLException(e.getMessage());
-        }
-        return totalPages;    }
-        private DatHoaDonModel buildData(ResultSet resultSet) throws SQLException { 
-        return buildData(resultSet, true);
     }
-
-private DatHoaDonModel buildData(ResultSet resultSet, boolean addSTT) throws SQLException { 
-        
-        return DatHoaDonModel.builder()
-            .id(resultSet.getInt("id"))
-            .stt(addSTT ? resultSet.getInt("stt") : -1)
-            .id_tai_khoan(resultSet.getInt("id_tai_khoan"))
-            .id_khach_hang(resultSet.getInt("id_khach_hang"))
-            .id_phieu_giam_gia(resultSet.getInt("id_phieu_giam_gia"))
-            .maHd(resultSet.getString("maHd"))
-            .tienGiam(resultSet.getInt("tienGiam"))
-            .phuong_thuc_thanh_toan(resultSet.getInt("phuong_thuc_thanh_toan"))
-            .trangThai(resultSet.getInt("trang_thai"))
-            .ngayTao(resultSet.getDate("ngay_tao"))
-            .ngayCapnhat(resultSet.getDate("ngay_cap_nhat"))
-            .trangThaixoa(resultSet.getBoolean("trang_thai_xoa"))           
-            .build();
-    }
-
-public String getLastCode() throws SQLException {
-        String query = String.format("SELECT TOP(1) ma FROM %s ORDER BY id DESC", TABLE_NAME);
-        try {
-            return (String) JbdcHelper.value(query);
+ 
+    public ArrayList<DatHoaDonRequest> getTop15(long trang) {
+        //SUA LAI CAU QUERY
+        String sql = """
+                  WITH CTE_HoaDon AS (
+                        SELECT
+                            hd.ma,
+                            hd.ngay_tao,
+                            kh.ho_ten,
+                            SUM(hdct.gia_ban * so_luong) AS tong_gia_ban,
+                            hd.tien_giam,
+                            (SUM(hdct.gia_ban * so_luong) - hd.tien_giam) AS tong_sau_giam,
+                            hd.trang_thai,
+                            hd.trang_thai_xoa,
+                            hd.phuong_thuc_thanh_toan,
+                            hd.id,
+                            tk.ho_ten as tennv,
+                            ROW_NUMBER() OVER (ORDER BY hd.ngay_tao DESC) AS row_num
+                        FROM 
+                            HoaDon hd
+                        INNER JOIN 
+                            HoaDonChiTiet hdct ON hd.id = hdct.id_hoa_don
+                        INNER JOIN 
+                            KhachHang kh ON hd.id_khach_hang = kh.id
+                        INNER JOIN 
+                            TaiKhoan tk ON hd.id_tai_khoan = tk.id 
+                        GROUP BY 
+                            hd.ma,
+                            hd.ngay_tao,
+                            kh.ho_ten,
+                            hd.tien_giam,
+                            hd.trang_thai,
+                            hd.trang_thai_xoa,
+                            hd.phuong_thuc_thanh_toan,
+                            hd.id,
+                            tk.ho_ten
+                    )
+                    SELECT 
+                        ma,
+                        ngay_tao,
+                        ho_ten,
+                        tong_gia_ban,
+                        tien_giam,
+                        tong_sau_giam,
+                        trang_thai,
+                        trang_thai_xoa,
+                        phuong_thuc_thanh_toan,
+                        id,
+                        tennv
+                    FROM 
+                        CTE_HoaDon
+                    WHERE 
+                        row_num > (?*15-15) AND row_num <=(?*15)
+                    ORDER BY 
+                        ngay_tao DESC;
+                     """;
+        ArrayList<DatHoaDonRequest> lists = new ArrayList<>();
+        try (Connection con = DBConnect.getInstance().getConnect();
+                PreparedStatement ps = con.prepareStatement(sql)) {
+                ps.setObject(1, trang);
+                ps.setObject(2, trang);
+                ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                DatHoaDonRequest datHoaDonRequest=new DatHoaDonRequest();
+                
+                datHoaDonRequest.setMaHd(rs.getString(1));
+                datHoaDonRequest.setThoiGian(rs.getDate(2));
+                datHoaDonRequest.setKhachHang(rs.getString(3));
+                datHoaDonRequest.setTongTienhang(rs.getDouble(4));
+                datHoaDonRequest.setGiamGia(rs.getDouble(5));
+                datHoaDonRequest.setThanhTien(rs.getDouble(6));
+                datHoaDonRequest.setTrangThai(rs.getInt(7));
+                datHoaDonRequest.setTrangThaixoa(rs.getBoolean(8));
+                datHoaDonRequest.setPhuongThucTT(rs.getInt(9));
+                datHoaDonRequest.setId(rs.getInt(10));
+                datHoaDonRequest.setTenNv(rs.getString(11));
+                lists.add(datHoaDonRequest);
+               
+            }
         } catch (Exception e) {
-            e.printStackTrace();
-            throw new SQLException(e.getMessage());
+            e.printStackTrace(System.out); // nem loi khi xay ra 
         }
+        return lists;
     }
-   
+  
+    public ArrayList<DatHoaDonRequest> locDataPage(int phuongThucTT,int trangThai,int idNv,long trang) {
+        String sql = """
+                WITH CTE_HoaDon AS (
+                         SELECT
+                             hd.ma,
+                             hd.ngay_tao,
+                             kh.ho_ten,
+                             SUM(hdct.gia_ban * so_luong) AS tong_gia_ban,
+                             hd.tien_giam,
+                             (SUM(hdct.gia_ban * so_luong) - hd.tien_giam) AS tong_sau_giam,
+                             hd.trang_thai,
+                             hd.trang_thai_xoa,
+                             hd.phuong_thuc_thanh_toan,
+                             hd.id,
+                             tk.ho_ten as tennv,
+                             ROW_NUMBER() OVER (ORDER BY hd.ngay_tao DESC) AS row_num
+                         FROM 
+                             HoaDon hd
+                         INNER JOIN 
+                             HoaDonChiTiet hdct ON hd.id = hdct.id_hoa_don
+                         INNER JOIN 
+                             KhachHang kh ON hd.id_khach_hang = kh.id
+                         INNER JOIN 
+                             TaiKhoan tk ON hd.id_tai_khoan = tk.id 
+                         WHERE 
+                             hd.trang_thai_xoa = 0 AND
+                             (COALESCE(?, 0) < 0 OR hd.phuong_thuc_thanh_toan = ?) AND
+                             (COALESCE( ?, 0 )< 0  OR hd.trang_thai = ?) AND
+                             (COALESCE(?, 0) < 1 OR tk.id = ?)
+                         GROUP BY 
+                             hd.ma,
+                             hd.ngay_tao,
+                             kh.ho_ten,
+                             hd.tien_giam,
+                             hd.trang_thai,
+                             hd.trang_thai_xoa,
+                             hd.phuong_thuc_thanh_toan,
+                             hd.id,
+                             tk.ho_ten
+                     )
+                     SELECT 
+                         ma,
+                         ngay_tao,
+                         ho_ten,
+                         tong_gia_ban,
+                         tien_giam,
+                         tong_sau_giam,
+                         trang_thai,
+                         trang_thai_xoa,
+                         phuong_thuc_thanh_toan,
+                         id,
+                         tennv
+                     FROM 
+                         CTE_HoaDon
+                     WHERE 
+                         row_num > (? * 15 - 15) AND row_num <= (? * 15)
+                     ORDER BY 
+                         ngay_tao DESC;
+                     """;
+        ArrayList<DatHoaDonRequest> lists = new ArrayList<>();
+        try (Connection con = DBConnect.getInstance().getConnect();
+            PreparedStatement ps = con.prepareStatement(sql)) {
+            
+            ps.setObject(1, phuongThucTT);
+            ps.setObject(2, phuongThucTT);
+            ps.setObject(3, trangThai);
+            ps.setObject(4, trangThai);
+            ps.setObject(5, idNv);
+            ps.setObject(6, idNv);
+            ps.setObject(7, trang);
+            ps.setObject(8, trang);
+            
+            
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                DatHoaDonRequest datHoaDonRequest=new DatHoaDonRequest();
+                
+                datHoaDonRequest.setMaHd(rs.getString(1));
+                datHoaDonRequest.setThoiGian(rs.getDate(2));
+                datHoaDonRequest.setKhachHang(rs.getString(3));
+                datHoaDonRequest.setTongTienhang(rs.getDouble(4));
+                datHoaDonRequest.setGiamGia(rs.getDouble(5));
+                datHoaDonRequest.setThanhTien(rs.getDouble(6));
+                datHoaDonRequest.setTrangThai(rs.getInt(7));
+                datHoaDonRequest.setTrangThaixoa(rs.getBoolean(8));
+                datHoaDonRequest.setPhuongThucTT(rs.getInt(9));
+                datHoaDonRequest.setId(rs.getInt(10));
+                datHoaDonRequest.setTenNv(rs.getString(11));
+                
+                lists.add(datHoaDonRequest);
+            }
+        } catch (Exception e) {
+            e.printStackTrace(System.out); // nem loi khi xay ra 
+        }
+        return lists;
+    }
+    public ArrayList<DatHoaDonRequest> locDataPage2(int phuongThucTT,int trangThai,int idNv,Date startDate,Date endDate,long trang) {
+        String sql = """
+                WITH CTE_HoaDon AS (
+                     SELECT
+                         hd.ma,
+                         hd.ngay_tao,
+                         kh.ho_ten,
+                         SUM(hdct.gia_ban * so_luong) AS tong_gia_ban,
+                         hd.tien_giam,
+                         (SUM(hdct.gia_ban * so_luong) - hd.tien_giam) AS tong_sau_giam,
+                         hd.trang_thai,
+                         hd.trang_thai_xoa,
+                         hd.phuong_thuc_thanh_toan,
+                         hd.id,
+                     tk.ho_ten as tennv,
+                         ROW_NUMBER() OVER (ORDER BY hd.ngay_tao DESC) AS row_num
+                     FROM 
+                         HoaDon hd
+                     INNER JOIN 
+                         HoaDonChiTiet hdct ON hd.id = hdct.id_hoa_don
+                     INNER JOIN 
+                         KhachHang kh ON hd.id_khach_hang = kh.id
+                     INNER JOIN 
+                         TaiKhoan tk ON hd.id_tai_khoan = tk.id 
+                 	Where hd.trang_thai_xoa =0 and
+                          hd.trang_thai_xoa = 0
+                           AND (hd.ngay_tao >= ? OR ? IS NULL)
+                           AND (hd.ngay_tao <= ? OR ? IS NULL)
+                           AND (COALESCE(?, -1) < 0 OR hd.phuong_thuc_thanh_toan = ?)
+                           AND (COALESCE(?, -1) < 0 OR hd.trang_thai = ?)
+                           AND (COALESCE(?, 0) = 0 OR tk3.id = ?)
+                     GROUP BY 
+                         hd.ma,
+                         hd.ngay_tao,
+                         kh.ho_ten,
+                         hd.tien_giam,
+                         hd.trang_thai,
+                         hd.trang_thai_xoa,
+                         hd.phuong_thuc_thanh_toan,
+                         hd.id,
+                         tk.ho_ten
+                 )
+                 SELECT 
+                     ma,
+                     ngay_tao,
+                     ho_ten,
+                     tong_gia_ban,
+                     tien_giam,
+                     tong_sau_giam,
+                     trang_thai,
+                     trang_thai_xoa,
+                     phuong_thuc_thanh_toan,
+                     id,
+                     tennv
+                 FROM 
+                     CTE_HoaDon
+                 WHERE 
+                     row_num > (?*15-15) AND row_num <=(?*15)
+                 ORDER BY 
+                     ngay_tao DESC;
+                     """;
+        ArrayList<DatHoaDonRequest> lists = new ArrayList<>();
+        try (Connection con = DBConnect.getInstance().getConnect();
+            PreparedStatement ps = con.prepareStatement(sql)) {
+            
+        ps.setDate(1, new java.sql.Date(startDate.getTime())); // Ngày bắt đầu
+        ps.setDate(2, new java.sql.Date(startDate.getTime())); // Ngày bắt đầu (sử dụng lại cho điều kiện IS NULL)
+        ps.setDate(3, new java.sql.Date(endDate.getTime()));   // Ngày kết thúc
+        ps.setDate(4, new java.sql.Date(endDate.getTime()));   // Ngày kết thúc (sử dụng lại cho điều kiện IS NULL)
+        ps.setInt(5, phuongThucTT); // Phương thức thanh toán
+        ps.setInt(6, phuongThucTT); // Phương thức thanh toán
+        ps.setInt(7, trangThai); // Trạng thái
+        ps.setInt(8, trangThai); // Trạng thái
+        ps.setInt(9, idNv); // ID tài khoản
+        ps.setInt(10, idNv); // ID tài khoản
+        ps.setLong(11,trang); // ID tài khoản
+        ps.setLong(12, trang); // ID tài khoản
+            
+            
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                DatHoaDonRequest datHoaDonRequest=new DatHoaDonRequest();
+                
+                datHoaDonRequest.setMaHd(rs.getString(1));
+                datHoaDonRequest.setThoiGian(rs.getDate(2));
+                datHoaDonRequest.setKhachHang(rs.getString(3));
+                datHoaDonRequest.setTongTienhang(rs.getDouble(4));
+                datHoaDonRequest.setGiamGia(rs.getDouble(5));
+                datHoaDonRequest.setThanhTien(rs.getDouble(6));
+                datHoaDonRequest.setTrangThai(rs.getInt(7));
+                datHoaDonRequest.setTrangThaixoa(rs.getBoolean(8));
+                datHoaDonRequest.setPhuongThucTT(rs.getInt(9));
+                datHoaDonRequest.setId(rs.getInt(10));
+                datHoaDonRequest.setTenNv(rs.getString(11));
+                
+                lists.add(datHoaDonRequest);
+            }
+        } catch (Exception e) {
+            e.printStackTrace(System.out); // nem loi khi xay ra 
+        }
+        return lists;
+    }
+
 }
 
 

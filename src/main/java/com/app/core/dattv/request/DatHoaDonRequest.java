@@ -14,21 +14,24 @@ import java.util.Date;
  */
 
 public class DatHoaDonRequest {
+
    
+    private int id;
     private String maHd;
     private Date thoiGian;
     private String khachHang;
     private double tongTienhang;
     private double giamGia;
     private double thanhTien;
-    private boolean trangThai;
+    private int trangThai;
     private int phuongThucTT;
     private boolean trangThaixoa;
+    private String tenNv;
 
     public DatHoaDonRequest() {
     }
 
-    public DatHoaDonRequest(String maHd, Date thoiGian, String khachHang, double tongTienhang, double giamGia, double thanhTien, boolean trangThai, int phuongThucTT) {
+    public DatHoaDonRequest(String maHd, Date thoiGian, String khachHang, double tongTienhang, double giamGia, double thanhTien, int trangThai, int phuongThucTT) {
         this.maHd = maHd;
         this.thoiGian = thoiGian;
         this.khachHang = khachHang;
@@ -40,12 +43,32 @@ public class DatHoaDonRequest {
         
     }
 
-    public DatHoaDonRequest(boolean trangThaixoa) {
-        this.trangThaixoa = trangThaixoa;
+    public DatHoaDonRequest(String tenNv) {
+        this.tenNv = tenNv;
+    }
+    
+
+    public DatHoaDonRequest(int id) {
+        this.id = id;
     }
 
- 
+    public String getTenNv() {
+        return tenNv;
+    }
 
+    public void setTenNv(String tenNv) {
+        this.tenNv = tenNv;
+    }
+    
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+    
     public String getMaHd() {
         return maHd;
     }
@@ -94,11 +117,11 @@ public class DatHoaDonRequest {
         this.thanhTien = thanhTien;
     }
 
-    public boolean isTrangThai() {
+    public int getTrangThai() {
         return trangThai;
     }
 
-    public void setTrangThai(boolean trangThai) {
+    public void setTrangThai(int trangThai) {
         this.trangThai = trangThai;
     }
 
@@ -110,6 +133,7 @@ public class DatHoaDonRequest {
         this.phuongThucTT = phuongThucTT;
     }
 
+   
     public boolean isTrangThaixoa() {
         return trangThaixoa;
     }
@@ -118,6 +142,7 @@ public class DatHoaDonRequest {
         this.trangThaixoa = trangThaixoa;
     }
 
+    
     
 
     
