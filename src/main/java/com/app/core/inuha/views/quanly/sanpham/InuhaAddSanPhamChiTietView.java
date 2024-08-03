@@ -4,10 +4,13 @@ import com.app.common.helper.MessageModal;
 import com.app.common.helper.MessageToast;
 import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
+import com.app.core.inuha.models.InuhaHoaDonChiTietModel;
 import com.app.core.inuha.models.InuhaSanPhamChiTietModel;
 import com.app.core.inuha.models.InuhaSanPhamModel;
 import com.app.core.inuha.models.sanpham.InuhaKichCoModel;
 import com.app.core.inuha.models.sanpham.InuhaMauSacModel;
+import com.app.core.inuha.repositories.InuhaHoaDonChiTietRepository;
+import com.app.core.inuha.services.InuhaHoaDonChiTietService;
 import com.app.core.inuha.services.InuhaKichCoService;
 import com.app.core.inuha.services.InuhaMauSacService;
 import com.app.core.inuha.services.InuhaSanPhamChiTietService;
@@ -261,7 +264,7 @@ public class InuhaAddSanPhamChiTietView extends javax.swing.JPanel {
         });
 
         lblSoLuong.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        lblSoLuong.setText("Số lượng:");
+        lblSoLuong.setText("Số lượng tồn:");
 
         btnSubmit.setText("Thêm ngay");
         btnSubmit.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -298,7 +301,7 @@ public class InuhaAddSanPhamChiTietView extends javax.swing.JPanel {
                     .addGroup(roundPanel1Layout.createSequentialGroup()
                         .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(txtSoLuong, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblSoLuong, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(lblSoLuong, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(30, 30, 30)
                         .addComponent(lblTrangThai)
                         .addGap(18, 18, 18)
@@ -410,7 +413,7 @@ public class InuhaAddSanPhamChiTietView extends javax.swing.JPanel {
 
         lblSoLuong.setForeground(ColorUtils.DANGER_COLOR);
         if (soLuong.isEmpty()) { 
-            MessageToast.error("Vui lòng nhập số lượng");
+            MessageToast.error("Vui lòng nhập số lượng tồn");
             txtSoLuong.requestFocus();
             return;
         }
@@ -419,7 +422,7 @@ public class InuhaAddSanPhamChiTietView extends javax.swing.JPanel {
 		throw new NumberFormatException();
 	    }
 	} catch (NumberFormatException e) { 
-	    MessageToast.error("Số lượng phải nhỏ hơn " + MAX);
+	    MessageToast.error("Số lượng tồn phải nhỏ hơn " + MAX);
 	    txtSoLuong.requestFocus();
 	    return;
 	}
@@ -482,22 +485,30 @@ public class InuhaAddSanPhamChiTietView extends javax.swing.JPanel {
                             InuhaDetailSanPhamView.getInstance().loadDataPage(1);
                         } else {
                             sanPhamChiTietService.update(model);
+			    
+			    if (sanPhamChiTiet.isTrangThai() != trangThai && !trangThai) { 
+				List<InuhaHoaDonChiTietModel> sanPhamCho = InuhaHoaDonChiTietRepository.getInstance().getAllIdsByIdSanPhamChiTiet(sanPhamChiTiet.getId());
+				for(InuhaHoaDonChiTietModel m: sanPhamCho) { 
+				    InuhaHoaDonChiTietService.getInstance().delete(m);
+				}
+			    }
+			    
                             MessageToast.success("Lưu chỉnh sửa sản phẩm chi tiết thành công.");
                             InuhaDetailSanPhamView.getInstance(sanPham).loadDataPage();
 			    InuhaDetailSanPhamChiTietView.getInstance().updateView(model);
                         }
                         InuhaSanPhamView.getInstance().loadDataPage();
 			InuhaSanPhamView.getInstance().loadDataPageSPCT();
-			loading.dispose();
+			
                         ModalDialog.closeModal(InuhaDetailSanPhamView.ID_MODAL_ADD);
                     } catch (ServiceResponseException e) {
-                        loading.dispose();
                         MessageToast.error(e.getMessage());
                     } catch (Exception e) {
                         e.printStackTrace();
-                        loading.dispose();
                         MessageToast.error(ErrorConstant.DEFAULT_ERROR);
-                    }
+                    } finally {
+			loading.dispose();
+		    }
                 });
                 loading.setVisible(true);
             }

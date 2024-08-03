@@ -1,6 +1,9 @@
 package com.app.core.inuha.models;
 
 import com.app.utils.BillUtils;
+import com.app.utils.CurrencyUtils;
+import com.app.utils.VoucherUtils;
+import java.util.Vector;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -43,13 +46,22 @@ public class InuhaPhieuGiamGiaModel {
     private String ngayTao;
     
     private String ngayCapNhat;
-    
-    private boolean trangThai;
-    
+        
     private boolean trangThaiXoa;
     
-    public Object[] toDataRowHoaDon() { 
+    public Object[] toDataRowBanHang() {
 	return new Object[] { 
+	    stt,
+	    ma,
+	    ten,
+	    soLuong,
+	    VoucherUtils.getKieuGiam(giamTheoPhanTram),
+	    VoucherUtils.getTextGiaTriGiam(this),
+	    CurrencyUtils.parseString(giamToiDa),
+	    CurrencyUtils.parseString(donToiThieu),
+	    ngayBatDau,
+	    ngayKetThuc,
+	    VoucherUtils.getTrangThai(this)
 	};
     }
 }

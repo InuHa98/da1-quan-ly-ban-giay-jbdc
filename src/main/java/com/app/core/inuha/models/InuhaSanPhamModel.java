@@ -67,7 +67,7 @@ public class InuhaSanPhamModel {
             ten,
             danhMuc.getTen(),
             thuongHieu.getTen(),
-            CurrencyUtils.parseString(soLuong),
+            CurrencyUtils.parseNumber(soLuong),
             CurrencyUtils.parseString(giaBan),
             trangThai
         };
@@ -80,7 +80,7 @@ public class InuhaSanPhamModel {
             ProductUtils.getImage(hinhAnh),
             ten,
             CurrencyUtils.parseString(giaBan),
-            CurrencyUtils.parseString(soLuong),
+            CurrencyUtils.parseNumber(soLuong),
             danhMuc.getTen(),
             thuongHieu.getTen(),
 	    xuatXu.getTen(),

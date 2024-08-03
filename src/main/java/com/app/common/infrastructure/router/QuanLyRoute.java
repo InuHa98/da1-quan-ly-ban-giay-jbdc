@@ -37,7 +37,7 @@ public class QuanLyRoute {
         itemSideMenu.add(new SidebarMenuItem(2, "sell", "Bán hàng", RouterConstant.BAN_HANG));
         itemSideMenu.add(new SidebarMenuItem(3, "product", "Sản phẩm", RouterConstant.SAN_PHAM));
         itemSideMenu.add(new SidebarMenuItem(4, "voucher", "Phiếu giảm giá", RouterConstant.PHIEU_GIAM_GIA));
-        itemSideMenu.add(new SidebarMenuItem(5, "sale", "Đợt giảm giá", RouterConstant.DOT_GIAM_GIA));
+//        itemSideMenu.add(new SidebarMenuItem(5, "sale", "Đợt giảm giá", RouterConstant.DOT_GIAM_GIA));
         itemSideMenu.add(new SidebarMenuItem(6, "receipt", "Hoá đơn", RouterConstant.HOA_DON));
         itemSideMenu.add(new SidebarMenuItem(7, "customer", "Khách hàng", RouterConstant.KHACH_HANG));
         itemSideMenu.add(new SidebarMenuItem(8, "users", "Nhân viên", RouterConstant.NHAN_VIEN));

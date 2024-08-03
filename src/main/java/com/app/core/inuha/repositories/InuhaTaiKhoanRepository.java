@@ -123,7 +123,7 @@ public class InuhaTaiKhoanRepository implements IDAOinterface<InuhaTaiKhoanModel
     public boolean has(Integer id) throws SQLException {
         String query = "SELECT TOP(1) 1 FROM TaiKhoan WHERE id = ? AND trang_thai_xoa = 0";
         try {
-            return (boolean) JbdcHelper.value(query, id);
+            return JbdcHelper.value(query, id) != null;
         } catch (Exception e) {
             e.printStackTrace();
             throw new SQLException(e.getMessage());
@@ -338,7 +338,7 @@ public class InuhaTaiKhoanRepository implements IDAOinterface<InuhaTaiKhoanModel
         };
 
         try {
-            return (boolean) JbdcHelper.value(query, args);
+            return JbdcHelper.value(query, args) != null;
         } catch(Exception e) {
             e.printStackTrace();
             throw new SQLException(e.getMessage());
@@ -350,7 +350,7 @@ public class InuhaTaiKhoanRepository implements IDAOinterface<InuhaTaiKhoanModel
 
         String query = """
             UPDATE TaiKhoan
-            SET password = ?, otp = NULL
+            SET mat_khau = ?, otp = NULL
             WHERE email LIKE ? AND otp = ? AND trang_thai_xoa = 0
         """;
 

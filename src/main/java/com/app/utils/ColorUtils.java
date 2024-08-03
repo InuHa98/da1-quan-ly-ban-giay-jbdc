@@ -14,6 +14,8 @@ import java.awt.Color;
 public class ColorUtils {
 
     public static Color PRIMARY_COLOR = new Color(234, 108, 32);
+    
+    public static Color PRIMARY_COLOR2 = new Color(100, 110, 177);
 
     public static Color PRIMARY_TEXT = new Color(189, 189, 189);
 

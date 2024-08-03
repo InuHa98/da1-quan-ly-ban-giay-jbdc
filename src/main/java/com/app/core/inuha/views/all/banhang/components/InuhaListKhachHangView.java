@@ -41,7 +41,7 @@ public class InuhaListKhachHangView extends javax.swing.JPanel {
     
     private final ExecutorService executorService = Executors.newFixedThreadPool(2);
     
-    private final InuhaKhachHangService chatLieuService = InuhaKhachHangService.getInstance();
+    private final InuhaKhachHangService khachHangService = InuhaKhachHangService.getInstance();
     
     public Pagination pagination = new Pagination();
     
@@ -109,7 +109,7 @@ public class InuhaListKhachHangView extends javax.swing.JPanel {
                     if (MessageModal.confirmWarning("Xoá: " + item.getHoTen(), "Bạn thực sự muốn xoá khách hàng này?")) {
                         executorService.submit(() -> {
                             try {
-                                chatLieuService.delete(item.getId());
+                                khachHangService.delete(item.getId());
                                 loadingDialog.dispose();
 
                                 loadDataPage();
@@ -162,7 +162,7 @@ public class InuhaListKhachHangView extends javax.swing.JPanel {
 	    request.setKeyword(keyword);
             request.setSize(sizePage);
 	    
-            int totalPages = chatLieuService.getTotalPage(request);
+            int totalPages = khachHangService.getTotalPage(request);
             if (totalPages < page) { 
                 page = totalPages;
             }
@@ -170,7 +170,7 @@ public class InuhaListKhachHangView extends javax.swing.JPanel {
             request.setPage(page);
 
            
-            dataItems = chatLieuService.getPage(request);
+            dataItems = khachHangService.getPage(request);
             
             for(InuhaKhachHangModel m: dataItems) { 
                 model.addRow(m.toDataRow());

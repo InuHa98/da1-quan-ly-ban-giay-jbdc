@@ -154,4 +154,6 @@ public class InuhaKichCoService implements IInuhaKichCoServiceInterface {
 	    throw new ServiceResponseException("Không thể thêm dữ liệu");
         }
     }
+    
+
 }

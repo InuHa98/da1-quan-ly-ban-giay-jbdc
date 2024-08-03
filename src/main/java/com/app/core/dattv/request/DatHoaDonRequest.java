@@ -6,11 +6,17 @@ package com.app.core.dattv.request;
 
 import java.util.Date;
 
+
+
 /**
  *
  * @author WIN
  */
+
 public class DatHoaDonRequest {
+
+   
+    private int id;
     private String maHd;
     private Date thoiGian;
     private String khachHang;
@@ -18,11 +24,14 @@ public class DatHoaDonRequest {
     private double giamGia;
     private double thanhTien;
     private int trangThai;
+    private int phuongThucTT;
+    private boolean trangThaixoa;
+    private String tenNv;
 
     public DatHoaDonRequest() {
     }
 
-    public DatHoaDonRequest(String maHd, Date thoiGian, String khachHang, double tongTienhang, double giamGia, double thanhTien, int trangThai) {
+    public DatHoaDonRequest(String maHd, Date thoiGian, String khachHang, double tongTienhang, double giamGia, double thanhTien, int trangThai, int phuongThucTT) {
         this.maHd = maHd;
         this.thoiGian = thoiGian;
         this.khachHang = khachHang;
@@ -30,8 +39,36 @@ public class DatHoaDonRequest {
         this.giamGia = giamGia;
         this.thanhTien = thanhTien;
         this.trangThai = trangThai;
+        this.phuongThucTT = phuongThucTT;
+        
     }
 
+    public DatHoaDonRequest(String tenNv) {
+        this.tenNv = tenNv;
+    }
+    
+
+    public DatHoaDonRequest(int id) {
+        this.id = id;
+    }
+
+    public String getTenNv() {
+        return tenNv;
+    }
+
+    public void setTenNv(String tenNv) {
+        this.tenNv = tenNv;
+    }
+    
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+    
     public String getMaHd() {
         return maHd;
     }
@@ -87,6 +124,37 @@ public class DatHoaDonRequest {
     public void setTrangThai(int trangThai) {
         this.trangThai = trangThai;
     }
+
+    public int getPhuongThucTT() {
+        return phuongThucTT;
+    }
+
+    public void setPhuongThucTT(int phuongThucTT) {
+        this.phuongThucTT = phuongThucTT;
+    }
+
+   
+    public boolean isTrangThaixoa() {
+        return trangThaixoa;
+    }
+
+    public void setTrangThaixoa(boolean trangThaixoa) {
+        this.trangThaixoa = trangThaixoa;
+    }
+
+    
+    
+
+    
+
+    @Override
+    public String toString() {
+        return "DatHoaDonRequest{" + "trangThaixoa=" + trangThaixoa + ", maHd=" + maHd + ", thoiGian=" + thoiGian + ", khachHang=" + khachHang + ", tongTien=" + tongTienhang + ", giamGia=" + giamGia + ", thanhTien=" + thanhTien + ", trangThai=" + trangThai +", phuongThucthanhtoan= "+ phuongThucTT + '}';
+    }
+
+    
+
+    
     
     
 
