@@ -27,6 +27,10 @@ import org.apache.poi.xssf.usermodel.XSSFColor;
 public class ExcelHelper {
     
     private static String getCellValueAsString(Cell cell) {
+	if (cell == null) { 
+	    return "";
+	}
+    
         switch (cell.getCellType()) {
             case STRING:
                 return cell.getStringCellValue();
@@ -34,18 +38,23 @@ public class ExcelHelper {
                 if (DateUtil.isCellDateFormatted(cell)) {
                     return cell.getDateCellValue().toString();
                 } else {
-                    return String.valueOf(cell.getNumericCellValue());
+                    double numericValue = cell.getNumericCellValue();
+                    if (numericValue == Math.floor(numericValue)) {
+                        return String.format("%d", (int) numericValue);
+                    } else {
+                        return String.format("%f", numericValue);
+                    }
                 }
             case BOOLEAN:
                 return String.valueOf(cell.getBooleanCellValue());
             case FORMULA:
-                return cell.getCellFormula();
+                return cell.getStringCellValue();
             default:
                 return "";
         }
     }
 	
-    private static List<String[]> readFile(File file, boolean skipHeader) {
+    public static List<String[]> readFile(File file, boolean skipHeader) {
         List<String[]> data = new ArrayList<>();
         
         try (FileInputStream fis = new FileInputStream(file);
@@ -58,21 +67,42 @@ public class ExcelHelper {
             if (skipHeader && rowIterator.hasNext()) {
                 rowIterator.next();
             }
-
+	    
+	    int maxColumns = getMaxColumnCount(sheet);
+	    
             while (rowIterator.hasNext()) {
                 Row row = rowIterator.next();
-                List<String> rowData = new ArrayList<>();
-                for (Cell cell : row) {
-                    String cellValue = getCellValueAsString(cell);
-                    rowData.add(cellValue);
+                String[] rowData = new String[maxColumns];
+
+                for (int i = 0; i < maxColumns; i++) {
+                    rowData[i] = "";
                 }
-                data.add(rowData.toArray(new String[0]));
+
+                for (Cell cell : row) {
+                    int columnIndex = cell.getColumnIndex();
+                    if (columnIndex < maxColumns) {
+                        rowData[columnIndex] = getCellValueAsString(cell);
+                    }
+                }
+                
+                data.add(rowData);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         return data;
+    }
+	
+    private static int getMaxColumnCount(Sheet sheet) {
+        int maxColumns = 0;
+        for (Row row : sheet) {
+            int lastCellNum = row.getLastCellNum();
+            if (lastCellNum > maxColumns) {
+                maxColumns = lastCellNum;
+            }
+        }
+        return maxColumns;
     }
 	
     private static void writeExcel(File file, String[] headers, List<String[]> rows) throws IOException { 
@@ -135,11 +165,8 @@ public class ExcelHelper {
     }
     
     public static void writeFile(String fileName, String[] headers, List<String[]> rows) {
-        JnaFileChooser ch = new JnaFileChooser();
-        ch.setMode(JnaFileChooser.Mode.Directories);
-        boolean act = ch.showOpenDialog(Application.app);
-        if (act) {
-            File folder = ch.getSelectedFile();
+	File folder = selectFolder();
+        if (folder != null) {
             File file = new File(folder, fileName + ".xlsx");
 	    
 	    ExecutorService executorService = Executors.newSingleThreadExecutor();
@@ -153,6 +180,7 @@ public class ExcelHelper {
 		    MessageToast.error("Không thể xuất dữ liệu sang Excel!!!!");
 		} finally {
 		    loading.dispose();
+		    executorService.shutdown();
 		}
 	    });
 	    loading.setVisible(true);
@@ -160,18 +188,26 @@ public class ExcelHelper {
         }
     }
     
-    public static List<String[]> readFile() {
-	return readFile(false);
+    public static File selectFolder() {
+        JnaFileChooser ch = new JnaFileChooser();
+        ch.setMode(JnaFileChooser.Mode.Directories);
+        boolean act = ch.showOpenDialog(Application.app);
+        if (act) {
+            File folder = ch.getSelectedFile();
+	    return folder;
+	}
+	return null;
     }
-    
-    public static List<String[]> readFile(boolean skipHeader) {
+	
+    public static File selectFile() {
         JnaFileChooser ch = new JnaFileChooser();
         ch.addFilter("Tệp Excel (*.xlsx, *.xls)", "xlsx", "xls");
         boolean act = ch.showOpenDialog(Application.app);
         if (act) {
             File file = ch.getSelectedFile();
-	    return readFile(file, skipHeader);
+	    return file;
         }
 	return null;
     }
+    
 }

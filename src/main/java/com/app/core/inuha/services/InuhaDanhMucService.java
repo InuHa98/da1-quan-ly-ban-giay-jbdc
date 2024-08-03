@@ -1,5 +1,6 @@
 package com.app.core.inuha.services;
 
+import com.app.common.helper.JbdcHelper;
 import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.constants.TrangThaiXoaConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
@@ -18,7 +19,20 @@ import java.util.Optional;
  */
 public class InuhaDanhMucService implements IInuhaDanhMucServiceInterface {
 
-    private final InuhaDanhMucRepository repository = new InuhaDanhMucRepository();
+    private final InuhaDanhMucRepository repository = InuhaDanhMucRepository.getInstance();
+    
+    private static InuhaDanhMucService instance = null;
+    
+    public static InuhaDanhMucService getInstance() { 
+	if (instance == null) { 
+	    instance = new InuhaDanhMucService();
+	}
+	return instance;
+    }
+    
+    private InuhaDanhMucService() { 
+	
+    }
     
     @Override
     public InuhaDanhMucModel getById(Integer id) {
@@ -66,7 +80,7 @@ public class InuhaDanhMucService implements IInuhaDanhMucServiceInterface {
             repository.update(model);
         } catch (SQLException ex) {
             ex.printStackTrace();
-            throw new ServiceResponseException("Không thể xoá danh mục này");
+            throw new ServiceResponseException("Không thể cập nhật danh mục này");
         }
     }
 
@@ -123,6 +137,21 @@ public class InuhaDanhMucService implements IInuhaDanhMucServiceInterface {
             ex.printStackTrace();
         }
         return 0;
+    }
+    
+    public InuhaDanhMucModel insertByExcel(String name) {
+        try {
+	    Optional<InuhaDanhMucModel> find = repository.getByName(name);
+	    if (find.isPresent()) { 
+		return find.get();
+	    }
+	    InuhaDanhMucModel model = new InuhaDanhMucModel();
+	    model.setTen(name);
+	    insert(model);
+            return getById(JbdcHelper.getLastInsertedId());
+        } catch (Exception ex) {
+	    throw new ServiceResponseException("Không thể thêm dữ liệu");
+        }
     }
     
 }

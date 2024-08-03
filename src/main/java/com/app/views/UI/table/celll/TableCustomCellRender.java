@@ -2,6 +2,7 @@ package com.app.views.UI.table.celll;
 
 import com.app.utils.ColorUtils;
 import com.app.views.UI.table.HoverIndex;
+import com.formdev.flatlaf.ui.FlatBorder;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -23,7 +24,7 @@ public class TableCustomCellRender extends DefaultTableCellRenderer {
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         Component com = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-        
+        setBorder(new EmptyBorder(0, 10, 0, 10));
 //        if (value instanceof Number) {
 //            setHorizontalAlignment(SwingConstants.CENTER);
 //        } else {

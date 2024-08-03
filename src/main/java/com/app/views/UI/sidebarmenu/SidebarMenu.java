@@ -16,6 +16,7 @@ import com.app.views.UI.ImageRound;
 import com.app.views.UI.dialog.LoadingDialog;
 import com.app.views.UI.scroll.ScrollBarCustomUI;
 import com.app.views.DashboardView;
+import com.app.views.UI.panel.qrcode.WebcamQRCodeScanPanel;
 import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.util.Animator;
 import net.miginfocom.swing.MigLayout;
@@ -44,7 +45,7 @@ public class SidebarMenu extends JPanel {
     
     private final static int MAX_WIDTH = 240;
 
-    private final InuhaTaiKhoanService nhanVienService = new InuhaTaiKhoanService();
+    private final InuhaTaiKhoanService nhanVienService = InuhaTaiKhoanService.getInstance();
 
     private final ExecutorService executor = Executors.newFixedThreadPool(2);
 
@@ -75,8 +76,7 @@ public class SidebarMenu extends JPanel {
     public SidebarMenu() {
 	instance = this;
         initComponents();
-		
-        this.initMenu((index) -> {
+	ISidebarMenuEvent event = (index) -> {
 
             Optional<SidebarMenuItem> item = itemsMenu.stream().filter(o -> o.getIndex() == index).findFirst();
             if (item.isEmpty()) {
@@ -91,6 +91,7 @@ public class SidebarMenu extends JPanel {
 	    }
 	    
             try {
+		WebcamQRCodeScanPanel.dispose();
                 Class<?> loadClass = Class.forName(className);
                 DashboardController.getInstance().show((JComponent) loadClass.getDeclaredConstructor().newInstance());
             } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException |
@@ -98,7 +99,9 @@ public class SidebarMenu extends JPanel {
                 throw new RuntimeException(e);
             }
 
-        });
+        };
+	
+        this.initMenu(event);
 
         int maxLengthText = 23;
 
@@ -253,6 +256,7 @@ public class SidebarMenu extends JPanel {
                     });
 
                     loading.setVisible(true);
+		    
                 }
             });
 
@@ -282,7 +286,7 @@ public class SidebarMenu extends JPanel {
         SidebarMenuButton menuButton = new SidebarMenuButton(index, callback);
         setFont(menuButton.getFont().deriveFont(Font.PLAIN, 14));
         menuButton.setIcon(ComponentUtils.resizeImage(ResourceUtils.getImageAssets("sidemenu/" + icon + ".png"), 24, 24));
-        menuButton.setText("       " + text);
+        menuButton.setText("        " + text);
         menuButton.addActionListener((e) -> {
             if (!animator.isRunning()) {
                 if (menuButton != selectedMenu) {
@@ -292,7 +296,12 @@ public class SidebarMenu extends JPanel {
                         unSelectedMenu = selectedMenu;
                         selectedMenu = menuButton;
                         animator.start();
-                        menuEvent.menuSelected(menuButton.getIndex());
+			LoadingDialog loading = new LoadingDialog();
+			executor.submit(() -> { 
+			    menuEvent.menuSelected(menuButton.getIndex());
+			    loading.dispose();
+			});
+                        loading.setVisible(true);
                     }
                 }
             }

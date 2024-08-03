@@ -1,11 +1,15 @@
 package com.app.core.inuha.services;
 
+import com.app.common.helper.JbdcHelper;
 import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.constants.TrangThaiXoaConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
 import com.app.common.infrastructure.request.FillterRequest;
+import com.app.core.inuha.models.sanpham.InuhaDanhMucModel;
+import com.app.core.inuha.models.sanpham.InuhaKieuDangModel;
 import com.app.core.inuha.models.sanpham.InuhaMauSacModel;
 import com.app.core.inuha.repositories.sanpham.InuhaMauSacRepository;
+import com.app.core.inuha.repositories.sanpham.InuhaXuatXuRepository;
 import com.app.core.inuha.services.impl.IInuhaMauSacServiceInterface;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -18,7 +22,20 @@ import java.util.Optional;
  */
 public class InuhaMauSacService implements IInuhaMauSacServiceInterface {
 
-    private final InuhaMauSacRepository repository = new InuhaMauSacRepository();
+    private final InuhaMauSacRepository repository = InuhaMauSacRepository.getInstance();
+    
+    private static InuhaMauSacService instance = null;
+    
+    public static InuhaMauSacService getInstance() { 
+	if (instance == null) { 
+	    instance = new InuhaMauSacService();
+	}
+	return instance;
+    }
+    
+    private InuhaMauSacService() { 
+	
+    }
     
     @Override
     public InuhaMauSacModel getById(Integer id) {
@@ -66,7 +83,7 @@ public class InuhaMauSacService implements IInuhaMauSacServiceInterface {
             repository.update(model);
         } catch (SQLException ex) {
             ex.printStackTrace();
-            throw new ServiceResponseException("Không thể xoá màu sắc này");
+            throw new ServiceResponseException("Không thể cập nhật màu sắc này");
         }
     }
 
@@ -123,6 +140,21 @@ public class InuhaMauSacService implements IInuhaMauSacServiceInterface {
             ex.printStackTrace();
         }
         return 0;
+    }
+    
+    public InuhaMauSacModel insertByExcel(String name) {
+        try {
+	    Optional<InuhaMauSacModel> find = repository.getByName(name);
+	    if (find.isPresent()) { 
+		return find.get();
+	    }
+	    InuhaMauSacModel model = new InuhaMauSacModel();
+	    model.setTen(name);
+	    insert(model);
+            return getById(JbdcHelper.getLastInsertedId());
+        } catch (Exception ex) {
+	    throw new ServiceResponseException("Không thể thêm dữ liệu");
+        }
     }
     
 }

@@ -3,6 +3,7 @@ package com.app.core.inuha.repositories.sanpham;
 import com.app.common.helper.JbdcHelper;
 import com.app.common.infrastructure.interfaces.IDAOinterface;
 import com.app.common.infrastructure.request.FillterRequest;
+import com.app.core.inuha.models.sanpham.InuhaMauSacModel;
 import com.app.core.inuha.models.sanpham.InuhaThuongHieuModel;
 import com.app.utils.TimeUtils;
 import java.sql.ResultSet;
@@ -18,6 +19,19 @@ import java.util.Optional;
 public class InuhaThuongHieuRepository implements IDAOinterface<InuhaThuongHieuModel, Integer> {
     
     private final static String TABLE_NAME = "ThuongHieu";
+    
+    private static InuhaThuongHieuRepository instance = null;
+    
+    public static InuhaThuongHieuRepository getInstance() { 
+	if (instance == null) { 
+	    instance = new InuhaThuongHieuRepository();
+	}
+	return instance;
+    }
+    
+    private InuhaThuongHieuRepository() { 
+	
+    }
     
     @Override
     public int insert(InuhaThuongHieuModel model) throws SQLException {
@@ -240,6 +254,28 @@ public class InuhaThuongHieuRepository implements IDAOinterface<InuhaThuongHieuM
             throw new SQLException(e.getMessage());
         }
         return totalPages;
+    }
+    
+    public Optional<InuhaThuongHieuModel> getByName(String name) throws SQLException {
+        ResultSet resultSet = null;
+        InuhaThuongHieuModel model = null;
+
+        String query = String.format("SELECT * FROM %s WHERE ten LIKE ? AND trang_thai_xoa = 0", TABLE_NAME);
+
+        try {
+            resultSet = JbdcHelper.query(query, name);
+            while(resultSet.next()) {
+                model = buildData(resultSet, false);
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+            throw new SQLException(e.getMessage());
+        }
+        finally {
+            JbdcHelper.close(resultSet);
+        }
+
+        return Optional.ofNullable(model);
     }
     
     private InuhaThuongHieuModel buildData(ResultSet resultSet) throws SQLException { 

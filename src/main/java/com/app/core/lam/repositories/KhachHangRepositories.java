@@ -20,8 +20,8 @@ public class KhachHangRepositories {
 
     public ArrayList<KhachHangModels> getKH() {
         String sql = """
-                     SELECT 
-                           [ho_ten]
+                     SELECT [id]
+                           ,[ho_ten]
                            ,[sdt]
                            ,[gioi_tinh]
                            ,[dia_chi]
@@ -34,13 +34,15 @@ public class KhachHangRepositories {
                 ResultSet rs = ps.executeQuery();) {
             while (rs.next()) {
                 KhachHangModels kh = new KhachHangModels();
-                kh.setTenKH(rs.getString(1));
-                kh.setSoDienThoai(rs.getString(2));
-                kh.setGioiTinh(rs.getBoolean(3));
-                kh.setDiaChi(rs.getString(4));
-                kh.setTrangThaiXoa(rs.getBoolean(5));
+                kh.setIdKH(rs.getInt(1));
+                kh.setTenKH(rs.getString(2));
+                kh.setSoDienThoai(rs.getString(3));
+                kh.setGioiTinh(rs.getBoolean(4));
+                kh.setDiaChi(rs.getString(5));
+                kh.setTrangThaiXoa(rs.getBoolean(6));
                 listRPKH.add(kh);
             }
+            
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -63,13 +65,6 @@ public class KhachHangRepositories {
             ps.setString(4, kh.getDiaChi());
             ps.setBoolean(5, kh.isTrangThaiXoa());
             check = ps.executeUpdate();
-            if (check > 0) {
-                try (ResultSet rs = ps.getGeneratedKeys()) {
-                    if (rs.next()) {
-                        kh.setIdKH(rs.getInt(1));
-                    }
-                }
-            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -123,7 +118,8 @@ public class KhachHangRepositories {
     public ArrayList<LichSuModels> getLS() {
         String sql = """
                      SELECT 
-                           [ho_ten]
+                            [id]
+                           ,[ho_ten]
                            ,[sdt]
                            ,[gioi_tinh]
                            ,[dia_chi]
@@ -137,15 +133,45 @@ public class KhachHangRepositories {
             while (rs.next()) {
                 LichSuModels ls = new LichSuModels();
                 ls.setTenKH(rs.getString(1));
-                ls.setSoDienThoai(rs.getString(2));
-                ls.setGioiTinh(rs.getBoolean(3));
-                ls.setDiaChi(rs.getString(4));
-                ls.setTrangThaiXoa(rs.getBoolean(5));
+                ls.setTenKH(rs.getString(2));
+                ls.setSoDienThoai(rs.getString(3));
+                ls.setGioiTinh(rs.getBoolean(4));
+                ls.setDiaChi(rs.getString(5));
+                ls.setTrangThaiXoa(rs.getBoolean(6));
                 listRPLS.add(ls);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         return listRPLS;
+    }
+    
+    public boolean deleteLichSu(String soDienThoai) {
+        return deleteKhachHang(soDienThoai);
+    }
+    
+    public boolean updateLichSu(LichSuModels ls) {
+        String sql = """
+                     UPDATE [dbo].[KhachHang]
+                        SET [ho_ten] = ?
+                           ,[gioi_tinh] = ?
+                           ,[dia_chi] = ?
+                           ,[trang_thai_xoa] = ?
+                      WHERE  sdt = ?
+                     """;
+        int check = 0;
+        try (Connection con = DBConnect.getInstance().getConnect();
+                PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setString(1, ls.getTenKH());
+            ps.setBoolean(2, ls.isGioiTinh());
+            ps.setString(3, ls.getDiaChi());
+            ps.setBoolean(4, ls.isTrangThaiXoa());
+            ps.setString(5, ls.getSoDienThoai());
+            check = ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return check > 0;
     }
 }

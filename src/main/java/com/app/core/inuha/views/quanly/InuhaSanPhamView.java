@@ -40,9 +40,11 @@ import com.app.utils.CurrencyUtils;
 import com.app.utils.ProductUtils;
 import com.app.utils.QrCodeUtils;
 import com.app.utils.ResourceUtils;
+import com.app.utils.TimeUtils;
 import com.app.views.UI.combobox.ComboBoxItem;
 import com.app.views.UI.dialog.LoadingDialog;
 import com.app.views.UI.panel.RoundPanel;
+import com.app.views.UI.panel.qrcode.IQRCodeScanEvent;
 import com.app.views.UI.table.TableCustomUI;
 import com.app.views.UI.table.celll.CheckBoxTableHeaderRenderer;
 import java.awt.Dimension;
@@ -58,14 +60,19 @@ import com.app.views.UI.table.ITableActionEvent;
 import com.app.views.UI.table.celll.TableActionCellEditor;
 import com.app.views.UI.table.celll.TableActionCellRender;
 import com.app.views.UI.table.celll.TableImageCellRender;
+import com.google.zxing.Result;
 import com.google.zxing.WriterException;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 import javax.swing.SwingUtilities;
 import jnafilechooser.api.JnaFileChooser;
 
@@ -79,25 +86,25 @@ public class InuhaSanPhamView extends RoundPanel {
         
     private final ExecutorService executorService = Executors.newFixedThreadPool(2);
     
-    private final static InuhaSanPhamService sanPhamService = new InuhaSanPhamService();
+    private final static InuhaSanPhamService sanPhamService = InuhaSanPhamService.getInstance();
     
-    private final static InuhaSanPhamChiTietService sanPhamChiTietService = new InuhaSanPhamChiTietService();
+    private final static InuhaSanPhamChiTietService sanPhamChiTietService = InuhaSanPhamChiTietService.getInstance();
 	
-    private final static InuhaDanhMucService danhMucService = new InuhaDanhMucService();
+    private final static InuhaDanhMucService danhMucService = InuhaDanhMucService.getInstance();
     
-    private final static InuhaThuongHieuService thuongHieuService = new InuhaThuongHieuService();
+    private final static InuhaThuongHieuService thuongHieuService = InuhaThuongHieuService.getInstance();
     
-    private final static InuhaXuatXuService xuatXuService = new InuhaXuatXuService();
+    private final static InuhaXuatXuService xuatXuService = InuhaXuatXuService.getInstance();
     
-    private final static InuhaKieuDangService kieuDangService = new InuhaKieuDangService();
+    private final static InuhaKieuDangService kieuDangService = InuhaKieuDangService.getInstance();
     
-    private final static InuhaChatLieuService chatLieuService = new InuhaChatLieuService();
+    private final static InuhaChatLieuService chatLieuService = InuhaChatLieuService.getInstance();
     
-    private final static InuhaDeGiayService deGiayService = new InuhaDeGiayService();
+    private final static InuhaDeGiayService deGiayService = InuhaDeGiayService.getInstance();
     
-    private final static InuhaKichCoService kichCoService = new InuhaKichCoService();
+    private final static InuhaKichCoService kichCoService = InuhaKichCoService.getInstance();
     
-    private final static InuhaMauSacService mauSacService = new InuhaMauSacService();
+    private final static InuhaMauSacService mauSacService = InuhaMauSacService.getInstance();
     
     private List<InuhaDanhMucModel> dataDanhMuc = new ArrayList<>();
     
@@ -162,13 +169,9 @@ public class InuhaSanPhamView extends RoundPanel {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) { 
-                    handleClickButtonSearch2();
+                    handleClickButtonSeachChiTiet();
                 }
             }
-
-	    private void handleClickButtonSearch2() {
-		throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-	    }
         });
 		
         pnlContainer.setBackground(ColorUtils.BACKGROUND_PRIMARY);
@@ -181,6 +184,11 @@ public class InuhaSanPhamView extends RoundPanel {
         btnXoaSanPham.setIcon(ResourceUtils.getSVG("/svg/trash.svg", new Dimension(20, 20)));
         btnSearch.setIcon(ResourceUtils.getSVG("/svg/search.svg", new Dimension(20, 20)));
         btnSearch2.setIcon(ResourceUtils.getSVG("/svg/search.svg", new Dimension(20, 20)));
+	btnScanQR.setIcon(ResourceUtils.getSVG("/svg/qr.svg", new Dimension(20, 20)));
+	btnScanQRChiTiet.setIcon(ResourceUtils.getSVG("/svg/qr.svg", new Dimension(20, 20)));
+	btnExport.setIcon(ResourceUtils.getSVG("/svg/export.svg", new Dimension(20, 20)));
+	btnImport.setIcon(ResourceUtils.getSVG("/svg/import.svg", new Dimension(20, 20)));
+	btnSaveAllQR.setIcon(ResourceUtils.getSVG("/svg/save.svg", new Dimension(20, 20)));
 	
         btnClear.setBackground(ColorUtils.BUTTON_GRAY);
 	btnClear2.setBackground(ColorUtils.BUTTON_GRAY);
@@ -189,12 +197,12 @@ public class InuhaSanPhamView extends RoundPanel {
         cboTrangThai.removeAllItems();
         cboTrangThai.addItem(new ComboBoxItem<>("-- Tất cả trạng thái --", -1));
         cboTrangThai.addItem(new ComboBoxItem<>("Đang bán", 1));
-        cboTrangThai.addItem(new ComboBoxItem<>("Dừng bán", 0));
+        cboTrangThai.addItem(new ComboBoxItem<>("Ngừng bán", 0));
         
 	cboTrangThai2.removeAllItems();
         cboTrangThai2.addItem(new ComboBoxItem<>("-- Tất cả trạng thái --", -1));
         cboTrangThai2.addItem(new ComboBoxItem<>("Đang bán", 1));
-        cboTrangThai2.addItem(new ComboBoxItem<>("Dừng bán", 0));
+        cboTrangThai2.addItem(new ComboBoxItem<>("Ngừng bán", 0));
 	
 	Dimension cboSize = new Dimension(150, 36);
 	cboDanhMuc.setPreferredSize(cboSize);
@@ -210,21 +218,24 @@ public class InuhaSanPhamView extends RoundPanel {
 	cboKichCo.setPreferredSize(cboSize);
 	cboMauSac.setPreferredSize(cboSize);
 	
-        loadDataDanhMuc();
-        loadDataThuongHieu();
-	loadDataXuatXu();
-	loadDataKieuDang();
-	loadDataChatLieu();
-	loadDataDeGiay();
-	loadDataKichCo();
-	loadDataMauSac();
-
         setupTable(tblDanhSach);
 	setupTableSPCT(tblDanhSachChiTiet);
-        loadDataPage(1);
-	loadDataPageSPCT(1);
         setupPagination();
 	setupPaginationSPCT();
+	
+	executorService.submit(() -> { 
+	    loadDataDanhMuc();
+	    loadDataThuongHieu();
+	    loadDataXuatXu();
+	    loadDataKieuDang();
+	    loadDataChatLieu();
+	    loadDataDeGiay();
+	    loadDataKichCo();
+	    loadDataMauSac();
+
+	    loadDataPage(1);
+	    loadDataPageSPCT(1);
+	});
     }
     
     private void setupTable(JTable table) { 
@@ -276,7 +287,7 @@ public class InuhaSanPhamView extends RoundPanel {
         
         pnlDanhSach.setBackground(ColorUtils.BACKGROUND_TABLE);
         TableCustomUI.apply(scrDanhSach, TableCustomUI.TableType.DEFAULT);
-        
+	
         table.setRowHeight(50);
         table.getColumnModel().getColumn(0).setHeaderRenderer(new CheckBoxTableHeaderRenderer(table, 0));
         table.getColumnModel().getColumn(3).setCellRenderer(new TableImageCellRender(table));
@@ -318,7 +329,8 @@ public class InuhaSanPhamView extends RoundPanel {
         
         pnlDanhSachChiTiet.setBackground(ColorUtils.BACKGROUND_TABLE);
         TableCustomUI.apply(scrDanhSachChiTiet, TableCustomUI.TableType.DEFAULT);
-        
+        TableCustomUI.resizeColumnHeader(table);
+	
         table.setRowHeight(50);
         table.getColumnModel().getColumn(0).setHeaderRenderer(new CheckBoxTableHeaderRenderer(table, 0));
         table.getColumnModel().getColumn(4).setCellRenderer(new TableImageCellRender(table));
@@ -349,7 +361,11 @@ public class InuhaSanPhamView extends RoundPanel {
             ComboBoxItem<Integer> thuongHieu = (ComboBoxItem<Integer>) cboThuongHieu.getSelectedItem();
             ComboBoxItem<Integer> trangThai = (ComboBoxItem<Integer>) cboTrangThai.getSelectedItem();
 
-            InuhaFilterSanPhamRequest request = new InuhaFilterSanPhamRequest(keyword, danhMuc.getValue(), thuongHieu.getValue(), trangThai.getValue());
+            InuhaFilterSanPhamRequest request = new InuhaFilterSanPhamRequest();
+	    request.setKeyword(keyword);
+	    request.setDanhMuc(danhMuc);
+	    request.setThuongHieu(thuongHieu);
+	    request.setTrangThai(trangThai);
             request.setSize(sizePage);
 	    
             int totalPages = sanPhamService.getTotalPage(request);
@@ -397,15 +413,15 @@ public class InuhaSanPhamView extends RoundPanel {
 
             InuhaFilterSanPhamChiTietRequest request = new InuhaFilterSanPhamChiTietRequest();
 	    request.setKeyword(keyword);
-	    request.setIdDanhMuc(danhMuc.getValue());
-	    request.setIdThuongHieu(thuongHieu.getValue());
-	    request.setIdXuatXu(xuatXu.getValue());
-	    request.setIdKieuDang(kieuDang.getValue());
-	    request.setIdChatLieu(chatLieu.getValue());
-	    request.setIdDeGiay(deGiay.getValue());
-	    request.setIdKichCo(kichCo.getValue());
-	    request.setIdMauSac(mauSac.getValue());
-	    request.setTrangThai(trangThai.getValue());
+	    request.setDanhMuc(danhMuc);
+	    request.setThuongHieu(thuongHieu);
+	    request.setXuatXu(xuatXu);
+	    request.setKieuDang(kieuDang);
+	    request.setChatLieu(chatLieu);
+	    request.setDeGiay(deGiay);
+	    request.setKichCo(kichCo);
+	    request.setMauSac(mauSac);
+	    request.setTrangThai(trangThai);
             request.setSize(sizePage);
 	    
             int totalPages = sanPhamChiTietService.getTotalPage(request);
@@ -484,17 +500,11 @@ public class InuhaSanPhamView extends RoundPanel {
     }
 	
     private void rerenderPagination(int currentPage, int totalPages) { 
-        currentPage = currentPage < 1 ? 1 : currentPage;
-        pagination.setCurrentPage(currentPage);
-        pagination.setTotalPages(totalPages);
-        pagination.renderListPage();
+	pagination.rerender(currentPage, totalPages);
     }
     
     private void rerenderPaginationSPCT(int currentPage, int totalPages) { 
-        currentPage = currentPage < 1 ? 1 : currentPage;
-        paginationSPCT.setCurrentPage(currentPage);
-        paginationSPCT.setTotalPages(totalPages);
-        paginationSPCT.renderListPage();
+	paginationSPCT.rerender(currentPage, totalPages);
     }
     
     public void loadDataDanhMuc() { 
@@ -642,6 +652,8 @@ public class InuhaSanPhamView extends RoundPanel {
         btnSearch2 = new javax.swing.JButton();
         btnClear2 = new javax.swing.JButton();
 
+        tbpTab.setForeground(new java.awt.Color(255, 255, 255));
+
         pnlDanhSachSanPham.setOpaque(false);
 
         pnlSearchBox.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -671,6 +683,7 @@ public class InuhaSanPhamView extends RoundPanel {
         });
 
         lblFilter.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
+        lblFilter.setForeground(new java.awt.Color(255, 255, 255));
         lblFilter.setText("Bộ lọc");
 
         javax.swing.GroupLayout splitLine1Layout = new javax.swing.GroupLayout(splitLine1);
@@ -735,6 +748,7 @@ public class InuhaSanPhamView extends RoundPanel {
         );
 
         lblList.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
+        lblList.setForeground(new java.awt.Color(255, 255, 255));
         lblList.setText("Danh sách sản phẩm");
 
         btnThemSanPham.setText("Thêm sản phẩm");
@@ -832,7 +846,7 @@ public class InuhaSanPhamView extends RoundPanel {
             pnlDanhSachLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlDanhSachLayout.createSequentialGroup()
                 .addGap(8, 8, 8)
-                .addComponent(scrDanhSach, javax.swing.GroupLayout.DEFAULT_SIZE, 410, Short.MAX_VALUE)
+                .addComponent(scrDanhSach, javax.swing.GroupLayout.DEFAULT_SIZE, 258, Short.MAX_VALUE)
                 .addGap(8, 8, 8))
         );
 
@@ -906,6 +920,7 @@ public class InuhaSanPhamView extends RoundPanel {
         pnlDanhSachSanPhamChiTiet.setOpaque(false);
 
         lblList2.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
+        lblList2.setForeground(new java.awt.Color(255, 255, 255));
         lblList2.setText("Danh sách chi tiết sản phẩm");
 
         javax.swing.GroupLayout splitLine3Layout = new javax.swing.GroupLayout(splitLine3);
@@ -927,8 +942,13 @@ public class InuhaSanPhamView extends RoundPanel {
             }
         });
 
-        btnImport.setText("Nhâp Excel");
+        btnImport.setText("Nhập Excel");
         btnImport.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnImport.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnImportActionPerformed(evt);
+            }
+        });
 
         btnExport.setText("Xuất Excel");
         btnExport.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -973,25 +993,8 @@ public class InuhaSanPhamView extends RoundPanel {
         scrDanhSachChiTiet.setViewportView(tblDanhSachChiTiet);
         if (tblDanhSachChiTiet.getColumnModel().getColumnCount() > 0) {
             tblDanhSachChiTiet.getColumnModel().getColumn(0).setMaxWidth(50);
-            tblDanhSachChiTiet.getColumnModel().getColumn(1).setMaxWidth(80);
-            tblDanhSachChiTiet.getColumnModel().getColumn(2).setMinWidth(70);
-            tblDanhSachChiTiet.getColumnModel().getColumn(3).setMinWidth(70);
-            tblDanhSachChiTiet.getColumnModel().getColumn(3).setPreferredWidth(70);
             tblDanhSachChiTiet.getColumnModel().getColumn(4).setMinWidth(60);
             tblDanhSachChiTiet.getColumnModel().getColumn(4).setMaxWidth(60);
-            tblDanhSachChiTiet.getColumnModel().getColumn(5).setMinWidth(100);
-            tblDanhSachChiTiet.getColumnModel().getColumn(6).setMinWidth(90);
-            tblDanhSachChiTiet.getColumnModel().getColumn(7).setMinWidth(90);
-            tblDanhSachChiTiet.getColumnModel().getColumn(8).setMinWidth(90);
-            tblDanhSachChiTiet.getColumnModel().getColumn(9).setMinWidth(90);
-            tblDanhSachChiTiet.getColumnModel().getColumn(10).setMinWidth(90);
-            tblDanhSachChiTiet.getColumnModel().getColumn(11).setMinWidth(90);
-            tblDanhSachChiTiet.getColumnModel().getColumn(12).setMinWidth(90);
-            tblDanhSachChiTiet.getColumnModel().getColumn(13).setMinWidth(90);
-            tblDanhSachChiTiet.getColumnModel().getColumn(14).setMinWidth(80);
-            tblDanhSachChiTiet.getColumnModel().getColumn(15).setMinWidth(80);
-            tblDanhSachChiTiet.getColumnModel().getColumn(16).setMinWidth(50);
-            tblDanhSachChiTiet.getColumnModel().getColumn(17).setMinWidth(60);
         }
 
         javax.swing.GroupLayout pnlDanhSachChiTietLayout = new javax.swing.GroupLayout(pnlDanhSachChiTiet);
@@ -1004,7 +1007,7 @@ public class InuhaSanPhamView extends RoundPanel {
             pnlDanhSachChiTietLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlDanhSachChiTietLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(scrDanhSachChiTiet, javax.swing.GroupLayout.DEFAULT_SIZE, 323, Short.MAX_VALUE)
+                .addComponent(scrDanhSachChiTiet, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -1071,6 +1074,7 @@ public class InuhaSanPhamView extends RoundPanel {
         );
 
         lblFilter2.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
+        lblFilter2.setForeground(new java.awt.Color(255, 255, 255));
         lblFilter2.setText("Bộ lọc");
 
         javax.swing.GroupLayout splitLine4Layout = new javax.swing.GroupLayout(splitLine4);
@@ -1266,15 +1270,7 @@ public class InuhaSanPhamView extends RoundPanel {
 
     private void tblDanhSachMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblDanhSachMouseClicked
         // TODO add your handling code here:
-        List<Integer> columns = List.of(0, 10);
-        if (SwingUtilities.isLeftMouseButton(evt)) { 
-            int row = tblDanhSach.rowAtPoint(evt.getPoint());
-            int col = tblDanhSach.columnAtPoint(evt.getPoint());
-            boolean isSelected = (boolean) tblDanhSach.getValueAt(row, 0);
-            if (!columns.contains(col)) { 
-                tblDanhSach.setValueAt(!isSelected, row, 0);
-            }
-        }
+	handleClickRowTable(evt);
     }//GEN-LAST:event_tblDanhSachMouseClicked
 
     private void btnXoaSanPhamActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXoaSanPhamActionPerformed
@@ -1359,6 +1355,11 @@ public class InuhaSanPhamView extends RoundPanel {
         // TODO add your handling code here:
 	handleClickButtonScanQrCodeChiTiet();
     }//GEN-LAST:event_btnScanQRChiTietActionPerformed
+
+    private void btnImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImportActionPerformed
+        // TODO add your handling code here:
+	handleClickButtonImport();
+    }//GEN-LAST:event_btnImportActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -1532,7 +1533,6 @@ public class InuhaSanPhamView extends RoundPanel {
                     if ((id = QrCodeUtils.getIdSanPham(code)) > 0) {
                         sanPhamModel = sanPhamService.getById(id);
                     } else if((id = QrCodeUtils.getIdSanPhamChiTiet(code)) > 0) { 
-			InuhaSanPhamChiTietService sanPhamChiTietService = new InuhaSanPhamChiTietService();
 			InuhaSanPhamChiTietModel sanPhamChiTietModel = sanPhamChiTietService.getById(id);
 			sanPhamModel = sanPhamChiTietModel.getSanPham();
                     } else { 
@@ -1569,6 +1569,25 @@ public class InuhaSanPhamView extends RoundPanel {
     private void showDetailChiTiet(InuhaSanPhamChiTietModel item) {
         ModalDialog.showModal(instance, new SimpleModalBorder(new InuhaDetailSanPhamChiTietView(item), null), ID_MODAL_DEAIL);
     }
+    
+    private void handleClickRowTable(MouseEvent evt) {
+	if (evt.getClickCount() > 1) { 
+	    InuhaSanPhamModel sanPhamModel = dataItems.get(tblDanhSach.getSelectedRow());
+	    showDetailSanPham(sanPhamModel);
+	    return;
+	}
+	
+        List<Integer> columns = List.of(0, 10);
+        if (SwingUtilities.isLeftMouseButton(evt)) { 
+            int row = tblDanhSach.rowAtPoint(evt.getPoint());
+            int col = tblDanhSach.columnAtPoint(evt.getPoint());
+            boolean isSelected = (boolean) tblDanhSach.getValueAt(row, 0);
+            if (!columns.contains(col)) { 
+                tblDanhSach.setValueAt(!isSelected, row, 0);
+            }
+        }
+    }
+    
     private void handleClickRowTableChiTiet(MouseEvent evt) {
 	if (evt.getClickCount() > 1) { 
 	    InuhaSanPhamChiTietModel sanPhamChiTietModel = dataItemsSPCT.get(tblDanhSachChiTiet.getSelectedRow());
@@ -1588,7 +1607,7 @@ public class InuhaSanPhamView extends RoundPanel {
     }
 
     private void handleClickXuatExcel() {
-	String fileName = "SanPhamChiTiet-" + System.currentTimeMillis();
+	String fileName = "SanPhamChiTiet-" + TimeUtils.now("dd_MM_yyyy__hh_mm_a");
 	String[] headers = new String[] {
 	    "STT",
 	    "Mã sản phẩm",
@@ -1604,7 +1623,7 @@ public class InuhaSanPhamView extends RoundPanel {
 	    "Màu sắc",
 	    "Giá nhập",
 	    "Giá bán",
-	    "Số lượng tồn",
+	    "Số lượng",
 	    "Trạng thái"
 	};
 
@@ -1661,7 +1680,7 @@ public class InuhaSanPhamView extends RoundPanel {
         boolean act = ch.showOpenDialog(Application.app);
         if (act) {
             File folder = ch.getSelectedFile();
-            File dir = new File(folder, "SanPhamChiTiet_QRCode_" + System.currentTimeMillis());
+            File dir = new File(folder, "SanPhamChiTiet-QRCode-" + TimeUtils.now("dd_MM_yyyy__hh_mm_a"));
 	    boolean checkExists = dir.isDirectory();
 
 	    if (!checkExists) {
@@ -1727,6 +1746,94 @@ public class InuhaSanPhamView extends RoundPanel {
 	    loading.setVisible(true);
 	});
     }
+
+    private void handleClickButtonImport() {
+	File fileExcel = ExcelHelper.selectFile();
+	if (fileExcel == null) {
+	    return;
+	}
+	
+	LoadingDialog loading = new LoadingDialog();
+	executorService.submit(() -> { 
+	    if (MessageModal.confirmWarning("Cảnh báo", "Dữ liệu chưa tồn tại thì sẽ được thêm vào còn dữ liệu đã tồn tại sẽ được cập nhật?")) { 
+		executorService.submit(() -> {
+		    List<String[]> rows = new ArrayList<>();
+		    try {
+			rows = ExcelHelper.readFile(fileExcel, false);
+		    } catch (Exception e) { 
+			e.printStackTrace();
+			loading.dispose();
+		    }
+		    int results = 0;
+
+		    List<String> keywords = Arrays.asList("Mã sản phẩm", "Mã chi tiết", "Kích cỡ", "Màu sắc", "Số lượng", "Trạng thái");
+		    String[] headers = rows.get(0);
+		    Map<String, Integer> keywordPositions = new HashMap<>();
+		    for (int i = 0; i < headers.length; i++) {
+			keywordPositions.put(headers[i], i);
+		    }
+
+		    List<Integer> positions = keywords.stream()
+			.map(keyword -> keywordPositions.getOrDefault(keyword, -1))
+			.collect(Collectors.toList());
+
+		    int posSanPham = positions.get(0);
+		    int posChiTiet = positions.get(1);
+		    int posKichCo = positions.get(2);
+		    int posMauSac = positions.get(3);
+		    int posSoLuong = positions.get(4);
+		    int posTrangThai = positions.get(5);
+
+		    for(String[] row : rows) { 
+			try {
+			    String maSanPham = posSanPham != -1 && posSanPham < row.length ? row[posSanPham] : null;
+			    String maChiTiet = posChiTiet != -1 && posChiTiet < row.length ? row[posChiTiet] : null;
+			    String tenKichCo = posKichCo != -1 && posKichCo < row.length ? row[posKichCo] : null;
+			    String tenMauSac = posMauSac != -1 && posMauSac < row.length ? row[posMauSac] : null;
+			    Integer soLuong = posSoLuong != -1 && posSoLuong < row.length ? (int) CurrencyUtils.parseNumber(row[posSoLuong]) : null;
+			    Boolean trangThai = posTrangThai != -1 && posTrangThai < row.length ? row[posTrangThai].equalsIgnoreCase("Đang bán") : null;
+
+			    if ((maSanPham == null && maChiTiet == null) || tenKichCo == null || tenMauSac == null || soLuong == null || trangThai == null) { 
+				continue;
+			    }
+
+			    InuhaKichCoModel kichCo = kichCoService.insertByExcel(tenKichCo);
+			    InuhaMauSacModel mauSac = mauSacService.insertByExcel(tenMauSac);
+
+			    InuhaSanPhamModel sanPham = new InuhaSanPhamModel();
+			    sanPham.setMa(maSanPham);
+
+			    InuhaSanPhamChiTietModel sanPhamChiTiet = new InuhaSanPhamChiTietModel();
+			    sanPhamChiTiet.setMa(maChiTiet);
+			    sanPhamChiTiet.setSoLuong(soLuong);
+			    sanPhamChiTiet.setTrangThai(trangThai);
+			    sanPhamChiTiet.setKichCo(kichCo);
+			    sanPhamChiTiet.setMauSac(mauSac);
+			    sanPhamChiTiet.setSanPham(sanPham);
+
+			    if (sanPhamChiTietService.insertByExcel(sanPhamChiTiet)) {
+				results++;
+			    }
+			} catch (Exception e) { 
+			}
+		    }
+
+
+		    if (results > 0) { 
+			MessageToast.success(results + " hàng dữ liệu chịu tác động");
+			loadDataPageSPCT(1);
+		    } else {
+			MessageToast.warning("Không có hàng dữ liệu nào chịu tác động");
+		    }
+		    loading.dispose();
+		});
+		loading.setVisible(true);
+	    }
+	    
+	});
+    }
+
+
 
 
 }

@@ -26,16 +26,10 @@ CREATE TABLE KhachHang (
 	ho_ten NVARCHAR(250) NOT NULL,
 	sdt VARCHAR(13) NOT NULL,
 	gioi_tinh BIT,
+	dia_chi NVARCHAR(2000),
 	trang_thai_xoa BIT DEFAULT 0
 );
 
-CREATE TABLE DiaChi (
-	id INT IDENTITY(1, 1) PRIMARY KEY,
-	id_khach_hang INT NOT NULL,
-	dia_chi NVARCHAR(2000),
-	trang_thai_xoa BIT DEFAULT 0,
-	FOREIGN KEY(id_khach_hang) REFERENCES dbo.KhachHang(id)
-)
 
 CREATE TABLE DanhMuc (
 	id INT IDENTITY(1, 1) PRIMARY KEY,
@@ -113,6 +107,7 @@ CREATE TABLE SanPham (
 	ma VARCHAR(50) NOT NULL,
 	ten NVARCHAR(250) NOT NULL,
 	mo_ta NVARCHAR(2000),
+	gia_nhap MONEY NOT NULL,
 	gia_ban MONEY NOT NULL,
 	hinh_anh VARCHAR(250),
 	trang_thai BIT NOT NULL,
@@ -155,7 +150,7 @@ CREATE TABLE PhieuGiamGia (
 	don_toi_thieu MONEY NOT NULL DEFAULT 0,
 	giam_toi_da MONEY NOT NULL DEFAULT 0,
 	ngay_tao DATE NOT NULL DEFAULT GETDATE(),
-	ngay_cap_nhat DATE NOT NULL DEFAULT GETDATE(),
+	ngay_cap_nhat DATE DEFAULT GETDATE(),
 	trang_thai BIT NOT NULL,
 	trang_thai_xoa BIT DEFAULT 0
 )
@@ -166,7 +161,7 @@ CREATE TABLE DotGiamGia (
 	thoi_gian_bat_dau DATE NOT NULL,
 	thoi_gian_ket_thuc DATE NOT NULL,
 	ngay_tao DATE NOT NULL DEFAULT GETDATE(),
-	ngay_cap_nhat DATE NOT NULL DEFAULT GETDATE(),
+	ngay_cap_nhat DATE DEFAULT GETDATE(),
 	trang_thai BIT NOT NULL,
 	trang_thai_xoa BIT DEFAULT 0
 )
@@ -186,17 +181,14 @@ CREATE TABLE HoaDon (
 	id_tai_khoan INT NOT NULL,
 	id_khach_hang INT,
 	id_phieu_giam_gia INT,
-	tien_ship MONEY DEFAULT 0,
 	tien_giam MONEY NOT NULL DEFAULT 0,
 	tien_mat MONEY NOT NULL DEFAULT 0,
 	tien_chuyen_khoan MONEY NOT NULL DEFAULT 0,
 	ma VARCHAR(10) NOT NULL,
-	mua_tai_quay BIT NOT NULL,
 	phuong_thuc_thanh_toan BIT NOT NULL,
-	ghi_chu NVARCHAR(2000),
 	trang_thai INT NOT NULL,
 	ngay_tao DATE NOT NULL DEFAULT GETDATE(),
-	ngay_cap_nhat DATE NOT NULL DEFAULT GETDATE(),
+	ngay_cap_nhat DATE DEFAULT GETDATE(),
 	trang_thai_xoa BIT DEFAULT 0,
 	FOREIGN KEY(id_tai_khoan) REFERENCES dbo.TaiKhoan(id),
 	FOREIGN KEY(id_khach_hang) REFERENCES dbo.KhachHang(id),
@@ -207,6 +199,7 @@ CREATE TABLE HoaDonChiTiet (
 	id INT IDENTITY(1, 1) PRIMARY KEY,
 	id_san_pham_chi_tiet INT NOT NULL,
 	id_hoa_don INT NOT NULL,
+	ma VARCHAR(50) NOT NULL,
 	gia_nhap MONEY NOT NULL DEFAULT 0,
 	gia_ban MONEY NOT NULL DEFAULT 0,
 	gia_giam MONEY NOT NULL DEFAULT 0,

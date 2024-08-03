@@ -4,6 +4,7 @@ import com.app.common.controller.ApplicationController;
 import com.app.common.controller.DashboardController;
 import com.app.common.helper.MessageBox;
 import com.app.common.helper.TestConnection;
+import com.app.core.inuha.views.all.banhang.InuhaBanHangView;
 import com.app.core.inuha.views.guest.LoginView;
 import com.app.utils.ResourceUtils;
 import com.app.core.inuha.views.quanly.InuhaSanPhamView;
@@ -72,8 +73,10 @@ public class Application extends JFrame {
 	
             ApplicationController.getInstance().setContext(new Application());
             ApplicationController.getInstance().show(new LoginView());
-//	    ApplicationController.getInstance().show(new DashboardView());
+//	    ApplicationController.getInstance().show(new DashboardView()
 //	    DashboardController.getInstance().show(new InuhaSanPhamView());
+//	    DashboardController.getInstance().show(new InuhaBanHangView());
+
 	    
             app = ApplicationController.getInstance().getContext();
             app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

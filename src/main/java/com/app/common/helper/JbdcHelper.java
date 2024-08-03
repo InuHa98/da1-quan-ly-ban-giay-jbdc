@@ -6,10 +6,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import lombok.Getter;
 
 /**
  *
@@ -17,6 +17,9 @@ import java.util.regex.Pattern;
  */
 public class JbdcHelper {
 
+    @Getter
+    private static Integer lastInsertedId = -1;
+    
     public static ResultSet query(String query, Object... args) throws SQLException {
         ResultSet resultSet = null;
         PreparedStatement stmt = null;
@@ -44,6 +47,16 @@ public class JbdcHelper {
         try {
             stmt = getStatement(query, args);
             result = stmt.executeUpdate();
+	    
+	    if (query.trim().toUpperCase().startsWith("INSERT")) {
+		try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+		    if (generatedKeys.next()) {
+			lastInsertedId = generatedKeys.getInt(1);
+		    }
+		}
+	    } else {
+		lastInsertedId = -1;
+	    }
         } catch (SQLException e) {
             throw new SQLException(e);
         }
@@ -100,7 +113,7 @@ public class JbdcHelper {
             sql += ")}";
             stmt = connection.prepareCall(sql);
         } else {
-            stmt = connection.prepareStatement(query);
+            stmt = connection.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS);
         }
 
         for (int i = 0; i < args.length; i++) {
@@ -117,7 +130,7 @@ public class JbdcHelper {
         Matcher matcher = pattern.matcher(query);
         if (matcher.find()) {
             return matcher.group(1).trim();
-        }
+        } 
         return null;
     }
 

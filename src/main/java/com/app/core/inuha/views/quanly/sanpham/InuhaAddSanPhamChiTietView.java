@@ -13,8 +13,8 @@ import com.app.core.inuha.services.InuhaMauSacService;
 import com.app.core.inuha.services.InuhaSanPhamChiTietService;
 import com.app.core.inuha.views.quanly.InuhaSanPhamView;
 import static com.app.core.inuha.views.quanly.sanpham.InuhaDetailSanPhamChiTietView.getInstance;
-import com.app.core.inuha.views.quanly.thuoctinhsanpham.kichco.InuhaListKichCoView;
-import com.app.core.inuha.views.quanly.thuoctinhsanpham.mausac.InuhaListMauSacView;
+import com.app.core.inuha.views.quanly.sanpham.thuoctinhsanpham.kichco.InuhaListKichCoView;
+import com.app.core.inuha.views.quanly.sanpham.thuoctinhsanpham.mausac.InuhaListMauSacView;
 import com.app.utils.ColorUtils;
 import com.app.utils.CurrencyUtils;
 import com.app.utils.ProductUtils;
@@ -24,6 +24,8 @@ import com.app.views.UI.dialog.LoadingDialog;
 import com.formdev.flatlaf.FlatClientProperties;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -39,16 +41,18 @@ import raven.modal.component.SimpleModalBorder;
  * @author InuHa
  */
 public class InuhaAddSanPhamChiTietView extends javax.swing.JPanel {
+    
+    private final int MAX = 99999999;
 
     private static InuhaAddSanPhamChiTietView instance;
     
-    private final InuhaSanPhamChiTietService sanPhamChiTietService = new InuhaSanPhamChiTietService();
+    private final InuhaSanPhamChiTietService sanPhamChiTietService = InuhaSanPhamChiTietService.getInstance();
     
     private final ExecutorService executorService = Executors.newFixedThreadPool(2);
        
-    private final static InuhaKichCoService kichCoService = new InuhaKichCoService();
+    private final static InuhaKichCoService kichCoService = InuhaKichCoService.getInstance();
     
-    private final static InuhaMauSacService mauSacService = new InuhaMauSacService();
+    private final static InuhaMauSacService mauSacService = InuhaMauSacService.getInstance();
     
     private List<InuhaKichCoModel> dataKichCo = new ArrayList<>();
     
@@ -104,12 +108,12 @@ public class InuhaAddSanPhamChiTietView extends javax.swing.JPanel {
         roundPanel1.setBackground(ColorUtils.BACKGROUND_PRIMARY);
         btnSubmit.setBackground(ColorUtils.BUTTON_PRIMARY);
         
-        txtSoLuong.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Tối đa " + Integer.MAX_VALUE);
+        txtSoLuong.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Tối đa " + MAX);
         
         btnCmdKichCo.setIcon(ResourceUtils.getSVG("/svg/plus.svg", new Dimension(20, 20)));
         btnCmdMauSac.setIcon(ResourceUtils.getSVG("/svg/plus.svg", new Dimension(20, 20)));
         
-        txtSoLuong.setFormatterFactory(CurrencyUtils.getDefaultFormatVND());
+        txtSoLuong.setFormatterFactory(CurrencyUtils.getDefaultFormat());
         
         cboKichCo.setModel(new DefaultComboBoxModel<ComboBoxItem<Integer>>());
         cboMauSac.setModel(new DefaultComboBoxModel<ComboBoxItem<Integer>>());
@@ -118,6 +122,16 @@ public class InuhaAddSanPhamChiTietView extends javax.swing.JPanel {
 	cboMauSac.setPreferredSize(cboSize);
 	cboKichCo.setPreferredSize(cboSize);
 	
+	KeyAdapter eventEnter = new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) { 
+                    handleClickButtonSubmit();
+                }
+            }
+        };
+	txtSoLuong.addKeyListener(eventEnter);
+		
         LoadingDialog loading = new LoadingDialog();
         executorService.submit(() -> {
             loadDataKichCo();
@@ -139,9 +153,8 @@ public class InuhaAddSanPhamChiTietView extends javax.swing.JPanel {
         
         
         if (!exists) { 
+	    item.setText(item.getText() + " (đã xoá)");
             comboBox.addItem(item);
-            comboBox.setEnabled(false);
-            btn.setEnabled(false);
         }
         
         comboBox.setSelectedItem(item);
@@ -397,10 +410,19 @@ public class InuhaAddSanPhamChiTietView extends javax.swing.JPanel {
 
         lblSoLuong.setForeground(ColorUtils.DANGER_COLOR);
         if (soLuong.isEmpty()) { 
-            MessageToast.error("Vui lòng nhập số lượng tồn");
+            MessageToast.error("Vui lòng nhập số lượng");
             txtSoLuong.requestFocus();
             return;
         }
+	try {
+	    if (CurrencyUtils.parseNumber(soLuong) >= MAX) { 
+		throw new NumberFormatException();
+	    }
+	} catch (NumberFormatException e) { 
+	    MessageToast.error("Số lượng phải nhỏ hơn " + MAX);
+	    txtSoLuong.requestFocus();
+	    return;
+	}
         lblSoLuong.setForeground(currentColor);
         
         lblKichCo.setForeground(ColorUtils.DANGER_COLOR);
@@ -454,8 +476,9 @@ public class InuhaAddSanPhamChiTietView extends javax.swing.JPanel {
 
                     try {
                         if (!isEdited) { 
+			    
                             sanPhamChiTietService.insert(model);
-                            MessageToast.success("Thếm mới sản phẩm chi tiết thành công.");
+                            MessageToast.success("Thêm mới sản phẩm chi tiết thành công.");
                             InuhaDetailSanPhamView.getInstance().loadDataPage(1);
                         } else {
                             sanPhamChiTietService.update(model);
@@ -464,6 +487,7 @@ public class InuhaAddSanPhamChiTietView extends javax.swing.JPanel {
 			    InuhaDetailSanPhamChiTietView.getInstance().updateView(model);
                         }
                         InuhaSanPhamView.getInstance().loadDataPage();
+			InuhaSanPhamView.getInstance().loadDataPageSPCT();
 			loading.dispose();
                         ModalDialog.closeModal(InuhaDetailSanPhamView.ID_MODAL_ADD);
                     } catch (ServiceResponseException e) {

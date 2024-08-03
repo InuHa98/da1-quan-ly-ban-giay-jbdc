@@ -5,14 +5,8 @@ import com.app.common.infrastructure.interfaces.IDAOinterface;
 import com.app.common.infrastructure.request.FillterRequest;
 import com.app.core.inuha.models.InuhaSanPhamChiTietModel;
 import com.app.core.inuha.models.InuhaSanPhamModel;
-import com.app.core.inuha.models.sanpham.InuhaChatLieuModel;
-import com.app.core.inuha.models.sanpham.InuhaDanhMucModel;
-import com.app.core.inuha.models.sanpham.InuhaDeGiayModel;
 import com.app.core.inuha.models.sanpham.InuhaKichCoModel;
-import com.app.core.inuha.models.sanpham.InuhaKieuDangModel;
 import com.app.core.inuha.models.sanpham.InuhaMauSacModel;
-import com.app.core.inuha.models.sanpham.InuhaThuongHieuModel;
-import com.app.core.inuha.models.sanpham.InuhaXuatXuModel;
 import com.app.core.inuha.request.InuhaFilterSanPhamChiTietRequest;
 import com.app.utils.TimeUtils;
 import java.sql.ResultSet;
@@ -27,9 +21,22 @@ import java.util.Optional;
  */
 public class InuhaSanPhamChiTietRepository implements IDAOinterface<InuhaSanPhamChiTietModel, Integer> {
     
-    private final InuhaSanPhamRepository sanPhamRepository = new InuhaSanPhamRepository();
+    private final InuhaSanPhamRepository sanPhamRepository = InuhaSanPhamRepository.getInstance();
     
     private final static String TABLE_NAME = "SanPhamChiTiet";
+    
+    private static InuhaSanPhamChiTietRepository instance = null;
+    
+    public static InuhaSanPhamChiTietRepository getInstance() { 
+	if (instance == null) { 
+	    instance = new InuhaSanPhamChiTietRepository();
+	}
+	return instance;
+    }
+    
+    private InuhaSanPhamChiTietRepository() { 
+	
+    }
     
     @Override
     public int insert(InuhaSanPhamChiTietModel model) throws SQLException {
@@ -150,8 +157,14 @@ public class InuhaSanPhamChiTietRepository implements IDAOinterface<InuhaSanPham
                 id_mau_sac = ? AND
                 trang_thai_xoa = 0
         """, TABLE_NAME);
+	Object[] args = new Object[] { 
+	    model.getId(),
+	    model.getSanPham().getId(),
+	    model.getKichCo().getId(),
+	    model.getMauSac().getId()
+	};
         try {
-            return JbdcHelper.value(query, model.getId(), model.getSanPham().getId(), model.getKichCo().getId(), model.getMauSac().getId()) != null;
+            return JbdcHelper.value(query, args) != null;
         } catch (Exception e) {
             e.printStackTrace();
             throw new SQLException(e.getMessage());
@@ -308,23 +321,29 @@ public class InuhaSanPhamChiTietRepository implements IDAOinterface<InuhaSanPham
                     ms.ngay_tao AS ngay_tao_mau_sac,
                     ms.ngay_cap_nhat AS ngay_cap_nhat_mau_sac
                 FROM %s AS spct
+                    LEFT JOIN SanPham AS sp ON sp.id = spct.id_san_pham
+		    LEFT JOIN DanhMuc AS dm ON dm.id = sp.id_danh_muc
+		    LEFT JOIN ThuongHieu AS th ON th.id = sp.id_thuong_hieu
+		    LEFT JOIN XuatXu AS xx ON xx.id = sp.id_xuat_xu
+		    LEFT JOIN KieuDang AS kd ON kd.id = sp.id_kieu_dang
+		    LEFT JOIN ChatLieu AS cl ON cl.id = sp.id_chat_lieu
+		    LEFT JOIN DeGiay AS dg ON dg.id = sp.id_de_giay
                     LEFT JOIN KichCo AS kc ON kc.id = spct.id_kich_co
                     LEFT JOIN MauSac AS ms ON ms.id = spct.id_mau_sac
-                    LEFT JOIN SanPham AS sp ON sp.id = spct.id_san_pham
                 WHERE
-                    (COALESCE(?, 0) = 0 OR spct.id_san_pham = ?) AND
+                    (COALESCE(?, 0) < 1 OR spct.id_san_pham = ?) AND
                     spct.trang_thai_xoa = 0 AND
                     (
-			(COALESCE(?, NULL) IS NULL OR spct.ma = ? OR sp.ma = ? OR sp.ten LIKE ?) AND
-			(COALESCE(?, 0) < 1 OR sp.id_danh_muc = ?) AND
-			(COALESCE(?, 0) < 1 OR sp.id_thuong_hieu = ?) AND
-			(COALESCE(?, 0) < 1 OR sp.id_xuat_xu = ?) AND
-			(COALESCE(?, 0) < 1 OR sp.id_kieu_dang = ?) AND
-			(COALESCE(?, 0) < 1 OR sp.id_chat_lieu = ?) AND
-			(COALESCE(?, 0) < 1 OR sp.id_de_giay = ?) AND
-			(COALESCE(?, 0) < 1 OR spct.id_kich_co = ?) AND
-			(COALESCE(?, 0) < 1 OR spct.id_mau_sac = ?) AND
-			(COALESCE(?, 0) < 0 OR spct.trang_thai = ?)
+			(COALESCE(?, NULL) IS NULL OR spct.ma LIKE ? OR sp.ma LIKE ? OR sp.ten LIKE ?) AND
+			(COALESCE(?, 0) < 1 OR dm.ten LIKE ?) AND
+			(COALESCE(?, 0) < 1 OR th.ten LIKE ?) AND
+			(COALESCE(?, 0) < 1 OR xx.ten LIKE ?) AND
+			(COALESCE(?, 0) < 1 OR kd.ten LIKE ?) AND
+			(COALESCE(?, 0) < 1 OR cl.ten LIKE ?) AND
+			(COALESCE(?, 0) < 1 OR dg.ten LIKE ?) AND
+			(COALESCE(?, 0) < 1 OR kc.ten LIKE ?) AND
+			(COALESCE(?, 0) < 1 OR ms.ten LIKE ?) AND
+			(COALESCE(?, -1) < 0 OR spct.trang_thai = ?)
                     )
             )
             SELECT *
@@ -340,27 +359,27 @@ public class InuhaSanPhamChiTietRepository implements IDAOinterface<InuhaSanPham
 	    filter.getIdSanPham(),
             filter.getIdSanPham(),
 	    filter.getKeyword(),
-	    filter.getKeyword(),
-	    filter.getKeyword(),
 	    String.format("%%%s%%", filter.getKeyword()),
-	    filter.getIdDanhMuc(),
-	    filter.getIdDanhMuc(),
-	    filter.getIdThuongHieu(),
-	    filter.getIdThuongHieu(),
-	    filter.getIdXuatXu(),
-	    filter.getIdXuatXu(),
-	    filter.getIdKieuDang(),
-	    filter.getIdKieuDang(),
-	    filter.getIdChatLieu(),
-	    filter.getIdChatLieu(),
-	    filter.getIdDeGiay(),
-	    filter.getIdDeGiay(),
-            filter.getIdKichCo(),
-            filter.getIdKichCo(),
-            filter.getIdMauSac(),
-            filter.getIdMauSac(),
-            filter.getTrangThai(),
-            filter.getTrangThai(),
+	    String.format("%%%s%%", filter.getKeyword()),
+	    String.format("%%%s%%", filter.getKeyword()),
+	    filter.getDanhMuc().getValue(),
+	    filter.getDanhMuc().getText(),
+	    filter.getThuongHieu().getValue(),
+	    filter.getThuongHieu().getText(),
+	    filter.getXuatXu().getValue(),
+	    filter.getXuatXu().getText(),
+	    filter.getKieuDang().getValue(),
+	    filter.getKieuDang().getText(),
+	    filter.getChatLieu().getValue(),
+	    filter.getChatLieu().getText(),
+	    filter.getDeGiay().getValue(),
+	    filter.getDeGiay().getText(),
+            filter.getKichCo().getValue(),
+            filter.getKichCo().getText(),
+            filter.getMauSac().getValue(),
+            filter.getMauSac().getText(),
+            filter.getTrangThai().getValue(),
+            filter.getTrangThai().getValue(),
             start,
             limit
         };
@@ -397,21 +416,29 @@ public class InuhaSanPhamChiTietRepository implements IDAOinterface<InuhaSanPham
         String query = String.format("""
             SELECT COUNT(*)
             FROM %s AS spct
-            LEFT JOIN SanPham AS sp ON sp.id = spct.id_san_pham
+		LEFT JOIN SanPham AS sp ON sp.id = spct.id_san_pham
+		LEFT JOIN DanhMuc AS dm ON dm.id = sp.id_danh_muc
+		LEFT JOIN ThuongHieu AS th ON th.id = sp.id_thuong_hieu
+		LEFT JOIN XuatXu AS xx ON xx.id = sp.id_xuat_xu
+		LEFT JOIN KieuDang AS kd ON kd.id = sp.id_kieu_dang
+		LEFT JOIN ChatLieu AS cl ON cl.id = sp.id_chat_lieu
+		LEFT JOIN DeGiay AS dg ON dg.id = sp.id_de_giay
+		LEFT JOIN KichCo AS kc ON kc.id = spct.id_kich_co
+		LEFT JOIN MauSac AS ms ON ms.id = spct.id_mau_sac
             WHERE
-                (COALESCE(?, 0) = 0 OR spct.id_san_pham = ?) AND
+                (COALESCE(?, 0) < 1 OR spct.id_san_pham = ?) AND
                 spct.trang_thai_xoa = 0 AND  
                 (
-                    (COALESCE(?, NULL) IS NULL OR spct.ma = ? OR sp.ma = ? OR sp.ten LIKE ?) AND
-                    (COALESCE(?, 0) < 1 OR sp.id_danh_muc = ?) AND
-		    (COALESCE(?, 0) < 1 OR sp.id_thuong_hieu = ?) AND
-		    (COALESCE(?, 0) < 1 OR sp.id_xuat_xu = ?) AND
-		    (COALESCE(?, 0) < 1 OR sp.id_kieu_dang = ?) AND
-		    (COALESCE(?, 0) < 1 OR sp.id_chat_lieu = ?) AND
-		    (COALESCE(?, 0) < 1 OR sp.id_de_giay = ?) AND
-                    (COALESCE(?, 0) < 1 OR spct.id_kich_co = ?) AND
-                    (COALESCE(?, 0) < 1 OR spct.id_mau_sac = ?) AND
-                    (COALESCE(?, 0) < 0 OR spct.trang_thai = ?)
+                    (COALESCE(?, NULL) IS NULL OR spct.ma LIKE ? OR sp.ma LIKE ? OR sp.ten LIKE ?) AND
+		    (COALESCE(?, 0) < 1 OR dm.ten LIKE ?) AND
+		    (COALESCE(?, 0) < 1 OR th.ten LIKE ?) AND
+		    (COALESCE(?, 0) < 1 OR xx.ten LIKE ?) AND
+		    (COALESCE(?, 0) < 1 OR kd.ten LIKE ?) AND
+		    (COALESCE(?, 0) < 1 OR cl.ten LIKE ?) AND
+		    (COALESCE(?, 0) < 1 OR dg.ten LIKE ?) AND
+		    (COALESCE(?, 0) < 1 OR kc.ten LIKE ?) AND
+		    (COALESCE(?, 0) < 1 OR ms.ten LIKE ?) AND
+                    (COALESCE(?, -1) < 0 OR spct.trang_thai = ?)
                 ) 
         """, TABLE_NAME);
 
@@ -420,29 +447,29 @@ public class InuhaSanPhamChiTietRepository implements IDAOinterface<InuhaSanPham
 	    filter.getIdSanPham(),
             filter.getIdSanPham(),
 	    filter.getKeyword(),
-	    filter.getKeyword(),
-	    filter.getKeyword(),
 	    String.format("%%%s%%", filter.getKeyword()),
-	    filter.getIdDanhMuc(),
-	    filter.getIdDanhMuc(),
-	    filter.getIdThuongHieu(),
-	    filter.getIdThuongHieu(),
-	    filter.getIdXuatXu(),
-	    filter.getIdXuatXu(),
-	    filter.getIdKieuDang(),
-	    filter.getIdKieuDang(),
-	    filter.getIdChatLieu(),
-	    filter.getIdChatLieu(),
-	    filter.getIdDeGiay(),
-	    filter.getIdDeGiay(),
-            filter.getIdKichCo(),
-            filter.getIdKichCo(),
-            filter.getIdMauSac(),
-            filter.getIdMauSac(),
-            filter.getTrangThai(),
-            filter.getTrangThai()
+	    String.format("%%%s%%", filter.getKeyword()),
+	    String.format("%%%s%%", filter.getKeyword()),
+	    filter.getDanhMuc().getValue(),
+	    filter.getDanhMuc().getText(),
+	    filter.getThuongHieu().getValue(),
+	    filter.getThuongHieu().getText(),
+	    filter.getXuatXu().getValue(),
+	    filter.getXuatXu().getText(),
+	    filter.getKieuDang().getValue(),
+	    filter.getKieuDang().getText(),
+	    filter.getChatLieu().getValue(),
+	    filter.getChatLieu().getText(),
+	    filter.getDeGiay().getValue(),
+	    filter.getDeGiay().getText(),
+            filter.getKichCo().getValue(),
+            filter.getKichCo().getText(),
+            filter.getMauSac().getValue(),
+            filter.getMauSac().getText(),
+            filter.getTrangThai().getValue(),
+            filter.getTrangThai().getValue()
         };
-        
+	        
         try {
             totalRows = (int) JbdcHelper.value(query, args);
             totalPages = (int) Math.ceil((double) totalRows / request.getSize());
@@ -452,7 +479,48 @@ public class InuhaSanPhamChiTietRepository implements IDAOinterface<InuhaSanPham
         }
         return totalPages;
     }
-    
+
+    public Optional<InuhaSanPhamChiTietModel> getByCode(String ma) throws SQLException {
+        ResultSet resultSet = null;
+        InuhaSanPhamChiTietModel model = null;
+
+        String query = String.format("""
+            SELECT
+                spct.*,
+                kc.ten AS ten_kich_co,
+                kc.ngay_tao AS ngay_tao_kich_co,
+                kc.ngay_cap_nhat AS ngay_cap_nhat_kich_co,
+                ms.ten AS ten_mau_sac,
+                ms.ngay_tao AS ngay_tao_mau_sac,
+                ms.ngay_cap_nhat AS ngay_cap_nhat_mau_sac
+            FROM %s AS spct
+                LEFT JOIN KichCo AS kc ON kc.id = spct.id_kich_co
+                LEFT JOIN MauSac AS ms ON ms.id = spct.id_mau_sac
+            WHERE
+                spct.ma = ? AND
+                spct.trang_thai_xoa = 0
+        """, TABLE_NAME);
+
+        try {
+            resultSet = JbdcHelper.query(query, ma);
+            while(resultSet.next()) {
+                model = buildData(resultSet, false);
+                Optional<InuhaSanPhamModel> sanPham = sanPhamRepository.getById(resultSet.getInt("id_san_pham"));
+                if (sanPham.isPresent()) { 
+                    model.setSanPham(sanPham.get());
+                }
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+            throw new SQLException(e.getMessage());
+        }
+        finally {
+            JbdcHelper.close(resultSet);
+        }
+
+        return Optional.ofNullable(model);
+    }
+	
     private InuhaSanPhamChiTietModel buildData(ResultSet resultSet) throws SQLException { 
         return buildData(resultSet, true);
     }

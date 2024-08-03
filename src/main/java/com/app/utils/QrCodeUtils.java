@@ -31,6 +31,8 @@ public class QrCodeUtils {
     
     public final static String TYPE_SANPHAM = "product";
     
+    public final static String TYPE_HOADON = "bill";
+    
     public final static String TYPE_SANPHAMCHITIET = "productdetail";
     
     private static final int WIDTH = 600;
@@ -48,6 +50,10 @@ public class QrCodeUtils {
         return PREFIX_CODE + SEPERATOR + TYPE_SANPHAMCHITIET + SEPERATOR + id;
     }
     
+    public static String generateCodeHoaDon(int id) { 
+        return PREFIX_CODE + SEPERATOR + TYPE_HOADON + SEPERATOR + id;
+    }
+	
     public static int getIdSanPham(String code) { 
         String regex = String.format("^%s\\%s%s\\%s(\\d+)$", PREFIX_CODE, SEPERATOR, TYPE_SANPHAM, SEPERATOR);
         Pattern pattern = Pattern.compile(regex);
@@ -67,7 +73,17 @@ public class QrCodeUtils {
         }
         return -1;
     }
-       
+     
+    public static int getIdHoaDon(String code) { 
+        String regex = String.format("^%s\\%s%s\\%s(\\d+)$", PREFIX_CODE, SEPERATOR, TYPE_HOADON, SEPERATOR);
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(code);
+        if (matcher.matches()) { 
+            return Integer.parseInt(matcher.group(1));
+        }
+        return -1;
+    }
+	
     public static boolean isValidCanCuocCongDan(String code) { 
         String regex = "^\\d{12}\\|\\d{9}\\|[\\p{L}\\s]+\\|\\d{8}\\|(Nam|Nữ)\\|[\\p{L}\\s,]+\\|\\d{8}$";
         Pattern pattern = Pattern.compile(regex);

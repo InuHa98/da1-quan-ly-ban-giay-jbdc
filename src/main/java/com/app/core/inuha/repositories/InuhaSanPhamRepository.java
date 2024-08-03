@@ -26,6 +26,19 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
     
     private final static String TABLE_NAME = "SanPham";
     
+    private static InuhaSanPhamRepository instance = null;
+    
+    public static InuhaSanPhamRepository getInstance() { 
+	if (instance == null) { 
+	    instance = new InuhaSanPhamRepository();
+	}
+	return instance;
+    }
+    
+    private InuhaSanPhamRepository() { 
+	
+    }
+    
     @Override
     public int insert(InuhaSanPhamModel model) throws SQLException {
         int result = 0;
@@ -103,7 +116,6 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
             e.printStackTrace();
             throw new SQLException(e.getMessage());
         }
-
         return result;
     }
 
@@ -331,9 +343,13 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
                     sp.trang_thai_xoa = 0 AND
                     (
                         (? IS NULL OR sp.ten LIKE ? OR sp.ma LIKE ?) AND
-                        (COALESCE(?, 0) < 1 OR sp.id_danh_muc = ?) AND
-                        (COALESCE(?, 0) < 1 OR sp.id_thuong_hieu = ?) AND
-                        (COALESCE(?, 0) < 0 OR sp.trang_thai = ?)
+			(COALESCE(?, 0) < 1 OR dm.ten LIKE ?) AND
+                        (COALESCE(?, 0) < 1 OR th.ten LIKE ?) AND
+                        (COALESCE(?, 0) < 1 OR xx.ten LIKE ?) AND
+			(COALESCE(?, 0) < 1 OR kd.ten LIKE ?) AND
+			(COALESCE(?, 0) < 1 OR cl.ten LIKE ?) AND
+			(COALESCE(?, 0) < 1 OR dg.ten LIKE ?) AND
+                        (COALESCE(?, -1) < 0 OR sp.trang_thai = ?)
                     )
             )
             SELECT *
@@ -345,19 +361,28 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
         int start = offset[0];
         int limit = offset[1];
 
+	
         Object[] args = new Object[] {
             filter.getKeyword(),
             String.format("%%%s%%", filter.getKeyword()),
             String.format("%%%s%%", filter.getKeyword()),
-            filter.getIdDanhMuc(),
-            filter.getIdDanhMuc(),
-            filter.getIdThuongHieu(),
-            filter.getIdThuongHieu(),
-            filter.getTrangThai(),
-            filter.getTrangThai(),
+            filter.getDanhMuc().getValue(),
+            filter.getDanhMuc().getText(),
+            filter.getThuongHieu().getValue(),
+            filter.getThuongHieu().getText(),
+            filter.getXuatXu().getValue(),
+            filter.getXuatXu().getText(),
+	    filter.getKieuDang().getValue(),
+            filter.getKieuDang().getText(),
+	    filter.getChatLieu().getValue(),
+            filter.getChatLieu().getText(),
+	    filter.getDeGiay().getValue(),
+            filter.getDeGiay().getText(),
+            filter.getTrangThai().getValue(),
+            filter.getTrangThai().getValue(),
             start,
             limit
-        };
+        };	
 
         try {
             resultSet = JbdcHelper.query(query, args);
@@ -386,14 +411,24 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
 
         String query = String.format("""
             SELECT COUNT(*)
-            FROM %s
+            FROM %s AS sp
+		LEFT JOIN DanhMuc AS dm ON dm.id = sp.id_danh_muc
+		LEFT JOIN ThuongHieu AS th ON th.id = sp.id_thuong_hieu
+		LEFT JOIN XuatXu AS xx ON xx.id = sp.id_xuat_xu
+		LEFT JOIN KieuDang AS kd ON kd.id = sp.id_kieu_dang
+		LEFT JOIN ChatLieu AS cl ON cl.id = sp.id_chat_lieu
+		LEFT JOIN DeGiay AS dg ON dg.id = sp.id_de_giay
             WHERE
-                trang_thai_xoa = 0 AND  
+                sp.trang_thai_xoa = 0 AND  
                 (
-                    (? IS NULL OR ten LIKE ? OR ma LIKE ?) AND
-                    (COALESCE(?, 0) < 1 OR id_danh_muc = ?) AND
-                    (COALESCE(?, 0) < 1 OR id_thuong_hieu = ?) AND
-                    (COALESCE(?, 0) < 0 OR trang_thai = ?)
+                    (? IS NULL OR sp.ten LIKE ? OR sp.ma LIKE ?) AND
+		    (COALESCE(?, 0) < 1 OR dm.ten LIKE ?) AND
+		    (COALESCE(?, 0) < 1 OR th.ten LIKE ?) AND
+		    (COALESCE(?, 0) < 1 OR xx.ten LIKE ?) AND
+		    (COALESCE(?, 0) < 1 OR kd.ten LIKE ?) AND
+		    (COALESCE(?, 0) < 1 OR cl.ten LIKE ?) AND
+		    (COALESCE(?, 0) < 1 OR dg.ten LIKE ?) AND
+		    (COALESCE(?, -1) < 0 OR sp.trang_thai = ?)
                 ) 
         """, TABLE_NAME);
 
@@ -401,12 +436,20 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
             filter.getKeyword(),
             String.format("%%%s%%", filter.getKeyword()),
             String.format("%%%s%%", filter.getKeyword()),
-            filter.getIdDanhMuc(),
-            filter.getIdDanhMuc(),
-            filter.getIdThuongHieu(),
-            filter.getIdThuongHieu(),
-            filter.getTrangThai(),
-            filter.getTrangThai()
+            filter.getDanhMuc().getValue(),
+            filter.getDanhMuc().getText(),
+            filter.getThuongHieu().getValue(),
+            filter.getThuongHieu().getText(),
+            filter.getXuatXu().getValue(),
+            filter.getXuatXu().getText(),
+	    filter.getKieuDang().getValue(),
+            filter.getKieuDang().getText(),
+	    filter.getChatLieu().getValue(),
+            filter.getChatLieu().getText(),
+	    filter.getDeGiay().getValue(),
+            filter.getDeGiay().getText(),
+            filter.getTrangThai().getValue(),
+            filter.getTrangThai().getValue()
         };
         
         try {
@@ -419,6 +462,60 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
         return totalPages;
     }
     
+    public Optional<InuhaSanPhamModel> getByCode(String code) throws SQLException {
+        ResultSet resultSet = null;
+        InuhaSanPhamModel model = null;
+
+        String query = String.format("""
+            SELECT
+                sp.*,
+                dm.ten AS ten_danh_muc,
+                dm.ngay_tao AS ngay_tao_danh_muc,
+                dm.ngay_cap_nhat AS ngay_cap_nhat_danh_muc,
+                th.ten AS ten_thuong_hieu,
+                th.ngay_tao AS ngay_tao_thuong_hieu,
+                th.ngay_cap_nhat AS ngay_cap_nhat_thuong_hieu,
+                xx.ten AS ten_xuat_xu,
+                xx.ngay_tao AS ngay_tao_xuat_xu,
+                xx.ngay_cap_nhat AS ngay_cap_nhat_xuat_xu,
+                kd.ten AS ten_kieu_dang,
+                kd.ngay_tao AS ngay_tao_kieu_dang,
+                kd.ngay_cap_nhat AS ngay_cap_nhat_kieu_dang,
+                cl.ten AS ten_chat_lieu,
+                cl.ngay_tao AS ngay_tao_chat_lieu,
+                cl.ngay_cap_nhat AS ngay_cap_nhat_chat_lieu,
+                dg.ten AS ten_de_giay,
+                dg.ngay_tao AS ngay_tao_de_giay,
+                dg.ngay_cap_nhat AS ngay_cap_nhat_de_giay,
+                (SELECT SUM(so_luong) FROM SanPhamChiTiet WHERE id_san_pham = sp.id) AS so_luong
+            FROM %s AS sp
+                LEFT JOIN DanhMuc AS dm ON dm.id = sp.id_danh_muc
+                LEFT JOIN ThuongHieu AS th ON th.id = sp.id_thuong_hieu
+                LEFT JOIN XuatXu AS xx ON xx.id = sp.id_xuat_xu
+                LEFT JOIN KieuDang AS kd ON kd.id = sp.id_kieu_dang
+                LEFT JOIN ChatLieu AS cl ON cl.id = sp.id_chat_lieu
+                LEFT JOIN DeGiay AS dg ON dg.id = sp.id_de_giay
+            WHERE
+                sp.ma LIKE ? AND
+                sp.trang_thai_xoa = 0
+        """, TABLE_NAME);
+
+        try {
+            resultSet = JbdcHelper.query(query, code);
+            while(resultSet.next()) {
+                model = buildData(resultSet, false);
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+            throw new SQLException(e.getMessage());
+        }
+        finally {
+            JbdcHelper.close(resultSet);
+        }
+
+        return Optional.ofNullable(model);
+    }
+	
     private InuhaSanPhamModel buildData(ResultSet resultSet) throws SQLException { 
         return buildData(resultSet, true);
     }

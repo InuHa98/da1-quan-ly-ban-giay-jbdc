@@ -4,6 +4,7 @@ import com.app.common.helper.JbdcHelper;
 import com.app.common.infrastructure.interfaces.IDAOinterface;
 import com.app.common.infrastructure.request.FillterRequest;
 import com.app.core.inuha.models.sanpham.InuhaChatLieuModel;
+import com.app.core.inuha.repositories.InuhaHoaDonChiTietRepository;
 import com.app.utils.TimeUtils;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,6 +19,19 @@ import java.util.Optional;
 public class InuhaChatLieuRepository implements IDAOinterface<InuhaChatLieuModel, Integer> {
     
     private final static String TABLE_NAME = "ChatLieu";
+    
+    private static InuhaChatLieuRepository instance = null;
+    
+    public static InuhaChatLieuRepository getInstance() { 
+	if (instance == null) { 
+	    instance = new InuhaChatLieuRepository();
+	}
+	return instance;
+    }
+    
+    private InuhaChatLieuRepository() { 
+	
+    }
     
     @Override
     public int insert(InuhaChatLieuModel model) throws SQLException {
@@ -242,6 +256,28 @@ public class InuhaChatLieuRepository implements IDAOinterface<InuhaChatLieuModel
         return totalPages;
     }
     
+    public Optional<InuhaChatLieuModel> getByName(String name) throws SQLException {
+        ResultSet resultSet = null;
+        InuhaChatLieuModel model = null;
+
+        String query = String.format("SELECT * FROM %s WHERE ten LIKE ? AND trang_thai_xoa = 0", TABLE_NAME);
+
+        try {
+            resultSet = JbdcHelper.query(query, name);
+            while(resultSet.next()) {
+                model = buildData(resultSet, false);
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+            throw new SQLException(e.getMessage());
+        }
+        finally {
+            JbdcHelper.close(resultSet);
+        }
+
+        return Optional.ofNullable(model);
+    }
+	
     private InuhaChatLieuModel buildData(ResultSet resultSet) throws SQLException { 
         return buildData(resultSet, true);
     }
