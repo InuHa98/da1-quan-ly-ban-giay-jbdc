@@ -50,6 +50,7 @@ public class TableActionCellRender extends DefaultTableCellRenderer {
                 }
             }
         });
+        
     }
 
     @Override
