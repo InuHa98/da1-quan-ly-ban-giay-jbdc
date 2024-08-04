@@ -46,7 +46,7 @@ public class DatHoaDonChiTietRepository {
                                                hdct.gia_ban,
                                                (hdct.so_luong * hdct.gia_ban) AS thanh_tien,
                                                hdt.Tong_tien,
-                                               kh.ho_ten AS khach_hang_ho_ten,
+                                               ISNULL(kh.ho_ten, N'Khách hàng lẻ') AS ho_ten,
                                                tk.ho_ten AS nhan_vien_ho_ten,
                                                hd.ma,
                                                hd.ngay_tao,
@@ -55,7 +55,7 @@ public class DatHoaDonChiTietRepository {
                                                HoaDonChiTiet hdct
                                            INNER JOIN 
                                                HoaDon hd ON hd.id = hdct.id_hoa_don
-                                           INNER JOIN 
+                                           LEFT JOIN 
                                                KhachHang kh ON hd.id_khach_hang = kh.id
                                            INNER JOIN 
                                                TaiKhoan tk ON hd.id_tai_khoan = tk.id 
@@ -125,7 +125,7 @@ public class DatHoaDonChiTietRepository {
               gia_ban,
               (hdct.so_luong*hdct.gia_ban) as 'thanh_tien',
               sum((hdct.so_luong*hdct.gia_ban)) as 'Tong_tien',
-              kh.ho_ten,
+              ISNULL(kh.ho_ten, N'Khách hàng lẻ') AS ho_ten,
               tk.ho_ten,
               hd.ma,
               hd.ngay_tao,
@@ -133,7 +133,7 @@ public class DatHoaDonChiTietRepository {
               sum(hdct.so_luong)
               FROM HoaDonChiTiet hdct
                INNER JOIN HoaDon hd ON hd.id = hdct.id_hoa_don
-               INNER JOIN   KhachHang kh ON hd.id_khach_hang = kh.id
+               Left join   KhachHang kh ON hd.id_khach_hang = kh.id
                INNER JOIN TaiKhoan tk ON hd.id_tai_khoan = tk.id 
                where hd.ma=?	 
                 GROUP BY hdct.id , 
