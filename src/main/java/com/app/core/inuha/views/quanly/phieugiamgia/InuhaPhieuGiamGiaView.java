@@ -61,6 +61,9 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
     public InuhaPhieuGiamGiaView() {
 	initComponents();
 	
+	btnCreate.setBackground(ColorUtils.PRIMARY_COLOR);
+	btnCreate.setIcon(ResourceUtils.getSVG("/svg/plus.svg", new Dimension(20, 20)));
+	
 	datePicker.setEditor(txtThoiGian);
 	datePicker.setDateSelectionMode(DatePicker.DateSelectionMode.BETWEEN_DATE_SELECTED);
 	datePicker.setSeparator("  tới ngày  ");
@@ -205,6 +208,7 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
         scrDanhSach = new javax.swing.JScrollPane();
         tblDanhSach = new javax.swing.JTable();
         pnlPhanTrang = new javax.swing.JPanel();
+        btnCreate = new javax.swing.JButton();
 
         lblFilter.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
         lblFilter.setText("Bộ lọc");
@@ -287,11 +291,11 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
 
             },
             new String [] {
-                "#", "Mã", "Tên", "Số lượng", "Kiểu giảm", "Giá trị giảm", "Giảm tối đa", "Đơn tối thiểu", "Ngày bắt đầu", "ngày kết thúc", "Trạng thái"
+                "#", "Mã", "Tên", "Số lượng", "Kiểu giảm", "Giá trị giảm", "Giảm tối đa", "Đơn tối thiểu", "Ngày bắt đầu", "ngày kết thúc", "Trạng thái", "Hành động"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false, false, true
+                false, false, false, false, false, false, false, false, false, false, true, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -314,7 +318,7 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
             pnlDanhSachLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlDanhSachLayout.createSequentialGroup()
                 .addGap(10, 10, 10)
-                .addComponent(scrDanhSach, javax.swing.GroupLayout.DEFAULT_SIZE, 277, Short.MAX_VALUE))
+                .addComponent(scrDanhSach, javax.swing.GroupLayout.DEFAULT_SIZE, 275, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout pnlPhanTrangLayout = new javax.swing.GroupLayout(pnlPhanTrang);
@@ -328,6 +332,14 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
             .addGap(0, 35, Short.MAX_VALUE)
         );
 
+        btnCreate.setText("Tạo mới phiếu giảm giá");
+        btnCreate.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnCreate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCreateActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout pnlListLayout = new javax.swing.GroupLayout(pnlList);
         pnlList.setLayout(pnlListLayout);
         pnlListLayout.setHorizontalGroup(
@@ -335,7 +347,9 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
             .addGroup(pnlListLayout.createSequentialGroup()
                 .addGap(23, 23, 23)
                 .addComponent(lblDanhSach, javax.swing.GroupLayout.PREFERRED_SIZE, 736, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnCreate, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(15, 15, 15))
             .addGroup(pnlListLayout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addComponent(pnlPhanTrang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -347,8 +361,10 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
             pnlListLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlListLayout.createSequentialGroup()
                 .addGap(10, 10, 10)
-                .addComponent(lblDanhSach, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnlListLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblDanhSach, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnCreate))
+                .addGap(10, 10, 10)
                 .addComponent(splitLine1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(pnlDanhSach, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -378,8 +394,13 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnCreateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCreateActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnCreateActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnClear;
+    private javax.swing.JButton btnCreate;
     private javax.swing.JButton btnSearch;
     private javax.swing.JComboBox cboTrangThai;
     private javax.swing.JLabel lblDanhSach;
