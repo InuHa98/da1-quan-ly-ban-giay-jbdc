@@ -40,7 +40,7 @@ public class VoucherUtils {
 	    value = model.getGiaTriGiam();
 	}
 	
-	if (value > model.getGiamToiDa()) {
+	if (model.getGiamToiDa() > 0 && value > model.getGiamToiDa()) {
 	    value = (int) model.getGiamToiDa();
 	}
 	

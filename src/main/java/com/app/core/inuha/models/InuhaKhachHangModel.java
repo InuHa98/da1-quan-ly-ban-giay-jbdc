@@ -1,5 +1,6 @@
 package com.app.core.inuha.models;
 
+import com.app.utils.CurrencyUtils;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,6 +32,8 @@ public class InuhaKhachHangModel {
     private String diaChi;
     
     private boolean trangThaiXoa;
+    
+    private int soLanMuaHang;
         
     public boolean isGioiTinh() { 
 	return gioiTinh;
@@ -46,6 +49,7 @@ public class InuhaKhachHangModel {
 	    null,
 	    sdt,
 	    hoTen,
+	    CurrencyUtils.parseNumber(soLanMuaHang),
 	    getGioiTinh(),
 	    diaChi
 	};

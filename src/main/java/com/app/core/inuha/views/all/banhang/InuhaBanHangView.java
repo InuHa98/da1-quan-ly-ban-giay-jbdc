@@ -151,6 +151,8 @@ public class InuhaBanHangView extends javax.swing.JPanel {
     
     private InuhaPhieuGiamGiaModel currentPhieuGiamGia = null;
     
+    private InuhaKhachHangModel currentKhachHang = null;
+    
     private boolean reLoad = true;
     
     private ChiTietThanhToan chiTietThanhToan = new ChiTietThanhToan();
@@ -372,10 +374,15 @@ public class InuhaBanHangView extends javax.swing.JPanel {
                 tblDanhSachSanPham.getCellEditor().stopCellEditing();
             }
             
-            model.setRowCount(0);
-            
-            String keyword = txtTuKhoa.getText().trim();
+	    String keyword = txtTuKhoa.getText().trim();
             keyword = keyword.replaceAll("\\s+", " ");
+	    
+	    if (keyword.length() > 250) {
+		MessageToast.warning("Từ khoá tìm kiếm chỉ được chứa tối đa 250 kí tự");
+		return;
+	    }
+	    
+            model.setRowCount(0);
         
             ComboBoxItem<Integer> danhMuc = (ComboBoxItem<Integer>) cboDanhMuc.getSelectedItem();
             ComboBoxItem<Integer> thuongHieu = (ComboBoxItem<Integer>) cboThuongHieu.getSelectedItem();
@@ -1659,6 +1666,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 	
 	tblDanhSachHoaDon.setRowSelectionInterval(i, i);
 	currentHoaDon = dataItemsHoaDonCho.get(i);
+	currentKhachHang = dataItemsHoaDonCho.get(i).getKhachHang();
 	
 	LoadingDialog loading = new LoadingDialog();
 	executorService.submit(() -> {
@@ -1698,6 +1706,8 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 	
 	currentHoaDon = null;
 	currentHoaDonChiTiet = null;
+	currentPhieuGiamGia = null;
+	currentKhachHang = null;
 	dataItemsGioHang = new ArrayList<>();
 	txtSoDienThoai.setText(null);
 	txtTenKhachHang.setText(null);
@@ -1798,14 +1808,20 @@ public class InuhaBanHangView extends javax.swing.JPanel {
     }
     
     private void handleClickButtonSelectKhachHang() {
-	ModalDialog.showModal(this, new SimpleModalBorder(new InuhaListKhachHangView(), "Danh sách khách hàng"));
+	ModalDialog.showModal(this, new SimpleModalBorder(new InuhaListKhachHangView(currentKhachHang), "Danh sách khách hàng"));
     }
 
     public void setKhachHang(InuhaKhachHangModel khachHang) {
+	if (khachHang == null) { 
+	    handleClickButtonClearKhachHang();
+	    return;
+	}
+	
 	LoadingDialog loading = new LoadingDialog();
 	executorService.submit(() -> {
 	    try {
-		currentHoaDon.setKhachHang(khachHang);
+		currentKhachHang = khachHang;
+		currentHoaDon.setKhachHang(currentKhachHang);
 		hoaDonService.update(currentHoaDon);
 		txtSoDienThoai.setText(khachHang.getSdt());
 		txtTenKhachHang.setText(khachHang.getHoTen());
@@ -1828,6 +1844,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 	executorService.submit(() -> {
 	    try {
 		clearVoucher();
+		currentKhachHang = null;
 		currentHoaDon.setKhachHang(null);
 		currentHoaDon.setPhieuGiamGia(null);
 		hoaDonService.update(currentHoaDon);
@@ -2145,6 +2162,10 @@ public class InuhaBanHangView extends javax.swing.JPanel {
     }
     
     private void showSelectVoucher() {
+	if (currentKhachHang == null || currentKhachHang.getSoLanMuaHang() < 1) {
+	    MessageToast.warning("Phiếu giảm giá chỉ áp dụng cho khách hàng đã từng mua hàng tại đây!");
+	    return;
+	}
 	ModalDialog.showModal(instance, new SimpleModalBorder(new InuhaListPhieuGiamGiaView(chiTietThanhToan), "Danh sách Voucher"));
     }
 

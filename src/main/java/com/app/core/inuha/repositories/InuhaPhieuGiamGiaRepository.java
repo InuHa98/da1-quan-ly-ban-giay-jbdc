@@ -317,6 +317,7 @@ public class InuhaPhieuGiamGiaRepository implements IDAOinterface<InuhaPhieuGiam
 		)
         """, TABLE_NAME, TrangThaiPhieuGiamGiaConstant.DANG_DIEN_RA, TrangThaiPhieuGiamGiaConstant.SAP_DIEN_RA, TrangThaiPhieuGiamGiaConstant.DA_DIEN_RA);
 
+	
 	Object[] args = new Object[] {
 	    filter.getKeyword(),
             String.format("%%%s%%", filter.getKeyword()),
