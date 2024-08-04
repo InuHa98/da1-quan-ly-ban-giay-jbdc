@@ -54,6 +54,7 @@ public class DatHoaDonChiTietView extends javax.swing.JPanel {
         this.tongSoLuong(mahd);
         ArrayList<DatHoaDonChiTietModel> list=datHoaDonChiTietRepository.loadDatHoaDonChiTietTable(mahd);
         loadData(list);
+        cboTrangthai.setEnabled(false);
         setupTable(tblHoadonchitiet);
         datHoaDonChiTietRepository.tongSoLuong(mahd);
         lblMaHd.setText(datHoaDonRequest.getMaHd());
@@ -77,17 +78,17 @@ public class DatHoaDonChiTietView extends javax.swing.JPanel {
         ITableActionEvent event = new ITableActionEvent(){
             @Override
             public void onEdit(int row) {
-                System.out.println("aaaaaaaaaaaaa");
+           
             }
 
             @Override
             public void onDelete(int row) {
-                System.out.println("bbbbbbb");     
+                     
             }
 
             @Override
             public void onView(int row) {
-                System.out.println("cccccc"); 
+           
               
             }
             
@@ -117,8 +118,8 @@ public class DatHoaDonChiTietView extends javax.swing.JPanel {
             SELECT	
                            
                             sum(hdct.so_luong)
-              FROM HoaDonChiTiet3 hdct
-                            INNER JOIN HoaDon3 hd ON hd.id = hdct.id_hoa_don
+              FROM HoaDonChiTiet hdct
+                            INNER JOIN HoaDon hd ON hd.id = hdct.id_hoa_don
                where hd.ma=?	 
               
                      """;
@@ -246,7 +247,6 @@ public class DatHoaDonChiTietView extends javax.swing.JPanel {
         roundPanel4 = new com.app.views.UI.panel.RoundPanel();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -268,9 +268,6 @@ public class DatHoaDonChiTietView extends javax.swing.JPanel {
         lblTenkhachhang = new javax.swing.JLabel();
         lblNhanvien = new javax.swing.JLabel();
         cboTrangthai = new javax.swing.JComboBox<>();
-        roundPanel3 = new com.app.views.UI.panel.RoundPanel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
 
         tblHoadonchitiet.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -306,8 +303,6 @@ public class DatHoaDonChiTietView extends javax.swing.JPanel {
                 jButton4ActionPerformed(evt);
             }
         });
-
-        jButton5.setText("Xóa");
 
         jLabel1.setForeground(new java.awt.Color(0, 204, 255));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -348,14 +343,16 @@ public class DatHoaDonChiTietView extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(roundPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(roundPanel4Layout.createSequentialGroup()
-                        .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(roundPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(roundPanel4Layout.createSequentialGroup()
+                                .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, roundPanel4Layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(18, 18, 18)
                         .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(84, 84, 84)
-                        .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(38, 38, 38))
+                        .addGap(24, 24, 24))
                     .addGroup(roundPanel4Layout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 75, Short.MAX_VALUE)
@@ -397,7 +394,6 @@ public class DatHoaDonChiTietView extends javax.swing.JPanel {
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(roundPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton5)
                     .addComponent(jButton4)
                     .addComponent(jButton3))
                 .addContainerGap())
@@ -503,32 +499,6 @@ public class DatHoaDonChiTietView extends javax.swing.JPanel {
 
         jTabbedPane1.addTab("Hóa đơn chi tiết", roundPanel2);
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        jScrollPane2.setViewportView(jTable1);
-
-        javax.swing.GroupLayout roundPanel3Layout = new javax.swing.GroupLayout(roundPanel3);
-        roundPanel3.setLayout(roundPanel3Layout);
-        roundPanel3Layout.setHorizontalGroup(
-            roundPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 776, Short.MAX_VALUE)
-        );
-        roundPanel3Layout.setVerticalGroup(
-            roundPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 598, Short.MAX_VALUE)
-        );
-
-        jTabbedPane1.addTab("Lịch sử hóa đơn", roundPanel3);
-
         javax.swing.GroupLayout roundPanel1Layout = new javax.swing.GroupLayout(roundPanel1);
         roundPanel1.setLayout(roundPanel1Layout);
         roundPanel1Layout.setHorizontalGroup(
@@ -570,7 +540,6 @@ public class DatHoaDonChiTietView extends javax.swing.JPanel {
     private javax.swing.JComboBox<String> cboTrangthai;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
@@ -582,10 +551,8 @@ public class DatHoaDonChiTietView extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTable jTable1;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JLabel lblGiamgia;
     private javax.swing.JLabel lblMaHd;
@@ -597,7 +564,6 @@ public class DatHoaDonChiTietView extends javax.swing.JPanel {
     private javax.swing.JLabel lblTongtienhang;
     private com.app.views.UI.panel.RoundPanel roundPanel1;
     private com.app.views.UI.panel.RoundPanel roundPanel2;
-    private com.app.views.UI.panel.RoundPanel roundPanel3;
     private com.app.views.UI.panel.RoundPanel roundPanel4;
     private javax.swing.JTable tblHoadonchitiet;
     // End of variables declaration//GEN-END:variables

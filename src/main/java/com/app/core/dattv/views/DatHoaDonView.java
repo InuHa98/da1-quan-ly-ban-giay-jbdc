@@ -136,7 +136,7 @@ public class DatHoaDonView  extends RoundPanel{
                                          SELECT
                                              hd.ma,
                                              hd.ngay_tao,
-                                             kh.ho_ten,
+                                             ISNULL(kh.ho_ten, N'Khách hàng lẻ') AS ho_ten,
                                              SUM(hdct.gia_ban * so_luong) AS tong_gia_ban,
                                              hd.tien_giam,
                                              SUM((hdct.gia_ban * so_luong) - hd.tien_giam) AS tong_sau_giam,
@@ -195,7 +195,7 @@ public class DatHoaDonView  extends RoundPanel{
                      SELECT
                          hd.ma,
                          hd.ngay_tao,
-                         kh.ho_ten,
+                         ISNULL(kh.ho_ten, N'Khách hàng lẻ') AS ho_ten,
                          SUM(hdct.gia_ban * so_luong) AS tong_gia_ban,
                          hd.tien_giam,
                          SUM((hdct.gia_ban * so_luong) - hd.tien_giam) AS tong_sau_giam,
@@ -458,33 +458,33 @@ private String getTrangThaiString(int trangThai) {
 private void handleClickButtonScanQrCode() {
         QrCodeHelper.showWebcam("Tìm kiếm hóa đơn bằng QR", result -> {
 
-//            LoadingDialog loading = new LoadingDialog();
-//            executorService.submit(() -> {
-//                try {
-//                    String code = result.getText();
-//
-//                   DatHoaDonRequest hoaDonRequest = null;
-//                    int id;
-//                    if ((id = QrCodeUtils.getIdHoaDon(code)) > 0) {
-//                        hoaDonRequest = datHoaDonService.getById(id);
-//                    
-//                    } else { 
-//                        loading.dispose();
-//                        MessageToast.error("QRCode không hợp lệ!!!");
-//                        return;
-//                    }
-//                    loading.dispose();
-//                    showHoadonchitiet();
-//                } catch (ServiceResponseException e) {
-//                    loading.dispose();
-//                    MessageModal.error(e.getMessage());
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                    loading.dispose();
-//                    MessageModal.error(ErrorConstant.DEFAULT_ERROR);
-//                }
-//            });
-//            loading.setVisible(true);
+           LoadingDialog loading = new LoadingDialog();
+            executorService.submit(() -> {
+               try {
+                   String code = result.getText();
+
+                 DatHoaDonRequest hoaDonRequest = null;
+                   int id;
+                    if ((id = QrCodeUtils.getIdHoaDon(code)) > 0) {
+                      hoaDonRequest = datHoaDonService.getById(id);
+                    
+                    } else { 
+                        loading.dispose();
+                       MessageToast.error("QRCode không hợp lệ!!!");
+                       return;
+                   }
+                   loading.dispose();
+                   showHoadonchitiet();
+               } catch (ServiceResponseException e) {
+                   loading.dispose();
+                   MessageModal.error(e.getMessage());
+               } catch (Exception e) {
+                   e.printStackTrace();
+                  loading.dispose();
+                   MessageModal.error(ErrorConstant.DEFAULT_ERROR);
+                }
+            });
+            loading.setVisible(true);
         });
 
     }
@@ -991,14 +991,19 @@ private void handleClickButtonScanQrCode() {
                 .addContainerGap())
         );
 
-        btnNext.setText("Last");
+        btnNext.setText("Next");
         btnNext.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnNextActionPerformed(evt);
             }
         });
 
-        jButton3.setText("jButton1");
+        jButton3.setText("Last");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         jButton4.setText("Fisrt");
         jButton4.addActionListener(new java.awt.event.ActionListener() {
@@ -1195,7 +1200,8 @@ private void handleClickButtonScanQrCode() {
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-     
+     trang=1;
+        loadDataPage1(trang);
        
     }//GEN-LAST:event_jButton4ActionPerformed
 
@@ -1205,7 +1211,7 @@ private void handleClickButtonScanQrCode() {
             trang--;
             loadDataPage1(trang);
         }else{
-            JOptionPane.showMessageDialog(this, "aaaaaaaaaa");
+            JOptionPane.showMessageDialog(this, "Bạn đang ở trang đầu tiên ! ");
         }
     }//GEN-LAST:event_btnPreviewActionPerformed
 
@@ -1220,9 +1226,19 @@ private void handleClickButtonScanQrCode() {
 
     private void btnXuatdanhsachActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXuatdanhsachActionPerformed
         // TODO add your handling code here:
-        JOptionPane.showConfirmDialog(this, "In thành công !");
-        inDanhSach();
+         int result = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn tiếp tục?", "Xác nhận", JOptionPane.YES_NO_OPTION);
+
+        // Kiểm tra kết quả và thực hiện hành động tương ứng
+        if (result == JOptionPane.YES_OPTION) {
+            inDanhSach();
+        } 
     }//GEN-LAST:event_btnXuatdanhsachActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+        trang=soTrang;
+        loadDataPage1(trang);
+    }//GEN-LAST:event_jButton3ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
