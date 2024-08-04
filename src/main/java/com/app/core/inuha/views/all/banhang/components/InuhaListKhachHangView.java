@@ -10,6 +10,8 @@ import com.app.core.inuha.models.InuhaKhachHangModel;
 import com.app.core.inuha.request.InuhaFilterKhachHangRequest;
 import com.app.core.inuha.services.InuhaKhachHangService;
 import com.app.core.inuha.views.all.banhang.InuhaBanHangView;
+import com.app.core.inuha.views.quanly.components.table.khachhang.InuhaKhachHangTableActionCellEditor;
+import com.app.core.inuha.views.quanly.components.table.khachhang.InuhaKhachHangTableActionCellRender;
 import com.app.core.inuha.views.quanly.components.table.thuoctinhsanpham.InuhaThuocTinhTableActionCellEditor;
 import com.app.core.inuha.views.quanly.components.table.thuoctinhsanpham.InuhaThuocTinhTableActionCellRender;
 import com.app.utils.ColorUtils;
@@ -55,18 +57,21 @@ public class InuhaListKhachHangView extends javax.swing.JPanel {
         
     public static InuhaListKhachHangView getInstance() { 
         if (instance == null) { 
-            instance = new InuhaListKhachHangView();
+            instance = new InuhaListKhachHangView(null);
         }
         return instance;
     }
     
+    private InuhaKhachHangModel khachHang;
+    
     /**
      * Creates new form InuhaQuanLyKhachHangView
      */
-    public InuhaListKhachHangView() {
+    public InuhaListKhachHangView(InuhaKhachHangModel khachHang) {
         initComponents();
         instance = this;
-	
+	this.khachHang = khachHang;
+		
 	pnlSearchBox.setPlaceholder("Nhập tên hoặc số điện thoại ...");
 	txtTuKhoa = pnlSearchBox.getKeyword();
 
@@ -110,17 +115,19 @@ public class InuhaListKhachHangView extends javax.swing.JPanel {
                         executorService.submit(() -> {
                             try {
                                 khachHangService.delete(item.getId());
-                                loadingDialog.dispose();
-
+				int currentId = khachHang == null ? -1 : khachHang.getId();
+				if (item.getId() == currentId) {
+				    InuhaBanHangView.getInstance().setKhachHang(null);
+				}
                                 loadDataPage();
                                 MessageToast.success("Xoá thành công khách hàng: " + item.getHoTen());
                             } catch (ServiceResponseException e) {
-                                loadingDialog.dispose();
                                 MessageToast.error(e.getMessage());
                             } catch (Exception e) {
-                                loadingDialog.dispose();
                                 MessageModal.error(ErrorConstant.DEFAULT_ERROR);
-                            } 
+                            }  finally {
+				loadingDialog.dispose();
+			    }
                         });
                         loadingDialog.setVisible(true);
                     }
@@ -138,8 +145,8 @@ public class InuhaListKhachHangView extends javax.swing.JPanel {
         tblDanhSach.setBackground(ColorUtils.BACKGROUND_GRAY);
         tblDanhSach.getTableHeader().setBackground(ColorUtils.BACKGROUND_GRAY);
         
-        table.getColumnModel().getColumn(1).setCellRenderer(new InuhaThuocTinhTableActionCellRender(table));
-        table.getColumnModel().getColumn(1).setCellEditor(new InuhaThuocTinhTableActionCellEditor(event));
+        table.getColumnModel().getColumn(1).setCellRenderer(new InuhaKhachHangTableActionCellRender(table));
+        table.getColumnModel().getColumn(1).setCellEditor(new InuhaKhachHangTableActionCellEditor(event));
     }
     
     public void loadDataPage() { 
@@ -153,10 +160,16 @@ public class InuhaListKhachHangView extends javax.swing.JPanel {
                 tblDanhSach.getCellEditor().stopCellEditing();
             }
             
-            model.setRowCount(0);
-            
 	    String keyword = txtTuKhoa.getText().trim();
             keyword = keyword.replaceAll("\\s+", " ");
+	    
+	    if (keyword.length() > 250) {
+		MessageToast.warning("Từ khoá tìm kiếm chỉ được chứa tối đa 250 kí tự");
+		return;
+	    }
+		    
+            model.setRowCount(0);
+            
 	    
             InuhaFilterKhachHangRequest request = new InuhaFilterKhachHangRequest();
 	    request.setKeyword(keyword);
@@ -242,11 +255,11 @@ public class InuhaListKhachHangView extends javax.swing.JPanel {
 
             },
             new String [] {
-                "#", "", "Số điện thoại", "Tên khách hàng", "Giới tính", "Địa chỉ"
+                "#", "", "Số điện thoại", "Tên khách hàng", "Lượt mua hàng", "Giới tính", "Địa chỉ"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, true, false, false, false, false
+                false, true, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -266,7 +279,7 @@ public class InuhaListKhachHangView extends javax.swing.JPanel {
             tblDanhSach.getColumnModel().getColumn(1).setMinWidth(100);
             tblDanhSach.getColumnModel().getColumn(2).setMinWidth(100);
             tblDanhSach.getColumnModel().getColumn(3).setMinWidth(150);
-            tblDanhSach.getColumnModel().getColumn(5).setMinWidth(200);
+            tblDanhSach.getColumnModel().getColumn(6).setMinWidth(200);
         }
 
         javax.swing.GroupLayout pnlDanhSachLayout = new javax.swing.GroupLayout(pnlDanhSach);

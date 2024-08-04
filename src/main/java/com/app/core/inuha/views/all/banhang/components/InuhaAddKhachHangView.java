@@ -6,6 +6,7 @@ import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
 import com.app.core.inuha.models.InuhaKhachHangModel;
 import com.app.core.inuha.services.InuhaKhachHangService;
+import com.app.core.inuha.views.all.banhang.InuhaBanHangView;
 import com.app.core.inuha.views.quanly.InuhaSanPhamView;
 import com.app.utils.ColorUtils;
 import com.app.utils.NumberPhoneUtils;
@@ -74,7 +75,7 @@ public class InuhaAddKhachHangView extends JPanel {
         jLabel1 = new javax.swing.JLabel();
         rdoNam = new javax.swing.JRadioButton();
         rdoNu = new javax.swing.JRadioButton();
-        lblTen1 = new javax.swing.JLabel();
+        lblDiaChi = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         txtDiaChi = new javax.swing.JTextArea();
 
@@ -124,8 +125,8 @@ public class InuhaAddKhachHangView extends JPanel {
         buttonGroup1.add(rdoNu);
         rdoNu.setText("Nữ");
 
-        lblTen1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        lblTen1.setText("Địa chỉ:");
+        lblDiaChi.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblDiaChi.setText("Địa chỉ:");
 
         txtDiaChi.setColumns(20);
         txtDiaChi.setRows(5);
@@ -159,7 +160,7 @@ public class InuhaAddKhachHangView extends JPanel {
                         .addGap(28, 28, 28)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(lblTen1)
+                                .addComponent(lblDiaChi)
                                 .addGap(0, 0, Short.MAX_VALUE))
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 291, Short.MAX_VALUE))))
                 .addGap(40, 40, 40))
@@ -170,7 +171,7 @@ public class InuhaAddKhachHangView extends JPanel {
                 .addGap(0, 0, 0)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblTen)
-                    .addComponent(lblTen1))
+                    .addComponent(lblDiaChi))
                 .addGap(10, 10, 10)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
@@ -224,9 +225,9 @@ public class InuhaAddKhachHangView extends JPanel {
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lblDiaChi;
     private javax.swing.JLabel lblSoDienThoai;
     private javax.swing.JLabel lblTen;
-    private javax.swing.JLabel lblTen1;
     private javax.swing.JRadioButton rdoNam;
     private javax.swing.JRadioButton rdoNu;
     private javax.swing.JTextArea txtDiaChi;
@@ -263,6 +264,14 @@ public class InuhaAddKhachHangView extends JPanel {
         }
 	lblSoDienThoai.setForeground(currentColor);
 	
+	lblDiaChi.setForeground(ColorUtils.DANGER_COLOR);
+        if (diaChi.length() > 2000) { 
+            MessageToast.error("Địa chỉ không được vượt quá 2000 ký tự");
+            txtDiaChi.requestFocus();
+            return;
+        }
+        lblDiaChi.setForeground(currentColor);
+	
 	boolean isEdited = this.model != null;
 		
 	InuhaKhachHangModel khachHang = new InuhaKhachHangModel();
@@ -286,6 +295,10 @@ public class InuhaAddKhachHangView extends JPanel {
 		} else {
 		    khachHangService.update(khachHang);
 		    InuhaListKhachHangView.getInstance().loadDataPage();
+		    int currentId = model == null ? -1 : model.getId();
+		    if (khachHang.getId() == currentId) {
+			InuhaBanHangView.getInstance().setKhachHang(khachHang);
+		    }
 		    MessageToast.success("Cập nhật khách hàng thành công.");
 		}
 		ModalDialog.closeModal(InuhaListKhachHangView.MODAL_ID_CREATE);

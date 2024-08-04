@@ -1,47 +1,38 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
-
-package com.app.core.inuha.views.quanly.components.table.trangthai;
+package com.app.core.inuha.views.quanly.components.table.phieugiamgia;
 
 import com.app.utils.ColorUtils;
-import com.app.utils.ProductUtils;
-import java.awt.Color;
+import com.app.utils.VoucherUtils;
 
 /**
  *
  * @author inuHa
  */
-public class InuhaTrangThaiSanPhamTablePanel extends javax.swing.JPanel {
+public class InuhaTrangThaiPhieuGiamGiaTablePanel extends javax.swing.JPanel {
 
     /** Creates new form InuhaTrangThaiSanPhamTablePanel */
-    public InuhaTrangThaiSanPhamTablePanel() {
+    public InuhaTrangThaiPhieuGiamGiaTablePanel() {
 	initComponents();
     }
     
-    public InuhaTrangThaiSanPhamTablePanel(boolean trangThai) {
+    public InuhaTrangThaiPhieuGiamGiaTablePanel(String trangThai) {
 	this();
 	setTrangThai(trangThai);
     }
     
-    public void setTrangThai(boolean trangThai) { 
-	if (trangThai) {
-	    setDangBan();
-	} else {
-	    setNgungBan();
+    public void setTrangThai(String trangThai) { 
+	switch (trangThai) {
+	    case VoucherUtils.STATUS_DANG_DIEN_RA -> {
+		txtText.setForeground(ColorUtils.SUCCESS_COLOR);
+	    }
+	    case VoucherUtils.STATUS_SAP_DIEN_RA -> {
+		txtText.setForeground(ColorUtils.PRIMARY_COLOR);
+	    }
+	    default -> txtText.setForeground(ColorUtils.DANGER_COLOR);
 	}
-    }
-    
-    public void setDangBan() { 
-	txtText.setText(ProductUtils.getTrangThai(true));
-	txtText.setForeground(ColorUtils.SUCCESS_COLOR);
-    }
 
-    public void setNgungBan() { 
-	txtText.setText(ProductUtils.getTrangThai(false));
-	txtText.setForeground(ColorUtils.DANGER_COLOR);
+	txtText.setText(trangThai);
     }
+   
 	
     /**
      * This method is called from within the constructor to initialize the form.
@@ -55,7 +46,7 @@ public class InuhaTrangThaiSanPhamTablePanel extends javax.swing.JPanel {
         txtText = new javax.swing.JLabel();
 
         txtText.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        txtText.setText("Ngừng bán");
+        txtText.setText("0");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);

@@ -378,11 +378,16 @@ public class InuhaSanPhamView extends RoundPanel {
                 tblDanhSach.getCellEditor().stopCellEditing();
             }
             
+	    String keyword = txtTuKhoa.getText().trim();
+            keyword = keyword.replaceAll("\\s+", " ");
+	    
+	    if (keyword.length() > 250) {
+		MessageToast.warning("Từ khoá tìm kiếm chỉ được chứa tối đa 250 kí tự");
+		return;
+	    }
+	    
             model.setRowCount(0);
             
-            String keyword = txtTuKhoa.getText().trim();
-            keyword = keyword.replaceAll("\\s+", " ");
-        
             ComboBoxItem<Integer> danhMuc = (ComboBoxItem<Integer>) cboDanhMuc.getSelectedItem();
             ComboBoxItem<Integer> thuongHieu = (ComboBoxItem<Integer>) cboThuongHieu.getSelectedItem();
 	    ComboBoxItem<Integer> soLuong = (ComboBoxItem<Integer>) cboSoLuong.getSelectedItem();
@@ -424,11 +429,16 @@ public class InuhaSanPhamView extends RoundPanel {
                 tblDanhSachChiTiet.getCellEditor().stopCellEditing();
             }
             
-            model.setRowCount(0);
-            
-            String keyword = txtTuKhoa2.getText().trim();
+	    String keyword = txtTuKhoa2.getText().trim();
             keyword = keyword.replaceAll("\\s+", " ");
         
+	    if (keyword.length() > 250) {
+		MessageToast.warning("Từ khoá tìm kiếm chỉ được chứa tối đa 250 kí tự");
+		return;
+	    }
+	    
+            model.setRowCount(0);
+		    
             ComboBoxItem<Integer> danhMuc = (ComboBoxItem<Integer>) cboDanhMuc2.getSelectedItem();
             ComboBoxItem<Integer> thuongHieu = (ComboBoxItem<Integer>) cboThuongHieu2.getSelectedItem();
 	    ComboBoxItem<Integer> xuatXu = (ComboBoxItem<Integer>) cboXuatXu.getSelectedItem();

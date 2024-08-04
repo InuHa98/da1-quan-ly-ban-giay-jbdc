@@ -1,14 +1,22 @@
 package com.app.core.inuha.views.quanly.phieugiamgia;
 
+import com.app.common.helper.MessageModal;
+import com.app.common.helper.MessageToast;
 import com.app.common.helper.Pagination;
+import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.constants.TrangThaiPhieuGiamGiaConstant;
+import com.app.common.infrastructure.exceptions.ServiceResponseException;
 import com.app.core.inuha.models.InuhaPhieuGiamGiaModel;
 import com.app.core.inuha.request.InuhaFilterPhieuGiamGiaRequest;
 import com.app.core.inuha.services.InuhaPhieuGiamGiaService;
+import com.app.core.inuha.views.quanly.components.table.thuoctinhsanpham.InuhaThuocTinhTableActionCellEditor;
+import com.app.core.inuha.views.quanly.components.table.thuoctinhsanpham.InuhaThuocTinhTableActionCellRender;
+import com.app.core.inuha.views.quanly.components.table.phieugiamgia.InuhaTrangThaiPhieuGiamGiaTableCellRender;
 import com.app.utils.ColorUtils;
 import com.app.utils.ResourceUtils;
 import com.app.views.UI.combobox.ComboBoxItem;
 import com.app.views.UI.dialog.LoadingDialog;
+import com.app.views.UI.table.ITableActionEvent;
 import com.app.views.UI.table.TableCustomUI;
 import java.awt.Dimension;
 import java.awt.event.KeyAdapter;
@@ -22,7 +30,10 @@ import javax.swing.JComboBox;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
+import java.awt.event.ItemEvent;
 import raven.datetime.component.date.DatePicker;
+import raven.modal.ModalDialog;
+import raven.modal.component.SimpleModalBorder;
 
 /**
  *
@@ -48,6 +59,8 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
     
     private DatePicker datePicker = new DatePicker();
     
+    private boolean firstLoad = true;
+    
     
     public static InuhaPhieuGiamGiaView getInstance() { 
         if (instance == null) { 
@@ -60,15 +73,18 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
     /** Creates new form InuhaPhieuGiamGiaView */
     public InuhaPhieuGiamGiaView() {
 	initComponents();
+	instance = this;
+	
+	btnCreate.setBackground(ColorUtils.PRIMARY_COLOR);
+	btnCreate.setIcon(ResourceUtils.getSVG("/svg/plus.svg", new Dimension(20, 20)));
 	
 	datePicker.setEditor(txtThoiGian);
 	datePicker.setDateSelectionMode(DatePicker.DateSelectionMode.BETWEEN_DATE_SELECTED);
 	datePicker.setSeparator("  tới ngày  ");
 	datePicker.setUsePanelOption(true);
-	datePicker.setDateSelectionAble(localDate -> !localDate.isAfter(LocalDate.now()));
 	datePicker.setCloseAfterSelected(true);
 	
-	pnlSearchBox.setPlaceholder("Nhập tên hoặc mã giảm giấ ...");
+	pnlSearchBox.setPlaceholder("Nhập tên hoặc mã giảm giá ...");
         txtTuKhoa = pnlSearchBox.getKeyword();
 	
 	btnSearch.setIcon(ResourceUtils.getSVG("/svg/search.svg", new Dimension(20, 20)));
@@ -98,17 +114,66 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
 	cboTrangThai.setPreferredSize(cboSize);
 	
 	setupTable(tblDanhSach);
-        loadDataPage(1);
         setupPagination();
+	executorService.submit(() -> {
+	    loadDataPage(1);
+	    firstLoad = false;
+	});
     }
 
     private void setupTable(JTable table) { 
+	ITableActionEvent event = new ITableActionEvent() {
+            @Override
+            public void onEdit(int row) {
+                InuhaPhieuGiamGiaModel item = dataItems.get(row);
+		ModalDialog.showModal(instance, new SimpleModalBorder(new InuhaAddPhieuGiamGiaView(item), "Chỉnh sửa"));
+            }
+
+            @Override
+            public void onDelete(int row) {
+                if (table.isEditing()) {
+                    table.getCellEditor().stopCellEditing();
+                }
+		
+                InuhaPhieuGiamGiaModel item = dataItems.get(row);
+                
+                LoadingDialog loadingDialog = new LoadingDialog();
+
+                executorService.submit(() -> {
+                    if (MessageModal.confirmWarning("Xoá: " + item.getMa(), "Không thể hoàn tác. Bạn thực sự muốn xoá phiếu giảm giá này?")) {
+                        executorService.submit(() -> {
+                            try {
+                                phieuGiamGiaService.delete(item.getId());
+                                loadDataPage();
+                                MessageToast.success("Xoá thành công phiếu giảm giá: " + item.getMa());
+                            } catch (ServiceResponseException e) {
+                                MessageToast.error(e.getMessage());
+                            } catch (Exception e) {
+                                MessageModal.error(ErrorConstant.DEFAULT_ERROR);
+                            } finally {
+				loadingDialog.dispose();
+			    }
+                        });
+                        loadingDialog.setVisible(true);
+                    }
+                });
+            }
+
+            @Override
+            public void onView(int row) {
+            }
+        };
+		
 	pnlList.setBackground(ColorUtils.BACKGROUND_DASHBOARD);
 	pnlDanhSach.setBackground(ColorUtils.BACKGROUND_TABLE);
         TableCustomUI.apply(scrDanhSach, TableCustomUI.TableType.DEFAULT);
 
         tblDanhSach.setBackground(ColorUtils.BACKGROUND_TABLE);
         tblDanhSach.getTableHeader().setBackground(ColorUtils.BACKGROUND_TABLE);
+	
+	table.getColumnModel().getColumn(10).setCellRenderer(new InuhaTrangThaiPhieuGiamGiaTableCellRender(table));
+	table.getColumnModel().getColumn(11).setCellRenderer(new InuhaThuocTinhTableActionCellRender(table));
+        table.getColumnModel().getColumn(11).setCellEditor(new InuhaThuocTinhTableActionCellEditor(event));
     }
     
     public void loadDataPage() { 
@@ -121,12 +186,31 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
             if (tblDanhSach.isEditing()) {
                 tblDanhSach.getCellEditor().stopCellEditing();
             }
+	    
+	    String keyword = txtTuKhoa.getText().trim();
+            keyword = keyword.replaceAll("\\s+", " ");
+	    
+	    if (keyword.length() > 250) {
+		MessageToast.warning("Từ khoá tìm kiếm chỉ được chứa tối đa 250 kí tự");
+		return;
+	    }
             
             model.setRowCount(0);
             
 	    ComboBoxItem<Integer> trangThai = (ComboBoxItem<Integer>) cboTrangThai.getSelectedItem();
-	    
+	    String ngayBatDau = null;
+	    String ngayKetThuc = null;
+
+	    LocalDate[] dates = datePicker.getSelectedDateRange();
+	    if (dates != null) { 
+		ngayBatDau = dates[0].toString();
+		ngayKetThuc = dates[1].toString();
+	    }
             InuhaFilterPhieuGiamGiaRequest request = new InuhaFilterPhieuGiamGiaRequest();
+	    request.setKeyword(keyword);
+	    request.setTrangThai(trangThai);
+	    request.setNgayBatDau(ngayBatDau);
+	    request.setNgayKetThuc(ngayKetThuc);
             request.setSize(sizePage);
 	    
             int totalPages = phieuGiamGiaService.getTotalPage(request);
@@ -205,6 +289,7 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
         scrDanhSach = new javax.swing.JScrollPane();
         tblDanhSach = new javax.swing.JTable();
         pnlPhanTrang = new javax.swing.JPanel();
+        btnCreate = new javax.swing.JButton();
 
         lblFilter.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
         lblFilter.setText("Bộ lọc");
@@ -221,12 +306,27 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
         );
 
         cboTrangThai.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cboTrangThai.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cboTrangThaiItemStateChanged(evt);
+            }
+        });
 
         btnSearch.setText("Tìm kiếm");
         btnSearch.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnSearch.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSearchActionPerformed(evt);
+            }
+        });
 
         btnClear.setText("Huỷ");
         btnClear.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnClear.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnClearActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout pnlFilterLayout = new javax.swing.GroupLayout(pnlFilter);
         pnlFilter.setLayout(pnlFilterLayout);
@@ -244,12 +344,12 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
                         .addGap(18, 18, 18)
                         .addComponent(cboTrangThai, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(txtThoiGian, javax.swing.GroupLayout.PREFERRED_SIZE, 249, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txtThoiGian, javax.swing.GroupLayout.PREFERRED_SIZE, 271, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
                         .addComponent(btnSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnClear, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(101, Short.MAX_VALUE))))
+                        .addContainerGap(73, Short.MAX_VALUE))))
         );
         pnlFilterLayout.setVerticalGroup(
             pnlFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -287,11 +387,11 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
 
             },
             new String [] {
-                "#", "Mã", "Tên", "Số lượng", "Kiểu giảm", "Giá trị giảm", "Giảm tối đa", "Đơn tối thiểu", "Ngày bắt đầu", "ngày kết thúc", "Trạng thái"
+                "#", "Mã", "Tên", "Số lượng", "Kiểu giảm", "Giá trị giảm", "Giảm tối đa", "Đơn tối thiểu", "Ngày bắt đầu", "ngày kết thúc", "Trạng thái", "Hành động"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false, false, true
+                false, false, false, false, false, false, false, false, false, false, true, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -314,7 +414,7 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
             pnlDanhSachLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlDanhSachLayout.createSequentialGroup()
                 .addGap(10, 10, 10)
-                .addComponent(scrDanhSach, javax.swing.GroupLayout.DEFAULT_SIZE, 277, Short.MAX_VALUE))
+                .addComponent(scrDanhSach, javax.swing.GroupLayout.DEFAULT_SIZE, 275, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout pnlPhanTrangLayout = new javax.swing.GroupLayout(pnlPhanTrang);
@@ -328,6 +428,14 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
             .addGap(0, 35, Short.MAX_VALUE)
         );
 
+        btnCreate.setText("Tạo mới phiếu giảm giá");
+        btnCreate.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnCreate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCreateActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout pnlListLayout = new javax.swing.GroupLayout(pnlList);
         pnlList.setLayout(pnlListLayout);
         pnlListLayout.setHorizontalGroup(
@@ -335,7 +443,9 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
             .addGroup(pnlListLayout.createSequentialGroup()
                 .addGap(23, 23, 23)
                 .addComponent(lblDanhSach, javax.swing.GroupLayout.PREFERRED_SIZE, 736, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnCreate, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(15, 15, 15))
             .addGroup(pnlListLayout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addComponent(pnlPhanTrang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -347,8 +457,10 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
             pnlListLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlListLayout.createSequentialGroup()
                 .addGap(10, 10, 10)
-                .addComponent(lblDanhSach, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnlListLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblDanhSach, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnCreate))
+                .addGap(10, 10, 10)
                 .addComponent(splitLine1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(pnlDanhSach, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -378,8 +490,31 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnCreateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCreateActionPerformed
+        // TODO add your handling code here:
+	handleClickButtonAdd();
+    }//GEN-LAST:event_btnCreateActionPerformed
+
+    private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchActionPerformed
+        // TODO add your handling code here:
+	handleClickButtonSearch();
+    }//GEN-LAST:event_btnSearchActionPerformed
+
+    private void btnClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearActionPerformed
+        // TODO add your handling code here:
+	handleClickButtonClear();
+    }//GEN-LAST:event_btnClearActionPerformed
+
+    private void cboTrangThaiItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cboTrangThaiItemStateChanged
+        // TODO add your handling code here:
+	if (evt.getStateChange() == ItemEvent.SELECTED) {
+	    handleClickButtonSearch();
+	}
+    }//GEN-LAST:event_cboTrangThaiItemStateChanged
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnClear;
+    private javax.swing.JButton btnCreate;
     private javax.swing.JButton btnSearch;
     private javax.swing.JComboBox cboTrangThai;
     private javax.swing.JLabel lblDanhSach;
@@ -396,7 +531,32 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
     private javax.swing.JFormattedTextField txtThoiGian;
     // End of variables declaration//GEN-END:variables
 
-    private void handleClickButtonSearch() {
+    private void handleClickButtonClear() {
+        LoadingDialog loading = new LoadingDialog();
+        executorService.submit(() -> {
+            txtTuKhoa.setText(null);
+            cboTrangThai.setSelectedIndex(0);
+	    datePicker.clearSelectedDate();
+	    txtThoiGian.setText("");
+            loadDataPage();
+            loading.dispose();
+        });
+        loading.setVisible(true);
+    }
 	
+    private void handleClickButtonSearch() {
+	if (firstLoad) {
+	    return;
+	}
+        LoadingDialog loading = new LoadingDialog();
+        executorService.submit(() -> {
+            loadDataPage();
+            loading.dispose();
+        });
+        loading.setVisible(true);
+    }
+
+    private void handleClickButtonAdd() {
+	ModalDialog.showModal(this, new SimpleModalBorder(new InuhaAddPhieuGiamGiaView(), "Thêm mới"));
     }
 }
