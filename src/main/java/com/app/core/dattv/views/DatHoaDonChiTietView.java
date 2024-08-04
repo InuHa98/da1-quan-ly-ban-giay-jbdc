@@ -10,6 +10,8 @@ import com.app.core.dattv.models.DatHoaDonChiTietModel;
 import com.app.core.dattv.models.DatHoaDonModel;
 import com.app.core.dattv.repositoris.DatHoaDonChiTietRepository;
 import com.app.core.dattv.request.DatHoaDonRequest;
+import com.app.core.inuha.models.InuhaSanPhamModel;
+import com.app.core.inuha.views.quanly.sanpham.InuhaDetailSanPhamView;
 import com.app.views.UI.table.ITableActionEvent;
 import com.app.views.UI.table.TableCustomUI;
 import com.app.views.UI.table.celll.TableActionCellEditor;
@@ -20,6 +22,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -43,6 +46,8 @@ public class DatHoaDonChiTietView extends javax.swing.JPanel {
     DatHoaDonRequest datHoaDonRequest= null;
     DatHoaDonView datHoaDonView=new DatHoaDonView();
     private int tongSoLuong;
+    private List<InuhaSanPhamModel> dataItems = new ArrayList<>();
+    private static DatHoaDonChiTietView instance;
     
     /**
      * Creates new form DatHoaDon
@@ -166,11 +171,6 @@ public class DatHoaDonChiTietView extends javax.swing.JPanel {
             cell=row.createCell(6, CellType.STRING);
             cell.setCellValue("Thành Tiền");
             
-            cell=row.createCell(7, CellType.STRING);
-            cell.setCellValue("Tổng số lượng");
-            
-            cell=row.createCell(8, CellType.STRING);
-            cell.setCellValue("Tổng tiền hàng");
             
             
             this.datHoaDonRequest=datHoaDonRequest;
@@ -200,15 +200,36 @@ public class DatHoaDonChiTietView extends javax.swing.JPanel {
 
                 cell=row.createCell(6, CellType.STRING);
                 cell.setCellValue(list.get(i).getThanhTien());
-
-                cell=row.createCell(7, CellType.STRING);
-                cell.setCellValue(list.get(i).getTongSoluong());
-                
-                cell=row.createCell(8, CellType.STRING);
-                cell.setCellValue(list.get(i).getTongTienhang());
-                
-                
+   
             }
+            
+                row=sheet.createRow(4+list.size());
+                cell=row.createCell(5, CellType.STRING);
+                cell.setCellValue("Tổng số lượng :");
+
+                cell=row.createCell(6, CellType.STRING);
+                cell.setCellValue(tongSoLuong);
+                
+                row=sheet.createRow(5+list.size());
+                cell=row.createCell(5, CellType.STRING);
+                cell.setCellValue("Tổng Tiền hàng :");
+
+                cell=row.createCell(6, CellType.STRING);
+                cell.setCellValue(datHoaDonRequest.getTongTienhang());
+                
+                row=sheet.createRow(6+list.size());
+                cell=row.createCell(5, CellType.STRING);
+                cell.setCellValue("Giảm giá :");
+
+                cell=row.createCell(6, CellType.STRING);
+                cell.setCellValue(datHoaDonRequest.getGiamGia());
+                
+                row=sheet.createRow(7+list.size());
+                cell=row.createCell(5, CellType.STRING);
+                cell.setCellValue("Thành tiền :");
+
+                cell=row.createCell(6, CellType.STRING);
+                cell.setCellValue(datHoaDonRequest.getThanhTien());
             
             File file=new File("C:\\Users\\WIN\\Desktop\\qr\\danhsachhoadonchitiet.xlsx");
             try {
@@ -222,7 +243,10 @@ public class DatHoaDonChiTietView extends javax.swing.JPanel {
         } catch (Exception e) {
         }
     }
-    
+     private void showDetailSanPham(InuhaSanPhamModel item) {
+	ModalDialog.closeAllModal();
+        ModalDialog.showModal(instance, new SimpleModalBorder(new InuhaDetailSanPhamView(item), null));
+    }
     
    
     
@@ -286,6 +310,11 @@ public class DatHoaDonChiTietView extends javax.swing.JPanel {
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
+            }
+        });
+        tblHoadonchitiet.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblHoadonchitietMouseClicked(evt);
             }
         });
         jScrollPane3.setViewportView(tblHoadonchitiet);
@@ -532,6 +561,15 @@ public class DatHoaDonChiTietView extends javax.swing.JPanel {
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void tblHoadonchitietMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblHoadonchitietMouseClicked
+        // TODO add your handling code here:
+        if (evt.getClickCount() > 1) { 
+	    InuhaSanPhamModel sanPhamModel = dataItems.get(tblHoadonchitiet.getSelectedRow());
+	    showDetailSanPham(sanPhamModel);
+	    return;
+	}
+    }//GEN-LAST:event_tblHoadonchitietMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

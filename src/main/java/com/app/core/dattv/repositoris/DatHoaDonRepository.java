@@ -200,7 +200,7 @@ public class DatHoaDonRepository {
                                        TaiKhoan tk ON hd.id_tai_khoan = tk.id 
                                    WHERE  
                                        hd.trang_thai_xoa = 0
-                                       AND (hd.ma like ?) OR (kh.ho_ten like ?)
+                                       AND (hd.ma like ? OR kh.ho_ten like ? or kh.sdt like ?)
                                    GROUP BY 
                                        hd.ma,
                                        hd.ngay_tao,
@@ -216,6 +216,7 @@ public class DatHoaDonRepository {
         ArrayList<DatHoaDonRequest> lists = new ArrayList<>();
         try (Connection con = DBConnect.getInstance().getConnect();
                 PreparedStatement ps = con.prepareStatement(sql)) {
+                
                 ps.setObject(1, keyword);
                 ps.setObject(2, keyword);
                 //ps.setObject(3, keyword);
