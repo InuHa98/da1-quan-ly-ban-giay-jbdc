@@ -22,10 +22,7 @@ public class InuhaTrangThaiSanPhamTablePanel extends javax.swing.JPanel {
     
     public InuhaTrangThaiSanPhamTablePanel(boolean trangThai) {
 	this();
-	pnlContainer.setRoundBottomLeft(25);
-	pnlContainer.setRoundBottomRight(25);
-	pnlContainer.setRoundTopLeft(25);
-	pnlContainer.setRoundTopRight(25);
+	pnlContainer.setOpaque(false);
 	txtText.setForeground(Color.WHITE);
 	setTrangThai(trangThai);
     }
@@ -40,12 +37,12 @@ public class InuhaTrangThaiSanPhamTablePanel extends javax.swing.JPanel {
     
     public void setDangBan() { 
 	txtText.setText(ProductUtils.getTrangThai(true));
-	pnlContainer.setBackground(ColorUtils.PRIMARY_COLOR);
+	txtText.setForeground(ColorUtils.PRIMARY_COLOR);
     }
 
     public void setNgungBan() { 
 	txtText.setText(ProductUtils.getTrangThai(false));
-	pnlContainer.setBackground(ColorUtils.DANGER_COLOR);
+	txtText.setForeground(ColorUtils.DANGER_COLOR);
     }
 	
     /**

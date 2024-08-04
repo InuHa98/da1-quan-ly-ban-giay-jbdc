@@ -245,7 +245,7 @@ public class InuhaHoaDonChiTietRepository implements IDAOinterface<InuhaHoaDonCh
 
         String query = String.format("""
             SELECT 
-                hdct.id
+                hdct.*
             FROM %s AS hdct
 		JOIN HoaDon AS hd ON hd.id = hdct.id_hoa_don
 		JOIN SanPhamChiTiet AS spct ON spct.id = hdct.id_san_pham_chi_tiet

@@ -10,6 +10,7 @@ import com.app.core.inuha.models.InuhaHoaDonModel;
 import com.app.core.inuha.models.InuhaKhachHangModel;
 import com.app.core.inuha.models.InuhaPhieuGiamGiaModel;
 import com.app.core.inuha.models.InuhaTaiKhoanModel;
+import com.app.utils.SessionUtils;
 import com.app.utils.TimeUtils;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -200,8 +201,9 @@ public class InuhaHoaDonRepository implements IDAOinterface<InuhaHoaDonModel, In
             WHERE 
                 hd.trang_thai_xoa = 0 AND
                 hd.trang_thai = %d
+                %s
             ORDER BY hd.id DESC 
-        """, MAX_WAIT_BILL, TABLE_NAME, TrangThaiHoaDonConstant.STATUS_CHO_THANH_TOAN);
+        """, MAX_WAIT_BILL, TABLE_NAME, TrangThaiHoaDonConstant.STATUS_CHO_THANH_TOAN, SessionUtils.isManager() ? " " : " AND id_tai_khoan = " + SessionLogin.getInstance().getData().getId());
 
         try {
             resultSet = JbdcHelper.query(query);
@@ -308,10 +310,10 @@ public class InuhaHoaDonRepository implements IDAOinterface<InuhaHoaDonModel, In
     
     public boolean isMaxHoaDonCho() throws SQLException {
 
-        String query = String.format("SELECT COUNT(*) FROM %s WHERE trang_thai = %d", TABLE_NAME, TrangThaiHoaDonConstant.STATUS_CHO_THANH_TOAN);
+        String query = String.format("SELECT COUNT(*) FROM %s WHERE trang_thai = %d AND id_tai_khoan = ?", TABLE_NAME, TrangThaiHoaDonConstant.STATUS_CHO_THANH_TOAN);
 
         try {
-            return (int) JbdcHelper.value(query) >= MAX_WAIT_BILL;
+            return (int) JbdcHelper.value(query, SessionLogin.getInstance().getData().getId()) >= MAX_WAIT_BILL;
         } catch(Exception e) {
             e.printStackTrace();
             throw new SQLException(e.getMessage());

@@ -30,9 +30,9 @@ public class DatHoaDonChiTietRepository {
                                                    hd.id AS hoa_don_id,
                                                    SUM(hdct.so_luong * hdct.gia_ban) AS Tong_tien
                                                FROM
-                                                   HoaDonChiTiet3 hdct
+                                                   HoaDonChiTiet hdct
                                                INNER JOIN
-                                                   HoaDon3 hd ON hd.id = hdct.id_hoa_don
+                                                   HoaDon hd ON hd.id = hdct.id_hoa_don
                                                GROUP BY
                                                    hd.id
                                            )
@@ -46,19 +46,19 @@ public class DatHoaDonChiTietRepository {
                                                hdct.gia_ban,
                                                (hdct.so_luong * hdct.gia_ban) AS thanh_tien,
                                                hdt.Tong_tien,
-                                               kh3.ho_ten AS khach_hang_ho_ten,
-                                               tk3.ho_ten AS nhan_vien_ho_ten,
+                                               ISNULL(kh.ho_ten, N'Khách hàng lẻ') AS ho_ten,
+                                               tk.ho_ten AS nhan_vien_ho_ten,
                                                hd.ma,
                                                hd.ngay_tao,
                                                hd.trang_thai
                                            FROM 
-                                               HoaDonChiTiet3 hdct
+                                               HoaDonChiTiet hdct
                                            INNER JOIN 
-                                               HoaDon3 hd ON hd.id = hdct.id_hoa_don
+                                               HoaDon hd ON hd.id = hdct.id_hoa_don
+                                           LEFT JOIN 
+                                               KhachHang kh ON hd.id_khach_hang = kh.id
                                            INNER JOIN 
-                                               KhachHang3 kh3 ON hd.id_khach_hang = kh3.id
-                                           INNER JOIN 
-                                               TaiKhoan3 tk3 ON hd.id_tai_khoan = tk3.id 
+                                               TaiKhoan tk ON hd.id_tai_khoan = tk.id 
                                            INNER JOIN 
                                                HoaDonTongTien hdt ON hd.id = hdt.hoa_don_id
                                            GROUP BY 
@@ -70,8 +70,8 @@ public class DatHoaDonChiTietRepository {
                                                hdct.gia_nhap,
                                                hdct.gia_ban,
                                                hdt.Tong_tien,
-                                               kh3.ho_ten,
-                                               tk3.ho_ten,
+                                               kh.ho_ten,
+                                               tk.ho_ten,
                                                hd.ma,
                                                hd.ngay_tao,
                                                hd.trang_thai;                      
@@ -125,16 +125,16 @@ public class DatHoaDonChiTietRepository {
               gia_ban,
               (hdct.so_luong*hdct.gia_ban) as 'thanh_tien',
               sum((hdct.so_luong*hdct.gia_ban)) as 'Tong_tien',
-              kh3.ho_ten,
-              tk3.ho_ten,
+              ISNULL(kh.ho_ten, N'Khách hàng lẻ') AS ho_ten,
+              tk.ho_ten,
               hd.ma,
               hd.ngay_tao,
               hd.trang_thai,
               sum(hdct.so_luong)
-              FROM HoaDonChiTiet3 hdct
-               INNER JOIN HoaDon3 hd ON hd.id = hdct.id_hoa_don
-               INNER JOIN   KhachHang3 kh3 ON hd.id_khach_hang = kh3.id
-               INNER JOIN TaiKhoan3 tk3 ON hd.id_tai_khoan = tk3.id 
+              FROM HoaDonChiTiet hdct
+               INNER JOIN HoaDon hd ON hd.id = hdct.id_hoa_don
+               Left join   KhachHang kh ON hd.id_khach_hang = kh.id
+               INNER JOIN TaiKhoan tk ON hd.id_tai_khoan = tk.id 
                where hd.ma=?	 
                 GROUP BY hdct.id , 
                          gia_giam ,
@@ -143,8 +143,8 @@ public class DatHoaDonChiTietRepository {
      					so_luong ,
      					gia_nhap,
      					gia_ban,
-     					kh3.ho_ten,
-     					tk3.ho_ten,
+     					kh.ho_ten,
+     					tk.ho_ten,
      					hd.ma,
      					hd.ngay_tao,
       					hd.trang_thai	 
@@ -188,8 +188,8 @@ public class DatHoaDonChiTietRepository {
             SELECT	
                            
                             sum(hdct.so_luong)
-              FROM HoaDonChiTiet3 hdct
-                            INNER JOIN HoaDon3 hd ON hd.id = hdct.id_hoa_don
+              FROM HoaDonChiTiet hdct
+                            INNER JOIN HoaDon hd ON hd.id = hdct.id_hoa_don
                where hd.ma=?	 
               
                      """;

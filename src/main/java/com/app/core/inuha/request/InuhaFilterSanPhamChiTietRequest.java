@@ -33,6 +33,8 @@ public class InuhaFilterSanPhamChiTietRequest extends FillterRequest {
     
     private ComboBoxItem<Integer> mauSac = new ComboBoxItem<>();
     
+    private ComboBoxItem<Integer> soLuong = new ComboBoxItem<>();
+    
     private ComboBoxItem<Integer> trangThai = new ComboBoxItem<>();
 
 }

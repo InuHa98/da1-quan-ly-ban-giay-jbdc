@@ -1,6 +1,8 @@
-package com.app.core.inuha.views.quanly.components.table.trangthai;
+package com.app.core.inuha.views.quanly.components.table.soluongton;
 
+import com.app.core.inuha.views.quanly.components.table.trangthai.*;
 import com.app.utils.ColorUtils;
+import com.app.utils.CurrencyUtils;
 import java.awt.BasicStroke;
 import java.awt.Component;
 import java.awt.Graphics;
@@ -12,11 +14,11 @@ import javax.swing.table.TableCellRenderer;
  *
  * @author InuHa
  */
-public class InuhaTrangThaiSanPhamTableCellRender implements TableCellRenderer {
+public class InuhaSoLuongTonSanPhamTableCellRender implements TableCellRenderer {
     
     private final TableCellRenderer oldCellRenderer;
     
-    public InuhaTrangThaiSanPhamTableCellRender(JTable table) {
+    public InuhaSoLuongTonSanPhamTableCellRender(JTable table) {
 	this.oldCellRenderer = table.getDefaultRenderer(Object.class);
     }
     
@@ -24,8 +26,8 @@ public class InuhaTrangThaiSanPhamTableCellRender implements TableCellRenderer {
     public Component getTableCellRendererComponent(JTable table, Object o, boolean isSeleted, boolean bln1, int row, int column) {
         Component com = oldCellRenderer.getTableCellRendererComponent(table, o, isSeleted, bln1, row, column);
         
-	boolean trangThai = (boolean) o;
-        InuhaTrangThaiSanPhamTablePanel cell = new InuhaTrangThaiSanPhamTablePanel(trangThai) { 
+	int soLuong = (int) CurrencyUtils.parseNumber(String.valueOf(o));
+        InuhaSoLuongTonSanPhamTablePanel cell = new InuhaSoLuongTonSanPhamTablePanel(soLuong) { 
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);

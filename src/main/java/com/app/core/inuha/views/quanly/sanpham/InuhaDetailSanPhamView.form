@@ -22,7 +22,7 @@
                   <Component id="pnlList" max="32767" attributes="0"/>
                   <Component id="pnlInfo" max="32767" attributes="0"/>
               </Group>
-              <EmptySpace pref="20" max="32767" attributes="0"/>
+              <EmptySpace pref="17" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -400,24 +400,26 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Component id="pnlDanhSach" alignment="1" max="32767" attributes="0"/>
               <Group type="102" attributes="0">
-                  <EmptySpace min="20" pref="20" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="1" attributes="0">
-                          <Component id="cboKichCo" min="-2" pref="163" max="-2" attributes="0"/>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Component id="cboMauSac" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Component id="cboTrangThai" min="-2" max="-2" attributes="0"/>
+                          <Component id="cboKichCo" pref="180" max="32767" attributes="0"/>
+                          <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
+                          <Component id="cboMauSac" pref="154" max="32767" attributes="0"/>
+                          <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
+                          <Component id="cboTrangThai" pref="160" max="32767" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Component id="btnReset" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="32767" attributes="0"/>
-                          <Component id="btnExport" min="-2" max="-2" attributes="0"/>
+                          <Component id="cboSoLuong" min="-2" pref="157" max="-2" attributes="0"/>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Component id="btnReset" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="65" max="-2" attributes="0"/>
+                          <Component id="btnExport" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
                           <Component id="btnThemSanPhamChiTiet" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <Component id="pnlPhanTrang" max="32767" attributes="0"/>
                   </Group>
-                  <EmptySpace min="20" pref="20" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -426,12 +428,11 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="103" alignment="1" groupAlignment="0" attributes="0">
-                          <Group type="103" alignment="0" groupAlignment="3" attributes="0">
-                              <Component id="btnThemSanPhamChiTiet" alignment="3" min="-2" pref="32" max="-2" attributes="0"/>
-                              <Component id="btnExport" alignment="3" min="-2" pref="31" max="-2" attributes="0"/>
-                          </Group>
-                          <Component id="btnReset" min="-2" pref="32" max="-2" attributes="0"/>
+                      <Group type="103" alignment="1" groupAlignment="3" attributes="0">
+                          <Component id="btnThemSanPhamChiTiet" alignment="3" min="-2" pref="32" max="-2" attributes="0"/>
+                          <Component id="btnExport" alignment="3" min="-2" pref="31" max="-2" attributes="0"/>
+                          <Component id="btnReset" alignment="3" min="-2" pref="32" max="-2" attributes="0"/>
+                          <Component id="cboSoLuong" alignment="3" min="-2" pref="32" max="-2" attributes="0"/>
                       </Group>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="cboTrangThai" alignment="3" min="-2" pref="32" max="-2" attributes="0"/>
@@ -451,7 +452,7 @@
       <SubComponents>
         <Component class="javax.swing.JButton" name="btnThemSanPhamChiTiet">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Th&#xea;m s&#x1ea3;n ph&#x1ea9;m chi ti&#x1ebf;t"/>
+            <Property name="text" type="java.lang.String" value="Th&#xea;m m&#x1edb;i"/>
             <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
               <Color id="Hand Cursor"/>
             </Property>
@@ -648,6 +649,21 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnResetActionPerformed"/>
           </Events>
+        </Component>
+        <Component class="javax.swing.JComboBox" name="cboSoLuong">
+          <Properties>
+            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+              <StringArray count="1">
+                <StringItem index="0" value="-- T&#x1ea5;t c&#x1ea3; s&#x1ed1; l&#x1b0;&#x1ee3;ng --"/>
+              </StringArray>
+            </Property>
+          </Properties>
+          <Events>
+            <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="cboSoLuongItemStateChanged"/>
+          </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value=""/>
+          </AuxValues>
         </Component>
       </SubComponents>
     </Container>

@@ -333,10 +333,8 @@ public class InuhaListPhieuGiamGiaView extends javax.swing.JPanel {
 		InuhaBanHangView.getInstance().setVoucher(phieuGiamGia);
 		ModalDialog.closeAllModal();
 	    } catch (ServiceResponseException e) {
-		e.printStackTrace();
 		MessageToast.error(e.getMessage());
 	    } catch (Exception e) {
-		e.printStackTrace();
 		MessageToast.error(ErrorConstant.DEFAULT_ERROR);
 	    } finally {
 		txtMa.requestFocus();

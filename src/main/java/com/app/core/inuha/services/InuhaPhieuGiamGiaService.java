@@ -8,6 +8,7 @@ import com.app.core.inuha.models.InuhaPhieuGiamGiaModel;
 import com.app.core.inuha.models.InuhaSanPhamModel;
 import com.app.core.inuha.repositories.InuhaPhieuGiamGiaRepository;
 import com.app.core.inuha.services.impl.IInuhaPhieuGiamGiaServiceInterface;
+import com.app.utils.SessionUtils;
 import com.app.utils.VoucherUtils;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -129,6 +130,7 @@ public class InuhaPhieuGiamGiaService implements IInuhaPhieuGiamGiaServiceInterf
         }
         return new ArrayList<>();
     }
+   
 
     @Override
     public Integer getTotalPage(FillterRequest request) {
@@ -161,6 +163,7 @@ public class InuhaPhieuGiamGiaService implements IInuhaPhieuGiamGiaServiceInterf
 		    return item;
 		}
 	    }
+	    
         } catch (SQLException ex) {
             throw new ServiceResponseException("Phiếu giảm giá không tồn tại hoặc đã hết hạn");
         }
