@@ -30,6 +30,7 @@ import com.app.core.inuha.services.InuhaSanPhamChiTietService;
 import com.app.core.inuha.services.InuhaSanPhamService;
 import com.app.core.inuha.services.InuhaThuongHieuService;
 import com.app.core.inuha.services.InuhaXuatXuService;
+import com.app.core.inuha.views.quanly.components.table.soluongton.InuhaSoLuongTonSanPhamTableCellRender;
 import com.app.core.inuha.views.quanly.components.table.trangthai.InuhaTrangThaiSanPhamTableCellRender;
 import com.app.core.inuha.views.quanly.sanpham.InuhaAddSanPhamView;
 import com.app.core.inuha.views.quanly.sanpham.InuhaDetailSanPhamChiTietView;
@@ -44,7 +45,6 @@ import com.app.utils.TimeUtils;
 import com.app.views.UI.combobox.ComboBoxItem;
 import com.app.views.UI.dialog.LoadingDialog;
 import com.app.views.UI.panel.RoundPanel;
-import com.app.views.UI.panel.qrcode.IQRCodeScanEvent;
 import com.app.views.UI.table.TableCustomUI;
 import com.app.views.UI.table.celll.CheckBoxTableHeaderRenderer;
 import java.awt.Dimension;
@@ -60,8 +60,8 @@ import com.app.views.UI.table.ITableActionEvent;
 import com.app.views.UI.table.celll.TableActionCellEditor;
 import com.app.views.UI.table.celll.TableActionCellRender;
 import com.app.views.UI.table.celll.TableImageCellRender;
-import com.google.zxing.Result;
 import com.google.zxing.WriterException;
+import java.awt.event.ItemEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -136,6 +136,8 @@ public class InuhaSanPhamView extends RoundPanel {
     
     private List<InuhaSanPhamChiTietModel> dataItemsSPCT = new ArrayList<>();
     
+    private boolean firstLoad = true;
+    
     /**
      * Creates new form InuhaSanPhamView
      */
@@ -177,6 +179,8 @@ public class InuhaSanPhamView extends RoundPanel {
 		
         pnlContainer.setBackground(ColorUtils.BACKGROUND_PRIMARY);
 	pnlContainer.setRound(0, 0, 0, 0);
+	pnlFilter.setBackground(ColorUtils.BACKGROUND_DASHBOARD);
+	pnlFilter2.setBackground(ColorUtils.BACKGROUND_DASHBOARD);
 	pnlList.setBackground(ColorUtils.BACKGROUND_DASHBOARD);
 	pnlList2.setBackground(ColorUtils.BACKGROUND_DASHBOARD);
 	pnlDanhSachChiTiet.setRound(0, 0, 0, 0);
@@ -211,7 +215,19 @@ public class InuhaSanPhamView extends RoundPanel {
         cboTrangThai2.addItem(new ComboBoxItem<>("Đang bán", 1));
         cboTrangThai2.addItem(new ComboBoxItem<>("Ngừng bán", 0));
 	
+	cboSoLuong.removeAllItems();
+        cboSoLuong.addItem(new ComboBoxItem<>("-- Tất cả số lượng --", -1));
+        cboSoLuong.addItem(new ComboBoxItem<>("Còn hàng", 1));
+        cboSoLuong.addItem(new ComboBoxItem<>("Hết hàng", 0));
+	
+	cboSoLuong2.removeAllItems();
+        cboSoLuong2.addItem(new ComboBoxItem<>("-- Tất cả số lượng --", -1));
+        cboSoLuong2.addItem(new ComboBoxItem<>("Còn hàng", 1));
+        cboSoLuong2.addItem(new ComboBoxItem<>("Hết hàng", 0));
+	
 	Dimension cboSize = new Dimension(150, 36);
+	cboSoLuong.setPreferredSize(cboSize);
+	cboSoLuong2.setPreferredSize(cboSize);
 	cboDanhMuc.setPreferredSize(cboSize);
 	cboThuongHieu.setPreferredSize(cboSize);
 	cboTrangThai.setPreferredSize(cboSize);
@@ -242,6 +258,7 @@ public class InuhaSanPhamView extends RoundPanel {
 
 	    loadDataPage(1);
 	    loadDataPageSPCT(1);
+	    firstLoad = false;
 	});
     }
     
@@ -298,6 +315,7 @@ public class InuhaSanPhamView extends RoundPanel {
         table.setRowHeight(50);
         table.getColumnModel().getColumn(0).setHeaderRenderer(new CheckBoxTableHeaderRenderer(table, 0));
         table.getColumnModel().getColumn(3).setCellRenderer(new TableImageCellRender(table));
+	table.getColumnModel().getColumn(7).setCellRenderer(new InuhaSoLuongTonSanPhamTableCellRender(table));
 	table.getColumnModel().getColumn(9).setCellRenderer(new InuhaTrangThaiSanPhamTableCellRender(table));
         table.getColumnModel().getColumn(10).setCellRenderer(new TableActionCellRender(table));
         table.getColumnModel().getColumn(10).setCellEditor(new TableActionCellEditor(event));
@@ -341,6 +359,7 @@ public class InuhaSanPhamView extends RoundPanel {
         table.setRowHeight(50);
         table.getColumnModel().getColumn(0).setHeaderRenderer(new CheckBoxTableHeaderRenderer(table, 0));
         table.getColumnModel().getColumn(4).setCellRenderer(new TableImageCellRender(table));
+	table.getColumnModel().getColumn(6).setCellRenderer(new InuhaSoLuongTonSanPhamTableCellRender(table));
 	table.getColumnModel().getColumn(17).setCellRenderer(new InuhaTrangThaiSanPhamTableCellRender(table));
     }
     
@@ -366,12 +385,14 @@ public class InuhaSanPhamView extends RoundPanel {
         
             ComboBoxItem<Integer> danhMuc = (ComboBoxItem<Integer>) cboDanhMuc.getSelectedItem();
             ComboBoxItem<Integer> thuongHieu = (ComboBoxItem<Integer>) cboThuongHieu.getSelectedItem();
+	    ComboBoxItem<Integer> soLuong = (ComboBoxItem<Integer>) cboSoLuong.getSelectedItem();
             ComboBoxItem<Integer> trangThai = (ComboBoxItem<Integer>) cboTrangThai.getSelectedItem();
 
             InuhaFilterSanPhamRequest request = new InuhaFilterSanPhamRequest();
 	    request.setKeyword(keyword);
 	    request.setDanhMuc(danhMuc);
 	    request.setThuongHieu(thuongHieu);
+	    request.setSoLuong(soLuong);
 	    request.setTrangThai(trangThai);
             request.setSize(sizePage);
 	    
@@ -416,6 +437,7 @@ public class InuhaSanPhamView extends RoundPanel {
 	    ComboBoxItem<Integer> deGiay = (ComboBoxItem<Integer>) cboDeGiay.getSelectedItem();
 	    ComboBoxItem<Integer> kichCo = (ComboBoxItem<Integer>) cboKichCo.getSelectedItem();
 	    ComboBoxItem<Integer> mauSac = (ComboBoxItem<Integer>) cboMauSac.getSelectedItem();
+	    ComboBoxItem<Integer> soLuong = (ComboBoxItem<Integer>) cboSoLuong2.getSelectedItem();
             ComboBoxItem<Integer> trangThai = (ComboBoxItem<Integer>) cboTrangThai2.getSelectedItem();
 
             InuhaFilterSanPhamChiTietRequest request = new InuhaFilterSanPhamChiTietRequest();
@@ -428,6 +450,7 @@ public class InuhaSanPhamView extends RoundPanel {
 	    request.setDeGiay(deGiay);
 	    request.setKichCo(kichCo);
 	    request.setMauSac(mauSac);
+	    request.setSoLuong(soLuong);
 	    request.setTrangThai(trangThai);
             request.setSize(sizePage);
 	    
@@ -621,6 +644,7 @@ public class InuhaSanPhamView extends RoundPanel {
         lblFilter = new javax.swing.JLabel();
         splitLine1 = new com.app.views.UI.label.SplitLine();
         cboDanhMuc = new javax.swing.JComboBox();
+        cboSoLuong = new javax.swing.JComboBox();
         pnlList = new com.app.views.UI.panel.RoundPanel();
         lblList = new javax.swing.JLabel();
         btnThemSanPham = new javax.swing.JButton();
@@ -643,7 +667,7 @@ public class InuhaSanPhamView extends RoundPanel {
         tblDanhSachChiTiet = new javax.swing.JTable();
         pnlPhanTrangChiTiet = new javax.swing.JPanel();
         btnScanQRChiTiet = new javax.swing.JButton();
-        roundPanel2 = new com.app.views.UI.panel.RoundPanel();
+        pnlFilter2 = new com.app.views.UI.panel.RoundPanel();
         lblFilter2 = new javax.swing.JLabel();
         splitLine4 = new com.app.views.UI.label.SplitLine();
         cboDanhMuc2 = new javax.swing.JComboBox();
@@ -658,6 +682,7 @@ public class InuhaSanPhamView extends RoundPanel {
         pnlSearchBox2 = new com.app.views.UI.panel.SearchBox();
         btnSearch2 = new javax.swing.JButton();
         btnClear2 = new javax.swing.JButton();
+        cboSoLuong2 = new javax.swing.JComboBox();
 
         tbpTab.setForeground(new java.awt.Color(255, 255, 255));
 
@@ -670,8 +695,18 @@ public class InuhaSanPhamView extends RoundPanel {
         });
 
         cboThuongHieu.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "-- Tất cả thương hiệu --" }));
+        cboThuongHieu.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cboThuongHieuItemStateChanged(evt);
+            }
+        });
 
         cboTrangThai.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "-- Tất cả trạng thái --" }));
+        cboTrangThai.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cboTrangThaiItemStateChanged(evt);
+            }
+        });
 
         btnClear.setText("Huỷ lọc");
         btnClear.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -696,7 +731,7 @@ public class InuhaSanPhamView extends RoundPanel {
         splitLine1.setLayout(splitLine1Layout);
         splitLine1Layout.setHorizontalGroup(
             splitLine1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGap(0, 1141, Short.MAX_VALUE)
         );
         splitLine1Layout.setVerticalGroup(
             splitLine1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -704,33 +739,45 @@ public class InuhaSanPhamView extends RoundPanel {
         );
 
         cboDanhMuc.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "-- Tất cả danh mục --" }));
+        cboDanhMuc.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cboDanhMucItemStateChanged(evt);
+            }
+        });
+
+        cboSoLuong.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "-- Tất cả số lượng --" }));
+        cboSoLuong.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cboSoLuongItemStateChanged(evt);
+            }
+        });
 
         javax.swing.GroupLayout pnlFilterLayout = new javax.swing.GroupLayout(pnlFilter);
         pnlFilter.setLayout(pnlFilterLayout);
         pnlFilterLayout.setHorizontalGroup(
             pnlFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlFilterLayout.createSequentialGroup()
+                .addGap(20, 20, 20)
                 .addGroup(pnlFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 799, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(pnlFilterLayout.createSequentialGroup()
-                        .addGap(20, 20, 20)
-                        .addGroup(pnlFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 799, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(pnlFilterLayout.createSequentialGroup()
-                                .addComponent(pnlSearchBox, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(cboDanhMuc, 0, 151, Short.MAX_VALUE)
-                                .addGap(20, 20, 20)
-                                .addComponent(cboThuongHieu, 0, 163, Short.MAX_VALUE)
-                                .addGap(20, 20, 20)
-                                .addComponent(cboTrangThai, 0, 151, Short.MAX_VALUE)
-                                .addGap(18, 18, 18)
-                                .addComponent(btnSearch)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(btnClear)
-                                .addGap(20, 20, 20))))
-                    .addGroup(pnlFilterLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(splitLine1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(pnlSearchBox, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(cboDanhMuc, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(cboThuongHieu, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(cboSoLuong, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(cboTrangThai, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnSearch)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnClear)))
+                .addGap(76, 76, 76))
+            .addGroup(pnlFilterLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(splitLine1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
         pnlFilterLayout.setVerticalGroup(
@@ -743,13 +790,13 @@ public class InuhaSanPhamView extends RoundPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(pnlFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(pnlSearchBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnClear, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(pnlFilterLayout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(cboTrangThai, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(btnSearch, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(cboThuongHieu, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(cboDanhMuc, javax.swing.GroupLayout.Alignment.TRAILING))
+                        .addComponent(cboSoLuong, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnClear, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cboDanhMuc, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(cboThuongHieu, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addGap(20, 20, 20))
         );
 
@@ -845,7 +892,7 @@ public class InuhaSanPhamView extends RoundPanel {
         pnlDanhSach.setLayout(pnlDanhSachLayout);
         pnlDanhSachLayout.setHorizontalGroup(
             pnlDanhSachLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scrDanhSach, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1011, Short.MAX_VALUE)
+            .addComponent(scrDanhSach, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1165, Short.MAX_VALUE)
         );
         pnlDanhSachLayout.setVerticalGroup(
             pnlDanhSachLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -965,7 +1012,7 @@ public class InuhaSanPhamView extends RoundPanel {
 
             },
             new String [] {
-                "", "#", "Mã chi tiết", "Mã sản phẩm", "", "Tên sản phẩm", "Danh mục", "Thương hiệu", "Xuất xứ", "Kiểu dáng", "Chất liệu", "Đế giày", "Kích cỡ", "Màu sắc", "Giá nhập", "Giá bán", "Số lượng tồn", "Trạng thái"
+                "", "#", "Mã chi tiết", "Mã sản phẩm", "", "Tên sản phẩm", "Số lượng tồn", "Danh mục", "Thương hiệu", "Xuất xứ", "Kiểu dáng", "Chất liệu", "Đế giày", "Kích cỡ", "Màu sắc", "Giá nhập", "Giá bán", "Trạng thái"
             }
         ) {
             Class[] types = new Class [] {
@@ -1003,7 +1050,7 @@ public class InuhaSanPhamView extends RoundPanel {
         pnlDanhSachChiTiet.setLayout(pnlDanhSachChiTietLayout);
         pnlDanhSachChiTietLayout.setHorizontalGroup(
             pnlDanhSachChiTietLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scrDanhSachChiTiet, javax.swing.GroupLayout.DEFAULT_SIZE, 1011, Short.MAX_VALUE)
+            .addComponent(scrDanhSachChiTiet, javax.swing.GroupLayout.DEFAULT_SIZE, 1165, Short.MAX_VALUE)
         );
         pnlDanhSachChiTietLayout.setVerticalGroup(
             pnlDanhSachChiTietLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1089,8 +1136,18 @@ public class InuhaSanPhamView extends RoundPanel {
         );
 
         cboDanhMuc2.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "-- Tất cả danh mục --" }));
+        cboDanhMuc2.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cboDanhMuc2ItemStateChanged(evt);
+            }
+        });
 
         cboThuongHieu2.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "-- Tất cả thương hiệu --" }));
+        cboThuongHieu2.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cboThuongHieu2ItemStateChanged(evt);
+            }
+        });
         cboThuongHieu2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cboThuongHieu2ActionPerformed(evt);
@@ -1098,8 +1155,18 @@ public class InuhaSanPhamView extends RoundPanel {
         });
 
         cboTrangThai2.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "-- Tất cả trạng thái --" }));
+        cboTrangThai2.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cboTrangThai2ItemStateChanged(evt);
+            }
+        });
 
         cboXuatXu.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "-- Tất cả xuất xứ --" }));
+        cboXuatXu.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cboXuatXuItemStateChanged(evt);
+            }
+        });
         cboXuatXu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cboXuatXuActionPerformed(evt);
@@ -1107,6 +1174,11 @@ public class InuhaSanPhamView extends RoundPanel {
         });
 
         cboKieuDang.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "-- Tất cả kiểu dáng --" }));
+        cboKieuDang.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cboKieuDangItemStateChanged(evt);
+            }
+        });
         cboKieuDang.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cboKieuDangActionPerformed(evt);
@@ -1114,10 +1186,25 @@ public class InuhaSanPhamView extends RoundPanel {
         });
 
         cboChatLieu.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "-- Tất cả chất liệu --" }));
+        cboChatLieu.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cboChatLieuItemStateChanged(evt);
+            }
+        });
 
         cboDeGiay.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "-- Tất cả đế giày --" }));
+        cboDeGiay.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cboDeGiayItemStateChanged(evt);
+            }
+        });
 
         cboKichCo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "-- Tất cả kích cỡ --" }));
+        cboKichCo.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cboKichCoItemStateChanged(evt);
+            }
+        });
         cboKichCo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cboKichCoActionPerformed(evt);
@@ -1125,6 +1212,11 @@ public class InuhaSanPhamView extends RoundPanel {
         });
 
         cboMauSac.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "-- Tất cả màu sắc --" }));
+        cboMauSac.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cboMauSacItemStateChanged(evt);
+            }
+        });
         cboMauSac.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cboMauSacActionPerformed(evt);
@@ -1153,67 +1245,85 @@ public class InuhaSanPhamView extends RoundPanel {
             }
         });
 
-        javax.swing.GroupLayout roundPanel2Layout = new javax.swing.GroupLayout(roundPanel2);
-        roundPanel2.setLayout(roundPanel2Layout);
-        roundPanel2Layout.setHorizontalGroup(
-            roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        cboSoLuong2.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "-- Tất cả số lượng --" }));
+        cboSoLuong2.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cboSoLuong2ItemStateChanged(evt);
+            }
+        });
+        cboSoLuong2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboSoLuong2ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout pnlFilter2Layout = new javax.swing.GroupLayout(pnlFilter2);
+        pnlFilter2.setLayout(pnlFilter2Layout);
+        pnlFilter2Layout.setHorizontalGroup(
+            pnlFilter2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(splitLine4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(roundPanel2Layout.createSequentialGroup()
+            .addGroup(pnlFilter2Layout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addGroup(roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblFilter2, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cboKieuDang, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(pnlSearchBox2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 329, Short.MAX_VALUE))
+                .addGroup(pnlFilter2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(pnlSearchBox2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 397, Short.MAX_VALUE)
+                    .addGroup(pnlFilter2Layout.createSequentialGroup()
+                        .addComponent(lblFilter2, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(pnlFilter2Layout.createSequentialGroup()
+                        .addComponent(cboKieuDang, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
+                        .addComponent(cboSoLuong2, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addGap(18, 18, 18)
-                .addGroup(roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(roundPanel2Layout.createSequentialGroup()
-                        .addGroup(roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(cboTrangThai2, 0, 143, Short.MAX_VALUE)
+                .addGroup(pnlFilter2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlFilter2Layout.createSequentialGroup()
+                        .addGroup(pnlFilter2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(cboTrangThai2, 0, 185, Short.MAX_VALUE)
                             .addComponent(cboChatLieu, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(18, 18, 18)
-                        .addGroup(roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(cboDanhMuc2, 0, 142, Short.MAX_VALUE)
+                        .addGroup(pnlFilter2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(cboDanhMuc2, 0, 186, Short.MAX_VALUE)
                             .addComponent(cboDeGiay, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addGroup(roundPanel2Layout.createSequentialGroup()
+                    .addGroup(pnlFilter2Layout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addComponent(btnSearch2, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnClear2, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addGap(18, 18, 18)
-                .addGroup(roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(pnlFilter2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(cboThuongHieu2, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(cboKichCo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
-                .addGroup(roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(pnlFilter2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(cboXuatXu, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(cboMauSac, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(20, 20, 20))
         );
-        roundPanel2Layout.setVerticalGroup(
-            roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(roundPanel2Layout.createSequentialGroup()
+        pnlFilter2Layout.setVerticalGroup(
+            pnlFilter2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlFilter2Layout.createSequentialGroup()
                 .addGap(0, 0, 0)
                 .addComponent(lblFilter2, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(splitLine4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(pnlFilter2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(pnlFilter2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(cboDanhMuc2, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(cboThuongHieu2, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(cboTrangThai2, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(cboXuatXu, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(pnlSearchBox2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(pnlFilter2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cboKichCo, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cboChatLieu, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cboMauSac, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cboKieuDang, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cboDeGiay, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cboDeGiay, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cboSoLuong2, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(pnlFilter2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnClear2, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnSearch2, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(15, 15, 15))
@@ -1223,14 +1333,14 @@ public class InuhaSanPhamView extends RoundPanel {
         pnlDanhSachSanPhamChiTiet.setLayout(pnlDanhSachSanPhamChiTietLayout);
         pnlDanhSachSanPhamChiTietLayout.setHorizontalGroup(
             pnlDanhSachSanPhamChiTietLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(roundPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(pnlFilter2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(pnlList2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         pnlDanhSachSanPhamChiTietLayout.setVerticalGroup(
             pnlDanhSachSanPhamChiTietLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlDanhSachSanPhamChiTietLayout.createSequentialGroup()
                 .addGap(15, 15, 15)
-                .addComponent(roundPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(pnlFilter2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(pnlList2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -1361,6 +1471,150 @@ public class InuhaSanPhamView extends RoundPanel {
 	handleClickButtonImport();
     }//GEN-LAST:event_btnImportActionPerformed
 
+    private void cboSoLuong2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboSoLuong2ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cboSoLuong2ActionPerformed
+
+    private void cboDanhMucItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cboDanhMucItemStateChanged
+        // TODO add your handling code here:
+	if (firstLoad) {
+	    return;
+	}
+	if (evt.getStateChange() == ItemEvent.SELECTED) {
+	    handleClickButtonSearch();
+	}
+    }//GEN-LAST:event_cboDanhMucItemStateChanged
+
+    private void cboThuongHieuItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cboThuongHieuItemStateChanged
+        // TODO add your handling code here:
+	if (firstLoad) {
+	    return;
+	}
+	if (evt.getStateChange() == ItemEvent.SELECTED) {
+	    handleClickButtonSearch();
+	}
+    }//GEN-LAST:event_cboThuongHieuItemStateChanged
+
+    private void cboSoLuongItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cboSoLuongItemStateChanged
+        // TODO add your handling code here:
+	if (firstLoad) {
+	    return;
+	}
+	if (evt.getStateChange() == ItemEvent.SELECTED) {
+	    handleClickButtonSearch();
+	}
+    }//GEN-LAST:event_cboSoLuongItemStateChanged
+
+    private void cboTrangThaiItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cboTrangThaiItemStateChanged
+        // TODO add your handling code here:
+	if (firstLoad) {
+	    return;
+	}
+	if (evt.getStateChange() == ItemEvent.SELECTED) {
+	    handleClickButtonSearch();
+	}
+    }//GEN-LAST:event_cboTrangThaiItemStateChanged
+
+    private void cboTrangThai2ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cboTrangThai2ItemStateChanged
+        // TODO add your handling code here:
+	if (firstLoad) {
+	    return;
+	}
+	if (evt.getStateChange() == ItemEvent.SELECTED) {
+	    handleClickButtonSeachChiTiet();
+	}
+    }//GEN-LAST:event_cboTrangThai2ItemStateChanged
+
+    private void cboDanhMuc2ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cboDanhMuc2ItemStateChanged
+        // TODO add your handling code here:
+	if (firstLoad) {
+	    return;
+	}
+	if (evt.getStateChange() == ItemEvent.SELECTED) {
+	    handleClickButtonSeachChiTiet();
+	}
+    }//GEN-LAST:event_cboDanhMuc2ItemStateChanged
+
+    private void cboThuongHieu2ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cboThuongHieu2ItemStateChanged
+        // TODO add your handling code here:
+	if (firstLoad) {
+	    return;
+	}
+	if (evt.getStateChange() == ItemEvent.SELECTED) {
+	    handleClickButtonSeachChiTiet();
+	}
+    }//GEN-LAST:event_cboThuongHieu2ItemStateChanged
+
+    private void cboXuatXuItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cboXuatXuItemStateChanged
+        // TODO add your handling code here:
+	if (firstLoad) {
+	    return;
+	}
+	if (evt.getStateChange() == ItemEvent.SELECTED) {
+	    handleClickButtonSeachChiTiet();
+	}
+    }//GEN-LAST:event_cboXuatXuItemStateChanged
+
+    private void cboMauSacItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cboMauSacItemStateChanged
+        // TODO add your handling code here:
+	if (firstLoad) {
+	    return;
+	}
+	if (evt.getStateChange() == ItemEvent.SELECTED) {
+	    handleClickButtonSeachChiTiet();
+	}
+    }//GEN-LAST:event_cboMauSacItemStateChanged
+
+    private void cboKichCoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cboKichCoItemStateChanged
+        // TODO add your handling code here:
+	if (firstLoad) {
+	    return;
+	}
+	if (evt.getStateChange() == ItemEvent.SELECTED) {
+	    handleClickButtonSeachChiTiet();
+	}
+    }//GEN-LAST:event_cboKichCoItemStateChanged
+
+    private void cboDeGiayItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cboDeGiayItemStateChanged
+        // TODO add your handling code here:
+	if (firstLoad) {
+	    return;
+	}
+	if (evt.getStateChange() == ItemEvent.SELECTED) {
+	    handleClickButtonSeachChiTiet();
+	}
+    }//GEN-LAST:event_cboDeGiayItemStateChanged
+
+    private void cboChatLieuItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cboChatLieuItemStateChanged
+        // TODO add your handling code here:
+	if (firstLoad) {
+	    return;
+	}
+	if (evt.getStateChange() == ItemEvent.SELECTED) {
+	    handleClickButtonSeachChiTiet();
+	}
+    }//GEN-LAST:event_cboChatLieuItemStateChanged
+
+    private void cboSoLuong2ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cboSoLuong2ItemStateChanged
+        // TODO add your handling code here:
+	if (firstLoad) {
+	    return;
+	}
+	if (evt.getStateChange() == ItemEvent.SELECTED) {
+	    handleClickButtonSeachChiTiet();
+	}
+    }//GEN-LAST:event_cboSoLuong2ItemStateChanged
+
+    private void cboKieuDangItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cboKieuDangItemStateChanged
+        // TODO add your handling code here:
+	if (firstLoad) {
+	    return;
+	}
+	if (evt.getStateChange() == ItemEvent.SELECTED) {
+	    handleClickButtonSeachChiTiet();
+	}
+    }//GEN-LAST:event_cboKieuDangItemStateChanged
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnClear;
@@ -1381,6 +1635,8 @@ public class InuhaSanPhamView extends RoundPanel {
     private javax.swing.JComboBox cboKichCo;
     private javax.swing.JComboBox cboKieuDang;
     private javax.swing.JComboBox cboMauSac;
+    private javax.swing.JComboBox cboSoLuong;
+    private javax.swing.JComboBox cboSoLuong2;
     private javax.swing.JComboBox cboThuongHieu;
     private javax.swing.JComboBox cboThuongHieu2;
     private javax.swing.JComboBox cboTrangThai;
@@ -1396,13 +1652,13 @@ public class InuhaSanPhamView extends RoundPanel {
     private javax.swing.JPanel pnlDanhSachSanPham;
     private javax.swing.JPanel pnlDanhSachSanPhamChiTiet;
     private com.app.views.UI.panel.RoundPanel pnlFilter;
+    private com.app.views.UI.panel.RoundPanel pnlFilter2;
     private com.app.views.UI.panel.RoundPanel pnlList;
     private com.app.views.UI.panel.RoundPanel pnlList2;
     private javax.swing.JPanel pnlPhanTrang;
     private javax.swing.JPanel pnlPhanTrangChiTiet;
     private com.app.views.UI.panel.SearchBox pnlSearchBox;
     private com.app.views.UI.panel.SearchBox pnlSearchBox2;
-    private com.app.views.UI.panel.RoundPanel roundPanel2;
     private javax.swing.JScrollPane scrDanhSach;
     private javax.swing.JScrollPane scrDanhSachChiTiet;
     private com.app.views.UI.label.SplitLine splitLine1;
@@ -1501,6 +1757,7 @@ public class InuhaSanPhamView extends RoundPanel {
 	    cboDeGiay.setSelectedIndex(0);
 	    cboKichCo.setSelectedIndex(0);
 	    cboMauSac.setSelectedIndex(0);
+	    cboSoLuong2.setSelectedIndex(0);
             loadDataPageSPCT();
             loading.dispose();
         });
@@ -1514,6 +1771,7 @@ public class InuhaSanPhamView extends RoundPanel {
             cboDanhMuc.setSelectedIndex(0);
             cboThuongHieu.setSelectedIndex(0);
             cboTrangThai.setSelectedIndex(0);
+	    cboSoLuong.setSelectedIndex(0);
             loadDataPage();
             loading.dispose();
         });

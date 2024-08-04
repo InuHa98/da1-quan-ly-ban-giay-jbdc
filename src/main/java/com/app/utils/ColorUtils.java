@@ -47,7 +47,7 @@ public class ColorUtils {
     
     public static Color BUTTON_PRIMARY = new Color(234, 108, 32);
 
-    public static Color BUTTON_GRAY = new Color(34, 35, 38);
+    public static Color BUTTON_GRAY = new Color(49, 51, 56);
         
     public static Color INPUT_PRIMARY = new Color(43, 45, 49);
 

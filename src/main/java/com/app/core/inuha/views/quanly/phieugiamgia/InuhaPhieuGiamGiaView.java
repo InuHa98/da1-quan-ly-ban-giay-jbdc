@@ -1,8 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
-
 package com.app.core.inuha.views.quanly.phieugiamgia;
 
 import com.app.common.helper.Pagination;
@@ -58,6 +53,7 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
         if (instance == null) { 
             instance = new InuhaPhieuGiamGiaView();
         }
+	
         return instance;
     }
 	
@@ -80,6 +76,8 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
 	
 	lblFilter.setIcon(ResourceUtils.getSVG("/svg/filter.svg", new Dimension(20, 20)));
 	lblDanhSach.setIcon(ResourceUtils.getSVG("/svg/list.svg", new Dimension(20, 20)));
+	
+	pnlFilter.setBackground(ColorUtils.BACKGROUND_DASHBOARD);
 	
 	txtTuKhoa.addKeyListener(new KeyAdapter() {
             @Override

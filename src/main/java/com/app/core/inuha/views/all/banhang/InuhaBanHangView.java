@@ -42,6 +42,7 @@ import com.app.core.inuha.views.all.banhang.components.InuhaEditGioHangView;
 import com.app.core.inuha.views.all.banhang.components.InuhaListKhachHangView;
 import com.app.core.inuha.views.all.banhang.components.InuhaListPhieuGiamGiaView;
 import com.app.core.inuha.views.quanly.InuhaSanPhamView;
+import com.app.core.inuha.views.quanly.components.table.soluongton.InuhaSoLuongTonSanPhamTableCellRender;
 import com.app.utils.BillUtils;
 import com.app.utils.ColorUtils;
 import com.app.utils.CurrencyUtils;
@@ -308,6 +309,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 	
         table.setRowHeight(50);
 	table.getColumnModel().getColumn(5).setCellRenderer(new TableAlignCenterCellRender(table));
+	table.getColumnModel().getColumn(5).setCellRenderer(new InuhaSoLuongTonSanPhamTableCellRender(table));
         table.getColumnModel().getColumn(2).setCellRenderer(new TableImageCellRender(table));
     }
     
@@ -404,7 +406,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
             request.setPage(page);
 
            
-            dataItemsSanPham = sanPhamService.getPage(request);
+            dataItemsSanPham = sanPhamService.getPage(request, true);
             
             for(InuhaSanPhamModel m: dataItemsSanPham) { 
                 model.addRow(m.toDataRowBanHang());

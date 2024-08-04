@@ -436,7 +436,7 @@ public class InuhaThongKeView extends javax.swing.JPanel {
         );
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
-        jLabel4.setText("Thống kê chi tiết");
+        jLabel4.setText("Chi tiết số lượng");
 
         javax.swing.GroupLayout splitLine1Layout = new javax.swing.GroupLayout(splitLine1);
         splitLine1.setLayout(splitLine1Layout);
@@ -664,7 +664,7 @@ public class InuhaThongKeView extends javax.swing.JPanel {
                 .addComponent(pnlList, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jTabbedPane1.addTab("Danh sách chi tiết", jPanel2);
+        jTabbedPane1.addTab("Thống kê chi tiết", jPanel2);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jLabel1.setText("Tổng số lượng bán");
@@ -811,6 +811,11 @@ public class InuhaThongKeView extends javax.swing.JPanel {
         });
 
         cboSanPham.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Tất cả sản phẩm" }));
+        cboSanPham.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cboSanPhamItemStateChanged(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -870,6 +875,7 @@ public class InuhaThongKeView extends javax.swing.JPanel {
 	    txtThoiGian.setVisible(isCustom);
 	    revalidate();
 	    repaint();
+	    handleClickButtonFilter();
 	}
     }//GEN-LAST:event_cboThoiGianItemStateChanged
 
@@ -910,6 +916,11 @@ public class InuhaThongKeView extends javax.swing.JPanel {
         // TODO add your handling code here:
 	handleClickButtonExport();
     }//GEN-LAST:event_btnExportActionPerformed
+
+    private void cboSanPhamItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cboSanPhamItemStateChanged
+        // TODO add your handling code here:
+	handleClickButtonFilter();
+    }//GEN-LAST:event_cboSanPhamItemStateChanged
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnClear;
@@ -960,6 +971,9 @@ public class InuhaThongKeView extends javax.swing.JPanel {
     // End of variables declaration//GEN-END:variables
 
     private void handleClickButtonFilter() {
+	if (firstLoad) {
+	    return;
+	}
 	LoadingDialog loading = new LoadingDialog();
 	executorService.submit(() -> {
 	    loadDataChart();

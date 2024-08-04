@@ -27,6 +27,8 @@ public class InuhaFilterSanPhamRequest extends FillterRequest {
     
     private ComboBoxItem<Integer> deGiay = new ComboBoxItem<>();
         
+    private ComboBoxItem<Integer> soLuong = new ComboBoxItem<>();
+    
     private ComboBoxItem<Integer> trangThai = new ComboBoxItem<>();
 
 }

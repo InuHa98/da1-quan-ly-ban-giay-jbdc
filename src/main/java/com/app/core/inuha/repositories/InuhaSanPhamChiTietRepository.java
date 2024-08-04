@@ -347,6 +347,7 @@ public class InuhaSanPhamChiTietRepository implements IDAOinterface<InuhaSanPham
 			(COALESCE(?, 0) < 1 OR dg.ten LIKE ?) AND
 			(COALESCE(?, 0) < 1 OR kc.ten LIKE ?) AND
 			(COALESCE(?, 0) < 1 OR ms.ten LIKE ?) AND
+                        (COALESCE(?, -1) < 0 OR (? = 1 AND spct.so_luong > 0) OR (? = 0 AND spct.so_luong < 1)) AND
 			(COALESCE(?, -1) < 0 OR spct.trang_thai = ?)
                     )
             )
@@ -382,6 +383,9 @@ public class InuhaSanPhamChiTietRepository implements IDAOinterface<InuhaSanPham
             filter.getKichCo().getText(),
             filter.getMauSac().getValue(),
             filter.getMauSac().getText(),
+	    filter.getSoLuong().getValue(),
+	    filter.getSoLuong().getValue(),
+	    filter.getSoLuong().getValue(),
             filter.getTrangThai().getValue(),
             filter.getTrangThai().getValue(),
             start,
@@ -443,6 +447,7 @@ public class InuhaSanPhamChiTietRepository implements IDAOinterface<InuhaSanPham
 		    (COALESCE(?, 0) < 1 OR dg.ten LIKE ?) AND
 		    (COALESCE(?, 0) < 1 OR kc.ten LIKE ?) AND
 		    (COALESCE(?, 0) < 1 OR ms.ten LIKE ?) AND
+                    (COALESCE(?, -1) < 0 OR (? = 1 AND spct.so_luong > 0) OR (? = 0 AND spct.so_luong < 1)) AND
                     (COALESCE(?, -1) < 0 OR spct.trang_thai = ?)
                 ) 
         """, TABLE_NAME);
@@ -471,6 +476,9 @@ public class InuhaSanPhamChiTietRepository implements IDAOinterface<InuhaSanPham
             filter.getKichCo().getText(),
             filter.getMauSac().getValue(),
             filter.getMauSac().getText(),
+	    filter.getSoLuong().getValue(),
+	    filter.getSoLuong().getValue(),
+	    filter.getSoLuong().getValue(),
             filter.getTrangThai().getValue(),
             filter.getTrangThai().getValue()
         };
