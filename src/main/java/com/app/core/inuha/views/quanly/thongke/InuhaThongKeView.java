@@ -875,7 +875,9 @@ public class InuhaThongKeView extends javax.swing.JPanel {
 	    txtThoiGian.setVisible(isCustom);
 	    revalidate();
 	    repaint();
-	    handleClickButtonFilter();
+	    if (!isCustom) {
+		handleClickButtonFilter();
+	    }
 	}
     }//GEN-LAST:event_cboThoiGianItemStateChanged
 
