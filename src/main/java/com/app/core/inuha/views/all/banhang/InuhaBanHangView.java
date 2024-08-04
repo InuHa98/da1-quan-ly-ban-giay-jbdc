@@ -193,7 +193,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 	lblBill.setIcon(ResourceUtils.getSVG("/svg/bill.svg", new Dimension(20, 20)));
 	lblProducts.setIcon(ResourceUtils.getSVG("/svg/shoes.svg", new Dimension(20, 20)));
 	lblCart.setIcon(ResourceUtils.getSVG("/svg/cart.svg", new Dimension(20, 20)));
-	btnReset.setIcon(ResourceUtils.getSVG("/svg/reload.svg", new Dimension(20, 20)));
+	btnReset.setIcon(ResourceUtils.getSVG("/svg/reload-n.svg", new Dimension(20, 20)));
 	btnSubmit.setIcon(ResourceUtils.getSVG("/svg/paid.svg", new Dimension(24, 24)));
 	btnAddBill.setIcon(ResourceUtils.getSVG("/svg/plus-c.svg", new Dimension(20, 20)));
 	btnCancel.setIcon(ResourceUtils.getSVG("/svg/times.svg", new Dimension(32, 32)));
@@ -210,6 +210,26 @@ public class InuhaBanHangView extends javax.swing.JPanel {
                 }
             }
         });
+	
+	txtTienMat.addKeyListener(new KeyAdapter() {
+	    @Override
+	    public void keyPressed(KeyEvent e) {
+		if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+		    handleClickButtonSubmit();
+		    e.consume();
+		}
+	    }
+	});
+	
+	txtTienChuyenKhoan.addKeyListener(new KeyAdapter() {
+	    @Override
+	    public void keyPressed(KeyEvent e) {
+		if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+		    handleClickButtonSubmit();
+		    e.consume();
+		}
+	    }
+	});
 	
 	Dimension cboSize = new Dimension(100, 28);
 	cboDanhMuc.setPreferredSize(cboSize);
@@ -1032,7 +1052,6 @@ public class InuhaBanHangView extends javax.swing.JPanel {
             .addGap(0, 35, Short.MAX_VALUE)
         );
 
-        btnReset.setText("Làm mới");
         btnReset.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnReset.setMaximumSize(new java.awt.Dimension(79, 35));
         btnReset.setMinimumSize(new java.awt.Dimension(79, 35));
@@ -1069,10 +1088,12 @@ public class InuhaBanHangView extends javax.swing.JPanel {
             .addComponent(splitLine4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(pnlDanhSachSanPham, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(pnlSanPhamLayout.createSequentialGroup()
-                .addGap(20, 20, 20)
+                .addGap(15, 15, 15)
                 .addGroup(pnlSanPhamLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlSanPhamLayout.createSequentialGroup()
                         .addComponent(pnlSearchBox, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnReset, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(pnlSanPhamLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(cboDanhMuc, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -1100,20 +1121,18 @@ public class InuhaBanHangView extends javax.swing.JPanel {
                             .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(cboDeGiay, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(pnlSanPhamLayout.createSequentialGroup()
-                        .addComponent(lblProducts, javax.swing.GroupLayout.PREFERRED_SIZE, 590, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(5, 5, 5)
+                        .addComponent(lblProducts, javax.swing.GroupLayout.PREFERRED_SIZE, 582, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnScanQr, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(12, 12, 12)
-                        .addComponent(btnReset, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(btnScanQr, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(pnlPhanTrang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(20, 20, 20))
+                .addGap(15, 15, 15))
         );
         pnlSanPhamLayout.setVerticalGroup(
             pnlSanPhamLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlSanPhamLayout.createSequentialGroup()
                 .addGroup(pnlSanPhamLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblProducts, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnReset, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnScanQr, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(splitLine4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1130,10 +1149,11 @@ public class InuhaBanHangView extends javax.swing.JPanel {
                     .addComponent(cboKieuDang, javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(cboXuatXu, javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(cboThuongHieu, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(cboDanhMuc, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(pnlSearchBox, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
-                    .addComponent(cboDeGiay))
-                .addGap(20, 20, 20)
+                    .addComponent(btnReset, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(pnlSearchBox, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(cboDeGiay)
+                    .addComponent(cboDanhMuc, javax.swing.GroupLayout.Alignment.LEADING))
+                .addGap(19, 19, 19)
                 .addComponent(pnlDanhSachSanPham, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pnlPhanTrang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1353,7 +1373,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(20, 20, 20)
+                .addGap(15, 15, 15)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -1923,6 +1943,8 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 		loadDataPageSanPham();
 		setVoucher(currentPhieuGiamGia);
 		MessageToast.success("Cập nhật giỏ hàng thành công!");
+		currentHoaDonChiTiet = null;
+		btnRemoveSanPham.setEnabled(false);
 	    } catch (ServiceResponseException e) {
 		e.printStackTrace();
 		MessageToast.error(e.getMessage());
@@ -1968,6 +1990,8 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 		loadDataGioHang();
 		setVoucher(currentPhieuGiamGia);
 		MessageToast.success("Xoá thành công sản phẩm khỏi giỏ hàng!");
+		currentHoaDonChiTiet = null;
+		btnRemoveSanPham.setEnabled(false);
 	    } catch (ServiceResponseException e) {
 		e.printStackTrace();
 		MessageToast.error(e.getMessage());
@@ -2002,14 +2026,14 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 	
 	if (hinhThucThanhToan.getValue() == PhuongThucThanhToanConstant.TIEN_MAT || hinhThucThanhToan.getValue() == PhuongThucThanhToanConstant.KET_HOP) { 
 	    if (tienMat.isEmpty()) { 
-		MessageToast.error("Tiền mặt không được bỏ trống");
+		MessageToast.warning("Tiền mặt không được bỏ trống");
 		txtTienMat.requestFocus();
 		return;
 	    }
 	    try {
 		tienMatValue = (int) CurrencyUtils.parseNumber(tienMat);
 	    } catch (NumberFormatException e) { 
-		MessageToast.error("Tiền mặt vượt quá giới hạn cho phép");
+		MessageToast.warning("Tiền mặt vượt quá giới hạn cho phép");
 		txtTienMat.requestFocus();
 		return;
 	    }
@@ -2017,21 +2041,21 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 
 	if (hinhThucThanhToan.getValue() == PhuongThucThanhToanConstant.CHUYEN_KHOAN || hinhThucThanhToan.getValue() == PhuongThucThanhToanConstant.KET_HOP) { 
 	    if (tienChuyenKhoan.isEmpty()) { 
-		MessageToast.error("Tiền chuyển khoản không được bỏ trống");
+		MessageToast.warning("Tiền chuyển khoản không được bỏ trống");
 		txtTienChuyenKhoan.requestFocus();
 		return;
 	    }
 	    try {
 		tienChuyenKhoanValue = (int) CurrencyUtils.parseNumber(tienChuyenKhoan);
 	    } catch (NumberFormatException e) { 
-		MessageToast.error("Tiền chuyển khoản vượt quá giới hạn cho phép");
+		MessageToast.warning("Tiền chuyển khoản vượt quá giới hạn cho phép");
 		txtTienChuyenKhoan.requestFocus();
 		return;
 	    }
 	}
 	
 	if ((tienMatValue + tienChuyenKhoanValue) < chiTietThanhToan.getTongThanhToan()) { 
-	    MessageToast.error("Tiền khách trả phải lớn hơn hoặc bằng tổng thanh toán");
+	    MessageToast.warning("Tiền khách trả phải lớn hơn hoặc bằng tổng thanh toán");
 	    txtTienMat.requestFocus();
 	    txtTienChuyenKhoan.requestFocus();
 	    return;

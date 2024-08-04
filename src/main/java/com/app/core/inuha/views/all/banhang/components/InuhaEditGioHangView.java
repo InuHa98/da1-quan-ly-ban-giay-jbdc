@@ -5,6 +5,10 @@ import com.app.core.inuha.views.all.banhang.InuhaBanHangView;
 import com.app.utils.ColorUtils;
 import com.app.utils.ResourceUtils;
 import java.awt.Dimension;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import javax.swing.JFormattedTextField;
 import javax.swing.JSpinner;
 import javax.swing.text.NumberFormatter;
@@ -17,18 +21,35 @@ import raven.modal.ModalDialog;
 public class InuhaEditGioHangView extends javax.swing.JPanel {
 
     private InuhaHoaDonChiTietModel hoaDonChiTiet = null;
+    
+    private int maxSoLuong = 1;
+    
     /** Creates new form InuhaAddGioHangView */
     public InuhaEditGioHangView(InuhaHoaDonChiTietModel hoaDonChiTiet) {
 	initComponents();
 	this.hoaDonChiTiet = hoaDonChiTiet;
 	
+	spnSoLuong.addMouseWheelListener(new MouseWheelListener() {
+	    @Override
+	    public void mouseWheelMoved(MouseWheelEvent e) {
+		int notches = e.getWheelRotation();
+		if (notches < 0) {
+		    spnSoLuong.setValue(Math.min(maxSoLuong, (int) ((Number) spnSoLuong.getValue()).intValue() + 1));
+		} else {
+		    spnSoLuong.setValue(Math.max(1, (((Number) spnSoLuong.getValue()).intValue() - 1)));
+		}
+	    }
+	});
+		
 	btnSubmit.setBackground(ColorUtils.BUTTON_PRIMARY);
 	
 	setLimit(hoaDonChiTiet.getSanPhamChiTiet().getSoLuong() + hoaDonChiTiet.getSoLuong());
 	spnSoLuong.setValue(hoaDonChiTiet.getSoLuong());
     }
 
-    private void setLimit(int maxSoLuong) { 
+    private void setLimit(int max) { 
+	maxSoLuong = max;
+	spnSoLuong.setValue(1);
 	JSpinner.NumberEditor editor = new JSpinner.NumberEditor(spnSoLuong, "#");
 	JFormattedTextField textField = editor.getTextField();
         NumberFormatter formatter = (NumberFormatter) textField.getFormatter();
@@ -36,6 +57,17 @@ public class InuhaEditGioHangView extends javax.swing.JPanel {
         formatter.setCommitsOnValidEdit(true);
         formatter.setMaximum(maxSoLuong);
         formatter.setMinimum(1);
+	
+	textField.addKeyListener(new KeyAdapter() {
+	    @Override
+	    public void keyPressed(KeyEvent e) {
+		if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+		    handleClickButtonSubmit();
+		    e.consume();
+		}
+	    }
+	});
+		    
 	spnSoLuong.setEditor(editor);
 	lblLimit.setText("(Tối đa " + maxSoLuong + ")");
     }

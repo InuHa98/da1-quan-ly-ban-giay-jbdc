@@ -249,10 +249,11 @@ public class InuhaThongKeView extends javax.swing.JPanel {
 	lblTongDoanhThu.setText(CurrencyUtils.parseNumber(dataTongSo.getTongDoanhThu()));
 	lblTongLoiNhuan.setText(CurrencyUtils.parseNumber(dataTongSo.getTongLoiNhuan()));
 	
-	lblTongSanPham.setForeground(ColorUtils.PRIMARY_COLOR);
-	lblTongDoanhThu.setForeground(ColorUtils.PRIMARY_COLOR);
-	lblTongLoiNhuan.setForeground(ColorUtils.PRIMARY_COLOR);
-	
+	lblTongSanPham.setForeground(dataTongSo.getTongSanPham() > 0 ? ColorUtils.PRIMARY_COLOR : ColorUtils.PRIMARY_TEXT);	
+	lblTongDoanhThu.setForeground(dataTongSo.getTongDoanhThu() > 0 ? ColorUtils.PRIMARY_COLOR : ColorUtils.PRIMARY_TEXT);	
+	lblTongLoiNhuan.setForeground(dataTongSo.getTongLoiNhuan() > 0 ? ColorUtils.PRIMARY_COLOR : ColorUtils.PRIMARY_TEXT);	
+
+		
 	InuhaThongKeChiTietModel dataChiTiet = thongKeService.getDetail(filter);
 	
 	lblTongDon.setText(String.valueOf(dataChiTiet.getTongHoaDon()));	
@@ -261,11 +262,11 @@ public class InuhaThongKeView extends javax.swing.JPanel {
 	lblTongDonDaThanhToan.setText(String.valueOf(dataChiTiet.getDaThanhToan()));
 	lblTongKhachHang.setText(String.valueOf(dataChiTiet.getKhachHang()));
 	
-	lblTongDon.setForeground(ColorUtils.PRIMARY_COLOR2);	
-	lblTongDonDaHuy.setForeground(ColorUtils.PRIMARY_COLOR2);
-	lblTongDonChoThanhToan.setForeground(ColorUtils.PRIMARY_COLOR2);
-	lblTongDonDaThanhToan.setForeground(ColorUtils.PRIMARY_COLOR2);
-	lblTongKhachHang.setForeground(ColorUtils.PRIMARY_COLOR2);
+	lblTongDon.setForeground(dataChiTiet.getTongHoaDon() > 0 ? ColorUtils.PRIMARY_COLOR : ColorUtils.PRIMARY_TEXT);	
+	lblTongDonDaHuy.setForeground(dataChiTiet.getDaHuy()> 0 ? ColorUtils.PRIMARY_COLOR : ColorUtils.PRIMARY_TEXT);
+	lblTongDonChoThanhToan.setForeground(dataChiTiet.getChoThanhToan()> 0 ? ColorUtils.PRIMARY_COLOR : ColorUtils.PRIMARY_TEXT);
+	lblTongDonDaThanhToan.setForeground(dataChiTiet.getDaThanhToan()> 0 ? ColorUtils.PRIMARY_COLOR : ColorUtils.PRIMARY_TEXT);
+	lblTongKhachHang.setForeground(dataChiTiet.getKhachHang()> 0 ? ColorUtils.PRIMARY_COLOR : ColorUtils.PRIMARY_TEXT);
 	
 	List<InuhaThongKeChartModel> dataChart = thongKeService.getDataChart(filter);
 	
@@ -423,7 +424,7 @@ public class InuhaThongKeView extends javax.swing.JPanel {
             pnlChartLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlChartLayout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addComponent(chartDoanhThu, javax.swing.GroupLayout.DEFAULT_SIZE, 607, Short.MAX_VALUE)
+                .addComponent(chartDoanhThu, javax.swing.GroupLayout.DEFAULT_SIZE, 612, Short.MAX_VALUE)
                 .addGap(20, 20, 20))
         );
         pnlChartLayout.setVerticalGroup(
@@ -584,7 +585,7 @@ public class InuhaThongKeView extends javax.swing.JPanel {
         pnlDanhSach.setLayout(pnlDanhSachLayout);
         pnlDanhSachLayout.setHorizontalGroup(
             pnlDanhSachLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scrDanhSach, javax.swing.GroupLayout.DEFAULT_SIZE, 924, Short.MAX_VALUE)
+            .addComponent(scrDanhSach, javax.swing.GroupLayout.DEFAULT_SIZE, 929, Short.MAX_VALUE)
         );
         pnlDanhSachLayout.setVerticalGroup(
             pnlDanhSachLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -816,7 +817,7 @@ public class InuhaThongKeView extends javax.swing.JPanel {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(20, 20, 20)
+                .addGap(15, 15, 15)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jTabbedPane1)
                     .addGroup(layout.createSequentialGroup()
@@ -857,7 +858,7 @@ public class InuhaThongKeView extends javax.swing.JPanel {
                     .addComponent(pnlLoiNhuan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(10, 10, 10)
                 .addComponent(jTabbedPane1)
-                .addGap(20, 20, 20))
+                .addGap(15, 15, 15))
         );
     }// </editor-fold>//GEN-END:initComponents
 
