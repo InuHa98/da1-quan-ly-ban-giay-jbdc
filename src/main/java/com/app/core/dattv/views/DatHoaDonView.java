@@ -264,23 +264,10 @@ public class DatHoaDonView  extends RoundPanel{
         tableModel.setRowCount(0);
 
     for (DatHoaDonRequest datHoaDonRequest : list) {
-        String trangThaiString;
-        switch (datHoaDonRequest.getTrangThai()) {
-            case 0:
-                trangThaiString = "Chưa thanh toán";
-                break;
-            case 1:
-               trangThaiString = "Đã thanh toán";
-                break;
-            case 2:
-                trangThaiString = "Đã hủy";
-                break;
-            default:
-                trangThaiString = "Trạng thái không xác định";
-                break;
-        }
+        String trangThaiString = getTrangThaiString(datHoaDonRequest.getTrangThai());
 
         Object[] row = {
+            false,
             datHoaDonRequest.getMaHd(),
             datHoaDonRequest.getThoiGian(),
             datHoaDonRequest.getKhachHang(),
@@ -293,10 +280,106 @@ public class DatHoaDonView  extends RoundPanel{
         tableModel.addRow(row);
     }
     }
+    public void printSelected(){
+        try {
+            XSSFWorkbook workBook=new XSSFWorkbook();
+            XSSFSheet sheet=workBook.createSheet("Danh sách hóa đơn");
+            XSSFRow row=null;
+            Cell cell=null;
+            
+            row=sheet.createRow(3);
+            cell=row.createCell(0, CellType.STRING);
+            cell.setCellValue("STT");
+            
+            cell=row.createCell(1, CellType.STRING);
+            cell.setCellValue("Mã HĐ");
+            
+            cell=row.createCell(2, CellType.STRING);
+            cell.setCellValue("Thời gian");
+            
+            cell=row.createCell(3, CellType.STRING);
+            cell.setCellValue("Khách Hàng");
+            
+            cell=row.createCell(4, CellType.STRING);
+            cell.setCellValue("Tổng tiền hàng");
+            
+            cell=row.createCell(5, CellType.STRING);
+            cell.setCellValue("Giảm giá");
+            
+            cell=row.createCell(6, CellType.STRING);
+            cell.setCellValue("Thành Tiền");
+            
+            cell=row.createCell(7, CellType.STRING);
+            cell.setCellValue("Nhân viên");
+            
+            cell=row.createCell(8, CellType.STRING);
+            cell.setCellValue("Trạng thái");
+            
+            for (int i = 0; i < tblHoadon.getRowCount(); i++) {
+                
+            boolean isChecked=(Boolean)tblHoadon.getValueAt(i, 0);
+            if(isChecked){
+                String maHd = (String) tblHoadon.getValueAt(i, 1);
+                Date thoiGian = (Date) tblHoadon.getValueAt(i, 2);
+                String khachHang = (String) tblHoadon.getValueAt(i, 3);
+                double tongTienhang = (Double) tblHoadon.getValueAt(i, 4);
+                double giamGia = (Double) tblHoadon.getValueAt(i, 5);
+                double thanhTien = (Double) tblHoadon.getValueAt(i, 6);
+                String trangThaiString = (String) tblHoadon.getValueAt(i, 7);
+                
+                row=sheet.createRow(4+i);
+                cell=row.createCell(0,CellType.NUMERIC);
+                cell.setCellValue(i+1);
+                
+                cell=row.createCell(1, CellType.STRING);
+                cell.setCellValue(maHd);
+                
+                cell=row.createCell(2, CellType.STRING);
+                cell.setCellValue(thoiGian);
+                
+                cell=row.createCell(3, CellType.STRING);
+                cell.setCellValue(khachHang);
+                
+                cell=row.createCell(4, CellType.STRING);
+                cell.setCellValue(tongTienhang);
+
+                cell=row.createCell(5, CellType.STRING);
+                cell.setCellValue(giamGia);
+
+                cell=row.createCell(6, CellType.STRING);
+                cell.setCellValue(thanhTien);
+
+                cell=row.createCell(7, CellType.STRING);
+                cell.setCellValue(trangThaiString);
+                
+            }
+        }
+  
+            JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Chọn nơi lưu file Excel");
+        fileChooser.setSelectedFile(new File("DefaultFilename.xlsx")); // Tên mặc định của file
+        
+        int userSelection = fileChooser.showSaveDialog(null);
+        
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToSave = fileChooser.getSelectedFile();
+            try (FileOutputStream fileOut = new FileOutputStream(fileToSave)) {
+                workBook.write(fileOut);
+                JOptionPane.showMessageDialog(this, "Lưu thành công !");
+                workBook.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Lỗi khi lưu file Excel.");
+            }
+        }
+           
+        } catch (Exception e) {
+        }
+
+    }
 
   public void loadDataPage1(long trang) {
-    DefaultTableModel model = (DefaultTableModel) tblHoadon.getModel();
-    model.setRowCount(0);
+   
 
     int pt = -1;
     int trangThai = -1;
@@ -342,21 +425,7 @@ public class DatHoaDonView  extends RoundPanel{
         }
 
         list = datHoaDonRepository.getTop15(trang);
-        for (DatHoaDonRequest datHoaDonRequest : list) {
-            String trangThaiString = getTrangThaiString(datHoaDonRequest.getTrangThai());
-
-            Object[] row = {
-                datHoaDonRequest.getMaHd(),
-                datHoaDonRequest.getThoiGian(),
-                datHoaDonRequest.getKhachHang(),
-                datHoaDonRequest.getTongTienhang(),
-                datHoaDonRequest.getGiamGia(),
-                datHoaDonRequest.getThanhTien(),
-                trangThaiString
-            };
-
-            model.addRow(row);
-        }
+        loadData(list);
         lblTrang.setText(""+trang);
         lblSotrang.setText(trang +" / " + soTrang);
     } else {
@@ -380,20 +449,7 @@ public class DatHoaDonView  extends RoundPanel{
             if (list.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Không tìm thấy hóa đơn");
             } else {
-                for (DatHoaDonRequest hd : list) {
-                    String trangThaiString = getTrangThaiString(hd.getTrangThai());
-
-                    Object[] row = {
-                        hd.getMaHd(),
-                        hd.getThoiGian(),
-                        hd.getKhachHang(),
-                        hd.getTongTienhang(),
-                        hd.getGiamGia(),
-                        hd.getThanhTien(),
-                        trangThaiString
-                    };
-                    model.addRow(row);
-                }
+                loadData(list);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -418,20 +474,8 @@ public class DatHoaDonView  extends RoundPanel{
             if (list.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Không tìm thấy hóa đơn");
             } else {
-                for (DatHoaDonRequest hd : list) {
-                    String trangThaiString = getTrangThaiString(hd.getTrangThai());
-
-                    Object[] row = {
-                        hd.getMaHd(),
-                        hd.getThoiGian(),
-                        hd.getKhachHang(),
-                        hd.getTongTienhang(),
-                        hd.getGiamGia(),
-                        hd.getThanhTien(),
-                        trangThaiString
-                    };
-                    model.addRow(row);
-                }
+                loadData(list);
+                
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -556,6 +600,7 @@ private void handleClickButtonScanQrCode() {
                 
             }
             
+            
             JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Chọn nơi lưu file Excel");
         fileChooser.setSelectedFile(new File("DefaultFilename.xlsx")); // Tên mặc định của file
@@ -577,6 +622,7 @@ private void handleClickButtonScanQrCode() {
         } catch (Exception e) {
         }
     }
+    
         
   
     
@@ -640,8 +686,8 @@ private void handleClickButtonScanQrCode() {
 
         plnSearch.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel6.setForeground(new java.awt.Color(0, 153, 255));
+        jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel6.setForeground(new java.awt.Color(255, 153, 51));
         jLabel6.setText("Tìm kiếm");
 
         btnTimkiem.setText("Tìm kiếm");
@@ -755,8 +801,8 @@ private void handleClickButtonScanQrCode() {
                 .addContainerGap(10, Short.MAX_VALUE))
         );
 
-        jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel7.setForeground(new java.awt.Color(0, 153, 255));
+        jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel7.setForeground(new java.awt.Color(255, 153, 0));
         jLabel7.setText("Bộ lọc");
 
         plnTrangthai.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -911,29 +957,36 @@ private void handleClickButtonScanQrCode() {
 
         tblHoadon.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Mã hóa đơn", "Thời gian", "Khách hàng", "Tổng tiền hàng", "Giảm giá", "Thành tiền", "Trạng thái"
+                "#", "Mã hóa đơn", "Thời gian", "Khách hàng", "Tổng tiền hàng", "Giảm giá", "Thành tiền", "Trạng thái"
             }
         ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false
+            Class[] types = new Class [] {
+                java.lang.Boolean.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
             };
+            boolean[] canEdit = new boolean [] {
+                true, false, false, false, false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
@@ -960,10 +1013,10 @@ private void handleClickButtonScanQrCode() {
         );
 
         jLabel13.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel13.setForeground(new java.awt.Color(51, 102, 255));
+        jLabel13.setForeground(new java.awt.Color(255, 153, 51));
         jLabel13.setText("Hóa Đơn");
 
-        btnXuatdanhsach.setText("Xuất dánh sách");
+        btnXuatdanhsach.setText("Xuất danh sách");
         btnXuatdanhsach.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnXuatdanhsachActionPerformed(evt);
@@ -1146,11 +1199,11 @@ private void handleClickButtonScanQrCode() {
         cbbPhuongthucTT.setSelectedIndex(0);
         cbbTrangthai.setSelectedIndex(0);
         ckoToanthoigian.setSelected(true);
-        String keyword = txtTimkiem.getText();
+        String searchkeyword="%"+ txtTimkiem.getText()+"%";
         int index=tblHoadon.getSelectedRow();
-        list = datHoaDonRepository.search(keyword);
-        if(keyword.trim()==null){
-            JOptionPane.showMessageDialog(this, "Nhập thông tin hóa đơn hoặc tên khách hàng !");
+        list = datHoaDonRepository.search(searchkeyword);
+        if(searchkeyword.trim()==null){
+            JOptionPane.showMessageDialog(this, "Nhập thông tin hóa đơn hoặc tên khách hàng -SĐT khách hàng!");
         }
         if(!list.isEmpty()){
             loadData(list);
@@ -1226,12 +1279,29 @@ private void handleClickButtonScanQrCode() {
 
     private void btnXuatdanhsachActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXuatdanhsachActionPerformed
         // TODO add your handling code here:
-         int result = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn tiếp tục?", "Xác nhận", JOptionPane.YES_NO_OPTION);
+        List<String> selectedInvoices = new ArrayList<>();
+        for (int i = 0; i < tblHoadon.getRowCount(); i++) {
+            Boolean isChecked = (Boolean) tblHoadon.getValueAt(i, 0);
+            if (isChecked) {
+                selectedInvoices.add((String) tblHoadon.getValueAt(i, 1));
+            }
+        }
+        if(selectedInvoices.isEmpty()){
+            int result = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn tiếp tục?", "Xác nhận", JOptionPane.YES_NO_OPTION);
 
         // Kiểm tra kết quả và thực hiện hành động tương ứng
-        if (result == JOptionPane.YES_OPTION) {
-            inDanhSach();
-        } 
+            if (result == JOptionPane.YES_OPTION) {
+                inDanhSach();
+            } 
+        }else{
+            int result = JOptionPane.showConfirmDialog(this, "In hóa đơn đã chọn ?", "Xác nhận", JOptionPane.YES_NO_OPTION);
+
+        // Kiểm tra kết quả và thực hiện hành động tương ứng
+            if (result == JOptionPane.YES_OPTION) {
+                printSelected();
+            } 
+        }
+         
     }//GEN-LAST:event_btnXuatdanhsachActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
