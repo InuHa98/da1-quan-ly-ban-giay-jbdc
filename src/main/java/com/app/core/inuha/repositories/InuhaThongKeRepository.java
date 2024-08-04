@@ -293,52 +293,102 @@ public class InuhaThongKeRepository {
 	    }
 	}
         
-        String query = String.format("""
-	    WITH HoaDonCTE AS (
+	String query = null;
+	
+	int idSanPham = filter.getSanPham().getValue();
+	
+	if (idSanPham < 1) {
+	    query = String.format("""
+		WITH HoaDonCTE AS (
+		    SELECT 
+			sp.id,
+			SUM(hdct.so_luong) AS so_luong,
+			(SUM(hdct.gia_ban * hdct.so_luong) - (hd.tien_giam / (SELECT SUM(so_luong) FROM HoaDonChiTiet WHERE id_hoa_don = hd.id) * SUM(hdct.so_luong))) AS doanh_thu,
+			(SUM((hdct.gia_ban - hdct.gia_nhap) * hdct.so_luong) - (hd.tien_giam / (SELECT SUM(so_luong) FROM HoaDonChiTiet WHERE id_hoa_don = hd.id) * SUM(hdct.so_luong))) AS loi_nhuan
+		    FROM HoaDon AS hd
+			JOIN HoaDonChiTiet AS hdct ON hdct.id_hoa_don = hd.id
+			JOIN SanPhamChiTiet AS spct ON spct.id = hdct.id_san_pham_chi_tiet
+			JOIN SanPham AS sp ON sp.id = spct.id_san_pham
+		    WHERE 
+			hd.trang_thai = %d AND
+			hd.trang_thai_xoa = 0 AND
+			(COALESCE(?, 0) < 1 OR spct.id_san_pham = ?) AND
+			hd.ngay_tao >= ? AND
+			hd.ngay_tao <= ?
+		    GROUP BY hd.id, hd.ngay_tao, hd.tien_giam, sp.id
+		),
+		HoaDonCTE2 AS (
+		    SELECT 
+			id,
+			ISNULL(SUM(so_luong), 0) AS so_luong,
+			ISNULL(SUM(doanh_thu), 0) AS doanh_thu,
+			ISNULL(SUM(loi_nhuan), 0) AS loi_nhuan
+		    FROM HoaDonCTE
+		    GROUP BY id
+		)
 		SELECT 
+		    ROW_NUMBER() OVER (ORDER BY %s DESC) AS stt,
 		    sp.id,
-		    SUM(hdct.so_luong) AS so_luong,
-		    (SUM(hdct.gia_ban * hdct.so_luong) - (hd.tien_giam / (SELECT SUM(so_luong) FROM HoaDonChiTiet WHERE id_hoa_don = hd.id) * SUM(hdct.so_luong))) AS doanh_thu,
-		    (SUM((hdct.gia_ban - hdct.gia_nhap) * hdct.so_luong) - (hd.tien_giam / (SELECT SUM(so_luong) FROM HoaDonChiTiet WHERE id_hoa_don = hd.id) * SUM(hdct.so_luong))) AS loi_nhuan
-		FROM HoaDon AS hd
-		    JOIN HoaDonChiTiet AS hdct ON hdct.id_hoa_don = hd.id
-		    JOIN SanPhamChiTiet AS spct ON spct.id = hdct.id_san_pham_chi_tiet
+		    sp.ma,
+		    sp.ten,
+		    hd.so_luong AS so_luong_ban,
+		    hd.doanh_thu,
+		    hd.loi_nhuan,
+		    (SELECT SUM(so_luong) FROM SanPhamChiTiet WHERE id_san_pham = sp.id) AS so_luong_ton
+		FROM HoaDonCTE2 AS hd
+		    JOIN SanPham AS sp ON sp.id = hd.id
+	    """, TrangThaiHoaDonConstant.STATUS_DA_THANH_TOAN, orderBy);
+	} else {
+	    query = String.format("""
+		WITH HoaDonCTE AS (
+		    SELECT 
+			spct.id,
+			SUM(hdct.so_luong) AS so_luong,
+			(SUM(hdct.gia_ban * hdct.so_luong) - (hd.tien_giam / (SELECT SUM(so_luong) FROM HoaDonChiTiet WHERE id_hoa_don = hd.id) * SUM(hdct.so_luong))) AS doanh_thu,
+			(SUM((hdct.gia_ban - hdct.gia_nhap) * hdct.so_luong) - (hd.tien_giam / (SELECT SUM(so_luong) FROM HoaDonChiTiet WHERE id_hoa_don = hd.id) * SUM(hdct.so_luong))) AS loi_nhuan
+		    FROM HoaDon AS hd
+			JOIN HoaDonChiTiet AS hdct ON hdct.id_hoa_don = hd.id
+			JOIN SanPhamChiTiet AS spct ON spct.id = hdct.id_san_pham_chi_tiet
+			JOIN SanPham AS sp ON sp.id = spct.id_san_pham
+		    WHERE 
+			hd.trang_thai = %d AND
+			hd.trang_thai_xoa = 0 AND
+			(COALESCE(?, 0) < 1 OR spct.id_san_pham = ?) AND
+			hd.ngay_tao >= ? AND
+			hd.ngay_tao <= ?
+		    GROUP BY hd.id, hd.tien_giam, spct.id
+		),
+		HoaDonCTE2 AS (
+		    SELECT 
+			id,
+			ISNULL(SUM(so_luong), 0) AS so_luong,
+			ISNULL(SUM(doanh_thu), 0) AS doanh_thu,
+			ISNULL(SUM(loi_nhuan), 0) AS loi_nhuan
+		    FROM HoaDonCTE
+		    GROUP BY id
+		)
+		SELECT 
+		    ROW_NUMBER() OVER (ORDER BY %s DESC) AS stt,
+		    spct.id,
+		    spct.ma,
+		    (sp.ten + ' - ' + kc.ten + ' - ' + ms.ten) AS ten,
+		    hd.so_luong AS so_luong_ban,
+		    hd.doanh_thu,
+		    hd.loi_nhuan,
+		    spct.so_luong AS so_luong_ton
+		FROM HoaDonCTE2 AS hd
+		    JOIN SanPhamChiTiet AS spct ON spct.id = hd.id
 		    JOIN SanPham AS sp ON sp.id = spct.id_san_pham
-		WHERE 
-		    hd.trang_thai = %d AND
-		    hd.trang_thai_xoa = 0 AND
-                    (COALESCE(?, 0) < 1 OR spct.id_san_pham = ?) AND
-		    hd.ngay_tao >= ? AND
-		    hd.ngay_tao <= ?
-		GROUP BY hd.id, hd.ngay_tao, hd.tien_giam, sp.id
-            ),
-            HoaDonCTE2 AS (
-            	SELECT 
-		    id,
-		    ISNULL(SUM(so_luong), 0) AS so_luong,
-		    ISNULL(SUM(doanh_thu), 0) AS doanh_thu,
-		    ISNULL(SUM(loi_nhuan), 0) AS loi_nhuan
-            	FROM HoaDonCTE
-            	GROUP BY id
-            )
-	    SELECT 
-		ROW_NUMBER() OVER (ORDER BY %s DESC) AS stt,
-		sp.id,
-		sp.ma,
-		sp.ten,
-		hd.so_luong AS so_luong_ban,
-		hd.doanh_thu,
-		hd.loi_nhuan,
-		(SELECT SUM(so_luong) FROM SanPhamChiTiet WHERE id_san_pham = sp.id AND trang_thai = 1) AS so_luong_ton
-	    FROM HoaDonCTE2 AS hd
-		JOIN SanPham AS sp ON sp.id = hd.id
-        """, TrangThaiHoaDonConstant.STATUS_DA_THANH_TOAN, orderBy);
+		    JOIN KichCo AS kc ON kc.id = spct.id_kich_co
+		    JOIN MauSac AS ms ON ms.id = spct.id_mau_sac
+	    """, TrangThaiHoaDonConstant.STATUS_DA_THANH_TOAN, orderBy);
+	}
 
 	DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 	
         Object[] args = new Object[] {
-	    filter.getSanPham().getValue(),
-	    filter.getSanPham().getValue(),
+	    idSanPham,
+	    idSanPham,
 	    String.format("%s 00:00:00", filter.getStartDate().format(format)),
 	    String.format("%s 23:59:59", filter.getEndDate().format(format))
         };
@@ -388,51 +438,107 @@ public class InuhaThongKeRepository {
 	    }
 	}
         
-        String query = String.format("""
-	    WITH HoaDonCTE AS (
-		SELECT 
-		    sp.id,
-		    SUM(hdct.so_luong) AS so_luong,
-		    (SUM(hdct.gia_ban * hdct.so_luong) - (hd.tien_giam / (SELECT SUM(so_luong) FROM HoaDonChiTiet WHERE id_hoa_don = hd.id) * SUM(hdct.so_luong))) AS doanh_thu,
-		    (SUM((hdct.gia_ban - hdct.gia_nhap) * hdct.so_luong) - (hd.tien_giam / (SELECT SUM(so_luong) FROM HoaDonChiTiet WHERE id_hoa_don = hd.id) * SUM(hdct.so_luong))) AS loi_nhuan
-		FROM HoaDon AS hd
-		    JOIN HoaDonChiTiet AS hdct ON hdct.id_hoa_don = hd.id
-		    JOIN SanPhamChiTiet AS spct ON spct.id = hdct.id_san_pham_chi_tiet
-		    JOIN SanPham AS sp ON sp.id = spct.id_san_pham
-		WHERE 
-		    hd.trang_thai = %d AND
-		    hd.trang_thai_xoa = 0 AND
-                    (COALESCE(?, 0) < 1 OR spct.id_san_pham = ?) AND
-		    hd.ngay_tao >= ? AND
-		    hd.ngay_tao <= ?
-		GROUP BY hd.id, hd.ngay_tao, hd.tien_giam, sp.id
-            ),
-            HoaDonCTE2 AS (
-            	SELECT 
-		    id,
-		    ISNULL(SUM(so_luong), 0) AS so_luong,
-		    ISNULL(SUM(doanh_thu), 0) AS doanh_thu,
-		    ISNULL(SUM(loi_nhuan), 0) AS loi_nhuan
-            	FROM HoaDonCTE
-            	GROUP BY id
-            ),
-            TableCTE AS (
-            	SELECT 
-		    ROW_NUMBER() OVER (ORDER BY %s DESC) AS stt,
-                    sp.id,
-                    sp.ma,
-                    sp.ten,
-		    hd.so_luong AS so_luong_ban,
-		    hd.doanh_thu,
-		    hd.loi_nhuan,
-		    (SELECT SUM(so_luong) FROM SanPhamChiTiet WHERE id_san_pham = sp.id AND trang_thai = 1) AS so_luong_ton
-            	FROM HoaDonCTE2 AS hd
-            	JOIN SanPham AS sp ON sp.id = hd.id
-            )
-            SELECT *
-            FROM TableCTE
-            WHERE stt BETWEEN ? AND ?
-        """, TrangThaiHoaDonConstant.STATUS_DA_THANH_TOAN, orderBy);
+
+	String query = null;
+	
+	int idSanPham = filter.getSanPham().getValue();
+	
+	if (idSanPham < 1) {
+	    query = String.format("""
+		WITH HoaDonCTE AS (
+		    SELECT 
+			sp.id,
+			SUM(hdct.so_luong) AS so_luong,
+			(SUM(hdct.gia_ban * hdct.so_luong) - (hd.tien_giam / (SELECT SUM(so_luong) FROM HoaDonChiTiet WHERE id_hoa_don = hd.id) * SUM(hdct.so_luong))) AS doanh_thu,
+			(SUM((hdct.gia_ban - hdct.gia_nhap) * hdct.so_luong) - (hd.tien_giam / (SELECT SUM(so_luong) FROM HoaDonChiTiet WHERE id_hoa_don = hd.id) * SUM(hdct.so_luong))) AS loi_nhuan
+		    FROM HoaDon AS hd
+			JOIN HoaDonChiTiet AS hdct ON hdct.id_hoa_don = hd.id
+			JOIN SanPhamChiTiet AS spct ON spct.id = hdct.id_san_pham_chi_tiet
+			JOIN SanPham AS sp ON sp.id = spct.id_san_pham
+		    WHERE 
+			hd.trang_thai = %d AND
+			hd.trang_thai_xoa = 0 AND
+			(COALESCE(?, 0) < 1 OR spct.id_san_pham = ?) AND
+			hd.ngay_tao >= ? AND
+			hd.ngay_tao <= ?
+		    GROUP BY hd.id, hd.ngay_tao, hd.tien_giam, sp.id
+		),
+		HoaDonCTE2 AS (
+		    SELECT 
+			id,
+			ISNULL(SUM(so_luong), 0) AS so_luong,
+			ISNULL(SUM(doanh_thu), 0) AS doanh_thu,
+			ISNULL(SUM(loi_nhuan), 0) AS loi_nhuan
+		    FROM HoaDonCTE
+		    GROUP BY id
+		),
+		TableCTE AS (
+                    SELECT 
+			ROW_NUMBER() OVER (ORDER BY %s DESC) AS stt,
+			sp.id,
+			sp.ma,
+			sp.ten,
+			hd.so_luong AS so_luong_ban,
+			hd.doanh_thu,
+			hd.loi_nhuan,
+			(SELECT SUM(so_luong) FROM SanPhamChiTiet WHERE id_san_pham = sp.id) AS so_luong_ton
+		    FROM HoaDonCTE2 AS hd
+			JOIN SanPham AS sp ON sp.id = hd.id
+                )
+		SELECT *
+		FROM TableCTE
+		WHERE stt BETWEEN ? AND ?
+	    """, TrangThaiHoaDonConstant.STATUS_DA_THANH_TOAN, orderBy);
+	} else {
+	    query = String.format("""
+		WITH HoaDonCTE AS (
+		    SELECT 
+			spct.id,
+			SUM(hdct.so_luong) AS so_luong,
+			(SUM(hdct.gia_ban * hdct.so_luong) - (hd.tien_giam / (SELECT SUM(so_luong) FROM HoaDonChiTiet WHERE id_hoa_don = hd.id) * SUM(hdct.so_luong))) AS doanh_thu,
+			(SUM((hdct.gia_ban - hdct.gia_nhap) * hdct.so_luong) - (hd.tien_giam / (SELECT SUM(so_luong) FROM HoaDonChiTiet WHERE id_hoa_don = hd.id) * SUM(hdct.so_luong))) AS loi_nhuan
+		    FROM HoaDon AS hd
+			JOIN HoaDonChiTiet AS hdct ON hdct.id_hoa_don = hd.id
+			JOIN SanPhamChiTiet AS spct ON spct.id = hdct.id_san_pham_chi_tiet
+			JOIN SanPham AS sp ON sp.id = spct.id_san_pham
+		    WHERE 
+			hd.trang_thai = %d AND
+			hd.trang_thai_xoa = 0 AND
+			(COALESCE(?, 0) < 1 OR spct.id_san_pham = ?) AND
+			hd.ngay_tao >= ? AND
+			hd.ngay_tao <= ?
+		    GROUP BY hd.id, hd.tien_giam, spct.id
+		),
+		HoaDonCTE2 AS (
+		    SELECT 
+			id,
+			ISNULL(SUM(so_luong), 0) AS so_luong,
+			ISNULL(SUM(doanh_thu), 0) AS doanh_thu,
+			ISNULL(SUM(loi_nhuan), 0) AS loi_nhuan
+		    FROM HoaDonCTE
+		    GROUP BY id
+		),
+		TableCTE AS (
+                    SELECT 
+			ROW_NUMBER() OVER (ORDER BY %s DESC) AS stt,
+			spct.id,
+			spct.ma,
+			(sp.ten + ' - ' + kc.ten + ' - ' + ms.ten) AS ten,
+			hd.so_luong AS so_luong_ban,
+			hd.doanh_thu,
+			hd.loi_nhuan,
+			spct.so_luong AS so_luong_ton
+		    FROM HoaDonCTE2 AS hd
+			JOIN SanPhamChiTiet AS spct ON spct.id = hd.id
+			JOIN SanPham AS sp ON sp.id = spct.id_san_pham
+                        JOIN KichCo AS kc ON kc.id = spct.id_kich_co
+                        JOIN MauSac AS ms ON ms.id = spct.id_mau_sac
+                )
+		SELECT *
+		FROM TableCTE
+		WHERE stt BETWEEN ? AND ?
+	    """, TrangThaiHoaDonConstant.STATUS_DA_THANH_TOAN, orderBy);
+	}
 
         int[] offset = FillterRequest.getOffset(filter.getPage(), filter.getSize());
         int start = offset[0];
@@ -441,8 +547,8 @@ public class InuhaThongKeRepository {
 	DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 	
         Object[] args = new Object[] {
-	    filter.getSanPham().getValue(),
-	    filter.getSanPham().getValue(),
+	    idSanPham,
+	    idSanPham,
 	    String.format("%s 00:00:00", filter.getStartDate().format(format)),
 	    String.format("%s 23:59:59", filter.getEndDate().format(format)),
             start,
@@ -481,9 +587,11 @@ public class InuhaThongKeRepository {
         int totalPages = 0;
         int totalRows = 0;
 
+	int idSanPham = filter.getSanPham().getValue();
+	
         String query = String.format("""
 	    SELECT 
-		COUNT(*)
+		COUNT(DISTINCT %s)
 	    FROM HoaDon AS hd
 		JOIN HoaDonChiTiet AS hdct ON hdct.id_hoa_don = hd.id
 		JOIN SanPhamChiTiet AS spct ON spct.id = hdct.id_san_pham_chi_tiet
@@ -494,14 +602,13 @@ public class InuhaThongKeRepository {
 		    (COALESCE(?, 0) < 1 OR spct.id_san_pham = ?) AND
 		hd.ngay_tao >= ? AND
 		hd.ngay_tao <= ?
-	    GROUP BY sp.id
-        """, TrangThaiHoaDonConstant.STATUS_DA_THANH_TOAN);
+        """, idSanPham < 1 ? "sp.id" : "spct.id", TrangThaiHoaDonConstant.STATUS_DA_THANH_TOAN);
 
 	DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 	
         Object[] args = new Object[] {
-	    filter.getSanPham().getValue(),
-	    filter.getSanPham().getValue(),
+	    idSanPham,
+	    idSanPham,
 	    String.format("%s 00:00:00", filter.getStartDate().format(format)),
 	    String.format("%s 23:59:59", filter.getEndDate().format(format))
         };
@@ -509,6 +616,7 @@ public class InuhaThongKeRepository {
         try {
 	    Object num = JbdcHelper.value(query, args);
             totalRows = num != null ? (int) num : 0;
+	   		
             totalPages = (int) Math.ceil((double) totalRows / filter.getSize());
         } catch(Exception e) {
             e.printStackTrace();

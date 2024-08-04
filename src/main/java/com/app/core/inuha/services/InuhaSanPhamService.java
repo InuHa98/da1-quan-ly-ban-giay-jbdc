@@ -4,6 +4,7 @@ import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.constants.TrangThaiXoaConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
 import com.app.common.infrastructure.request.FillterRequest;
+import com.app.core.inuha.models.InuhaPhieuGiamGiaModel;
 import com.app.core.inuha.models.InuhaSanPhamModel;
 import com.app.core.inuha.models.sanpham.InuhaKichCoModel;
 import com.app.core.inuha.models.sanpham.InuhaMauSacModel;
@@ -155,6 +156,15 @@ public class InuhaSanPhamService implements IInuhaSanPhamServiceInterface {
         return new ArrayList<>();
     }
 
+    public List<InuhaSanPhamModel> getPage(FillterRequest request, boolean isBanHang) {
+        try {
+            return repository.selectPage(request, isBanHang);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return new ArrayList<>();
+    }
+	
     @Override
     public Integer getTotalPage(FillterRequest request) {
         try {

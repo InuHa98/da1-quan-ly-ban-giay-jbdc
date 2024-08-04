@@ -249,10 +249,11 @@ public class InuhaThongKeView extends javax.swing.JPanel {
 	lblTongDoanhThu.setText(CurrencyUtils.parseNumber(dataTongSo.getTongDoanhThu()));
 	lblTongLoiNhuan.setText(CurrencyUtils.parseNumber(dataTongSo.getTongLoiNhuan()));
 	
-	lblTongSanPham.setForeground(ColorUtils.PRIMARY_COLOR);
-	lblTongDoanhThu.setForeground(ColorUtils.PRIMARY_COLOR);
-	lblTongLoiNhuan.setForeground(ColorUtils.PRIMARY_COLOR);
-	
+	lblTongSanPham.setForeground(dataTongSo.getTongSanPham() > 0 ? ColorUtils.PRIMARY_COLOR : ColorUtils.PRIMARY_TEXT);	
+	lblTongDoanhThu.setForeground(dataTongSo.getTongDoanhThu() > 0 ? ColorUtils.PRIMARY_COLOR : ColorUtils.PRIMARY_TEXT);	
+	lblTongLoiNhuan.setForeground(dataTongSo.getTongLoiNhuan() > 0 ? ColorUtils.PRIMARY_COLOR : ColorUtils.PRIMARY_TEXT);	
+
+		
 	InuhaThongKeChiTietModel dataChiTiet = thongKeService.getDetail(filter);
 	
 	lblTongDon.setText(String.valueOf(dataChiTiet.getTongHoaDon()));	
@@ -261,11 +262,11 @@ public class InuhaThongKeView extends javax.swing.JPanel {
 	lblTongDonDaThanhToan.setText(String.valueOf(dataChiTiet.getDaThanhToan()));
 	lblTongKhachHang.setText(String.valueOf(dataChiTiet.getKhachHang()));
 	
-	lblTongDon.setForeground(ColorUtils.PRIMARY_COLOR2);	
-	lblTongDonDaHuy.setForeground(ColorUtils.PRIMARY_COLOR2);
-	lblTongDonChoThanhToan.setForeground(ColorUtils.PRIMARY_COLOR2);
-	lblTongDonDaThanhToan.setForeground(ColorUtils.PRIMARY_COLOR2);
-	lblTongKhachHang.setForeground(ColorUtils.PRIMARY_COLOR2);
+	lblTongDon.setForeground(dataChiTiet.getTongHoaDon() > 0 ? ColorUtils.PRIMARY_COLOR : ColorUtils.PRIMARY_TEXT);	
+	lblTongDonDaHuy.setForeground(dataChiTiet.getDaHuy()> 0 ? ColorUtils.PRIMARY_COLOR : ColorUtils.PRIMARY_TEXT);
+	lblTongDonChoThanhToan.setForeground(dataChiTiet.getChoThanhToan()> 0 ? ColorUtils.PRIMARY_COLOR : ColorUtils.PRIMARY_TEXT);
+	lblTongDonDaThanhToan.setForeground(dataChiTiet.getDaThanhToan()> 0 ? ColorUtils.PRIMARY_COLOR : ColorUtils.PRIMARY_TEXT);
+	lblTongKhachHang.setForeground(dataChiTiet.getKhachHang()> 0 ? ColorUtils.PRIMARY_COLOR : ColorUtils.PRIMARY_TEXT);
 	
 	List<InuhaThongKeChartModel> dataChart = thongKeService.getDataChart(filter);
 	
@@ -423,7 +424,7 @@ public class InuhaThongKeView extends javax.swing.JPanel {
             pnlChartLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlChartLayout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addComponent(chartDoanhThu, javax.swing.GroupLayout.DEFAULT_SIZE, 607, Short.MAX_VALUE)
+                .addComponent(chartDoanhThu, javax.swing.GroupLayout.DEFAULT_SIZE, 612, Short.MAX_VALUE)
                 .addGap(20, 20, 20))
         );
         pnlChartLayout.setVerticalGroup(
@@ -435,7 +436,7 @@ public class InuhaThongKeView extends javax.swing.JPanel {
         );
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
-        jLabel4.setText("Thống kê chi tiết");
+        jLabel4.setText("Chi tiết số lượng");
 
         javax.swing.GroupLayout splitLine1Layout = new javax.swing.GroupLayout(splitLine1);
         splitLine1.setLayout(splitLine1Layout);
@@ -584,7 +585,7 @@ public class InuhaThongKeView extends javax.swing.JPanel {
         pnlDanhSach.setLayout(pnlDanhSachLayout);
         pnlDanhSachLayout.setHorizontalGroup(
             pnlDanhSachLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scrDanhSach, javax.swing.GroupLayout.DEFAULT_SIZE, 924, Short.MAX_VALUE)
+            .addComponent(scrDanhSach, javax.swing.GroupLayout.DEFAULT_SIZE, 929, Short.MAX_VALUE)
         );
         pnlDanhSachLayout.setVerticalGroup(
             pnlDanhSachLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -663,7 +664,7 @@ public class InuhaThongKeView extends javax.swing.JPanel {
                 .addComponent(pnlList, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jTabbedPane1.addTab("Danh sách chi tiết", jPanel2);
+        jTabbedPane1.addTab("Thống kê chi tiết", jPanel2);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jLabel1.setText("Tổng số lượng bán");
@@ -810,13 +811,18 @@ public class InuhaThongKeView extends javax.swing.JPanel {
         });
 
         cboSanPham.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Tất cả sản phẩm" }));
+        cboSanPham.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cboSanPhamItemStateChanged(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(20, 20, 20)
+                .addGap(15, 15, 15)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jTabbedPane1)
                     .addGroup(layout.createSequentialGroup()
@@ -857,7 +863,7 @@ public class InuhaThongKeView extends javax.swing.JPanel {
                     .addComponent(pnlLoiNhuan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(10, 10, 10)
                 .addComponent(jTabbedPane1)
-                .addGap(20, 20, 20))
+                .addGap(15, 15, 15))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -869,6 +875,7 @@ public class InuhaThongKeView extends javax.swing.JPanel {
 	    txtThoiGian.setVisible(isCustom);
 	    revalidate();
 	    repaint();
+	    handleClickButtonFilter();
 	}
     }//GEN-LAST:event_cboThoiGianItemStateChanged
 
@@ -909,6 +916,11 @@ public class InuhaThongKeView extends javax.swing.JPanel {
         // TODO add your handling code here:
 	handleClickButtonExport();
     }//GEN-LAST:event_btnExportActionPerformed
+
+    private void cboSanPhamItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cboSanPhamItemStateChanged
+        // TODO add your handling code here:
+	handleClickButtonFilter();
+    }//GEN-LAST:event_cboSanPhamItemStateChanged
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnClear;
@@ -959,6 +971,9 @@ public class InuhaThongKeView extends javax.swing.JPanel {
     // End of variables declaration//GEN-END:variables
 
     private void handleClickButtonFilter() {
+	if (firstLoad) {
+	    return;
+	}
 	LoadingDialog loading = new LoadingDialog();
 	executorService.submit(() -> {
 	    loadDataChart();

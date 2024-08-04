@@ -16,6 +16,7 @@ import com.app.core.inuha.services.InuhaKichCoService;
 import com.app.core.inuha.services.InuhaMauSacService;
 import com.app.core.inuha.services.InuhaSanPhamChiTietService;
 import com.app.core.inuha.views.quanly.InuhaSanPhamView;
+import com.app.core.inuha.views.quanly.components.table.soluongton.InuhaSoLuongTonSanPhamTableCellRender;
 import com.app.core.inuha.views.quanly.components.table.trangthai.InuhaTrangThaiSanPhamTableCellRender;
 import com.app.utils.ColorUtils;
 import com.app.utils.CurrencyUtils;
@@ -126,6 +127,11 @@ public class InuhaDetailSanPhamView extends JPanel {
         cboTrangThai.addItem(new ComboBoxItem<>("Đang bán", 1));
         cboTrangThai.addItem(new ComboBoxItem<>("Ngừng bán", 0));
         
+	cboSoLuong.removeAllItems();
+        cboSoLuong.addItem(new ComboBoxItem<>("-- Tất cả số lượng --", -1));
+        cboSoLuong.addItem(new ComboBoxItem<>("Còn hàng", 1));
+        cboSoLuong.addItem(new ComboBoxItem<>("Hết hàng", 0));
+	
         pictureBox.setImage(QrCodeHelper.getImage(QrCodeUtils.generateCodeSanPham(sanPham.getId())));
         pictureBox.setBoxFit(PictureBox.BoxFit.CONTAIN);
         pictureBox.setPictureBoxRender(new DefaultPictureBoxRender() {
@@ -162,6 +168,7 @@ public class InuhaDetailSanPhamView extends JPanel {
 	cboKichCo.setPreferredSize(cboSize);
 	cboMauSac.setPreferredSize(cboSize);
 	cboTrangThai.setPreferredSize(cboSize);
+	cboSoLuong.setPreferredSize(cboSize);
 	
 	LoadingDialog loading = new LoadingDialog();
 	executorService.submit(() -> { 
@@ -231,6 +238,7 @@ public class InuhaDetailSanPhamView extends JPanel {
         tblDanhSach.getTableHeader().setBackground(ColorUtils.BACKGROUND_DASHBOARD);
 
         table.getColumnModel().getColumn(0).setHeaderRenderer(new CheckBoxTableHeaderRenderer(table, 0));
+	table.getColumnModel().getColumn(5).setCellRenderer(new InuhaSoLuongTonSanPhamTableCellRender(table));
 	table.getColumnModel().getColumn(6).setCellRenderer(new InuhaTrangThaiSanPhamTableCellRender(table));
         table.getColumnModel().getColumn(7).setCellRenderer(new TableActionCellRender(table));
         table.getColumnModel().getColumn(7).setCellEditor(new TableActionCellEditor(event));
@@ -253,12 +261,14 @@ public class InuhaDetailSanPhamView extends JPanel {
             ComboBoxItem<Integer> kichCo = (ComboBoxItem<Integer>) cboKichCo.getSelectedItem();
             ComboBoxItem<Integer> mauSac = (ComboBoxItem<Integer>) cboMauSac.getSelectedItem();
             ComboBoxItem<Integer> trangThai = (ComboBoxItem<Integer>) cboTrangThai.getSelectedItem();
+	    ComboBoxItem<Integer> soLuong = (ComboBoxItem<Integer>) cboSoLuong.getSelectedItem();
 
             InuhaFilterSanPhamChiTietRequest request = new InuhaFilterSanPhamChiTietRequest();
 	    request.setIdSanPham(this.sanPham.getId());
 	    request.setKichCo(kichCo);
 	    request.setMauSac(mauSac);
 	    request.setTrangThai(trangThai);
+	    request.setSoLuong(soLuong);
 	    
             request.setSize(sizePage);
 	    
@@ -383,6 +393,7 @@ public class InuhaDetailSanPhamView extends JPanel {
         btnExport = new javax.swing.JButton();
         cboTrangThai = new javax.swing.JComboBox();
         btnReset = new javax.swing.JButton();
+        cboSoLuong = new javax.swing.JComboBox();
 
         lblTenSanPham.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         lblTenSanPham.setText("Thông tin sản phẩm");
@@ -589,7 +600,7 @@ public class InuhaDetailSanPhamView extends JPanel {
                         .addContainerGap())))
         );
 
-        btnThemSanPhamChiTiet.setText("Thêm sản phẩm chi tiết");
+        btnThemSanPhamChiTiet.setText("Thêm mới");
         btnThemSanPhamChiTiet.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnThemSanPhamChiTiet.setMaximumSize(new java.awt.Dimension(50, 23));
         btnThemSanPhamChiTiet.addActionListener(new java.awt.event.ActionListener() {
@@ -700,6 +711,13 @@ public class InuhaDetailSanPhamView extends JPanel {
             }
         });
 
+        cboSoLuong.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "-- Tất cả số lượng --" }));
+        cboSoLuong.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cboSoLuongItemStateChanged(evt);
+            }
+        });
+
         javax.swing.GroupLayout pnlListLayout = new javax.swing.GroupLayout(pnlList);
         pnlList.setLayout(pnlListLayout);
         pnlListLayout.setHorizontalGroup(
@@ -709,14 +727,16 @@ public class InuhaDetailSanPhamView extends JPanel {
                 .addGap(20, 20, 20)
                 .addGroup(pnlListLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlListLayout.createSequentialGroup()
-                        .addComponent(cboKichCo, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(cboKichCo, 0, 180, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
-                        .addComponent(cboMauSac, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(cboMauSac, 0, 154, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
-                        .addComponent(cboTrangThai, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(cboTrangThai, 0, 160, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(cboSoLuong, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
                         .addComponent(btnReset)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(65, 65, 65)
                         .addComponent(btnExport)
                         .addGap(18, 18, 18)
                         .addComponent(btnThemSanPhamChiTiet, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -728,11 +748,11 @@ public class InuhaDetailSanPhamView extends JPanel {
             .addGroup(pnlListLayout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addGroup(pnlListLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlListLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(pnlListLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(btnThemSanPhamChiTiet, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnExport, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addComponent(btnReset, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlListLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnThemSanPhamChiTiet, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnExport, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnReset, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(cboSoLuong, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(pnlListLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(cboTrangThai, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(cboMauSac, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -753,7 +773,7 @@ public class InuhaDetailSanPhamView extends JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(pnlList, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(pnlInfo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(20, Short.MAX_VALUE))
+                .addContainerGap(17, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -828,6 +848,11 @@ public class InuhaDetailSanPhamView extends JPanel {
 	handleClickButtonEdit();
     }//GEN-LAST:event_btnEditActionPerformed
 
+    private void cboSoLuongItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cboSoLuongItemStateChanged
+        // TODO add your handling code here:
+	handleFilter(evt);
+    }//GEN-LAST:event_cboSoLuongItemStateChanged
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnEdit;
@@ -838,6 +863,7 @@ public class InuhaDetailSanPhamView extends JPanel {
     private javax.swing.JButton btnThemSanPhamChiTiet;
     private javax.swing.JComboBox cboKichCo;
     private javax.swing.JComboBox cboMauSac;
+    private javax.swing.JComboBox cboSoLuong;
     private javax.swing.JComboBox cboTrangThai;
     private javax.swing.JLabel lblCL;
     private javax.swing.JLabel lblChatLieu;
@@ -956,6 +982,7 @@ public class InuhaDetailSanPhamView extends JPanel {
             cboKichCo.setSelectedIndex(0);
             cboMauSac.setSelectedIndex(0);
             cboTrangThai.setSelectedIndex(0);
+	    cboSoLuong.setSelectedIndex(0);
             loadDataPage();
             loading.dispose();
             reLoad = false;

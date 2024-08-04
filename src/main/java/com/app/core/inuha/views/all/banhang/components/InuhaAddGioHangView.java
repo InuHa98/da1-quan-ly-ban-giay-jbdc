@@ -3,7 +3,6 @@ package com.app.core.inuha.views.all.banhang.components;
 import com.app.core.inuha.models.InuhaSanPhamChiTietModel;
 import com.app.core.inuha.models.InuhaSanPhamModel;
 import com.app.core.inuha.models.sanpham.InuhaKichCoModel;
-import com.app.core.inuha.models.sanpham.InuhaMauSacModel;
 import com.app.core.inuha.services.InuhaSanPhamChiTietService;
 import com.app.core.inuha.views.all.banhang.InuhaBanHangView;
 import com.app.utils.ColorUtils;
@@ -18,6 +17,10 @@ import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.event.ItemEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +29,7 @@ import java.util.concurrent.Executors;
 import javax.swing.JFormattedTextField;
 import javax.swing.JSpinner;
 import javax.swing.text.NumberFormatter;
+import org.apache.poi.ss.formula.functions.Match;
 import raven.modal.ModalDialog;
 
 /**
@@ -44,7 +48,10 @@ public class InuhaAddGioHangView extends javax.swing.JPanel {
     
     private InuhaSanPhamChiTietModel currentSanPhamChiTiet = null;
     
-    /** Creates new form InuhaAddGioHangView */
+    private int maxSoLuong = 1;
+    
+    /** Creates new form InuhaAddGioHangView
+     * @param sanPham */
     public InuhaAddGioHangView(InuhaSanPhamModel sanPham) {
 	initComponents();
 	this.sanPham = sanPham;
@@ -61,7 +68,18 @@ public class InuhaAddGioHangView extends javax.swing.JPanel {
             }
         });
 	
-
+	spnSoLuong.addMouseWheelListener(new MouseWheelListener() {
+	    @Override
+	    public void mouseWheelMoved(MouseWheelEvent e) {
+		int notches = e.getWheelRotation();
+		if (notches < 0) {
+		    spnSoLuong.setValue(Math.min(maxSoLuong, (int) ((Number) spnSoLuong.getValue()).intValue() + 1));
+		} else {
+		    spnSoLuong.setValue(Math.max(1, (((Number) spnSoLuong.getValue()).intValue() - 1)));
+		}
+	    }
+	});
+		
         setLimit(1);
 	
 	LoadingDialog loading = new LoadingDialog();
@@ -75,7 +93,9 @@ public class InuhaAddGioHangView extends javax.swing.JPanel {
 	loading.setVisible(true);
     }
     
-    private void setLimit(int maxSoLuong) { 
+    private void setLimit(int max) { 
+	maxSoLuong = max;
+	spnSoLuong.setValue(1);
 	JSpinner.NumberEditor editor = new JSpinner.NumberEditor(spnSoLuong, "#");
 	JFormattedTextField textField = editor.getTextField();
         NumberFormatter formatter = (NumberFormatter) textField.getFormatter();
@@ -83,6 +103,17 @@ public class InuhaAddGioHangView extends javax.swing.JPanel {
         formatter.setCommitsOnValidEdit(true);
         formatter.setMaximum(maxSoLuong);
         formatter.setMinimum(1);
+	
+	textField.addKeyListener(new KeyAdapter() {
+	    @Override
+	    public void keyPressed(KeyEvent e) {
+		if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+		    handleClickButtonSubmit();
+		    e.consume();
+		}
+	    }
+	});
+		    
 	spnSoLuong.setEditor(editor);
 	lblLimit.setText("(Tối đa " + maxSoLuong + ")");
     }
