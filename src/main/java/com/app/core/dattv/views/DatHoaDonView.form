@@ -576,7 +576,8 @@
                 <Component class="javax.swing.JTable" name="tblHoadon">
                   <Properties>
                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                      <Table columnCount="7" rowCount="15">
+                      <Table columnCount="8" rowCount="15">
+                        <Column editable="true" title="#" type="java.lang.Boolean"/>
                         <Column editable="false" title="M&#xe3; h&#xf3;a &#x111;&#x1a1;n" type="java.lang.Object"/>
                         <Column editable="false" title="Th&#x1edd;i gian" type="java.lang.Object"/>
                         <Column editable="false" title="Kh&#xe1;ch h&#xe0;ng" type="java.lang.Object"/>
@@ -588,6 +589,11 @@
                     </Property>
                     <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
                       <TableColumnModel selectionModel="0">
+                        <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                          <Title/>
+                          <Editor/>
+                          <Renderer/>
+                        </Column>
                         <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
                           <Title/>
                           <Editor/>
@@ -678,7 +684,7 @@
             </Component>
             <Component class="javax.swing.JButton" name="btnXuatdanhsach">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Xu&#x1ea5;t d&#xe1;nh s&#xe1;ch"/>
+                <Property name="text" type="java.lang.String" value="Xu&#x1ea5;t danh s&#xe1;ch"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnXuatdanhsachActionPerformed"/>
