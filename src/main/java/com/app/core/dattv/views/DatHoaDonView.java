@@ -640,8 +640,8 @@ private void handleClickButtonScanQrCode() {
 
         plnSearch.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel6.setForeground(new java.awt.Color(0, 153, 255));
+        jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel6.setForeground(new java.awt.Color(255, 153, 51));
         jLabel6.setText("Tìm kiếm");
 
         btnTimkiem.setText("Tìm kiếm");
@@ -755,8 +755,8 @@ private void handleClickButtonScanQrCode() {
                 .addContainerGap(10, Short.MAX_VALUE))
         );
 
-        jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel7.setForeground(new java.awt.Color(0, 153, 255));
+        jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel7.setForeground(new java.awt.Color(255, 153, 0));
         jLabel7.setText("Bộ lọc");
 
         plnTrangthai.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -960,7 +960,7 @@ private void handleClickButtonScanQrCode() {
         );
 
         jLabel13.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel13.setForeground(new java.awt.Color(51, 102, 255));
+        jLabel13.setForeground(new java.awt.Color(255, 153, 51));
         jLabel13.setText("Hóa Đơn");
 
         btnXuatdanhsach.setText("Xuất dánh sách");
@@ -1146,11 +1146,11 @@ private void handleClickButtonScanQrCode() {
         cbbPhuongthucTT.setSelectedIndex(0);
         cbbTrangthai.setSelectedIndex(0);
         ckoToanthoigian.setSelected(true);
-        String keyword = txtTimkiem.getText();
+        String searchkeyword="%"+ txtTimkiem.getText()+"%";
         int index=tblHoadon.getSelectedRow();
-        list = datHoaDonRepository.search(keyword);
-        if(keyword.trim()==null){
-            JOptionPane.showMessageDialog(this, "Nhập thông tin hóa đơn hoặc tên khách hàng !");
+        list = datHoaDonRepository.search(searchkeyword);
+        if(searchkeyword.trim()==null){
+            JOptionPane.showMessageDialog(this, "Nhập thông tin hóa đơn hoặc tên khách hàng -SĐT khách hàng!");
         }
         if(!list.isEmpty()){
             loadData(list);

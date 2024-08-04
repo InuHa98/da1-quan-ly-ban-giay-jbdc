@@ -25,57 +25,38 @@ public class DatHoaDonChiTietRepository {
         //SUA LAI CAU QUERY
 
         String sql = """
-                                          WITH HoaDonTongTien AS (
-                                               SELECT
-                                                   hd.id AS hoa_don_id,
-                                                   SUM(hdct.so_luong * hdct.gia_ban) AS Tong_tien
-                                               FROM
-                                                   HoaDonChiTiet hdct
-                                               INNER JOIN
-                                                   HoaDon hd ON hd.id = hdct.id_hoa_don
-                                               GROUP BY
-                                                   hd.id
-                                           )
-                                           SELECT	
-                                               hdct.id,
-                                               hdct.gia_giam,
-                                               hdct.id_san_pham,
-                                               hdct.tensp,
-                                               hdct.so_luong,
-                                               hdct.gia_nhap,
-                                               hdct.gia_ban,
-                                               (hdct.so_luong * hdct.gia_ban) AS thanh_tien,
-                                               hdt.Tong_tien,
-                                               ISNULL(kh.ho_ten, N'Khách hàng lẻ') AS ho_ten,
-                                               tk.ho_ten AS nhan_vien_ho_ten,
-                                               hd.ma,
-                                               hd.ngay_tao,
-                                               hd.trang_thai
-                                           FROM 
-                                               HoaDonChiTiet hdct
-                                           INNER JOIN 
-                                               HoaDon hd ON hd.id = hdct.id_hoa_don
-                                           LEFT JOIN 
-                                               KhachHang kh ON hd.id_khach_hang = kh.id
-                                           INNER JOIN 
-                                               TaiKhoan tk ON hd.id_tai_khoan = tk.id 
-                                           INNER JOIN 
-                                               HoaDonTongTien hdt ON hd.id = hdt.hoa_don_id
-                                           GROUP BY 
-                                               hdct.id,
-                                               hdct.gia_giam,
-                                               hdct.id_san_pham,
-                                               hdct.tensp,
-                                               hdct.so_luong,
-                                               hdct.gia_nhap,
-                                               hdct.gia_ban,
-                                               hdt.Tong_tien,
-                                               kh.ho_ten,
-                                               tk.ho_ten,
-                                               hd.ma,
-                                               hd.ngay_tao,
-                                               hd.trang_thai;                      
-                                                               		                 
+                    SELECT
+                                                     hdct.id,
+                                                     hdct.gia_giam AS giaGiam,
+                                                     sp.ma AS maSp,
+                                                     sp.ten AS tenSP,
+                                                     hdct.so_luong AS soLuong,
+                                                     hdct.gia_nhap AS giaNhap,
+                                                     hdct.gia_ban AS giaBan,
+                                                     (hdct.so_luong * hdct.gia_ban) AS thanhTien,
+                                                     SUM(hdct.so_luong * hdct.gia_ban) OVER (PARTITION BY hd.id) AS tongTienhang,
+                                                     ISNULL(kh.ho_ten, N'Khách hàng lẻ') AS tenKhachHang,
+                                                     tk.ho_ten AS tenNV,
+                                                     hd.ma AS maHd,
+                                                     hd.ngay_tao AS ngayTao,
+                                                     hd.trang_thai AS trangThai,
+                                                     SUM(hdct.so_luong) OVER (PARTITION BY hd.id) AS tongSoluong
+                                                 FROM
+                                                     HoaDonChiTiet hdct
+                                                 INNER JOIN
+                                                     HoaDon hd ON hd.id = hdct.id_hoa_don
+                                                 INNER JOIN
+                                                     SanPhamChiTiet spct ON hdct.id_san_pham_chi_tiet = spct.id
+                                                 INNER JOIN
+                                                     SanPham sp ON spct.id_san_pham = sp.id
+                                                 LEFT JOIN
+                                                     KhachHang kh ON hd.id_khach_hang = kh.id
+                                                 INNER JOIN
+                                                     TaiKhoan tk ON hd.id_tai_khoan = tk.id
+                                                 WHERE
+                                                     hd.trang_thai_xoa = 0
+                                                 ORDER BY
+                                                     hd.ngay_tao DESC;   		                 
                                               		
                      """;
         ArrayList<DatHoaDonChiTietModel> lists = new ArrayList<>();
@@ -115,39 +96,38 @@ public class DatHoaDonChiTietRepository {
         //SUA LAI CAU QUERY
 
         String sql = """
-     SELECT	
-              hdct.id , 
-              gia_giam ,
-              hdct.id_san_pham,
-              hdct.tensp,
-              so_luong ,
-              gia_nhap,
-              gia_ban,
-              (hdct.so_luong*hdct.gia_ban) as 'thanh_tien',
-              sum((hdct.so_luong*hdct.gia_ban)) as 'Tong_tien',
-              ISNULL(kh.ho_ten, N'Khách hàng lẻ') AS ho_ten,
-              tk.ho_ten,
-              hd.ma,
-              hd.ngay_tao,
-              hd.trang_thai,
-              sum(hdct.so_luong)
-              FROM HoaDonChiTiet hdct
-               INNER JOIN HoaDon hd ON hd.id = hdct.id_hoa_don
-               Left join   KhachHang kh ON hd.id_khach_hang = kh.id
-               INNER JOIN TaiKhoan tk ON hd.id_tai_khoan = tk.id 
-               where hd.ma=?	 
-                GROUP BY hdct.id , 
-                         gia_giam ,
-                       	hdct.id_san_pham,
-     					hdct.tensp,                                               					 
-     					so_luong ,
-     					gia_nhap,
-     					gia_ban,
-     					kh.ho_ten,
-     					tk.ho_ten,
-     					hd.ma,
-     					hd.ngay_tao,
-      					hd.trang_thai	 
+     SELECT
+             hdct.id,
+             hdct.gia_giam AS giaGiam,
+             sp.ma AS maSp,
+             sp.ten AS tenSP,
+             hdct.so_luong AS soLuong,
+             hdct.gia_nhap AS giaNhap,
+             hdct.gia_ban AS giaBan,
+             (hdct.so_luong * hdct.gia_ban) AS thanhTien,
+             SUM(hdct.so_luong * hdct.gia_ban) OVER (PARTITION BY hd.id) AS tongTienhang,
+             ISNULL(kh.ho_ten, N'Khách hàng lẻ') AS tenKhachHang,
+             tk.ho_ten AS tenNV,
+             hd.ma AS maHd,
+             hd.ngay_tao AS ngayTao,
+             hd.trang_thai AS trangThai,
+             SUM(hdct.so_luong) OVER (PARTITION BY hd.id) AS tongSoluong
+         FROM
+             HoaDonChiTiet hdct
+         INNER JOIN
+             HoaDon hd ON hd.id = hdct.id_hoa_don
+         INNER JOIN
+             SanPhamChiTiet spct ON hdct.id_san_pham_chi_tiet = spct.id
+         INNER JOIN
+             SanPham sp ON spct.id_san_pham = sp.id
+         LEFT JOIN
+             KhachHang kh ON hd.id_khach_hang = kh.id
+         INNER JOIN
+             TaiKhoan tk ON hd.id_tai_khoan = tk.id
+         WHERE
+             hd.trang_thai_xoa = 0 and hd.ma=?
+         ORDER BY
+             hd.ngay_tao DESC;	 
                      """;
         ArrayList<DatHoaDonChiTietModel> lists = new ArrayList<>();
         try (Connection con = DBConnect.getInstance().getConnect(); PreparedStatement ps = con.prepareStatement(sql)) {

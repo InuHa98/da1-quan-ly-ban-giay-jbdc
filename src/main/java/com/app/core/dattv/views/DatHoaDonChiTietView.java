@@ -166,11 +166,6 @@ public class DatHoaDonChiTietView extends javax.swing.JPanel {
             cell=row.createCell(6, CellType.STRING);
             cell.setCellValue("Thành Tiền");
             
-            cell=row.createCell(7, CellType.STRING);
-            cell.setCellValue("Tổng số lượng");
-            
-            cell=row.createCell(8, CellType.STRING);
-            cell.setCellValue("Tổng tiền hàng");
             
             
             this.datHoaDonRequest=datHoaDonRequest;
@@ -200,15 +195,36 @@ public class DatHoaDonChiTietView extends javax.swing.JPanel {
 
                 cell=row.createCell(6, CellType.STRING);
                 cell.setCellValue(list.get(i).getThanhTien());
-
-                cell=row.createCell(7, CellType.STRING);
-                cell.setCellValue(list.get(i).getTongSoluong());
-                
-                cell=row.createCell(8, CellType.STRING);
-                cell.setCellValue(list.get(i).getTongTienhang());
-                
-                
+   
             }
+            
+                row=sheet.createRow(4+list.size());
+                cell=row.createCell(5, CellType.STRING);
+                cell.setCellValue("Tổng số lượng :");
+
+                cell=row.createCell(6, CellType.STRING);
+                cell.setCellValue(tongSoLuong);
+                
+                row=sheet.createRow(5+list.size());
+                cell=row.createCell(5, CellType.STRING);
+                cell.setCellValue("Tổng Tiền hàng :");
+
+                cell=row.createCell(6, CellType.STRING);
+                cell.setCellValue(datHoaDonRequest.getTongTienhang());
+                
+                row=sheet.createRow(6+list.size());
+                cell=row.createCell(5, CellType.STRING);
+                cell.setCellValue("Giảm giá :");
+
+                cell=row.createCell(6, CellType.STRING);
+                cell.setCellValue(datHoaDonRequest.getGiamGia());
+                
+                row=sheet.createRow(7+list.size());
+                cell=row.createCell(5, CellType.STRING);
+                cell.setCellValue("Thành tiền :");
+
+                cell=row.createCell(6, CellType.STRING);
+                cell.setCellValue(datHoaDonRequest.getThanhTien());
             
             File file=new File("C:\\Users\\WIN\\Desktop\\qr\\danhsachhoadonchitiet.xlsx");
             try {
