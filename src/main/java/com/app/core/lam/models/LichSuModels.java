@@ -28,7 +28,7 @@ public class LichSuModels {
     public LichSuModels() {
     }
 
-    public LichSuModels(int idKH, String maHD, Double giaBan, int soLuong, boolean trangThaiXoa) {
+    public LichSuModels(int idKH, String maHD, Double giaBan, int soLuong,LocalDateTime ngayMua) {
         this.idKH = idKH;
         this.maHD = maHD;
         this.giaBan = giaBan;

@@ -12,12 +12,14 @@ import com.app.common.infrastructure.exceptions.ServiceResponseException;
 import com.app.core.lam.models.KhachHangModels;
 import com.app.core.lam.models.LichSuModels;
 import com.app.core.lam.repositories.KhachHangRepositories;
+import com.app.core.lam.repositories.LichSuRepositories;
 import com.app.utils.NumberPhoneUtils;
 import com.app.utils.ResourceUtils;
 import com.app.utils.SessionUtils;
 import com.app.utils.TimeUtils;
 import com.app.views.UI.dialog.LoadingDialog;
 import java.awt.Dimension;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
@@ -40,6 +42,8 @@ public final class KhachHangView extends javax.swing.JPanel {
     private DefaultTableModel dtm = new DefaultTableModel();
 
     private ArrayList<KhachHangModels> listKH = new ArrayList<>();
+
+    private final LichSuRepositories repoLS = new LichSuRepositories();
 
     private DefaultTableModel dtmLS = new DefaultTableModel();
 
@@ -105,13 +109,13 @@ public final class KhachHangView extends javax.swing.JPanel {
     }
 
     public void showDataLS(ArrayList<LichSuModels> listLS) {
-        dtmLS.setRowCount(0); // Clear existing data
+        dtmLS.setRowCount(0);
         for (LichSuModels ls : listLS) {
             if (ls.isTrangThaiXoa()) {
                 dtmLS.addRow(new Object[]{
                     ls.getIdKH(), ls.getMaHD(), ls.getGiaBan(), ls.getSoLuong(),
                     ls.getNgayMua().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
-                    ls.isTrangThaiXoa() ? "Đã Mua" : "Chưa Mua"
+                    true
                 });
             }
         }
@@ -123,12 +127,13 @@ public final class KhachHangView extends javax.swing.JPanel {
         int soLuong = Integer.valueOf(txtSoLuong.getText());
         String ngayMua = TimeUtils.currentDateTime();
         boolean trangThaiXoa = !rbnChuaMua.isSelected();
-        LichSuModels ls = new LichSuModels(WIDTH, maHD, giaBan, soLuong, trangThaiXoa);
+        LichSuModels ls = new LichSuModels(WIDTH, maHD, giaBan, soLuong, LocalDateTime.now());
         return ls;
     }
 
     public KhachHangView() {
         initComponents();
+        
         btnLamMoiLS.setIcon(ResourceUtils.getSVG("/svg/reload.svg", new Dimension(20, 20)));
         btnThem.setIcon(ResourceUtils.getSVG("/svg/plus.svg", new Dimension(20, 20)));
         btnSua.setIcon(ResourceUtils.getSVG("/svg/edit.svg", new Dimension(20, 20)));
@@ -141,10 +146,8 @@ public final class KhachHangView extends javax.swing.JPanel {
         dtm = (DefaultTableModel) tblKhachHang.getModel();
         showData(listKH);
 
-        listLS = repo.getLS();
-        String[] columnNames = {"#", "Mã Hóa Đơn", "Giá Sản Phẩm", "Số Lượng", "Ngày Mua"};
-        dtmLS = new DefaultTableModel(columnNames, 0);
-        tblLichSuGD.setModel(dtmLS);
+        listLS = repoLS.getLS();
+        dtmLS = (DefaultTableModel) tblLichSuGD.getModel();
         showDataLS(listLS);
 
         txtSoDienThoai.setFormatterFactory(NumberPhoneUtils.getDefaultFormat());
@@ -669,7 +672,7 @@ public final class KhachHangView extends javax.swing.JPanel {
         SwingWorker<Boolean, Void> worker = new SwingWorker<>() {
             @Override
             protected Boolean doInBackground() {
-                return MessageModal.confirmInfo("Bạn thực sự muốn xóa?");
+                return MessageModal.confirmInfo("Bạn thực sự muốn xóa lịch sử mua hàng?");
             }
 
             @Override
@@ -683,20 +686,18 @@ public final class KhachHangView extends javax.swing.JPanel {
                                 int row = tblLichSuGD.getSelectedRow();
                                 if (row >= 0) {
                                     LichSuModels ls = listLS.get(row);
-                                    boolean check = repo.deleteLichSu(ls.getMaHD());
+                                    boolean check = repoLS.deleteHoaDon(ls.getMaHD());
                                     if (check) {
                                         MessageModal.success("Xóa lịch sử mua hàng thành công!");
                                         listLS.remove(row);
-                                        listKH.remove(row);
                                         SwingUtilities.invokeLater(() -> {
                                             showDataLS(listLS);
-                                            showData(listKH);
                                         });
                                     } else {
                                         MessageModal.error("Xóa lịch sử mua hàng không thành công!");
                                     }
                                 } else {
-                                    MessageModal.warning("Vui lòng hãy chọn vào một dòng để xóa");
+                                    MessageModal.warning("Vui lòng chọn một hàng để xóa!");
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -734,20 +735,24 @@ public final class KhachHangView extends javax.swing.JPanel {
                                 int row = tblLichSuGD.getSelectedRow();
                                 if (row >= 0) {
                                     LichSuModels newLS = listLS.get(row);
+
                                     newLS.setMaHD(txtMaHD.getText());
                                     newLS.setGiaBan(Double.parseDouble(txtGiaSP.getText()));
                                     newLS.setSoLuong(Integer.parseInt(txtSoLuong.getText()));
                                     newLS.setTrangThaiXoa(rbnDaMua.isSelected());
 
-                                    boolean check = repo.updateLichSu(newLS);
+
+                                    boolean check = repoLS.updateLichSu(newLS.getMaHD());
                                     if (check) {
                                         MessageModal.success("Sửa lịch sử mua hàng thành công!");
-                                        showDataLS(listLS);
+                                        SwingUtilities.invokeLater(() -> {
+                                            showDataLS(listLS);
+                                        });
                                     } else {
                                         MessageModal.error("Sửa lịch sử mua hàng không thành công!");
                                     }
                                 } else {
-                                    MessageModal.warning("Vui lòng chọn 1 hàng để sửa!");
+                                    MessageModal.warning("Vui lòng chọn một hàng để sửa!");
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -1072,7 +1077,7 @@ public final class KhachHangView extends javax.swing.JPanel {
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         executorService.submit(() -> {
             try {
-                listLS = repo.getLS();
+                listLS = repoLS.getLS();
 
                 SwingUtilities.invokeLater(() -> {
                     showDataLS(listLS);

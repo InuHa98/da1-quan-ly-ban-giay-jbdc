@@ -10,7 +10,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import com.app.core.lam.models.KhachHangModels;
-import com.app.core.lam.models.LichSuModels;
 import java.time.LocalDateTime;
 
 /**
@@ -18,81 +17,6 @@ import java.time.LocalDateTime;
  * @author Admin
  */
 public class KhachHangRepositories {
-
-    public ArrayList<LichSuModels> getLS() {
-        String sql = """
-                 SELECT   
-                    KhachHang.id,
-                    HoaDon.ma,  
-                    HoaDonChiTiet.gia_ban,  
-                    HoaDonChiTiet.so_luong,  
-                    KhachHang.ngay_tao,  
-                    KhachHang.trang_thai_xoa
-                 FROM   
-                     HoaDon JOIN HoaDonChiTiet ON HoaDon.id = HoaDonChiTiet.id_hoa_don  
-                 JOIN   
-                     KhachHang ON HoaDon.id_khach_hang = KhachHang.id;
-                        
-                 """;
-        ArrayList<LichSuModels> listRPLS = new ArrayList<>();
-        try (Connection con = DBConnect.getInstance().getConnect();
-                PreparedStatement ps = con.prepareStatement(sql);
-                ResultSet rs = ps.executeQuery();) {
-            while (rs.next()) {
-                LichSuModels ls = new LichSuModels();
-                ls.setIdKH(rs.getInt(1));
-                ls.setMaHD(rs.getString(2));
-                ls.setGiaBan(rs.getDouble(3));
-                ls.setSoLuong(rs.getInt(4));
-                ls.setNgayMua(rs.getObject(5, LocalDateTime.class));
-                ls.setTrangThaiXoa(rs.getBoolean(6));
-                listRPLS.add(ls);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        System.out.println("Data Retrieved: " + listRPLS.size());
-        return listRPLS;
-    }
-
-    public boolean deleteLichSu(String maHD) {
-        String sqlDeleteHoaDon = "DELETE FROM HoaDon WHERE maHD = ?";
-
-        int checkHoaDon = 0;
-
-        try (Connection con = DBConnect.getInstance().getConnect();
-                PreparedStatement ps = con.prepareStatement(sqlDeleteHoaDon)) {
-
-            ps.setString(1, maHD);
-            checkHoaDon = ps.executeUpdate();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return checkHoaDon > 0;
-    }
-
-    public boolean updateLichSu(LichSuModels ls) {
-        String sql = """
-                    UPDATE LichSu
-                    SET giaBan = ?, soLuong = ?, trangThaiXoa = ?
-                    WHERE maHD = ?
-                    """;
-        int check = 0;
-        try (Connection con = DBConnect.getInstance().getConnect();
-                PreparedStatement ps = con.prepareStatement(sql)) {
-
-            ps.setDouble(1, ls.getGiaBan());
-            ps.setInt(2, ls.getSoLuong());
-            ps.setBoolean(3, ls.isTrangThaiXoa());
-            ps.setString(4, ls.getMaHD());
-            check = ps.executeUpdate();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return check > 0;
-    }
 
     public ArrayList<KhachHangModels> getKH() {
         String sql = """
@@ -173,12 +97,7 @@ public class KhachHangRepositories {
             ps.setBoolean(3, kh.isGioiTinh());
             ps.setString(4, kh.getDiaChi());
             ps.setBoolean(5, kh.isTrangThaiXoa());
-            if (kh != null) {
-                int id = kh.getIdKH();
-                ps.setInt(6, id);
-            } else {
-                System.out.println("KhachHangModels is null");
-            }
+            ps.setInt(6, kh.getIdKH());
             check = ps.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
