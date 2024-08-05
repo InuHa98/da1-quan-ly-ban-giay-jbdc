@@ -18,11 +18,13 @@ import com.app.views.UI.table.celll.TableActionCellEditor;
 import com.app.views.UI.table.celll.TableActionCellRender;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -231,15 +233,24 @@ public class DatHoaDonChiTietView extends javax.swing.JPanel {
                 cell=row.createCell(6, CellType.STRING);
                 cell.setCellValue(datHoaDonRequest.getThanhTien());
             
-            File file=new File("C:\\Users\\WIN\\Desktop\\qr\\danhsachhoadonchitiet.xlsx");
-            try {
-                FileOutputStream fileOutputStream=new FileOutputStream(file);
-                workBook.write(fileOutputStream);
-                fileOutputStream.close();
-            } catch (Exception e) {
-                
+            JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Chọn nơi lưu file Excel");
+        fileChooser.setSelectedFile(new File("danhsach.xlsx")); // Tên mặc định của file
+        
+        int userSelection = fileChooser.showSaveDialog(null);
+        
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToSave = fileChooser.getSelectedFile();
+            try (FileOutputStream fileOut = new FileOutputStream(fileToSave)) {
+                workBook.write(fileOut);
+                JOptionPane.showMessageDialog(this, "Lưu thành công !");
+                workBook.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Lỗi khi lưu file Excel.");
             }
-            JOptionPane.showMessageDialog(this, "In thành công !");
+        }
+         
         } catch (Exception e) {
         }
     }
