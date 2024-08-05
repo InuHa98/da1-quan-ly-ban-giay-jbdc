@@ -331,7 +331,6 @@ public class InuhaPhieuGiamGiaRepository implements IDAOinterface<InuhaPhieuGiam
 	    filter.getTrangThai().getValue(),
 	    filter.getTrangThai().getValue()
         };
-		
         try {
             totalRows = (int) JbdcHelper.value(query, args);
             totalPages = (int) Math.ceil((double) totalRows / request.getSize());

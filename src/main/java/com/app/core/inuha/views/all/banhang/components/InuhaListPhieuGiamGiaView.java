@@ -94,11 +94,9 @@ public class InuhaListPhieuGiamGiaView extends javax.swing.JPanel {
     }
 
     private void setupTable(JTable table) { 
-        TableCustomUI.apply(scrDanhSach, TableCustomUI.TableType.DEFAULT);
+	TableCustomUI.apply(scrDanhSach, TableCustomUI.TableType.DEFAULT);
 	TableCustomUI.resizeColumnHeader(table);
-        pnlDanhSach.setBackground(ColorUtils.BACKGROUND_GRAY);
-        tblDanhSach.setBackground(ColorUtils.BACKGROUND_GRAY);
-        tblDanhSach.getTableHeader().setBackground(ColorUtils.BACKGROUND_GRAY);
+        pnlDanhSach.setBackground(ColorUtils.BACKGROUND_TABLE);
     }
     
     public void loadDataPage() { 

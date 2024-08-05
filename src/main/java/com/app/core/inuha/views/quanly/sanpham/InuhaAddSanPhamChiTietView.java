@@ -493,7 +493,7 @@ public class InuhaAddSanPhamChiTietView extends javax.swing.JPanel {
 				}
 			    }
 			    
-                            MessageToast.success("Lưu chỉnh sửa sản phẩm chi tiết thành công.");
+                            MessageToast.success("Lưu thông tin sản phẩm chi tiết thành công.");
                             InuhaDetailSanPhamView.getInstance(sanPham).loadDataPage();
 			    InuhaDetailSanPhamChiTietView.getInstance().updateView(model);
                         }

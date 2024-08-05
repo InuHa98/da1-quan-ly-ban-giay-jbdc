@@ -312,7 +312,6 @@ public class InuhaSanPhamView extends RoundPanel {
         pnlDanhSach.setBackground(ColorUtils.BACKGROUND_TABLE);
         TableCustomUI.apply(scrDanhSach, TableCustomUI.TableType.DEFAULT);
 	
-        table.setRowHeight(50);
         table.getColumnModel().getColumn(0).setHeaderRenderer(new CheckBoxTableHeaderRenderer(table, 0));
         table.getColumnModel().getColumn(3).setCellRenderer(new TableImageCellRender(table));
 	table.getColumnModel().getColumn(7).setCellRenderer(new InuhaSoLuongTonSanPhamTableCellRender(table));
@@ -356,7 +355,6 @@ public class InuhaSanPhamView extends RoundPanel {
         TableCustomUI.apply(scrDanhSachChiTiet, TableCustomUI.TableType.DEFAULT);
         TableCustomUI.resizeColumnHeader(table);
 	
-        table.setRowHeight(50);
         table.getColumnModel().getColumn(0).setHeaderRenderer(new CheckBoxTableHeaderRenderer(table, 0));
         table.getColumnModel().getColumn(4).setCellRenderer(new TableImageCellRender(table));
 	table.getColumnModel().getColumn(6).setCellRenderer(new InuhaSoLuongTonSanPhamTableCellRender(table));

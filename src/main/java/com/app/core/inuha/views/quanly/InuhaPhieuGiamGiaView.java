@@ -1,5 +1,6 @@
-package com.app.core.inuha.views.quanly.phieugiamgia;
+package com.app.core.inuha.views.quanly;
 
+import com.app.common.helper.JbdcHelper;
 import com.app.common.helper.MessageModal;
 import com.app.common.helper.MessageToast;
 import com.app.common.helper.Pagination;
@@ -12,8 +13,10 @@ import com.app.core.inuha.services.InuhaPhieuGiamGiaService;
 import com.app.core.inuha.views.quanly.components.table.thuoctinhsanpham.InuhaThuocTinhTableActionCellEditor;
 import com.app.core.inuha.views.quanly.components.table.thuoctinhsanpham.InuhaThuocTinhTableActionCellRender;
 import com.app.core.inuha.views.quanly.components.table.phieugiamgia.InuhaTrangThaiPhieuGiamGiaTableCellRender;
+import com.app.core.inuha.views.quanly.phieugiamgia.InuhaAddPhieuGiamGiaView;
 import com.app.utils.ColorUtils;
 import com.app.utils.ResourceUtils;
+import com.app.utils.TimeUtils;
 import com.app.views.UI.combobox.ComboBoxItem;
 import com.app.views.UI.dialog.LoadingDialog;
 import com.app.views.UI.table.ITableActionEvent;
@@ -57,8 +60,10 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
     
     private JTextField txtTuKhoa;
     
-    private DatePicker datePicker = new DatePicker();
+    private DatePicker datePickerNgayBatDau = new DatePicker();
     
+    private DatePicker datePickerNgayKetThuc = new DatePicker();
+	
     private boolean firstLoad = true;
     
     
@@ -78,11 +83,13 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
 	btnCreate.setBackground(ColorUtils.PRIMARY_COLOR);
 	btnCreate.setIcon(ResourceUtils.getSVG("/svg/plus.svg", new Dimension(20, 20)));
 	
-	datePicker.setEditor(txtThoiGian);
-	datePicker.setDateSelectionMode(DatePicker.DateSelectionMode.BETWEEN_DATE_SELECTED);
-	datePicker.setSeparator("  tới ngày  ");
-	datePicker.setUsePanelOption(true);
-	datePicker.setCloseAfterSelected(true);
+	datePickerNgayBatDau.setEditor(txtNgayBatDau);
+	datePickerNgayBatDau.setDateSelectionMode(DatePicker.DateSelectionMode.SINGLE_DATE_SELECTED);
+	datePickerNgayBatDau.setCloseAfterSelected(true);
+	
+	datePickerNgayKetThuc.setEditor(txtNgayKetThuc);
+	datePickerNgayKetThuc.setDateSelectionMode(DatePicker.DateSelectionMode.SINGLE_DATE_SELECTED);
+	datePickerNgayKetThuc.setCloseAfterSelected(true);
 	
 	pnlSearchBox.setPlaceholder("Nhập tên hoặc mã giảm giá ...");
         txtTuKhoa = pnlSearchBox.getKeyword();
@@ -200,12 +207,16 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
 	    ComboBoxItem<Integer> trangThai = (ComboBoxItem<Integer>) cboTrangThai.getSelectedItem();
 	    String ngayBatDau = null;
 	    String ngayKetThuc = null;
-
-	    LocalDate[] dates = datePicker.getSelectedDateRange();
-	    if (dates != null) { 
-		ngayBatDau = dates[0].toString();
-		ngayKetThuc = dates[1].toString();
+	    
+	    
+	    if (datePickerNgayBatDau.getSelectedDate()!= null) {
+		ngayBatDau = TimeUtils.date("yyyy-MM-dd", datePickerNgayBatDau.getSelectedDate());
 	    }
+
+	    if (datePickerNgayKetThuc.getSelectedDate()!= null) {
+		ngayKetThuc = TimeUtils.date("yyyy-MM-dd", datePickerNgayKetThuc.getSelectedDate());
+	    }
+		    
             InuhaFilterPhieuGiamGiaRequest request = new InuhaFilterPhieuGiamGiaRequest();
 	    request.setKeyword(keyword);
 	    request.setTrangThai(trangThai);
@@ -279,9 +290,11 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
         splitLine2 = new com.app.views.UI.label.SplitLine();
         pnlSearchBox = new com.app.views.UI.panel.SearchBox();
         cboTrangThai = new javax.swing.JComboBox();
-        txtThoiGian = new javax.swing.JFormattedTextField();
+        txtNgayBatDau = new javax.swing.JFormattedTextField();
         btnSearch = new javax.swing.JButton();
         btnClear = new javax.swing.JButton();
+        txtNgayKetThuc = new javax.swing.JFormattedTextField();
+        jLabel1 = new javax.swing.JLabel();
         pnlList = new com.app.views.UI.panel.RoundPanel();
         lblDanhSach = new javax.swing.JLabel();
         splitLine1 = new com.app.views.UI.label.SplitLine();
@@ -328,6 +341,9 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
             }
         });
 
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("tới ");
+
         javax.swing.GroupLayout pnlFilterLayout = new javax.swing.GroupLayout(pnlFilter);
         pnlFilter.setLayout(pnlFilterLayout);
         pnlFilterLayout.setHorizontalGroup(
@@ -344,12 +360,16 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
                         .addGap(18, 18, 18)
                         .addComponent(cboTrangThai, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(txtThoiGian, javax.swing.GroupLayout.PREFERRED_SIZE, 271, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addComponent(txtNgayBatDau, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txtNgayKetThuc, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnClear, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(73, Short.MAX_VALUE))))
+                        .addContainerGap(70, Short.MAX_VALUE))))
         );
         pnlFilterLayout.setVerticalGroup(
             pnlFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -359,10 +379,14 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(splitLine2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(pnlFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(pnlFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlFilterLayout.createSequentialGroup()
+                        .addGap(1, 1, 1)
+                        .addComponent(txtNgayKetThuc))
                     .addComponent(pnlSearchBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(cboTrangThai)
-                    .addComponent(txtThoiGian)
+                    .addComponent(txtNgayBatDau)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnSearch, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnClear, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(20, 20, 20))
@@ -398,6 +422,8 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
+        tblDanhSach.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        tblDanhSach.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         scrDanhSach.setViewportView(tblDanhSach);
         if (tblDanhSach.getColumnModel().getColumnCount() > 0) {
             tblDanhSach.getColumnModel().getColumn(1).setMinWidth(100);
@@ -517,6 +543,7 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
     private javax.swing.JButton btnCreate;
     private javax.swing.JButton btnSearch;
     private javax.swing.JComboBox cboTrangThai;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel lblDanhSach;
     private javax.swing.JLabel lblFilter;
     private javax.swing.JPanel pnlDanhSach;
@@ -528,7 +555,8 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
     private com.app.views.UI.label.SplitLine splitLine1;
     private com.app.views.UI.label.SplitLine splitLine2;
     private javax.swing.JTable tblDanhSach;
-    private javax.swing.JFormattedTextField txtThoiGian;
+    private javax.swing.JFormattedTextField txtNgayBatDau;
+    private javax.swing.JFormattedTextField txtNgayKetThuc;
     // End of variables declaration//GEN-END:variables
 
     private void handleClickButtonClear() {
@@ -536,8 +564,10 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
         executorService.submit(() -> {
             txtTuKhoa.setText(null);
             cboTrangThai.setSelectedIndex(0);
-	    datePicker.clearSelectedDate();
-	    txtThoiGian.setText("");
+	    datePickerNgayBatDau.clearSelectedDate();
+	    datePickerNgayKetThuc.clearSelectedDate();
+	    txtNgayBatDau.setText("");
+	    txtNgayKetThuc.setText("");
             loadDataPage();
             loading.dispose();
         });

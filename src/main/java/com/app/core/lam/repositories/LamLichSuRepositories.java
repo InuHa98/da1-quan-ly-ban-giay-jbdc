@@ -5,7 +5,7 @@
 package com.app.core.lam.repositories;
 
 import com.app.common.configs.DBConnect;
-import com.app.core.lam.models.LichSuModels;
+import com.app.core.lam.models.LamLichSuModels;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,9 +16,9 @@ import java.util.ArrayList;
  *
  * @author Admin
  */
-public class LichSuRepositories {
+public class LamLichSuRepositories {
 
-    public ArrayList<LichSuModels> getLS() {
+    public ArrayList<LamLichSuModels> getLS() {
         String sql = """
                  SELECT KhachHang.id
                        ,HoaDon.ma
@@ -31,12 +31,12 @@ public class LichSuRepositories {
                    INNER JOIN KhachHang ON HoaDon.id_khach_hang = KhachHang.id
                   WHERE HoaDon.trang_thai_xoa = ?
                  """;
-        ArrayList<LichSuModels> listRPLS = new ArrayList<>();
+        ArrayList<LamLichSuModels> listRPLS = new ArrayList<>();
         try (Connection con = DBConnect.getInstance().getConnect();
                 PreparedStatement ps = con.prepareStatement(sql)) {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                LichSuModels ls = new LichSuModels();
+                LamLichSuModels ls = new LamLichSuModels();
                 ls.setIdKH(rs.getInt(1));
                 ls.setMaHD(rs.getString(2));
                 ls.setGiaBan(rs.getDouble(3));

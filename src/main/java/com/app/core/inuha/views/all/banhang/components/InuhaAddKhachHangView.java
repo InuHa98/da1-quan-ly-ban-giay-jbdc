@@ -282,7 +282,7 @@ public class InuhaAddKhachHangView extends JPanel {
 	
 	if (isEdited) { 
             khachHang.setId(model.getId());
-            model.setTrangThaiXoa(model.isTrangThaiXoa());
+            khachHang.setTrangThaiXoa(model.isTrangThaiXoa());
         }
 		
         LoadingDialog loading = new LoadingDialog();

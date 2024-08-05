@@ -36,7 +36,7 @@ public class TableCustomUI {
     private final static Color COLOR_BACKGROUND = ColorUtils.BACKGROUND_TABLE;
     private final static Color COLOR_GRID_COLOR = ColorUtils.lighten(ColorUtils.BACKGROUND_TABLE, 0.1f);
     private final static Color COLOR_SELECTION_TEXT = ColorUtils.PRIMARY_TEXT;
-    private final static Color COLOR_SELECTION_BACKGROUND = ColorUtils.BACKGROUND_HOVER;
+    private final static Color COLOR_SELECTION_BACKGROUND = ColorUtils.BACKGROUND_SELECTED;
 
     
        

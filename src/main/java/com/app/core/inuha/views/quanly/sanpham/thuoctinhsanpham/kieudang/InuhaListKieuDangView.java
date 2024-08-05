@@ -118,9 +118,7 @@ public class InuhaListKieuDangView extends javax.swing.JPanel {
         };
         
         TableCustomUI.apply(scrDanhSach, TableCustomUI.TableType.DEFAULT);
-        pnlDanhSach.setBackground(ColorUtils.BACKGROUND_GRAY);
-        tblDanhSach.setBackground(ColorUtils.BACKGROUND_GRAY);
-        tblDanhSach.getTableHeader().setBackground(ColorUtils.BACKGROUND_GRAY);
+        pnlDanhSach.setBackground(ColorUtils.BACKGROUND_TABLE);
         
         table.getColumnModel().getColumn(4).setCellRenderer(new InuhaThuocTinhTableActionCellRender(table));
         table.getColumnModel().getColumn(4).setCellEditor(new InuhaThuocTinhTableActionCellEditor(event));

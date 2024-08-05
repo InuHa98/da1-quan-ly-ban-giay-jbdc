@@ -9,16 +9,16 @@ import java.util.ArrayList;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import com.app.core.lam.models.KhachHangModels;
+import com.app.core.lam.models.LamKhachHangModels;
 import java.time.LocalDateTime;
 
 /**
  *
  * @author Admin
  */
-public class KhachHangRepositories {
+public class LamKhachHangRepositories {
 
-    public ArrayList<KhachHangModels> getKH() {
+    public ArrayList<LamKhachHangModels> getKH() {
         String sql = """
                      SELECT [id]
                            ,[ho_ten]
@@ -29,12 +29,12 @@ public class KhachHangRepositories {
                            ,[trang_thai_xoa]
                        FROM [dbo].[KhachHang]
                      """;
-        ArrayList<KhachHangModels> listRPKH = new ArrayList<>();
+        ArrayList<LamKhachHangModels> listRPKH = new ArrayList<>();
         try (Connection con = DBConnect.getInstance().getConnect();
                 PreparedStatement ps = con.prepareStatement(sql);
                 ResultSet rs = ps.executeQuery();) {
             while (rs.next()) {
-                KhachHangModels kh = new KhachHangModels();
+                LamKhachHangModels kh = new LamKhachHangModels();
                 kh.setIdKH(rs.getInt(1));
                 kh.setTenKH(rs.getString(2));
                 kh.setSoDienThoai(rs.getString(3));
@@ -51,7 +51,7 @@ public class KhachHangRepositories {
         return listRPKH;
     }
 
-    public boolean addKhachHang(KhachHangModels kh) {
+    public boolean addKhachHang(LamKhachHangModels kh) {
         String sql = """
                  INSERT INTO [dbo].[KhachHang]
                             ([ho_ten]
@@ -78,7 +78,7 @@ public class KhachHangRepositories {
 
     }
 
-    public boolean updateKhachHang(KhachHangModels kh) {
+    public boolean updateKhachHang(LamKhachHangModels kh) {
         String sql = """
                      UPDATE [dbo].[KhachHang]
                         SET [ho_ten] = ?

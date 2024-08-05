@@ -33,13 +33,15 @@ public class ColorUtils {
 
     public static Color BACKGROUND_DARK = new Color(30, 31, 34);
 	
-    public static Color BACKGROUND_HOVER = new Color(113, 84, 68);
+    public static Color BACKGROUND_SELECTED = new Color(113, 84, 68);
 
     public static Color BACKGROUND_DASHBOARD = new Color(35, 36, 40);
 	
     public static Color BACKGROUND_TABLE = new Color(43, 45, 49);
     
-    public static Color BACKGROUND_TABLE_ODD = new Color(63, 66, 72);
+    public static Color BACKGROUND_HOVER = new Color(63, 66, 72);
+    
+    public static Color BACKGROUND_TABLE_ODD = new Color(43, 45, 49); //new Color(63, 66, 72);
         
     public static Color TEXT_TABLE = new Color(181, 186, 193);
         

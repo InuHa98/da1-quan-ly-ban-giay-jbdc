@@ -141,9 +141,7 @@ public class InuhaListKhachHangView extends javax.swing.JPanel {
         
         TableCustomUI.apply(scrDanhSach, TableCustomUI.TableType.DEFAULT);
 	TableCustomUI.resizeColumnHeader(table);
-        pnlDanhSach.setBackground(ColorUtils.BACKGROUND_GRAY);
-        tblDanhSach.setBackground(ColorUtils.BACKGROUND_GRAY);
-        tblDanhSach.getTableHeader().setBackground(ColorUtils.BACKGROUND_GRAY);
+        pnlDanhSach.setBackground(ColorUtils.BACKGROUND_TABLE);
         
         table.getColumnModel().getColumn(1).setCellRenderer(new InuhaKhachHangTableActionCellRender(table));
         table.getColumnModel().getColumn(1).setCellEditor(new InuhaKhachHangTableActionCellEditor(event));

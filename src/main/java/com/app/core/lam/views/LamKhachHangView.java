@@ -9,10 +9,10 @@ import com.app.common.helper.MessageModal;
 import com.app.common.helper.MessageToast;
 import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
-import com.app.core.lam.models.KhachHangModels;
-import com.app.core.lam.models.LichSuModels;
-import com.app.core.lam.repositories.KhachHangRepositories;
-import com.app.core.lam.repositories.LichSuRepositories;
+import com.app.core.lam.models.LamKhachHangModels;
+import com.app.core.lam.models.LamLichSuModels;
+import com.app.core.lam.repositories.LamKhachHangRepositories;
+import com.app.core.lam.repositories.LamLichSuRepositories;
 import com.app.utils.NumberPhoneUtils;
 import com.app.utils.ResourceUtils;
 import com.app.utils.SessionUtils;
@@ -33,25 +33,25 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author Admin
  */
-public final class KhachHangView extends javax.swing.JPanel {
+public final class LamKhachHangView extends javax.swing.JPanel {
 
     private final ExecutorService executorService = Executors.newFixedThreadPool(2);
 
-    private final KhachHangRepositories repo = new KhachHangRepositories();
+    private final LamKhachHangRepositories repo = new LamKhachHangRepositories();
 
     private DefaultTableModel dtm = new DefaultTableModel();
 
-    private ArrayList<KhachHangModels> listKH = new ArrayList<>();
+    private ArrayList<LamKhachHangModels> listKH = new ArrayList<>();
 
-    private final LichSuRepositories repoLS = new LichSuRepositories();
+    private final LamLichSuRepositories repoLS = new LamLichSuRepositories();
 
     private DefaultTableModel dtmLS = new DefaultTableModel();
 
-    private ArrayList<LichSuModels> listLS = new ArrayList<>();
+    private ArrayList<LamLichSuModels> listLS = new ArrayList<>();
 
     public void detailTable(int row) {
 
-        KhachHangModels kh = listKH.get(row);
+        LamKhachHangModels kh = listKH.get(row);
 
         txtTenKH.setText(kh.getTenKH());
 
@@ -73,29 +73,29 @@ public final class KhachHangView extends javax.swing.JPanel {
 
     }
 
-    public void showData(ArrayList<KhachHangModels> listKH) {
+    public void showData(ArrayList<LamKhachHangModels> listKH) {
         dtm.setRowCount(0);
-        for (KhachHangModels kh : listKH) {
+        for (LamKhachHangModels kh : listKH) {
             dtm.addRow(new Object[]{
                 kh.getIdKH(), kh.getTenKH(), kh.getSoDienThoai(), kh.isGioiTinh() ? "Nam" : "Nữ", kh.getDiaChi(), kh.getNgayTao(), kh.getNgayTao()
             });
         }
     }
 
-    public KhachHangModels getFormData() {
+    public LamKhachHangModels getFormData() {
         String tenKH = txtTenKH.getText();
         String soDienThoai = txtSoDienThoai.getText();
         boolean gioiTinh = rbnNam.isSelected();
         String diaChi = txtDiaChi.getText();
         String ngayTao = TimeUtils.currentDateTime();
         boolean trangThaiXoa = !rbnChuaMua.isSelected();
-        KhachHangModels kh = new KhachHangModels(WIDTH, tenKH, soDienThoai, gioiTinh, diaChi, trangThaiXoa);
+        LamKhachHangModels kh = new LamKhachHangModels(WIDTH, tenKH, soDienThoai, gioiTinh, diaChi, trangThaiXoa);
         return kh;
     }
 
     public void detailTableLS(int row) {
 
-        LichSuModels ls = listLS.get(row);
+        LamLichSuModels ls = listLS.get(row);
 
         txtMaHD.setText(ls.getMaHD());
         txtGiaSP.setText(String.valueOf(ls.getGiaBan()));
@@ -108,9 +108,9 @@ public final class KhachHangView extends javax.swing.JPanel {
 
     }
 
-    public void showDataLS(ArrayList<LichSuModels> listLS) {
+    public void showDataLS(ArrayList<LamLichSuModels> listLS) {
         dtmLS.setRowCount(0);
-        for (LichSuModels ls : listLS) {
+        for (LamLichSuModels ls : listLS) {
             if (ls.isTrangThaiXoa()) {
                 dtmLS.addRow(new Object[]{
                     ls.getIdKH(), ls.getMaHD(), ls.getGiaBan(), ls.getSoLuong(),
@@ -121,17 +121,17 @@ public final class KhachHangView extends javax.swing.JPanel {
         }
     }
 
-    public LichSuModels getFormDataLS() {
+    public LamLichSuModels getFormDataLS() {
         String maHD = txtMaHD.getText();
         Double giaBan = Double.valueOf(txtGiaSP.getText());
         int soLuong = Integer.valueOf(txtSoLuong.getText());
         String ngayMua = TimeUtils.currentDateTime();
         boolean trangThaiXoa = !rbnChuaMua.isSelected();
-        LichSuModels ls = new LichSuModels(WIDTH, maHD, giaBan, soLuong, LocalDateTime.now());
+        LamLichSuModels ls = new LamLichSuModels(WIDTH, maHD, giaBan, soLuong, LocalDateTime.now());
         return ls;
     }
 
-    public KhachHangView() {
+    public LamKhachHangView() {
         initComponents();
         
         btnLamMoiLS.setIcon(ResourceUtils.getSVG("/svg/reload.svg", new Dimension(20, 20)));
@@ -160,7 +160,7 @@ public final class KhachHangView extends javax.swing.JPanel {
     }
 
     private boolean isCheckSDT(String soDienThoai) {
-        for (KhachHangModels kh : listKH) {
+        for (LamKhachHangModels kh : listKH) {
             if (kh.getSoDienThoai().equals(soDienThoai)) {
                 return true;
             }
@@ -685,7 +685,7 @@ public final class KhachHangView extends javax.swing.JPanel {
                             try {
                                 int row = tblLichSuGD.getSelectedRow();
                                 if (row >= 0) {
-                                    LichSuModels ls = listLS.get(row);
+                                    LamLichSuModels ls = listLS.get(row);
                                     boolean check = repoLS.deleteHoaDon(ls.getMaHD());
                                     if (check) {
                                         MessageModal.success("Xóa lịch sử mua hàng thành công!");
@@ -734,7 +734,7 @@ public final class KhachHangView extends javax.swing.JPanel {
                             try {
                                 int row = tblLichSuGD.getSelectedRow();
                                 if (row >= 0) {
-                                    LichSuModels newLS = listLS.get(row);
+                                    LamLichSuModels newLS = listLS.get(row);
 
                                     newLS.setMaHD(txtMaHD.getText());
                                     newLS.setGiaBan(Double.parseDouble(txtGiaSP.getText()));
@@ -788,10 +788,10 @@ public final class KhachHangView extends javax.swing.JPanel {
             try {
                 String maHD = txtTimKiemLichSu.getText().trim();
 
-                ArrayList<LichSuModels> listSearchLichSu = new ArrayList<>();
+                ArrayList<LamLichSuModels> listSearchLichSu = new ArrayList<>();
 
                 if (!maHD.isEmpty()) {
-                    for (LichSuModels ls : listLS) {
+                    for (LamLichSuModels ls : listLS) {
 
                         if (ls.getMaHD().equals(maHD)) {
                             listSearchLichSu.add(ls);
@@ -829,10 +829,10 @@ public final class KhachHangView extends javax.swing.JPanel {
             try {
                 String soDienThoai = PhoneUtils.number(txtTimKiemKH.getText().trim());
 
-                ArrayList<KhachHangModels> listTimKiemKH = new ArrayList<>();
+                ArrayList<LamKhachHangModels> listTimKiemKH = new ArrayList<>();
 
                 if (!soDienThoai.isEmpty()) {
-                    for (KhachHangModels kh : listKH) {
+                    for (LamKhachHangModels kh : listKH) {
                         String khSoDienThoai = PhoneUtils.number(kh.getSoDienThoai());
 
                         if (khSoDienThoai.equals(soDienThoai)) {
@@ -891,7 +891,7 @@ public final class KhachHangView extends javax.swing.JPanel {
                             try {
                                 int row = tblKhachHang.getSelectedRow();
                                 if (row >= 0) {
-                                    KhachHangModels kh = listKH.get(row);
+                                    LamKhachHangModels kh = listKH.get(row);
                                     boolean check = repo.deleteKhachHang(kh.getSoDienThoai());
                                     if (check) {
                                         MessageModal.success("Xóa thông tin khách hàng thành công!");
@@ -975,7 +975,7 @@ public final class KhachHangView extends javax.swing.JPanel {
                             try {
                                 int row = tblKhachHang.getSelectedRow();
                                 if (row >= 0) {
-                                    KhachHangModels newKH = listKH.get(row);
+                                    LamKhachHangModels newKH = listKH.get(row);
                                     newKH.setTenKH(txtTenKH.getText());
                                     newKH.setSoDienThoai(txtSoDienThoai.getText());
                                     newKH.setGioiTinh(rbnNam.isSelected());
@@ -1028,7 +1028,7 @@ public final class KhachHangView extends javax.swing.JPanel {
                         ExecutorService executorService = Executors.newSingleThreadExecutor();
                         executorService.submit(() -> {
                             try {
-                                KhachHangModels newKH = getFormData();
+                                LamKhachHangModels newKH = getFormData();
                                 String soDienThoai = newKH.getSoDienThoai();
                                 if (soDienThoai == null) {
                                     MessageModal.warning("Vui lòng điền số điện thoại!");
@@ -1158,7 +1158,7 @@ public final class KhachHangView extends javax.swing.JPanel {
     private javax.swing.JTextField txtTimKiemLichSu;
     // End of variables declaration//GEN-END:variables
 
-    private void MessageModal(KhachHangView aThis, String vui_lòng_điền_đầy_đủ_thông_tin, String cảnh_báo) {
+    private void MessageModal(LamKhachHangView aThis, String vui_lòng_điền_đầy_đủ_thông_tin, String cảnh_báo) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

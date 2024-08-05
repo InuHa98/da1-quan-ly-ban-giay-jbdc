@@ -1148,7 +1148,7 @@ public class InuhaAddSanPhamView extends javax.swing.JPanel {
 				    InuhaHoaDonChiTietService.getInstance().delete(m);
 				}
 			    }
-                            MessageToast.success("Lưu chỉnh sửa sản phẩm thành công.");
+                            MessageToast.success("Lưu thông tin sản phẩm thành công.");
                             InuhaSanPhamView.getInstance().loadDataPage();
 			    InuhaSanPhamView.getInstance().loadDataPageSPCT();
                         }

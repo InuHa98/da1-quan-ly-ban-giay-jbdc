@@ -2,11 +2,9 @@ package com.app.common.infrastructure.router;
 
 import com.app.common.infrastructure.constants.RouterConstant;
 import com.app.common.infrastructure.session.SessionLogin;
-import com.app.core.inuha.views.quanly.InuhaNhanVienView;
 import com.app.views.UI.sidebarmenu.SidebarMenuItem;
 import lombok.Getter;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 

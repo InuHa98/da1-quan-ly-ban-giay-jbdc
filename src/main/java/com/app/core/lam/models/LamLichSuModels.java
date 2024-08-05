@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
  *
  * @author Admin
  */
-public class LichSuModels {
+public class LamLichSuModels {
 
     private int idKH;
 
@@ -25,10 +25,10 @@ public class LichSuModels {
 
     private boolean trangThaiXoa;
 
-    public LichSuModels() {
+    public LamLichSuModels() {
     }
 
-    public LichSuModels(int idKH, String maHD, Double giaBan, int soLuong,LocalDateTime ngayMua) {
+    public LamLichSuModels(int idKH, String maHD, Double giaBan, int soLuong,LocalDateTime ngayMua) {
         this.idKH = idKH;
         this.maHD = maHD;
         this.giaBan = giaBan;

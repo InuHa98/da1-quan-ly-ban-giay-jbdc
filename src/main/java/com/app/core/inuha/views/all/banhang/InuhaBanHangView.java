@@ -309,7 +309,6 @@ public class InuhaBanHangView extends javax.swing.JPanel {
         TableCustomUI.apply(scrDanhSachSanPham, TableCustomUI.TableType.DEFAULT);
         TableCustomUI.resizeColumnHeader(table);
 	
-        table.setRowHeight(50);
 	table.getColumnModel().getColumn(5).setCellRenderer(new TableAlignCenterCellRender(table));
 	table.getColumnModel().getColumn(5).setCellRenderer(new InuhaSoLuongTonSanPhamTableCellRender(table));
         table.getColumnModel().getColumn(2).setCellRenderer(new TableImageCellRender(table));
@@ -1821,6 +1820,13 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 	executorService.submit(() -> {
 	    try {
 		currentKhachHang = khachHang;
+		
+		dataItemsHoaDonCho.forEach(o -> {
+		    if (o.getKhachHang() != null && o.getKhachHang().getId() == khachHang.getId()) { 
+			o.setKhachHang(khachHang);
+		    }
+		});
+		
 		currentHoaDon.setKhachHang(currentKhachHang);
 		hoaDonService.update(currentHoaDon);
 		txtSoDienThoai.setText(khachHang.getSdt());

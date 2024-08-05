@@ -112,7 +112,7 @@ public class SidebarMenu extends JPanel {
 
         lbUsername.setText(username);
         lbEmail.setText(email);
-        lbRole.setText(SessionUtils.isManager() ? "Quản lý" : "Nhân viên");
+        lbRole.setText(SessionUtils.getChucVu(SessionUtils.isManager()));
 	
 	setMaximumSize(new Dimension(MIN_WIDTH, getPreferredSize().height));
     }

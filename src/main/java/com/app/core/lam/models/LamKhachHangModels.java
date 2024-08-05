@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
  * @author Admin
  */
 
-public class KhachHangModels {
+public class LamKhachHangModels {
 
     private int idKH;
 
@@ -28,10 +28,10 @@ public class KhachHangModels {
 
     private boolean trangThaiXoa;
 
-    public KhachHangModels() {
+    public LamKhachHangModels() {
     }
 
-    public KhachHangModels(int idKH, String tenKH, String soDienThoai, boolean gioiTinh, String diaChi, boolean trangThaiXoa) {
+    public LamKhachHangModels(int idKH, String tenKH, String soDienThoai, boolean gioiTinh, String diaChi, boolean trangThaiXoa) {
         this.idKH = idKH;
         this.tenKH = tenKH;
         this.soDienThoai = soDienThoai;

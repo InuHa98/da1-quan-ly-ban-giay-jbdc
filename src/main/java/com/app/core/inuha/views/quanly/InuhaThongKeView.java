@@ -1,4 +1,4 @@
-package com.app.core.inuha.views.quanly.thongke;
+package com.app.core.inuha.views.quanly;
 
 import com.app.common.helper.ExcelHelper;
 import com.app.common.helper.MessageModal;
