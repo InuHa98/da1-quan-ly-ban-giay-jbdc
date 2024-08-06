@@ -70,10 +70,14 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import jnafilechooser.api.JnaFileChooser;
 
 /**
@@ -280,25 +284,39 @@ public class InuhaSanPhamView extends RoundPanel {
                 
                 LoadingDialog loadingDialog = new LoadingDialog();
 
-                executorService.submit(() -> {
-                    if (MessageModal.confirmWarning("Xoá: " + item.getTen(), "Bạn thực sự muốn xoá sản phẩm này?")) {
-                        executorService.submit(() -> {
-                            try {
-                                sanPhamService.delete(item.getId());
-                                loadDataPage();
-				loadDataPageSPCT();
-                                MessageToast.success("Xoá thành công sản phẩm: " + item.getTen());
-                            } catch (ServiceResponseException e) {
-                                MessageToast.error(e.getMessage());
-                            } catch (Exception e) {
-                                MessageModal.error(ErrorConstant.DEFAULT_ERROR);
-                            } finally {
-				loadingDialog.dispose();
+		SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
+		    @Override
+		    protected Boolean doInBackground() throws Exception {
+			return MessageModal.confirmWarning("Xoá: " + item.getTen(), "Bạn thực sự muốn xoá sản phẩm này?");
+		    }
+
+		    @Override
+		    protected void done() {
+			try {
+			    if (get()) {
+				executorService.submit(() -> {
+				    try {
+					sanPhamService.delete(item.getId());
+					loadDataPage();
+					loadDataPageSPCT();
+					MessageToast.success("Xoá thành công sản phẩm: " + item.getTen());
+				    } catch (ServiceResponseException e) {
+					MessageToast.error(e.getMessage());
+				    } catch (Exception e) {
+					MessageModal.error(ErrorConstant.DEFAULT_ERROR);
+				    } finally {
+					loadingDialog.dispose();
+				    }
+				});
+				loadingDialog.setVisible(true);
 			    }
-                        });
-                        loadingDialog.setVisible(true);
-                    }
-                });
+			} catch (InterruptedException ex) {
+			} catch (ExecutionException ex) {
+			}
+		    }
+		    
+		};
+		worker.execute();
             }
 
             @Override
