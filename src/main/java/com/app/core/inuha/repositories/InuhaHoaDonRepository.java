@@ -12,6 +12,7 @@ import com.app.core.inuha.models.InuhaPhieuGiamGiaModel;
 import com.app.core.inuha.models.InuhaTaiKhoanModel;
 import com.app.utils.SessionUtils;
 import com.app.utils.TimeUtils;
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -342,9 +343,10 @@ public class InuhaHoaDonRepository implements IDAOinterface<InuhaHoaDonModel, In
     }
     
     public String getLastCode() throws SQLException {
-        String query = String.format("SELECT TOP(1) id FROM %s ORDER BY id DESC", TABLE_NAME);
+        String query = String.format("SELECT IDENT_CURRENT('%s') AS NextId", TABLE_NAME);
         try {
-            return String.valueOf(JbdcHelper.value(query));
+	    BigDecimal id = (BigDecimal) JbdcHelper.value(query);
+            return String.valueOf(id.intValue());
         } catch (Exception e) {
             e.printStackTrace();
             throw new SQLException(e.getMessage());

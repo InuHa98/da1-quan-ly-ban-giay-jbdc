@@ -10,6 +10,7 @@ import com.app.core.inuha.models.sanpham.InuhaKichCoModel;
 import com.app.core.inuha.models.sanpham.InuhaMauSacModel;
 import com.app.core.inuha.request.InuhaFilterSanPhamChiTietRequest;
 import com.app.utils.TimeUtils;
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -643,9 +644,10 @@ public class InuhaSanPhamChiTietRepository implements IDAOinterface<InuhaSanPham
     
     
     public String getLastCode() throws SQLException {
-        String query = String.format("SELECT TOP(1) ma FROM %s ORDER BY id DESC", TABLE_NAME);
+        String query = String.format("SELECT IDENT_CURRENT('%s') AS NextId", TABLE_NAME);
         try {
-            return (String) JbdcHelper.value(query);
+	    BigDecimal id = (BigDecimal) JbdcHelper.value(query);
+            return String.valueOf(id.intValue());
         } catch (Exception e) {
             e.printStackTrace();
             throw new SQLException(e.getMessage());

@@ -1650,10 +1650,12 @@ public class InuhaBanHangView extends javax.swing.JPanel {
     }
     
     private void showModalAddToCart(InuhaSanPhamModel sanPham) { 
+	ModalDialog.closeAllModal();
 	ModalDialog.showModal(this, new SimpleModalBorder(new InuhaAddGioHangView(sanPham), sanPham.getMa() + " - " + sanPham.getTen()));
     }
 
     private void showModalEditCart(InuhaHoaDonChiTietModel hoaDonChiTiet) { 
+	ModalDialog.closeAllModal();
 	ModalDialog.showModal(this, new SimpleModalBorder(new InuhaEditGioHangView(hoaDonChiTiet), hoaDonChiTiet.getSanPhamChiTiet().getMa() + " - " + hoaDonChiTiet.getSanPhamChiTiet().getSanPham().getTen()));
     }
 	
@@ -1807,6 +1809,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
     }
     
     private void handleClickButtonSelectKhachHang() {
+	ModalDialog.closeAllModal();
 	ModalDialog.showModal(this, new SimpleModalBorder(new InuhaListKhachHangView(currentKhachHang), "Danh sách khách hàng"));
     }
 
@@ -2086,6 +2089,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 	    return;
 	}
 	
+	ModalDialog.closeAllModal();
 	ModalDialog.showModal(this, new SimpleModalBorder(new InuhaConfirmHoaDonView(), null));
     }
     
@@ -2172,6 +2176,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 	    MessageToast.warning("Phiếu giảm giá chỉ áp dụng cho khách hàng đã từng mua hàng tại đây!");
 	    return;
 	}
+	ModalDialog.closeAllModal();
 	ModalDialog.showModal(instance, new SimpleModalBorder(new InuhaListPhieuGiamGiaView(chiTietThanhToan), "Danh sách Voucher"));
     }
 

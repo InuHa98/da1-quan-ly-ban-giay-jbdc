@@ -1731,6 +1731,7 @@ public class InuhaSanPhamView extends RoundPanel {
     }
 	
     private void handleClickButtonAdd() {
+	ModalDialog.closeAllModal();
         ModalDialog.showModal(this, new SimpleModalBorder(new InuhaAddSanPhamView(), "Thêm sản phẩm"));
     }
 
@@ -1833,6 +1834,7 @@ public class InuhaSanPhamView extends RoundPanel {
     }
 
     private void showDetailChiTiet(InuhaSanPhamChiTietModel item) {
+	ModalDialog.closeAllModal();
         ModalDialog.showModal(instance, new SimpleModalBorder(new InuhaDetailSanPhamChiTietView(item), null), ID_MODAL_DEAIL);
     }
     

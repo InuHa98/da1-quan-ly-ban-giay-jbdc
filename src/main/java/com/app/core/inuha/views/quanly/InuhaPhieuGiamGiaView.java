@@ -587,6 +587,7 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
     }
 
     private void handleClickButtonAdd() {
+	ModalDialog.closeAllModal();
 	ModalDialog.showModal(this, new SimpleModalBorder(new InuhaAddPhieuGiamGiaView(), "Thêm mới"));
     }
 }

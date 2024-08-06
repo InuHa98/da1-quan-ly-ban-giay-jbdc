@@ -611,10 +611,12 @@ public class InuhaNhanVienView extends javax.swing.JPanel {
     }
 
     private void handleClickButtonAdd() {
+	ModalDialog.closeAllModal();
 	ModalDialog.showModal(this, new SimpleModalBorder(new InuhaAddNhanVienView(), "Thêm nhân viên"));
     }
     
     private void showEdit(InuhaTaiKhoanModel item) { 
+	ModalDialog.closeAllModal();
 	ModalDialog.showModal(instance, new SimpleModalBorder(new InuhaAddNhanVienView(item), "Chỉnh sửa thông tin"));
     }
 

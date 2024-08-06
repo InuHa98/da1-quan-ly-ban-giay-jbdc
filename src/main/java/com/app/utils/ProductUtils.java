@@ -24,7 +24,6 @@ public class ProductUtils {
 
     public static String generateCodeSanPham() {
         String lastCode = InuhaSanPhamService.getInstance().getLastCode();
-        
         int number = 1;
         
         if (lastCode != null && !lastCode.equalsIgnoreCase("null")) { 
