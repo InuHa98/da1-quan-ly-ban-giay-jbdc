@@ -9,6 +9,6 @@ import com.app.core.inuha.models.InuhaHoaDonModel;
  */
 public interface IInuhaHoaDonServiceInterface extends IServiceInterface<InuhaHoaDonModel, Integer> {
 
-    String getLastCode();
+    String getLastId();
     
 }

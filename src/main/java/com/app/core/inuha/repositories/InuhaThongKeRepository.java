@@ -49,7 +49,7 @@ public class InuhaThongKeRepository {
                 ten
             FROM SanPham
             WHERE
-                trang_thai_xoa = 0
+                trang_thai_xoa != 1
             ORDER BY ten ASC 
         """;
 
@@ -116,7 +116,7 @@ public class InuhaThongKeRepository {
                     JOIN SanPhamChiTiet AS spct ON spct.id = hdct.id_san_pham_chi_tiet
 		WHERE 
 		    hd.trang_thai = %d AND
-		    hd.trang_thai_xoa = 0 AND
+		    hd.trang_thai_xoa != 1 AND
                     (COALESCE(?, 0) < 1 OR spct.id_san_pham = ?) AND
                     hd.ngay_tao >= ? AND
                     hd.ngay_tao <= ?
@@ -182,7 +182,7 @@ public class InuhaThongKeRepository {
                     JOIN SanPhamChiTiet AS spct ON spct.id = hdct.id_san_pham_chi_tiet
 		WHERE 
 		    hd.trang_thai = %d AND
-		    hd.trang_thai_xoa = 0 AND
+		    hd.trang_thai_xoa != 1 AND
                     (COALESCE(?, 0) < 1 OR spct.id_san_pham = ?) AND
                     hd.ngay_tao >= ? AND
                     hd.ngay_tao <= ?
@@ -311,7 +311,7 @@ public class InuhaThongKeRepository {
 			JOIN SanPham AS sp ON sp.id = spct.id_san_pham
 		    WHERE 
 			hd.trang_thai = %d AND
-			hd.trang_thai_xoa = 0 AND
+			hd.trang_thai_xoa != 1 AND
 			(COALESCE(?, 0) < 1 OR spct.id_san_pham = ?) AND
 			hd.ngay_tao >= ? AND
 			hd.ngay_tao <= ?
@@ -352,7 +352,7 @@ public class InuhaThongKeRepository {
 			JOIN SanPham AS sp ON sp.id = spct.id_san_pham
 		    WHERE 
 			hd.trang_thai = %d AND
-			hd.trang_thai_xoa = 0 AND
+			hd.trang_thai_xoa != 1 AND
 			(COALESCE(?, 0) < 1 OR spct.id_san_pham = ?) AND
 			hd.ngay_tao >= ? AND
 			hd.ngay_tao <= ?
@@ -457,7 +457,7 @@ public class InuhaThongKeRepository {
 			JOIN SanPham AS sp ON sp.id = spct.id_san_pham
 		    WHERE 
 			hd.trang_thai = %d AND
-			hd.trang_thai_xoa = 0 AND
+			hd.trang_thai_xoa != 1 AND
 			(COALESCE(?, 0) < 1 OR spct.id_san_pham = ?) AND
 			hd.ngay_tao >= ? AND
 			hd.ngay_tao <= ?
@@ -503,7 +503,7 @@ public class InuhaThongKeRepository {
 			JOIN SanPham AS sp ON sp.id = spct.id_san_pham
 		    WHERE 
 			hd.trang_thai = %d AND
-			hd.trang_thai_xoa = 0 AND
+			hd.trang_thai_xoa != 1 AND
 			(COALESCE(?, 0) < 1 OR spct.id_san_pham = ?) AND
 			hd.ngay_tao >= ? AND
 			hd.ngay_tao <= ?
@@ -598,7 +598,7 @@ public class InuhaThongKeRepository {
 		JOIN SanPham AS sp ON sp.id = spct.id_san_pham
 	    WHERE 
 		hd.trang_thai = %d AND
-		hd.trang_thai_xoa = 0 AND
+		hd.trang_thai_xoa != 1 AND
 		    (COALESCE(?, 0) < 1 OR spct.id_san_pham = ?) AND
 		hd.ngay_tao >= ? AND
 		hd.ngay_tao <= ?

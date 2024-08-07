@@ -188,9 +188,9 @@ public class InuhaHoaDonChiTietService implements IInuhaHoaDonChiTietServiceInte
     }
 
     @Override
-    public String getLastCode() {
+    public String getLastId() {
         try {
-            return repository.getLastCode();
+            return repository.getLastId();
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
@@ -213,5 +213,14 @@ public class InuhaHoaDonChiTietService implements IInuhaHoaDonChiTietServiceInte
             ex.printStackTrace();
         }
         return new ArrayList<>();
+    }
+    
+    public int count(FillterRequest request) {
+        try {
+            return repository.count(request);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return 0;
     }
 }

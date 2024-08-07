@@ -47,10 +47,14 @@ import java.awt.Shape;
 import java.awt.event.ItemEvent;
 import static java.time.Instant.now;
 import java.time.format.DateTimeFormatter;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 
 /**
  *
@@ -79,6 +83,9 @@ public class InuhaDetailSanPhamView extends JPanel {
     private List<InuhaSanPhamChiTietModel> dataItems = new ArrayList<>();
     
     private InuhaSanPhamModel sanPham = null;
+    
+    private final LoadingDialog loading = new LoadingDialog();
+    
     /**
      * Creates new form InuhaSanPhamView
      */
@@ -170,7 +177,6 @@ public class InuhaDetailSanPhamView extends JPanel {
 	cboTrangThai.setPreferredSize(cboSize);
 	cboSoLuong.setPreferredSize(cboSize);
 	
-	LoadingDialog loading = new LoadingDialog();
 	executorService.submit(() -> { 
 	    loadDataKichCo();
 	    loadDataMauSac();
@@ -200,29 +206,40 @@ public class InuhaDetailSanPhamView extends JPanel {
                 }
                 InuhaSanPhamChiTietModel item = dataItems.get(row);
                 
-                LoadingDialog loadingDialog = new LoadingDialog();
-
-                executorService.submit(() -> {
-                    if (MessageModal.confirmWarning("Xoá sản phẩm chi tiết ", "Bạn thực sự muốn xoá sản phẩm chi tiết này?")) {
-                        executorService.submit(() -> {
-                            try {
-                                sanPhamChiTietService.delete(item.getId());
-                                loadingDialog.dispose();
-                                InuhaSanPhamView.getInstance().loadDataPage();
-				InuhaSanPhamView.getInstance().loadDataPageSPCT();
-                                loadDataPage();
-                                MessageToast.success("Xoá thành công sản phẩm chi tiết");
-                            } catch (ServiceResponseException e) {
-                                loadingDialog.dispose();
-                                MessageToast.error(e.getMessage());
-                            } catch (Exception e) {
-                                loadingDialog.dispose();
-                                MessageModal.error(ErrorConstant.DEFAULT_ERROR);
-                            } 
-                        });
-                        loadingDialog.setVisible(true);
+                SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
+                    @Override
+                    protected Boolean doInBackground() throws Exception {
+                        return MessageModal.confirmWarning("Xoá sản phẩm chi tiết ", "Bạn thực sự muốn xoá sản phẩm chi tiết này?");
                     }
-                });
+
+                    @Override
+                    protected void done() {
+                        try {
+                            if (get()) {
+                                executorService.submit(() -> {
+                                    try {
+                                        sanPhamChiTietService.delete(item.getId());
+                                        InuhaSanPhamView.getInstance().loadDataPage();
+                                        InuhaSanPhamView.getInstance().loadDataPageSPCT();
+                                        loadDataPage();
+                                        MessageToast.success("Xoá thành công sản phẩm chi tiết");
+                                    } catch (ServiceResponseException e) {
+                                        MessageToast.error(e.getMessage());
+                                    } catch (Exception e) {
+                                        MessageModal.error(ErrorConstant.DEFAULT_ERROR);
+                                    }  finally {
+                                        loading.dispose();
+                                    }
+                                });
+                                loading.setVisible(true);
+                            }
+                        } catch (InterruptedException | ExecutionException ex) {
+                        }
+                    }
+                    
+                };
+                worker.execute();
+                
             }
 
             @Override
@@ -299,7 +316,6 @@ public class InuhaDetailSanPhamView extends JPanel {
             @Override
             public void onChangeLimitItem(JComboBox<Integer> comboBox) {
                 sizePage = (int) comboBox.getSelectedItem();
-		LoadingDialog loading = new LoadingDialog();
 		executorService.submit(() -> { 
 		    loadDataPage(1);
 		    loading.dispose();
@@ -309,7 +325,6 @@ public class InuhaDetailSanPhamView extends JPanel {
 
             @Override
             public void onClickPage(int page) {
-		LoadingDialog loading = new LoadingDialog();
 		executorService.submit(() -> { 
 		    loadDataPage(page);
 		    loading.dispose();
@@ -907,7 +922,6 @@ public class InuhaDetailSanPhamView extends JPanel {
 	    "Trạng thái"
 	};
 
-	LoadingDialog loading = new LoadingDialog();
 	executorService.submit(() -> { 
 	    List<InuhaSanPhamChiTietModel> items = findSelectedItems(tblDanhSach);
 	    try {
@@ -967,7 +981,6 @@ public class InuhaDetailSanPhamView extends JPanel {
             return;
         }
 	
-        LoadingDialog loading = new LoadingDialog();
         executorService.submit(() -> {
             loadDataPage();
             loading.dispose();
@@ -977,7 +990,6 @@ public class InuhaDetailSanPhamView extends JPanel {
     
     private void handleClickButtonReset() {
         reLoad = true;
-        LoadingDialog loading = new LoadingDialog();
         executorService.submit(() -> {
             cboKichCo.setSelectedIndex(0);
             cboMauSac.setSelectedIndex(0);
@@ -993,7 +1005,6 @@ public class InuhaDetailSanPhamView extends JPanel {
     private void handleClickButtonScanQrCode() {
         QrCodeHelper.showWebcam("Tìm kiếm bằng QR", result -> {
 
-            LoadingDialog loading = new LoadingDialog();
             executorService.submit(() -> {
                 try {
                     String code = result.getText();

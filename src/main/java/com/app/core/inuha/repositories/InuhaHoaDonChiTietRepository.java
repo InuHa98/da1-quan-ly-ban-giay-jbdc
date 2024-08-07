@@ -175,8 +175,8 @@ public class InuhaHoaDonChiTietRepository implements IDAOinterface<InuhaHoaDonCh
                 JOIN SanPham AS sp ON sp.id = spct.id_san_pham
             WHERE 
                 hdct.id_hoa_don = ? AND
-                sp.trang_thai_xoa = 0 AND
-                spct.trang_thai_xoa = 0
+                sp.trang_thai_xoa != 1 AND
+                spct.trang_thai_xoa != 1
 	    ORDER BY hdct.id DESC 
         """, TABLE_NAME);
 
@@ -393,7 +393,7 @@ public class InuhaHoaDonChiTietRepository implements IDAOinterface<InuhaHoaDonCh
             .build();
     }
     
-    public String getLastCode() throws SQLException {
+    public String getLastId() throws SQLException {
         String query = String.format("SELECT IDENT_CURRENT('%s') AS NextId", TABLE_NAME);
         try {
 	    BigDecimal id = (BigDecimal) JbdcHelper.value(query);

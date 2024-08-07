@@ -128,7 +128,7 @@ public class InuhaTaiKhoanRepository implements IDAOinterface<InuhaTaiKhoanModel
 
     @Override
     public boolean has(Integer id) throws SQLException {
-        String query = String.format("SELECT TOP(1) 1 FROM %s WHERE id = ? AND trang_thai_xoa = 0", TABLE_NAME);
+        String query = String.format("SELECT TOP(1) 1 FROM %s WHERE id = ? AND trang_thai_xoa != 1", TABLE_NAME);
         try {
             return JbdcHelper.value(query, id) != null;
         } catch (Exception e) {
@@ -153,7 +153,7 @@ public class InuhaTaiKhoanRepository implements IDAOinterface<InuhaTaiKhoanModel
             FROM %s
             WHERE
                 tai_khoan LIKE ? AND
-                trang_thai_xoa = 0
+                trang_thai_xoa != 1
         """, TABLE_NAME);
         try {
             return JbdcHelper.value(query, username) != null;
@@ -169,7 +169,7 @@ public class InuhaTaiKhoanRepository implements IDAOinterface<InuhaTaiKhoanModel
             FROM %s
             WHERE
                 email LIKE ? AND
-                trang_thai_xoa = 0
+                trang_thai_xoa != 1
         """, TABLE_NAME);
         try {
             return JbdcHelper.value(query, email) != null;
@@ -185,7 +185,7 @@ public class InuhaTaiKhoanRepository implements IDAOinterface<InuhaTaiKhoanModel
             FROM %s
             WHERE
                 sdt LIKE ? AND
-                trang_thai_xoa = 0
+                trang_thai_xoa != 1
         """, TABLE_NAME);
         try {
             return JbdcHelper.value(query, sdt) != null;
@@ -202,7 +202,7 @@ public class InuhaTaiKhoanRepository implements IDAOinterface<InuhaTaiKhoanModel
             WHERE
                 tai_khoan LIKE ? AND
                 id != ? AND
-                trang_thai_xoa = 0
+                trang_thai_xoa != 1
         """, TABLE_NAME);
         try {
             return JbdcHelper.value(query, model.getUsername(), model.getId()) != null;
@@ -219,7 +219,7 @@ public class InuhaTaiKhoanRepository implements IDAOinterface<InuhaTaiKhoanModel
             WHERE
                 email LIKE ? AND
                 id != ? AND
-                trang_thai_xoa = 0
+                trang_thai_xoa != 1
         """, TABLE_NAME);
         try {
             return JbdcHelper.value(query, model.getEmail(), model.getId()) != null;
@@ -236,7 +236,7 @@ public class InuhaTaiKhoanRepository implements IDAOinterface<InuhaTaiKhoanModel
             WHERE
                 sdt LIKE ? AND
                 id != ? AND
-                trang_thai_xoa = 0
+                trang_thai_xoa != 1
         """, TABLE_NAME);
         try {
             return JbdcHelper.value(query, model.getSdt(), model.getId()) != null;
@@ -251,7 +251,7 @@ public class InuhaTaiKhoanRepository implements IDAOinterface<InuhaTaiKhoanModel
         ResultSet resultSet = null;
         InuhaTaiKhoanModel TaiKhoan = null;
 
-        String query = String.format("SELECT * FROM %s WHERE id = ? AND trang_thai_xoa = 0", TABLE_NAME);
+        String query = String.format("SELECT * FROM %s WHERE id = ? AND trang_thai_xoa != 1", TABLE_NAME);
 
         try {
             resultSet = JbdcHelper.query(query, id);
@@ -277,7 +277,7 @@ public class InuhaTaiKhoanRepository implements IDAOinterface<InuhaTaiKhoanModel
         String query = String.format("""
             SELECT *, ROW_NUMBER() OVER (ORDER BY id DESC) AS stt
             FROM %s
-            WHERE trang_thai_xoa = 0
+            WHERE trang_thai_xoa != 1
             ORDER BY id DESC
         """, TABLE_NAME);
 
@@ -311,7 +311,7 @@ public class InuhaTaiKhoanRepository implements IDAOinterface<InuhaTaiKhoanModel
                     ROW_NUMBER() OVER (ORDER BY id DESC) AS stt
                 FROM %s
                 WHERE 
-                    trang_thai_xoa = 0 AND
+                    trang_thai_xoa != 1 AND
 		    (
 			(? IS NULL OR tai_khoan LIKE ? OR ho_ten LIKE ? OR email LIKE ?) AND
 			(COALESCE(?, -1) < 0 OR adm = ?) AND
@@ -370,7 +370,7 @@ public class InuhaTaiKhoanRepository implements IDAOinterface<InuhaTaiKhoanModel
             SELECT COUNT(*)
             FROM %s 
             WHERE 
-                trang_thai_xoa = 0 AND
+                trang_thai_xoa != 1 AND
 		(
 		    (? IS NULL OR tai_khoan LIKE ? OR ho_ten LIKE ? OR email LIKE ?) AND
 		    (COALESCE(?, -1) < 0 OR adm = ?) AND
@@ -430,7 +430,7 @@ public class InuhaTaiKhoanRepository implements IDAOinterface<InuhaTaiKhoanModel
         ResultSet resultSet = null;
         InuhaTaiKhoanModel taiKhoan = null;
 
-        String query = String.format("SELECT * FROM %s WHERE email LIKE ? AND trang_thai_xoa = 0", TABLE_NAME);
+        String query = String.format("SELECT * FROM %s WHERE email LIKE ? AND trang_thai_xoa != 1", TABLE_NAME);
 
         try {
 
@@ -453,7 +453,7 @@ public class InuhaTaiKhoanRepository implements IDAOinterface<InuhaTaiKhoanModel
         ResultSet resultSet = null;
         InuhaTaiKhoanModel taiKhoan = null;
 
-        String query = String.format("SELECT * FROM %s WHERE tai_khoan LIKE ? AND trang_thai_xoa = 0", TABLE_NAME);
+        String query = String.format("SELECT * FROM %s WHERE tai_khoan LIKE ? AND trang_thai_xoa != 1", TABLE_NAME);
 
         try {
             resultSet = JbdcHelper.query(query, username);
@@ -474,7 +474,7 @@ public class InuhaTaiKhoanRepository implements IDAOinterface<InuhaTaiKhoanModel
     public Integer updateOTPById(int id, String otp) throws SQLException {
         int row = 0;
 
-        String query = String.format("UPDATE %s SET otp = ? WHERE id = ? AND trang_thai_xoa = 0", TABLE_NAME);
+        String query = String.format("UPDATE %s SET otp = ? WHERE id = ? AND trang_thai_xoa != 1", TABLE_NAME);
 
         Object[] args = new Object[] {
             otp,
@@ -492,7 +492,7 @@ public class InuhaTaiKhoanRepository implements IDAOinterface<InuhaTaiKhoanModel
     }
 
     public boolean checkOtp(String email, String otp) throws SQLException {
-        String query = String.format("SELECT TOP(1) 1 FROM %s WHERE email LIKE ? AND otp = ? AND trang_thai_xoa = 0", TABLE_NAME);
+        String query = String.format("SELECT TOP(1) 1 FROM %s WHERE email LIKE ? AND otp = ? AND trang_thai_xoa != 1", TABLE_NAME);
 
         Object[] args = new Object[] {
             email,
@@ -513,7 +513,7 @@ public class InuhaTaiKhoanRepository implements IDAOinterface<InuhaTaiKhoanModel
         String query = String.format("""
             UPDATE %s
             SET mat_khau = ?, otp = NULL
-            WHERE email LIKE ? AND otp = ? AND trang_thai_xoa = 0
+            WHERE email LIKE ? AND otp = ? AND trang_thai_xoa != 1
         """, TABLE_NAME);
 
         Object[] args = new Object[] {
@@ -535,7 +535,7 @@ public class InuhaTaiKhoanRepository implements IDAOinterface<InuhaTaiKhoanModel
     public Integer updateAvatar(int id, String avatar) throws SQLException {
         int row = 0;
 
-        String query = String.format("UPDATE %s SET hinh_anh = ? WHERE id = ? AND trang_thai_xoa = 0", TABLE_NAME);
+        String query = String.format("UPDATE %s SET hinh_anh = ? WHERE id = ? AND trang_thai_xoa != 1", TABLE_NAME);
 
         Object[] args = new Object[] {
             avatar,
@@ -555,7 +555,7 @@ public class InuhaTaiKhoanRepository implements IDAOinterface<InuhaTaiKhoanModel
     public Integer updatePassword(int id, String oldPassword, String newPassword) throws SQLException {
         int row = 0;
 
-        String query = String.format("UPDATE %s SET mat_khau = ? WHERE id = ? AND mat_khau = ? AND trang_thai_xoa = 0", TABLE_NAME);
+        String query = String.format("UPDATE %s SET mat_khau = ? WHERE id = ? AND mat_khau = ? AND trang_thai_xoa != 1", TABLE_NAME);
 
         Object[] args = new Object[] {
             newPassword,
@@ -573,8 +573,8 @@ public class InuhaTaiKhoanRepository implements IDAOinterface<InuhaTaiKhoanModel
         return row;
     }
 
-    public int getNextId() throws SQLException {
-        String query = String.format("SELECT IDENT_CURRENT('%s') + 1 AS NextId", TABLE_NAME);
+    public int getLastId() throws SQLException {
+        String query = String.format("SELECT IDENT_CURRENT('%s') AS NextId", TABLE_NAME);
         try {
 	    BigDecimal id = (BigDecimal) JbdcHelper.value(query);
             return id.intValue();

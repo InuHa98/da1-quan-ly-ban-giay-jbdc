@@ -25,8 +25,10 @@ import raven.modal.component.SimpleModalBorder;
 import com.app.views.UI.table.ITableActionEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import javax.swing.SwingWorker;
 
 /**
  *
@@ -45,6 +47,8 @@ public class InuhaListThuongHieuView extends javax.swing.JPanel {
     private int sizePage = pagination.getLimitItem();
     
     private List<InuhaThuongHieuModel> dataItems = new ArrayList<>();
+    
+    private final LoadingDialog loading = new LoadingDialog();
     
     public final static String MODAL_ID_CREATE = "modal_create_danh_muc";
         
@@ -88,28 +92,40 @@ public class InuhaListThuongHieuView extends javax.swing.JPanel {
                 }
                 InuhaThuongHieuModel item = dataItems.get(row);
                 
-                LoadingDialog loadingDialog = new LoadingDialog();
-
-                executorService.submit(() -> {
-                    if (MessageModal.confirmWarning("Xoá: " + item.getTen(), "Bạn thực sự muốn xoá thương hiệu này?")) {
-                        executorService.submit(() -> {
-                            try {
-                                thuongHieuService.delete(item.getId());
-                                loadingDialog.dispose();
-                                InuhaAddSanPhamView.getInstance().loadDataThuongHieu();
-                                loadDataPage();
-                                MessageToast.success("Xoá thành công thương hiệu: " + item.getTen());
-                            } catch (ServiceResponseException e) {
-                                loadingDialog.dispose();
-                                MessageToast.error(e.getMessage());
-                            } catch (Exception e) {
-                                loadingDialog.dispose();
-                                MessageModal.error(ErrorConstant.DEFAULT_ERROR);
-                            } 
-                        });
-                        loadingDialog.setVisible(true);
+                SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
+                    @Override
+                    protected Boolean doInBackground() throws Exception {
+                        return MessageModal.confirmWarning("Xoá: " + item.getTen(), "Bạn thực sự muốn xoá thương hiệu này?");
                     }
-                });
+
+                    @Override
+                    protected void done() {
+                        try {
+                            if (get()) {
+                                executorService.submit(() -> {
+                                    try {
+                                        thuongHieuService.delete(item.getId());
+                                        InuhaAddSanPhamView.getInstance().loadDataThuongHieu();
+                                        loadDataPage();
+                                        MessageToast.success("Xoá thành công thương hiệu: " + item.getTen());
+                                    } catch (ServiceResponseException e) {
+                                        MessageToast.error(e.getMessage());
+                                    } catch (Exception e) {
+
+                                        MessageModal.error(ErrorConstant.DEFAULT_ERROR);
+                                    } finally {
+                                        loading.dispose();
+                                    }
+                                });
+                                loading.setVisible(true);
+                            }
+                        } catch (InterruptedException | ExecutionException ex) {
+                        }
+                    }
+                    
+                };
+                worker.execute();
+                
             }
 
             @Override

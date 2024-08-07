@@ -41,7 +41,6 @@ import com.app.core.inuha.views.all.banhang.components.InuhaConfirmHoaDonView;
 import com.app.core.inuha.views.all.banhang.components.InuhaEditGioHangView;
 import com.app.core.inuha.views.all.banhang.components.InuhaListKhachHangView;
 import com.app.core.inuha.views.all.banhang.components.InuhaListPhieuGiamGiaView;
-import com.app.core.inuha.views.quanly.InuhaSanPhamView;
 import com.app.core.inuha.views.quanly.components.table.soluongton.InuhaSoLuongTonSanPhamTableCellRender;
 import com.app.utils.BillUtils;
 import com.app.utils.ColorUtils;
@@ -52,15 +51,11 @@ import com.app.utils.TimeUtils;
 import com.app.utils.VoucherUtils;
 import com.app.views.UI.combobox.ComboBoxItem;
 import com.app.views.UI.dialog.LoadingDialog;
-import com.app.views.UI.panel.qrcode.IQRCodeScanEvent;
-import com.app.views.UI.panel.qrcode.WebcamQRCodeScanPanel;
 import com.app.views.UI.table.TableCustomUI;
 import com.app.views.UI.table.celll.TableAlignCenterCellRender;
 import com.app.views.UI.table.celll.TableImageCellRender;
 import com.formdev.flatlaf.FlatClientProperties;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -76,11 +71,9 @@ import java.util.logging.Logger;
 import javax.swing.JComboBox;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -152,6 +145,8 @@ public class InuhaBanHangView extends javax.swing.JPanel {
     private InuhaPhieuGiamGiaModel currentPhieuGiamGia = null;
     
     private InuhaKhachHangModel currentKhachHang = null;
+    
+    private final LoadingDialog loading = new LoadingDialog();
     
     private boolean reLoad = true;
     
@@ -430,7 +425,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
             @Override
             public void onChangeLimitItem(JComboBox<Integer> comboBox) {
                 sizePage = (int) comboBox.getSelectedItem();
-		LoadingDialog loading = new LoadingDialog();
+		
 		executorService.submit(() -> { 
 		    loadDataPageSanPham(1);
 		    loading.dispose();
@@ -440,7 +435,6 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 
             @Override
             public void onClickPage(int page) {
-		LoadingDialog loading = new LoadingDialog();
 		executorService.submit(() -> { 
 		    loadDataPageSanPham(page);
 		    loading.dispose();
@@ -1585,7 +1579,6 @@ public class InuhaBanHangView extends javax.swing.JPanel {
             return;
         }
 	
-	LoadingDialog loading = new LoadingDialog();
         executorService.submit(() -> {
             loadDataPageSanPham();
             loading.dispose();
@@ -1594,7 +1587,6 @@ public class InuhaBanHangView extends javax.swing.JPanel {
     }
 
     private void handleClickButtonReset() {
-        LoadingDialog loading = new LoadingDialog();
         executorService.submit(() -> {
             txtTuKhoa.setText(null);
             cboDanhMuc.setSelectedIndex(0);
@@ -1610,7 +1602,6 @@ public class InuhaBanHangView extends javax.swing.JPanel {
     }
 
     private void handleClickButtonCreateBill() {
-	LoadingDialog loading = new LoadingDialog();
 	executorService.submit(() -> {
 	    try {
 		InuhaHoaDonModel model = new InuhaHoaDonModel();
@@ -1669,7 +1660,6 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 	currentHoaDon = dataItemsHoaDonCho.get(i);
 	currentKhachHang = dataItemsHoaDonCho.get(i).getKhachHang();
 	
-	LoadingDialog loading = new LoadingDialog();
 	executorService.submit(() -> {
 	    loadDataGioHang();
 	    loading.dispose();
@@ -1775,7 +1765,6 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 	    protected void done() {
 		try {
 		    if (get()) {
-			LoadingDialog loading = new LoadingDialog();
 			try {
 			    currentHoaDon.setTrangThai(TrangThaiHoaDonConstant.STATUS_DA_HUY);
 			    hoaDonService.update(currentHoaDon);
@@ -1819,7 +1808,6 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 	    return;
 	}
 	
-	LoadingDialog loading = new LoadingDialog();
 	executorService.submit(() -> {
 	    try {
 		currentKhachHang = khachHang;
@@ -1849,7 +1837,6 @@ public class InuhaBanHangView extends javax.swing.JPanel {
     }
 	
     private void handleClickButtonClearKhachHang() {
-	LoadingDialog loading = new LoadingDialog();
 	executorService.submit(() -> {
 	    try {
 		clearVoucher();
@@ -1893,7 +1880,6 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 	}
 	
 	QrCodeHelper.showWebcam(result -> { 
-            LoadingDialog loading = new LoadingDialog();
             executorService.submit(() -> {
                 try {
                     String code = result.getText();
@@ -1932,7 +1918,6 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 	    MessageToast.warning("Sản phẩm đã hết hàng hoặc đã ngừng bán!");
 	    return;
 	}
-	LoadingDialog loading = new LoadingDialog();
 	executorService.submit(() -> {
 	    try {
 		InuhaHoaDonChiTietModel hoaDonChiTiet = new InuhaHoaDonChiTietModel();
@@ -1963,7 +1948,6 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 	    return;
 	}
 	
-	LoadingDialog loading = new LoadingDialog();
 	executorService.submit(() -> {
 	    try {
 		hoaDonChiTietService.update(hoaDonChiTiet, soLuongChenhLech);
@@ -2009,7 +1993,6 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 	    return;
 	}
 	
-	LoadingDialog loading = new LoadingDialog();
 	executorService.submit(() -> {
 	    try {
 		hoaDonChiTietService.delete(currentHoaDonChiTiet);
@@ -2094,7 +2077,6 @@ public class InuhaBanHangView extends javax.swing.JPanel {
     }
     
     public void submitSave(boolean printInvoice) { 
-	LoadingDialog loading = new LoadingDialog();
 	try {
 	    String tienMat = txtTienMat.getText().trim();
 	    String tienChuyenKhoan = txtTienChuyenKhoan.getText().trim();
@@ -2159,14 +2141,27 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 
     private void handleClickButtonSelectVoucher() {
 	if (currentPhieuGiamGia != null) { 
-	    executorService.submit(() -> {
-		if (MessageModal.confirmWarning("Sẽ huỷ áp dụng mã giảm giá hiện tại. Vẫn sẽ tiếp tục?")) {
-		    currentPhieuGiamGia = null;
-		    clearVoucher();
-		    showSelectVoucher();
-		}
-	    });
-	    return;
+            
+            SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
+                @Override
+                protected Boolean doInBackground() throws Exception {
+                    return MessageModal.confirmWarning("Sẽ huỷ áp dụng mã giảm giá hiện tại. Vẫn sẽ tiếp tục?");
+                }
+
+                @Override
+                protected void done() {
+                    try {
+                        if (get()) {
+                            currentPhieuGiamGia = null;
+                            clearVoucher();
+                            showSelectVoucher();
+                        }
+                    } catch (InterruptedException | ExecutionException ex) {
+                    }
+                }
+  
+            };
+            worker.execute();
 	}
 	showSelectVoucher();
     }

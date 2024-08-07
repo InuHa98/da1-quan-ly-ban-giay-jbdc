@@ -1,9 +1,11 @@
 package com.app.utils;
 
 import com.app.common.helper.MailerHelper;
+import com.app.common.infrastructure.request.FillterRequest;
 import com.app.common.infrastructure.session.AvatarUpload;
 import com.app.common.infrastructure.session.SessionLogin;
 import com.app.core.inuha.models.InuhaTaiKhoanModel;
+import com.app.core.inuha.services.InuhaTaiKhoanService;
 import static com.app.utils.ProductUtils.getUrlImageProduct;
 
 import javax.swing.*;
@@ -37,6 +39,16 @@ public class SessionUtils {
 
     private static final SecureRandom random = new SecureRandom();
 
+    public static int getInsertId() {
+        int lastId = InuhaTaiKhoanService.getInstance().getLastId();
+        if (lastId == 1) { 
+            if (InuhaTaiKhoanService.getInstance().count(new FillterRequest()) < 1) {
+                lastId--;
+            }
+        }
+        return ++lastId;
+    }
+    
     public static String generatePassword(int length) {
         if (length < ValidateUtils.MIN_LENGTH_PASSWORD) {
             throw new IllegalArgumentException("Mật khẩu phải lớn hơn hoặc bằng " + ValidateUtils.MIN_LENGTH_PASSWORD + " ký tự");

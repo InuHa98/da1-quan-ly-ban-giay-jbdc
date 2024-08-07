@@ -29,9 +29,13 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JTextField;
+import javax.swing.SwingWorker;
 
 /**
  *
@@ -54,6 +58,8 @@ public class InuhaListKhachHangView extends javax.swing.JPanel {
     public final static String MODAL_ID_CREATE = "modal_create_khach_hang";
             
     private JTextField txtTuKhoa;
+    
+    private final LoadingDialog loading = new LoadingDialog();
         
     public static InuhaListKhachHangView getInstance() { 
         if (instance == null) { 
@@ -107,31 +113,42 @@ public class InuhaListKhachHangView extends javax.swing.JPanel {
                     table.getCellEditor().stopCellEditing();
                 }
                 InuhaKhachHangModel item = dataItems.get(row);
-                
-                LoadingDialog loadingDialog = new LoadingDialog();
-
-                executorService.submit(() -> {
-                    if (MessageModal.confirmWarning("Xoá: " + item.getHoTen(), "Bạn thực sự muốn xoá khách hàng này?")) {
-                        executorService.submit(() -> {
-                            try {
-                                khachHangService.delete(item.getId());
-				int currentId = khachHang == null ? -1 : khachHang.getId();
-				if (item.getId() == currentId) {
-				    InuhaBanHangView.getInstance().setKhachHang(null);
-				}
-                                loadDataPage();
-                                MessageToast.success("Xoá thành công khách hàng: " + item.getHoTen());
-                            } catch (ServiceResponseException e) {
-                                MessageToast.error(e.getMessage());
-                            } catch (Exception e) {
-                                MessageModal.error(ErrorConstant.DEFAULT_ERROR);
-                            }  finally {
-				loadingDialog.dispose();
-			    }
-                        });
-                        loadingDialog.setVisible(true);
+                SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
+                    @Override
+                    protected Boolean doInBackground() throws Exception {
+                        return MessageModal.confirmWarning("Xoá: " + item.getHoTen(), "Bạn thực sự muốn xoá khách hàng này?");
                     }
-                });
+
+                    @Override
+                    protected void done() {
+                        try {
+                            if(get()) {
+                                executorService.submit(() -> {
+                                    try {
+                                        khachHangService.delete(item.getId());
+                                        int currentId = khachHang == null ? -1 : khachHang.getId();
+                                        if (item.getId() == currentId) {
+                                            InuhaBanHangView.getInstance().setKhachHang(null);
+                                        }
+                                        loadDataPage();
+                                        MessageToast.success("Xoá thành công khách hàng: " + item.getHoTen());
+                                    } catch (ServiceResponseException e) {
+                                        MessageToast.error(e.getMessage());
+                                    } catch (Exception e) {
+                                        MessageModal.error(ErrorConstant.DEFAULT_ERROR);
+                                    }  finally {
+                                        loading.dispose();
+                                    }
+                                });
+                                loading.setVisible(true);
+                            }
+                        } catch (InterruptedException | ExecutionException ex) {
+                        }
+                    }
+                    
+                };
+                worker.execute();
+               
             }
 
             @Override
@@ -199,7 +216,6 @@ public class InuhaListKhachHangView extends javax.swing.JPanel {
             @Override
             public void onChangeLimitItem(JComboBox<Integer> comboBox) {
                 sizePage = (int) comboBox.getSelectedItem();
-		LoadingDialog loading = new LoadingDialog();
 		executorService.submit(() -> { 
 		    loadDataPage(1);
 		    loading.dispose();
@@ -209,7 +225,6 @@ public class InuhaListKhachHangView extends javax.swing.JPanel {
 
             @Override
             public void onClickPage(int page) {
-		LoadingDialog loading = new LoadingDialog();
 		executorService.submit(() -> { 
 		    loadDataPage(page);
 		    loading.dispose();
@@ -366,7 +381,6 @@ public class InuhaListKhachHangView extends javax.swing.JPanel {
     }
     
     private void handleClickButtonSearch() {
-	LoadingDialog loading = new LoadingDialog();
 	executorService.submit(() -> {
 	    loadDataPage();
 	    loading.dispose();

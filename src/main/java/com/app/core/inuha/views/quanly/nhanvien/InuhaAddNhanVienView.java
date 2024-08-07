@@ -38,10 +38,14 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import jnafilechooser.api.JnaFileChooser;
 import raven.modal.ModalDialog;
 import raven.modal.component.SimpleModalBorder;
@@ -59,6 +63,8 @@ public class InuhaAddNhanVienView extends javax.swing.JPanel {
     private Color currentColor;
         
     private InuhaTaiKhoanModel model;
+    
+    private final LoadingDialog loading = new LoadingDialog();
     
     /** Creates new form InuhaAddPhieuGiamGiaView */
     
@@ -553,52 +559,63 @@ public class InuhaAddNhanVienView extends javax.swing.JPanel {
             taiKhoan.setTrangThaiXoa(model.isTrangThaiXoa());
         }
 		
-        LoadingDialog loading = new LoadingDialog();
-        executorService.submit(() -> {
-            if (MessageModal.confirmInfo(isEdited ? "Lưu lại thông tin nhân viên?" : "Thêm mới nhân viên này?")) {
-
-                executorService.submit(() -> {
-
-                    try {
-			if (!isEdited) {
-			    taiKhoan.setId(taiKhoanService.getNextId());
-			}
-			
-			if (selectHinhAnh != null && !selectHinhAnh.isEmpty()) {
-			    AvatarUpload avatarUpload = SessionUtils.uploadAvatar(taiKhoan, selectHinhAnh);
-			    MessageToast.clearAll();
-
-			    if (avatarUpload.getFileName() == null) {
-				loading.dispose();
-				MessageToast.error("Không thể upload hình ảnh!");
-				return;
-			    }
-
-			    taiKhoan.setAvatar(avatarUpload.getFileName());			    
-			}
-
-                        if (!isEdited) { 
-                            taiKhoanService.insert(taiKhoan);
-                            MessageToast.success("Thêm mới nhân viên thành công.");
-                            InuhaNhanVienView.getInstance().loadDataPage(1);
-                        } else {
-                            taiKhoanService.update(taiKhoan);
-                            MessageToast.success("Lưu thông tin nhân viên thành công.");
-                            InuhaNhanVienView.getInstance().loadDataPage();
-                        }
-
-                        ModalDialog.closeAllModal();
-                    } catch (ServiceResponseException e) {
-                        MessageToast.error(e.getMessage());
-                    } catch (Exception e) {
-                        MessageToast.error(ErrorConstant.DEFAULT_ERROR);
-                    } finally {
-			loading.dispose();
-		    }
-                });
-                loading.setVisible(true);
+        SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
+            @Override
+            protected Boolean doInBackground() throws Exception {
+                return MessageModal.confirmInfo(isEdited ? "Lưu lại thông tin nhân viên?" : "Thêm mới nhân viên này?");
             }
-        });
+
+            @Override
+            protected void done() {
+                try {
+                    if (get()) {
+                        executorService.submit(() -> {
+
+                            try {
+                                if (!isEdited) {
+                                    taiKhoan.setId(taiKhoanService.getLastId());
+                                }
+
+                                if (selectHinhAnh != null && !selectHinhAnh.isEmpty()) {
+                                    AvatarUpload avatarUpload = SessionUtils.uploadAvatar(taiKhoan, selectHinhAnh);
+                                    MessageToast.clearAll();
+
+                                    if (avatarUpload.getFileName() == null) {
+                                        loading.dispose();
+                                        MessageToast.error("Không thể upload hình ảnh!");
+                                        return;
+                                    }
+
+                                    taiKhoan.setAvatar(avatarUpload.getFileName());			    
+                                }
+
+                                if (!isEdited) { 
+                                    taiKhoanService.insert(taiKhoan);
+                                    MessageToast.success("Thêm mới nhân viên thành công.");
+                                    InuhaNhanVienView.getInstance().loadDataPage(1);
+                                } else {
+                                    taiKhoanService.update(taiKhoan);
+                                    MessageToast.success("Lưu thông tin nhân viên thành công.");
+                                    InuhaNhanVienView.getInstance().loadDataPage();
+                                }
+
+                                ModalDialog.closeAllModal();
+                            } catch (ServiceResponseException e) {
+                                MessageToast.error(e.getMessage());
+                            } catch (Exception e) {
+                                MessageToast.error(ErrorConstant.DEFAULT_ERROR);
+                            } finally {
+                                loading.dispose();
+                            }
+                        });
+                        loading.setVisible(true);
+                    }
+                } catch (InterruptedException | ExecutionException ex) {
+                }
+            }
+            
+        };
+        worker.execute();
     }
 
     private void handleUploadAvatar(MouseEvent evt) {
@@ -611,8 +628,6 @@ public class InuhaAddNhanVienView extends javax.swing.JPanel {
         boolean act = ch.showOpenDialog(SwingUtilities.getWindowAncestor(this));
         if (act) {
             File file = ch.getSelectedFile();
-
-            LoadingDialog loading = new LoadingDialog();
 
             executorService.submit(() -> {
                 try {

@@ -55,6 +55,7 @@ public class InuhaListPhieuGiamGiaView extends javax.swing.JPanel {
     
     public final static String MODAL_ID_CREATE = "modal_create_phieu_giam_gia";
             
+    private final LoadingDialog loading = new LoadingDialog();
         
     public static InuhaListPhieuGiamGiaView getInstance() { 
         if (instance == null) { 
@@ -142,7 +143,7 @@ public class InuhaListPhieuGiamGiaView extends javax.swing.JPanel {
             @Override
             public void onChangeLimitItem(JComboBox<Integer> comboBox) {
                 sizePage = (int) comboBox.getSelectedItem();
-		LoadingDialog loading = new LoadingDialog();
+		
 		executorService.submit(() -> { 
 		    loadDataPage(1);
 		    loading.dispose();
@@ -152,7 +153,7 @@ public class InuhaListPhieuGiamGiaView extends javax.swing.JPanel {
 
             @Override
             public void onClickPage(int page) {
-		LoadingDialog loading = new LoadingDialog();
+		
 		executorService.submit(() -> { 
 		    loadDataPage(page);
 		    loading.dispose();
@@ -321,7 +322,6 @@ public class InuhaListPhieuGiamGiaView extends javax.swing.JPanel {
 	    return;
 	}
 	
-	LoadingDialog loading = new LoadingDialog();
 	executorService.submit(() -> {
 	    try {
 		InuhaPhieuGiamGiaModel model = phieuGiamGiaService.getByCode(ma);

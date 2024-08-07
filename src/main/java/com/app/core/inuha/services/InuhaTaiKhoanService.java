@@ -320,13 +320,21 @@ public class InuhaTaiKhoanService implements IInuhaNhanVienServiceInterface {
     }
        
        
-    public int getNextId() {
+    public int getLastId() {
         try {
-	    return repository.getNextId();
+	    return repository.getLastId();
         } catch (SQLException e) {
             e.printStackTrace();
             throw new ServiceResponseException(ErrorConstant.DEFAULT_ERROR);
         }
     }
     
+    public int count(FillterRequest request) {
+        try {
+            return repository.count(request);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return 0;
+    }
 }

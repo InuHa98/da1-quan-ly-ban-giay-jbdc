@@ -34,6 +34,10 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ItemEvent;
+import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.SwingWorker;
 import raven.datetime.component.date.DatePicker;
 import raven.modal.ModalDialog;
 import raven.modal.component.SimpleModalBorder;
@@ -64,6 +68,8 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
     
     private DatePicker datePickerNgayKetThuc = new DatePicker();
 	
+    private final LoadingDialog loading = new LoadingDialog();
+    
     private boolean firstLoad = true;
     
     
@@ -144,26 +150,38 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
 		
                 InuhaPhieuGiamGiaModel item = dataItems.get(row);
                 
-                LoadingDialog loadingDialog = new LoadingDialog();
-
-                executorService.submit(() -> {
-                    if (MessageModal.confirmWarning("Xoá: " + item.getMa(), "Không thể hoàn tác. Bạn thực sự muốn xoá phiếu giảm giá này?")) {
-                        executorService.submit(() -> {
-                            try {
-                                phieuGiamGiaService.delete(item.getId());
-                                loadDataPage();
-                                MessageToast.success("Xoá thành công phiếu giảm giá: " + item.getMa());
-                            } catch (ServiceResponseException e) {
-                                MessageToast.error(e.getMessage());
-                            } catch (Exception e) {
-                                MessageModal.error(ErrorConstant.DEFAULT_ERROR);
-                            } finally {
-				loadingDialog.dispose();
-			    }
-                        });
-                        loadingDialog.setVisible(true);
+                SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
+                    @Override
+                    protected Boolean doInBackground() throws Exception {
+                        return MessageModal.confirmWarning("Xoá: " + item.getMa(), "Không thể hoàn tác. Bạn thực sự muốn xoá phiếu giảm giá này?");
                     }
-                });
+
+                    @Override
+                    protected void done() {
+                        try {
+                            if (get()) {
+                                executorService.submit(() -> {
+                                    try {
+                                        phieuGiamGiaService.delete(item.getId());
+                                        loadDataPage();
+                                        MessageToast.success("Xoá thành công phiếu giảm giá: " + item.getMa());
+                                    } catch (ServiceResponseException e) {
+                                        MessageToast.error(e.getMessage());
+                                    } catch (Exception e) {
+                                        MessageModal.error(ErrorConstant.DEFAULT_ERROR);
+                                    } finally {
+                                        loading.dispose();
+                                    }
+                                });
+                                loading.setVisible(true);
+                            }
+                        } catch (InterruptedException | ExecutionException ex) {
+                        }
+                    }
+                    
+                };
+                worker.execute();
+                
             }
 
             @Override
@@ -250,7 +268,6 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
             @Override
             public void onChangeLimitItem(JComboBox<Integer> comboBox) {
                 sizePage = (int) comboBox.getSelectedItem();
-		LoadingDialog loading = new LoadingDialog();
 		executorService.submit(() -> { 
 		    loadDataPage(1);
 		    loading.dispose();
@@ -260,7 +277,6 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
 
             @Override
             public void onClickPage(int page) {
-		LoadingDialog loading = new LoadingDialog();
 		executorService.submit(() -> { 
 		    loadDataPage(page);
 		    loading.dispose();
@@ -560,7 +576,6 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
     // End of variables declaration//GEN-END:variables
 
     private void handleClickButtonClear() {
-        LoadingDialog loading = new LoadingDialog();
         executorService.submit(() -> {
             txtTuKhoa.setText(null);
             cboTrangThai.setSelectedIndex(0);
@@ -578,7 +593,6 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
 	if (firstLoad) {
 	    return;
 	}
-        LoadingDialog loading = new LoadingDialog();
         executorService.submit(() -> {
             loadDataPage();
             loading.dispose();

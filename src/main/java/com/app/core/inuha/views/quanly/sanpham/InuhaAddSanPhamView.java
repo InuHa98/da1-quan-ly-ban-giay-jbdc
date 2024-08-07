@@ -48,13 +48,17 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import jnafilechooser.api.JnaFileChooser;
 import raven.modal.ModalDialog;
 import raven.modal.component.SimpleModalBorder;
@@ -96,6 +100,8 @@ public class InuhaAddSanPhamView extends javax.swing.JPanel {
     private List<InuhaDeGiayModel> dataDeGiay = new ArrayList<>();
     
     private final Color currentColor;
+    
+    private final LoadingDialog loading = new LoadingDialog();
     
     public static InuhaAddSanPhamView getInstance() {
         if (instance == null) {
@@ -197,7 +203,6 @@ public class InuhaAddSanPhamView extends javax.swing.JPanel {
 	cboChatLieu.setPreferredSize(cboSize);
 	cboDeGiay.setPreferredSize(cboSize);
 	
-        LoadingDialog loading = new LoadingDialog();
         executorService.submit(() -> {
             loadDataDanhMuc();
             loadDataThuongHieu();
@@ -929,7 +934,6 @@ public class InuhaAddSanPhamView extends javax.swing.JPanel {
         if (act) {
             File file = ch.getSelectedFile();
 
-            LoadingDialog loading = new LoadingDialog();
 
             executorService.submit(() -> {
                 try {
@@ -1116,57 +1120,70 @@ public class InuhaAddSanPhamView extends javax.swing.JPanel {
             model.setHinhAnh(sanPham.getHinhAnh());
         }
         
-        LoadingDialog loading = new LoadingDialog();
-        executorService.submit(() -> {
-            if (MessageModal.confirmInfo(isEdited ? "Lưu lại thông tin sản phẩm?" : "Thêm mới sản phẩm này?")) {
-
-                executorService.submit(() -> {
-
-                    
-                    String pathImage = ProductUtils.uploadImage(ma, selectHinhAnh);
-                    MessageToast.clearAll();
-
-                    if (pathImage == null) {
-                        loading.dispose();
-                        MessageToast.error("Không thể upload hình ảnh!");
-                        return;
-                    }
-
-                    model.setHinhAnh(pathImage);
-                    
-                    try {
-                        if (!isEdited) { 
-                            sanPhamService.insert(model);
-                            MessageToast.success("Thêm mới sản phẩm thành công.");
-                            InuhaSanPhamView.getInstance().loadDataPage(1);
-			    InuhaSanPhamView.getInstance().loadDataPageSPCT(1);
-                        } else {
-                            sanPhamService.update(model);
-			    if (sanPham.isTrangThai() != trangThai && !trangThai) { 
-				List<InuhaHoaDonChiTietModel> sanPhamCho = InuhaHoaDonChiTietRepository.getInstance().getAllIdsByIdSanPham(sanPham.getId());
-				for(InuhaHoaDonChiTietModel m: sanPhamCho) { 
-				    InuhaHoaDonChiTietService.getInstance().delete(m);
-				}
-			    }
-                            MessageToast.success("Lưu thông tin sản phẩm thành công.");
-                            InuhaSanPhamView.getInstance().loadDataPage();
-			    InuhaSanPhamView.getInstance().loadDataPageSPCT();
-                        }
-
-                        ModalDialog.closeAllModal();
-                    } catch (ServiceResponseException e) {
-			e.printStackTrace();
-                        MessageToast.error(e.getMessage());
-                    } catch (Exception e) {
-			e.printStackTrace();
-                        MessageToast.error(ErrorConstant.DEFAULT_ERROR);
-                    } finally {
-			loading.dispose();
-		    }
-                });
-                loading.setVisible(true);
+        SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
+            @Override
+            protected Boolean doInBackground() throws Exception {
+                return MessageModal.confirmInfo(isEdited ? "Lưu lại thông tin sản phẩm?" : "Thêm mới sản phẩm này?");
             }
-        });
+
+            @Override
+            protected void done() {
+                
+                try {
+                    if (get()) {
+                        executorService.submit(() -> {
+                            
+                            
+                            String pathImage = ProductUtils.uploadImage(ma, selectHinhAnh);
+                            MessageToast.clearAll();
+                            
+                            if (pathImage == null) {
+                                loading.dispose();
+                                MessageToast.error("Không thể upload hình ảnh!");
+                                return;
+                            }
+                            
+                            model.setHinhAnh(pathImage);
+                            
+                            try {
+                                if (!isEdited) {
+                                    sanPhamService.insert(model);
+                                    MessageToast.success("Thêm mới sản phẩm thành công.");
+                                    InuhaSanPhamView.getInstance().loadDataPage(1);
+                                    InuhaSanPhamView.getInstance().loadDataPageSPCT(1);
+                                } else {
+                                    sanPhamService.update(model);
+                                    if (sanPham.isTrangThai() != trangThai && !trangThai) {
+                                        List<InuhaHoaDonChiTietModel> sanPhamCho = InuhaHoaDonChiTietRepository.getInstance().getAllIdsByIdSanPham(sanPham.getId());
+                                        for(InuhaHoaDonChiTietModel m: sanPhamCho) {
+                                            InuhaHoaDonChiTietService.getInstance().delete(m);
+                                        }
+                                    }
+                                    MessageToast.success("Lưu thông tin sản phẩm thành công.");
+                                    InuhaSanPhamView.getInstance().loadDataPage();
+                                    InuhaSanPhamView.getInstance().loadDataPageSPCT();
+                                }
+                                
+                                ModalDialog.closeAllModal();
+                            } catch (ServiceResponseException e) {
+                                e.printStackTrace();
+                                MessageToast.error(e.getMessage());
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                MessageToast.error(ErrorConstant.DEFAULT_ERROR);
+                            } finally {
+                                loading.dispose();
+                            }
+                        });
+                        loading.setVisible(true);
+                    }
+                } catch (InterruptedException | ExecutionException ex) {
+                }
+
+            }
+
+        };
+        worker.execute();
         
     }
 

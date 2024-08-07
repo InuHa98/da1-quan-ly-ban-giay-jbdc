@@ -104,7 +104,7 @@ public class InuhaKhachHangRepository implements IDAOinterface<InuhaKhachHangMod
 
     @Override
     public boolean has(Integer id) throws SQLException {
-        String query = String.format("SELECT TOP(1) 1 FROM %s WHERE id = ? AND trang_thai_xoa = 0", TABLE_NAME);
+        String query = String.format("SELECT TOP(1) 1 FROM %s WHERE id = ? AND trang_thai_xoa != 1", TABLE_NAME);
         try {
             return JbdcHelper.value(query, id) != null;
         } catch (Exception e) {
@@ -117,7 +117,7 @@ public class InuhaKhachHangRepository implements IDAOinterface<InuhaKhachHangMod
         String query = String.format("""
             SELECT TOP(1) 1 
             FROM %s 
-            WHERE sdt LIKE ? AND trang_thai_xoa = 0
+            WHERE sdt LIKE ? AND trang_thai_xoa != 1
         """, TABLE_NAME);
 	try {
             return JbdcHelper.value(query, NumberPhoneUtils.formatPhoneNumber(sdt)) != null;
@@ -144,7 +144,7 @@ public class InuhaKhachHangRepository implements IDAOinterface<InuhaKhachHangMod
             WHERE
                 sdt LIKE ? AND
                 id != ? AND
-                trang_thai_xoa = 0
+                trang_thai_xoa != 1
         """, TABLE_NAME);
         try {
             return JbdcHelper.value(query, NumberPhoneUtils.formatPhoneNumber(model.getSdt()), model.getId()) != null;
@@ -164,7 +164,7 @@ public class InuhaKhachHangRepository implements IDAOinterface<InuhaKhachHangMod
                 kh.*,
                 (SELECT COUNT(*) FROM HoaDon WHERE id_khach_hang = kh.id AND trang_thai = %d) AS luot_mua
             FROM %s AS kh
-            WHERE kh.id = ? AND kh.trang_thai_xoa = 0
+            WHERE kh.id = ? AND kh.trang_thai_xoa != 1
         """, TrangThaiHoaDonConstant.STATUS_DA_THANH_TOAN, TABLE_NAME);
 
         try {
@@ -194,7 +194,7 @@ public class InuhaKhachHangRepository implements IDAOinterface<InuhaKhachHangMod
                 ROW_NUMBER() OVER (ORDER BY kh.id DESC) AS stt,
                 (SELECT COUNT(*) FROM HoaDon WHERE id_khach_hang = kh.id AND trang_thai = %d) AS luot_mua
             FROM %s AS kh
-            WHERE kh.trang_thai_xoa = 0
+            WHERE kh.trang_thai_xoa != 1
             ORDER BY kh.id DESC 
         """, TrangThaiHoaDonConstant.STATUS_DA_THANH_TOAN, TABLE_NAME);
 
@@ -229,7 +229,7 @@ public class InuhaKhachHangRepository implements IDAOinterface<InuhaKhachHangMod
                     (SELECT COUNT(*) FROM HoaDon WHERE id_khach_hang = kh.id AND trang_thai = %d) AS luot_mua
                 FROM %s AS kh
                 WHERE 
-                    kh.trang_thai_xoa = 0 AND
+                    kh.trang_thai_xoa != 1 AND
                     (
 			(? IS NULL OR kh.ho_ten LIKE ? OR kh.sdt LIKE ?) AND
 			(COALESCE(?, -1) < 0 OR kh.gioi_tinh = ?)
@@ -281,7 +281,7 @@ public class InuhaKhachHangRepository implements IDAOinterface<InuhaKhachHangMod
             SELECT COUNT(*) 
             FROM %s 
             WHERE 
-                trang_thai_xoa = 0 AND
+                trang_thai_xoa != 1 AND
 		(
 		    (? IS NULL OR ho_ten LIKE ? OR sdt LIKE ?) AND
 		    (COALESCE(?, -1) < 0 OR gioi_tinh = ?)

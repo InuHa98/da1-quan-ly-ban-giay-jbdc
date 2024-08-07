@@ -1,13 +1,8 @@
 package com.app.common.controller;
 
 import com.app.Application;
-import com.app.views.UI.dialog.LoadingDialog;
-import com.formdev.flatlaf.extras.FlatAnimatedLafChange;
-import lombok.Getter;
-import lombok.Setter;
 
 import javax.swing.*;
-import java.awt.*;
 
 /**
  *

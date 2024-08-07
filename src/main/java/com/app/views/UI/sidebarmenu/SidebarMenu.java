@@ -31,8 +31,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Optional;
 import java.util.TimerTask;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import jnafilechooser.api.JnaFileChooser;
 
 /**
@@ -70,6 +73,8 @@ public class SidebarMenu extends JPanel {
     private ISidebarMenuEvent menuEvent;
 
     private MouseAdapter eventHoverMenu;
+    
+    private final LoadingDialog loading = new LoadingDialog();
     
     private final List<SidebarMenuItem> itemsMenu = SessionUtils.isManager() ? QuanLyRoute.getInstance().getItemSideMenu() : NhanVienRoute.getInstance().getItemSideMenu();
 
@@ -222,47 +227,52 @@ public class SidebarMenu extends JPanel {
         boolean act = ch.showOpenDialog(SwingUtilities.getWindowAncestor(this));
         if (act) {
             File selectedFile = ch.getSelectedFile();
-
-            LoadingDialog loading = new LoadingDialog();
-
-            executor.submit(() -> {
-                if (MessageModal.confirmInfo("Cập nhật ảnh đại diện mới?")) {
-
-                    executor.submit(() -> {
-
-                        AvatarUpload avatarUpload = SessionUtils.uploadAvatar(SessionLogin.getInstance().getData(), selectedFile.getAbsolutePath());
-                        MessageToast.clearAll();
-
-                        if (avatarUpload.getFileName() == null) {
-                            loading.dispose();
-                            MessageToast.error("Không thể upload hình ảnh!");
-                            return;
-                        }
-
-                        try {
-                            nhanVienService.changeAvatar(avatarUpload.getFileName());
-                            loading.dispose();
-
-                            lbAvatar.setImage(avatarUpload.getDataImage());
-                            MessageToast.success("Cập nhật ảnh đại diện thành công.");
-
-                        } catch (ServiceResponseException e) {
-                            loading.dispose();
-                            MessageToast.error(e.getMessage());
-                        } catch (Exception e) {
-                            loading.dispose();
-                            MessageToast.error(ErrorConstant.DEFAULT_ERROR);
-                        }
-                    });
-
-                    loading.setVisible(true);
-		    
+            
+            SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
+                @Override
+                protected Boolean doInBackground() throws Exception {
+                    return MessageModal.confirmInfo("Cập nhật ảnh đại diện mới?");
                 }
-            });
 
+                @Override
+                protected void done() {
+                    try {
+                        if (get()) {
+                            executor.submit(() -> {
 
+                                AvatarUpload avatarUpload = SessionUtils.uploadAvatar(SessionLogin.getInstance().getData(), selectedFile.getAbsolutePath());
+                                MessageToast.clearAll();
 
+                                if (avatarUpload.getFileName() == null) {
+                                    loading.dispose();
+                                    MessageToast.error("Không thể upload hình ảnh!");
+                                    return;
+                                }
 
+                                try {
+                                    nhanVienService.changeAvatar(avatarUpload.getFileName());
+                                    loading.dispose();
+
+                                    lbAvatar.setImage(avatarUpload.getDataImage());
+                                    MessageToast.success("Cập nhật ảnh đại diện thành công.");
+
+                                } catch (ServiceResponseException e) {
+                                    loading.dispose();
+                                    MessageToast.error(e.getMessage());
+                                } catch (Exception e) {
+                                    loading.dispose();
+                                    MessageToast.error(ErrorConstant.DEFAULT_ERROR);
+                                }
+                            });
+
+                            loading.setVisible(true);
+                        }
+                    } catch (InterruptedException | ExecutionException ex) {
+                    }
+                }
+                
+            };
+            worker.execute();
         }
     }
 
@@ -296,7 +306,6 @@ public class SidebarMenu extends JPanel {
                         unSelectedMenu = selectedMenu;
                         selectedMenu = menuButton;
                         animator.start();
-			LoadingDialog loading = new LoadingDialog();
 			executor.submit(() -> { 
 			    menuEvent.menuSelected(menuButton.getIndex());
 			    loading.dispose();

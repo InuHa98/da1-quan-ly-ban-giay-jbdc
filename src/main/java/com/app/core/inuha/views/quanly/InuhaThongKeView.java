@@ -66,6 +66,8 @@ public class InuhaThongKeView extends javax.swing.JPanel {
     
     private InuhaFilterThongKeRequest filter = new InuhaFilterThongKeRequest();
 	
+    private final LoadingDialog loading = new LoadingDialog();
+    
     private boolean firstLoad = true;
     
     /** Creates new form BanHangView */
@@ -338,7 +340,6 @@ public class InuhaThongKeView extends javax.swing.JPanel {
             @Override
             public void onChangeLimitItem(JComboBox<Integer> comboBox) {
                 sizePage = (int) comboBox.getSelectedItem();
-		LoadingDialog loading = new LoadingDialog();
 		executorService.submit(() -> { 
 		    loadDataPage(1);
 		    loading.dispose();
@@ -348,7 +349,6 @@ public class InuhaThongKeView extends javax.swing.JPanel {
 
             @Override
             public void onClickPage(int page) {
-		LoadingDialog loading = new LoadingDialog();
 		executorService.submit(() -> { 
 		    loadDataPage(page);
 		    loading.dispose();
@@ -893,7 +893,6 @@ public class InuhaThongKeView extends javax.swing.JPanel {
 	}
 	
 	if (evt.getStateChange() == ItemEvent.SELECTED) { 
-	    LoadingDialog loading = new LoadingDialog();
 	    executorService.submit(() -> { 
 		loadDataPage(1);
 		loading.dispose();
@@ -904,7 +903,6 @@ public class InuhaThongKeView extends javax.swing.JPanel {
 
     private void btnClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearActionPerformed
         // TODO add your handling code here:
-	LoadingDialog loading = new LoadingDialog();
         executorService.submit(() -> {
             cboSanPham.setSelectedIndex(0);
             cboThoiGian.setSelectedIndex(0);
@@ -976,7 +974,6 @@ public class InuhaThongKeView extends javax.swing.JPanel {
 	if (firstLoad) {
 	    return;
 	}
-	LoadingDialog loading = new LoadingDialog();
 	executorService.submit(() -> {
 	    loadDataChart();
 	    loading.dispose();
@@ -996,7 +993,6 @@ public class InuhaThongKeView extends javax.swing.JPanel {
 	    "Số lượng tồn"
 	};
 
-	LoadingDialog loading = new LoadingDialog();
 	executorService.submit(() -> { 
 	    
 	    try {

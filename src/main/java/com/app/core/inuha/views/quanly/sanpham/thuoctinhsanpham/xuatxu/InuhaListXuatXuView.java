@@ -25,8 +25,10 @@ import raven.modal.component.SimpleModalBorder;
 import com.app.views.UI.table.ITableActionEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import javax.swing.SwingWorker;
 
 /**
  *
@@ -45,6 +47,8 @@ public class InuhaListXuatXuView extends javax.swing.JPanel {
     private int sizePage = pagination.getLimitItem();
     
     private List<InuhaXuatXuModel> dataItems = new ArrayList<>();
+    
+    private final LoadingDialog loading = new LoadingDialog();
     
     public final static String MODAL_ID_CREATE = "modal_create_xuat_xu";
         
@@ -88,28 +92,38 @@ public class InuhaListXuatXuView extends javax.swing.JPanel {
                 }
                 InuhaXuatXuModel item = dataItems.get(row);
                 
-                LoadingDialog loadingDialog = new LoadingDialog();
-
-                executorService.submit(() -> {
-                    if (MessageModal.confirmWarning("Xoá: " + item.getTen(), "Bạn thực sự muốn xoá xuất xứ này?")) {
-                        executorService.submit(() -> {
-                            try {
-                                xuatXuService.delete(item.getId());
-                                loadingDialog.dispose();
-                                InuhaAddSanPhamView.getInstance().loadDataXuatXu();
-                                loadDataPage();
-                                MessageToast.success("Xoá thành công xuất xứ: " + item.getTen());
-                            } catch (ServiceResponseException e) {
-                                loadingDialog.dispose();
-                                MessageToast.error(e.getMessage());
-                            } catch (Exception e) {
-                                loadingDialog.dispose();
-                                MessageModal.error(ErrorConstant.DEFAULT_ERROR);
-                            } 
-                        });
-                        loadingDialog.setVisible(true);
+                SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
+                    @Override
+                    protected Boolean doInBackground() throws Exception {
+                        return MessageModal.confirmWarning("Xoá: " + item.getTen(), "Bạn thực sự muốn xoá xuất xứ này?");
                     }
-                });
+
+                    @Override
+                    protected void done() {
+                        try {
+                            if (get()) {
+                                executorService.submit(() -> {
+                                    try {
+                                        xuatXuService.delete(item.getId());
+                                        InuhaAddSanPhamView.getInstance().loadDataXuatXu();
+                                        loadDataPage();
+                                        MessageToast.success("Xoá thành công xuất xứ: " + item.getTen());
+                                    } catch (ServiceResponseException e) {
+                                        MessageToast.error(e.getMessage());
+                                    } catch (Exception e) {
+                                        MessageModal.error(ErrorConstant.DEFAULT_ERROR);
+                                    } finally {
+                                        loading.dispose();
+                                    }
+                                });
+                                loading.setVisible(true);
+                            }
+                        } catch (InterruptedException | ExecutionException ex) {
+                        }
+                    }
+                    
+                };
+                worker.execute();
             }
 
             @Override
@@ -166,7 +180,6 @@ public class InuhaListXuatXuView extends javax.swing.JPanel {
             @Override
             public void onChangeLimitItem(JComboBox<Integer> comboBox) {
                 sizePage = (int) comboBox.getSelectedItem();
-		LoadingDialog loading = new LoadingDialog();
 		executorService.submit(() -> { 
 		    loadDataPage(1);
 		    loading.dispose();
@@ -176,7 +189,6 @@ public class InuhaListXuatXuView extends javax.swing.JPanel {
 
             @Override
             public void onClickPage(int page) {
-		LoadingDialog loading = new LoadingDialog();
 		executorService.submit(() -> { 
 		    loadDataPage(page);
 		    loading.dispose();

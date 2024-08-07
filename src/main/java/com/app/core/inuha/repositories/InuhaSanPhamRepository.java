@@ -154,7 +154,7 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
 
     @Override
     public boolean has(Integer id) throws SQLException {
-        String query = String.format("SELECT TOP(1) 1 FROM %s WHERE id = ? AND trang_thai_xoa = 0", TABLE_NAME);
+        String query = String.format("SELECT TOP(1) 1 FROM %s WHERE id = ? AND trang_thai_xoa != 1", TABLE_NAME);
         try {
             return JbdcHelper.value(query, id) != null;
         } catch (Exception e) {
@@ -164,7 +164,7 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
     }
 
     public boolean has(String name) throws SQLException {
-        String query = String.format("SELECT TOP(1) 1 FROM %s WHERE ten LIKE ? AND trang_thai_xoa = 0", TABLE_NAME);
+        String query = String.format("SELECT TOP(1) 1 FROM %s WHERE ten LIKE ? AND trang_thai_xoa != 1", TABLE_NAME);
         try {
             return JbdcHelper.value(query, name) != null;
         } catch (Exception e) {
@@ -196,7 +196,7 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
             WHERE
                 ten LIKE ? AND
                 id != ? AND
-                trang_thai_xoa = 0
+                trang_thai_xoa != 1
         """, TABLE_NAME);
         try {
             return JbdcHelper.value(query, model.getTen(), model.getId()) != null;
@@ -242,7 +242,7 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
                 LEFT JOIN DeGiay AS dg ON dg.id = sp.id_de_giay
             WHERE
                 sp.id = ? AND
-                sp.trang_thai_xoa = 0
+                sp.trang_thai_xoa != 1
         """, TABLE_NAME);
 
         try {
@@ -297,7 +297,7 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
                 LEFT JOIN ChatLieu AS cl ON cl.id = sp.id_chat_lieu
                 LEFT JOIN DeGiay AS dg ON dg.id = sp.id_de_giay
             WHERE
-                sp.trang_thai_xoa = 0
+                sp.trang_thai_xoa != 1
             ORDER BY sp.id DESC 
         """, TABLE_NAME);
 
@@ -359,7 +359,7 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
                     LEFT JOIN ChatLieu AS cl ON cl.id = sp.id_chat_lieu
                     LEFT JOIN DeGiay AS dg ON dg.id = sp.id_de_giay
                 WHERE
-                    sp.trang_thai_xoa = 0 AND
+                    sp.trang_thai_xoa != 1 AND
                     (
                         (? IS NULL OR sp.ten LIKE ? OR sp.ma LIKE ?) AND
 			(COALESCE(?, 0) < 1 OR dm.ten LIKE ?) AND
@@ -448,7 +448,7 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
 		LEFT JOIN ChatLieu AS cl ON cl.id = sp.id_chat_lieu
 		LEFT JOIN DeGiay AS dg ON dg.id = sp.id_de_giay
 	    WHERE
-		sp.trang_thai_xoa = 0 AND  
+		sp.trang_thai_xoa != 1 AND  
 		(
 		    (? IS NULL OR sp.ten LIKE ? OR sp.ma LIKE ?) AND
 		    (COALESCE(?, 0) < 1 OR dm.ten LIKE ?) AND
@@ -530,7 +530,7 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
                 LEFT JOIN DeGiay AS dg ON dg.id = sp.id_de_giay
             WHERE
                 sp.ma LIKE ? AND
-                sp.trang_thai_xoa = 0
+                sp.trang_thai_xoa != 1
         """, TABLE_NAME);
 
         try {
@@ -585,7 +585,7 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
     }
     
     
-    public String getLastCode() throws SQLException {
+    public String getLastId() throws SQLException {
         String query = String.format("SELECT IDENT_CURRENT('%s') AS NextId", TABLE_NAME);
         try {
 	    BigDecimal id = (BigDecimal) JbdcHelper.value(query);

@@ -9,6 +9,6 @@ import com.app.core.inuha.models.InuhaSanPhamModel;
  */
 public interface IInuhaSanPhamServiceInterface extends IServiceInterface<InuhaSanPhamModel, Integer> {
 
-    String getLastCode();
+    String getLastId();
     
 }

@@ -61,9 +61,8 @@ public class SessionLogin {
         } catch (ServiceResponseException e) {
             clear();
             MessageModal.closeAll();
-            if (MessageModal.confirmError("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại")) {
-                ApplicationController.getInstance().show(new LoginView());
-            }
+            MessageModal.warning("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại");
+            ApplicationController.getInstance().show(new LoginView());
         }
         return this;
     }

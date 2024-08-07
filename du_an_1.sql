@@ -219,3 +219,155 @@ VALUES
     GETDATE(), -- ngay_tao - date
 	0 -- trang_thai_xoa - bit
 )
+
+INSERT INTO dbo.DanhMuc
+(
+    ten,
+    trang_thai_xoa,
+    ngay_tao,
+    ngay_cap_nhat
+)
+VALUES
+(   N'Giày thể thao',       -- ten - nvarchar(250)
+    0,      -- trang_thai_xoa - bit
+    GETDATE(), -- ngay_tao - date
+    GETDATE()  -- ngay_cap_nhat - date
+),
+(   N'Giày thời trang',       -- ten - nvarchar(250)
+    0,      -- trang_thai_xoa - bit
+    GETDATE(), -- ngay_tao - date
+    GETDATE()  -- ngay_cap_nhat - date
+)
+
+INSERT INTO dbo.ThuongHieu
+(
+    ten,
+    trang_thai_xoa,
+    ngay_tao,
+    ngay_cap_nhat
+)
+VALUES
+(   N'Adidas',       -- ten - nvarchar(250)
+    0,      -- trang_thai_xoa - bit
+    GETDATE(), -- ngay_tao - date
+    GETDATE()  -- ngay_cap_nhat - date
+    )
+,(   N'Puma',       -- ten - nvarchar(250)
+    0,      -- trang_thai_xoa - bit
+    GETDATE(), -- ngay_tao - date
+    GETDATE()  -- ngay_cap_nhat - date
+    )
+
+INSERT INTO dbo.XuatXu
+(
+    ten,
+    trang_thai_xoa,
+    ngay_tao,
+    ngay_cap_nhat
+)
+VALUES
+(   N'Nhật bản',       -- ten - nvarchar(250)
+    0,      -- trang_thai_xoa - bit
+    GETDATE(), -- ngay_tao - date
+    GETDATE()  -- ngay_cap_nhat - date
+    ),
+	(   N'Việt nam',       -- ten - nvarchar(250)
+    0,      -- trang_thai_xoa - bit
+    GETDATE(), -- ngay_tao - date
+    GETDATE()  -- ngay_cap_nhat - date
+    )
+
+INSERT INTO dbo.KieuDang
+(
+    ten,
+    trang_thai_xoa,
+    ngay_tao,
+    ngay_cap_nhat
+)
+VALUES
+(   N'Nam',       -- ten - nvarchar(250)
+    0,      -- trang_thai_xoa - bit
+    GETDATE(), -- ngay_tao - date
+    GETDATE()  -- ngay_cap_nhat - date
+    ),
+	(   N'Nữ',       -- ten - nvarchar(250)
+    0,      -- trang_thai_xoa - bit
+    GETDATE(), -- ngay_tao - date
+    GETDATE()  -- ngay_cap_nhat - date
+    )
+
+INSERT INTO dbo.ChatLieu
+(
+    ten,
+    trang_thai_xoa,
+    ngay_tao,
+    ngay_cap_nhat
+)
+VALUES
+(   N'Cao cấp',       -- ten - nvarchar(250)
+    0,      -- trang_thai_xoa - bit
+    GETDATE(), -- ngay_tao - date
+    GETDATE()  -- ngay_cap_nhat - date
+    ),
+(   N'Real 1:1',       -- ten - nvarchar(250)
+    0,      -- trang_thai_xoa - bit
+    GETDATE(), -- ngay_tao - date
+    GETDATE()  -- ngay_cap_nhat - date
+    )
+
+INSERT INTO dbo.DeGiay
+(
+    ten,
+    trang_thai_xoa,
+    ngay_tao,
+    ngay_cap_nhat
+)
+VALUES
+(   N'Cao',       -- ten - nvarchar(250)
+    0,      -- trang_thai_xoa - bit
+    GETDATE(), -- ngay_tao - date
+    GETDATE()  -- ngay_cap_nhat - date
+    ),
+	(   N'Thấp',       -- ten - nvarchar(250)
+    0,      -- trang_thai_xoa - bit
+    GETDATE(), -- ngay_tao - date
+    GETDATE()  -- ngay_cap_nhat - date
+    )
+
+INSERT INTO dbo.KichCo
+(
+    ten,
+    trang_thai_xoa,
+    ngay_tao,
+    ngay_cap_nhat
+)
+VALUES
+(   N'L',       -- ten - nvarchar(250)
+    0,      -- trang_thai_xoa - bit
+    GETDATE(), -- ngay_tao - date
+    GETDATE()  -- ngay_cap_nhat - date
+    ),
+	(   N'XL',       -- ten - nvarchar(250)
+    0,      -- trang_thai_xoa - bit
+    GETDATE(), -- ngay_tao - date
+    GETDATE()  -- ngay_cap_nhat - date
+    )
+
+INSERT INTO dbo.MauSac
+(
+    ten,
+    trang_thai_xoa,
+    ngay_tao,
+    ngay_cap_nhat
+)
+VALUES
+(   N'Đen',       -- ten - nvarchar(250)
+    0,      -- trang_thai_xoa - bit
+    GETDATE(), -- ngay_tao - date
+    GETDATE()  -- ngay_cap_nhat - date
+    ),
+	(   N'Trắng',       -- ten - nvarchar(250)
+    0,      -- trang_thai_xoa - bit
+    GETDATE(), -- ngay_tao - date
+    GETDATE()  -- ngay_cap_nhat - date
+    )
