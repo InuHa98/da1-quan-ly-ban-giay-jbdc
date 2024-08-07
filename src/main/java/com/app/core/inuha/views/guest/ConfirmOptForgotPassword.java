@@ -79,7 +79,6 @@ public class ConfirmOptForgotPassword extends javax.swing.JPanel {
         setBackground(new java.awt.Color(51, 51, 51));
 
         jLabel1.setFont(jLabel1.getFont().deriveFont(jLabel1.getFont().getSize()+1f));
-        jLabel1.setForeground(new java.awt.Color(204, 204, 204));
         jLabel1.setText("Vui lòng kiểm tra thư mục Spam nếu không nhận được email.");
 
         btnCancel.setText("Huỷ");

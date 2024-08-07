@@ -126,6 +126,10 @@ public class StorageUtils {
         return getImage(FOLDER_PRODUCT + "/" + fileName);
     }
     
+    public static String getUrlImageAvatar(String fileName) { 
+        return FOLDER + "/" + FOLDER_AVATAR + "/" + fileName;
+    }
+	
     public static String getUrlImageProduct(String fileName) { 
         return FOLDER + "/" + FOLDER_PRODUCT + "/" + fileName;
     }

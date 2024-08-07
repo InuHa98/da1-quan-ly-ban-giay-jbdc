@@ -31,11 +31,15 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.SwingWorker;
 import raven.modal.ModalDialog;
 import raven.modal.component.SimpleModalBorder;
 
@@ -62,6 +66,8 @@ public class InuhaAddSanPhamChiTietView extends javax.swing.JPanel {
     private List<InuhaMauSacModel> dataMauSac = new ArrayList<>();
     
     private Color currentColor;
+    
+    private final LoadingDialog loading = new LoadingDialog();
     
     public static InuhaAddSanPhamChiTietView getInstance() { 
         return getInstance(null);
@@ -108,8 +114,8 @@ public class InuhaAddSanPhamChiTietView extends javax.swing.JPanel {
 	}
 		
         currentColor = lblSoLuong.getForeground();
-        roundPanel1.setBackground(ColorUtils.BACKGROUND_PRIMARY);
         btnSubmit.setBackground(ColorUtils.BUTTON_PRIMARY);
+        btnSubmit.setForeground(Color.WHITE);
         
         txtSoLuong.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Tối đa " + MAX);
         
@@ -135,7 +141,6 @@ public class InuhaAddSanPhamChiTietView extends javax.swing.JPanel {
         };
 	txtSoLuong.addKeyListener(eventEnter);
 		
-        LoadingDialog loading = new LoadingDialog();
         executorService.submit(() -> {
             loadDataKichCo();
             loadDataMauSac();
@@ -327,7 +332,7 @@ public class InuhaAddSanPhamChiTietView extends javax.swing.JPanel {
                         .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(btnCmdMauSac, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(cboMauSac, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(18, 18, 18)
                 .addComponent(lblSoLuong)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -471,48 +476,59 @@ public class InuhaAddSanPhamChiTietView extends javax.swing.JPanel {
             model.setTrangThaiXoa(sanPhamChiTiet.isTrangThaiXoa());
         }
         
-        LoadingDialog loading = new LoadingDialog();
-        executorService.submit(() -> {
-            if (MessageModal.confirmInfo(isEdited ? "Lưu lại thông tin sản phẩm chi tiết?" : "Thêm mới sản phẩm chi tiết này?")) {
-
-                executorService.submit(() -> {
-
-                    try {
-                        if (!isEdited) { 
-			    
-                            sanPhamChiTietService.insert(model);
-                            MessageToast.success("Thêm mới sản phẩm chi tiết thành công.");
-                            InuhaDetailSanPhamView.getInstance().loadDataPage(1);
-                        } else {
-                            sanPhamChiTietService.update(model);
-			    
-			    if (sanPhamChiTiet.isTrangThai() != trangThai && !trangThai) { 
-				List<InuhaHoaDonChiTietModel> sanPhamCho = InuhaHoaDonChiTietRepository.getInstance().getAllIdsByIdSanPhamChiTiet(sanPhamChiTiet.getId());
-				for(InuhaHoaDonChiTietModel m: sanPhamCho) { 
-				    InuhaHoaDonChiTietService.getInstance().delete(m);
-				}
-			    }
-			    
-                            MessageToast.success("Lưu chỉnh sửa sản phẩm chi tiết thành công.");
-                            InuhaDetailSanPhamView.getInstance(sanPham).loadDataPage();
-			    InuhaDetailSanPhamChiTietView.getInstance().updateView(model);
-                        }
-                        InuhaSanPhamView.getInstance().loadDataPage();
-			InuhaSanPhamView.getInstance().loadDataPageSPCT();
-			
-                        ModalDialog.closeModal(InuhaDetailSanPhamView.ID_MODAL_ADD);
-                    } catch (ServiceResponseException e) {
-                        MessageToast.error(e.getMessage());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        MessageToast.error(ErrorConstant.DEFAULT_ERROR);
-                    } finally {
-			loading.dispose();
-		    }
-                });
-                loading.setVisible(true);
+        SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
+            @Override
+            protected Boolean doInBackground() throws Exception {
+                return MessageModal.confirmInfo(isEdited ? "Lưu lại thông tin sản phẩm chi tiết?" : "Thêm mới sản phẩm chi tiết này?");
             }
-        });
+
+            @Override
+            protected void done() {
+                try {
+                    if (get()) {
+                        executorService.submit(() -> {
+
+                            try {
+                                if (!isEdited) { 
+
+                                    sanPhamChiTietService.insert(model);
+                                    MessageToast.success("Thêm mới sản phẩm chi tiết thành công.");
+                                    InuhaDetailSanPhamView.getInstance().loadDataPage(1);
+                                } else {
+                                    sanPhamChiTietService.update(model);
+
+                                    if (sanPhamChiTiet.isTrangThai() != trangThai && !trangThai) { 
+                                        List<InuhaHoaDonChiTietModel> sanPhamCho = InuhaHoaDonChiTietRepository.getInstance().getAllIdsByIdSanPhamChiTiet(sanPhamChiTiet.getId());
+                                        for(InuhaHoaDonChiTietModel m: sanPhamCho) { 
+                                            InuhaHoaDonChiTietService.getInstance().delete(m);
+                                        }
+                                    }
+
+                                    MessageToast.success("Lưu thông tin sản phẩm chi tiết thành công.");
+                                    InuhaDetailSanPhamView.getInstance(sanPham).loadDataPage();
+                                    InuhaDetailSanPhamChiTietView.getInstance().updateView(model);
+                                }
+                                InuhaSanPhamView.getInstance().loadDataPage();
+                                InuhaSanPhamView.getInstance().loadDataPageSPCT();
+
+                                ModalDialog.closeModal(InuhaDetailSanPhamView.ID_MODAL_ADD);
+                            } catch (ServiceResponseException e) {
+                                MessageToast.error(e.getMessage());
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                MessageToast.error(ErrorConstant.DEFAULT_ERROR);
+                            } finally {
+                                loading.dispose();
+                            }
+                        });
+                        loading.setVisible(true);
+                    }
+                } catch (InterruptedException | ExecutionException ex) {
+                }
+            }
+            
+        };
+        worker.execute();
         
     }
 

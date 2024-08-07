@@ -127,7 +127,7 @@ public class DatHoaDonRepository {
                                    INNER JOIN 
                                        TaiKhoan tk ON hd.id_tai_khoan = tk.id 
                                    WHERE 
-                                       hd.trang_thai_xoa = 0 AND
+                                       hd.trang_thai_xoa != 1 AND
                                        hd.id=?
                                    GROUP BY 
                                        hd.ma,
@@ -199,7 +199,7 @@ public class DatHoaDonRepository {
                                    INNER JOIN 
                                        TaiKhoan tk ON hd.id_tai_khoan = tk.id 
                                    WHERE  
-                                       hd.trang_thai_xoa = 0
+                                       hd.trang_thai_xoa != 1
                                        AND (hd.ma like ? OR kh.ho_ten like ? or kh.sdt like ?)
                                    GROUP BY 
                                        hd.ma,
@@ -394,7 +394,7 @@ public class DatHoaDonRepository {
                          INNER JOIN 
                              TaiKhoan tk ON hd.id_tai_khoan = tk.id 
                          WHERE 
-                             hd.trang_thai_xoa = 0 AND
+                             hd.trang_thai_xoa != 1 AND
                              (COALESCE(?, 0) < 0 OR hd.phuong_thuc_thanh_toan = ?) AND
                              (COALESCE( ?, 0 )< 0  OR hd.trang_thai = ?) AND
                              (COALESCE(?, 0) < 1 OR tk.id = ?)
@@ -490,7 +490,7 @@ public class DatHoaDonRepository {
                      INNER JOIN 
                          TaiKhoan tk ON hd.id_tai_khoan = tk.id 
                  	Where hd.trang_thai_xoa =0 and
-                          hd.trang_thai_xoa = 0
+                          hd.trang_thai_xoa != 1
                            AND (hd.ngay_tao >= ? OR ? IS NULL)
                            AND (hd.ngay_tao <= ? OR ? IS NULL)
                            AND (COALESCE(?, -1) < 0 OR hd.phuong_thuc_thanh_toan = ?)

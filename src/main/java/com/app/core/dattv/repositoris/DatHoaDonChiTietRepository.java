@@ -54,7 +54,7 @@ public class DatHoaDonChiTietRepository {
                                                  INNER JOIN
                                                      TaiKhoan tk ON hd.id_tai_khoan = tk.id
                                                  WHERE
-                                                     hd.trang_thai_xoa = 0
+                                                     hd.trang_thai_xoa != 1
                                                  ORDER BY
                                                      hd.ngay_tao DESC;   		                 
                                               		
@@ -125,7 +125,7 @@ public class DatHoaDonChiTietRepository {
          INNER JOIN
              TaiKhoan tk ON hd.id_tai_khoan = tk.id
          WHERE
-             hd.trang_thai_xoa = 0 and hd.ma=?
+             hd.trang_thai_xoa != 1 and hd.ma=?
          ORDER BY
              hd.ngay_tao DESC;	 
                      """;

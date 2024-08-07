@@ -13,8 +13,10 @@ import com.app.core.inuha.services.InuhaTaiKhoanService;
 import com.app.utils.ColorUtils;
 import com.app.utils.ComponentUtils;
 import com.app.utils.ResourceUtils;
+import com.app.utils.ThemeUtils;
 import com.app.views.UI.dialog.LoadingDialog;
 import com.formdev.flatlaf.FlatClientProperties;
+import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -49,13 +51,9 @@ public class ForgotPasswordView extends javax.swing.JPanel {
         initComponents();
         setLayout(new MigLayout("fill, insets 20", "[center]", "[center]"));
 	lblTitle.setForeground(ColorUtils.PRIMARY_COLOR);
-        pnlForgotPassword.setBackground(ColorUtils.BACKGROUND_PRIMARY);
         lbLogin.setForeground(ColorUtils.PRIMARY_COLOR);
 
         txtEmail.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Vui lòng nhập email đã đăng ký tài khoản");
-
-
-        lbEmail.setForeground(ColorUtils.PRIMARY_TEXT);
 
         currentEmail = lbEmail.getText();
 
@@ -70,6 +68,9 @@ public class ForgotPasswordView extends javax.swing.JPanel {
 
         txtEmail.addKeyListener(keyEnter);
         txtEmail.requestFocus();
+        
+        lblTheme.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        lblTheme.setIcon(ComponentUtils.resizeImageByWidth(ResourceUtils.getImageAssets("/sidemenu/theme.png"), 20));
     }
 
     /**
@@ -89,20 +90,16 @@ public class ForgotPasswordView extends javax.swing.JPanel {
         btnSubmit = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
         lbLogin = new javax.swing.JLabel();
-
-        pnlForgotPassword.setBackground(new java.awt.Color(51, 51, 51));
+        lblTheme = new javax.swing.JLabel();
 
         lblTitle.setFont(lblTitle.getFont().deriveFont(lblTitle.getFont().getStyle() | java.awt.Font.BOLD, lblTitle.getFont().getSize()+10));
-        lblTitle.setForeground(new java.awt.Color(255, 255, 255));
         lblTitle.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         lblTitle.setText("Quên mật khẩu!");
 
         jLabel2.setFont(jLabel2.getFont().deriveFont(jLabel2.getFont().getSize()+1f));
-        jLabel2.setForeground(new java.awt.Color(204, 204, 204));
         jLabel2.setText("Vui lòng kiểm tra thư mục spam nếu không nhận được email");
 
         lbEmail.setFont(lbEmail.getFont().deriveFont(lbEmail.getFont().getStyle() | java.awt.Font.BOLD, lbEmail.getFont().getSize()+2));
-        lbEmail.setForeground(new java.awt.Color(204, 204, 204));
         lbEmail.setText("Email");
 
         btnSubmit.setText("Gửi mã");
@@ -114,7 +111,6 @@ public class ForgotPasswordView extends javax.swing.JPanel {
         });
 
         jLabel5.setFont(jLabel5.getFont().deriveFont(jLabel5.getFont().getSize()+1f));
-        jLabel5.setForeground(new java.awt.Color(204, 204, 204));
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel5.setText("Đã có tài khoản?");
 
@@ -125,6 +121,12 @@ public class ForgotPasswordView extends javax.swing.JPanel {
         lbLogin.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 lbLoginMouseClicked(evt);
+            }
+        });
+
+        lblTheme.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblThemeMouseClicked(evt);
             }
         });
 
@@ -145,6 +147,10 @@ public class ForgotPasswordView extends javax.swing.JPanel {
                     .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(lbEmail, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(42, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlForgotPasswordLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(lblTheme, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(20, 20, 20))
         );
         pnlForgotPasswordLayout.setVerticalGroup(
             pnlForgotPasswordLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -163,7 +169,9 @@ public class ForgotPasswordView extends javax.swing.JPanel {
                 .addGroup(pnlForgotPasswordLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(lbLogin, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
                     .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(42, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblTheme, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(14, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -190,12 +198,20 @@ public class ForgotPasswordView extends javax.swing.JPanel {
         redirectLogin(evt);
     }//GEN-LAST:event_lbLoginMouseClicked
 
+    private void lblThemeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblThemeMouseClicked
+        // TODO add your handling code here:
+        if (SwingUtilities.isLeftMouseButton(evt)) { 
+            ThemeUtils.switchTheme();
+        }
+    }//GEN-LAST:event_lblThemeMouseClicked
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnSubmit;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel lbEmail;
     private javax.swing.JLabel lbLogin;
+    private javax.swing.JLabel lblTheme;
     private javax.swing.JLabel lblTitle;
     private com.app.views.UI.panel.RoundPanel pnlForgotPassword;
     private javax.swing.JTextField txtEmail;

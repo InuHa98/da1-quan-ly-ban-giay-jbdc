@@ -175,9 +175,9 @@ public class InuhaSanPhamChiTietService implements IInuhaSanPhamChiTietServiceIn
     }
 
     @Override
-    public String getLastCode() {
+    public String getLastId() {
         try {
-            return repository.getLastCode();
+            return repository.getNextId();
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
@@ -229,4 +229,13 @@ public class InuhaSanPhamChiTietService implements IInuhaSanPhamChiTietServiceIn
         }
     }
     
+    
+    public int count(FillterRequest request) {
+        try {
+            return repository.count(request);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return 0;
+    }
 }

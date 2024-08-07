@@ -213,7 +213,7 @@ public class DatHoaDonView  extends RoundPanel{
                      INNER JOIN 
                          TaiKhoan tk ON hd.id_tai_khoan = tk.id 
                  	Where hd.trang_thai_xoa =0 and
-                          hd.trang_thai_xoa = 0
+                          hd.trang_thai_xoa != 1
                            AND (hd.ngay_tao >= ? OR ? IS NULL)
                            AND (hd.ngay_tao <= ? OR ? IS NULL)
                            AND (COALESCE(?, -1) < 0 OR hd.phuong_thuc_thanh_toan = ?)

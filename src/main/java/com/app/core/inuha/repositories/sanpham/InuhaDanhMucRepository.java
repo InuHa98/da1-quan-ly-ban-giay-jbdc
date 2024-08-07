@@ -95,7 +95,7 @@ public class InuhaDanhMucRepository implements IDAOinterface<InuhaDanhMucModel, 
 
     @Override
     public boolean has(Integer id) throws SQLException {
-        String query = String.format("SELECT TOP(1) 1 FROM %s WHERE id = ? AND trang_thai_xoa = 0", TABLE_NAME);
+        String query = String.format("SELECT TOP(1) 1 FROM %s WHERE id = ? AND trang_thai_xoa != 1", TABLE_NAME);
         try {
             return JbdcHelper.value(query, id) != null;
         } catch (Exception e) {
@@ -105,7 +105,7 @@ public class InuhaDanhMucRepository implements IDAOinterface<InuhaDanhMucModel, 
     }
 
     public boolean has(String name) throws SQLException {
-        String query = String.format("SELECT TOP(1) 1 FROM %s WHERE ten LIKE ? AND trang_thai_xoa = 0", TABLE_NAME);
+        String query = String.format("SELECT TOP(1) 1 FROM %s WHERE ten LIKE ? AND trang_thai_xoa != 1", TABLE_NAME);
         try {
             return JbdcHelper.value(query, name) != null;
         } catch (Exception e) {
@@ -131,7 +131,7 @@ public class InuhaDanhMucRepository implements IDAOinterface<InuhaDanhMucModel, 
             WHERE
                 ten LIKE ? AND
                 id != ? AND
-                trang_thai_xoa = 0
+                trang_thai_xoa != 1
         """, TABLE_NAME);
         try {
             return JbdcHelper.value(query, model.getTen(), model.getId()) != null;
@@ -146,7 +146,7 @@ public class InuhaDanhMucRepository implements IDAOinterface<InuhaDanhMucModel, 
         ResultSet resultSet = null;
         InuhaDanhMucModel model = null;
 
-        String query = String.format("SELECT * FROM %s WHERE id = ? AND trang_thai_xoa = 0", TABLE_NAME);
+        String query = String.format("SELECT * FROM %s WHERE id = ? AND trang_thai_xoa != 1", TABLE_NAME);
 
         try {
             resultSet = JbdcHelper.query(query, id);
@@ -174,7 +174,7 @@ public class InuhaDanhMucRepository implements IDAOinterface<InuhaDanhMucModel, 
                 *,
                 ROW_NUMBER() OVER (ORDER BY id DESC) AS stt
             FROM %s
-            WHERE trang_thai_xoa = 0
+            WHERE trang_thai_xoa != 1
             ORDER BY id DESC 
         """, TABLE_NAME);
 
@@ -206,7 +206,7 @@ public class InuhaDanhMucRepository implements IDAOinterface<InuhaDanhMucModel, 
                     *,
                     ROW_NUMBER() OVER (ORDER BY id DESC) AS stt
                 FROM %s
-                WHERE trang_thai_xoa = 0
+                WHERE trang_thai_xoa != 1
             )
             SELECT *
             FROM TableCTE
@@ -244,7 +244,7 @@ public class InuhaDanhMucRepository implements IDAOinterface<InuhaDanhMucModel, 
         int totalPages = 0;
         int totalRows = 0;
 
-        String query = String.format("SELECT COUNT(*) FROM %s WHERE trang_thai_xoa = 0", TABLE_NAME);
+        String query = String.format("SELECT COUNT(*) FROM %s WHERE trang_thai_xoa != 1", TABLE_NAME);
 
         try {
             totalRows = (int) JbdcHelper.value(query);
@@ -261,7 +261,7 @@ public class InuhaDanhMucRepository implements IDAOinterface<InuhaDanhMucModel, 
         ResultSet resultSet = null;
         InuhaDanhMucModel model = null;
 
-        String query = String.format("SELECT * FROM %s WHERE ten LIKE ? AND trang_thai_xoa = 0", TABLE_NAME);
+        String query = String.format("SELECT * FROM %s WHERE ten LIKE ? AND trang_thai_xoa != 1", TABLE_NAME);
 
         try {
             resultSet = JbdcHelper.query(query, name);

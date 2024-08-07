@@ -1,5 +1,6 @@
 package com.app.core.inuha.views.quanly.phieugiamgia;
 
+import com.app.core.inuha.views.quanly.InuhaPhieuGiamGiaView;
 import com.app.common.helper.MessageToast;
 import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
@@ -104,7 +105,8 @@ public class InuhaAddPhieuGiamGiaView extends javax.swing.JPanel {
 	cboKieuGiamGia.addItem(new ComboBoxItem<>("Giảm theo phần trăm (%)", true));
 	cboKieuGiamGia.addItem(new ComboBoxItem<>("Giảm theo số tiền (vnđ)", false));
 	
-	btnSubmit.setBackground(ColorUtils.PRIMARY_COLOR);
+	btnSubmit.setBackground(ColorUtils.BUTTON_PRIMARY);
+        btnSubmit.setForeground(Color.WHITE);
     }
 
     /**
@@ -449,7 +451,7 @@ public class InuhaAddPhieuGiamGiaView extends javax.swing.JPanel {
 	
 	if (isEdited) { 
             phieuGiamGia.setId(model.getId());
-            model.setTrangThaiXoa(model.isTrangThaiXoa());
+            phieuGiamGia.setTrangThaiXoa(model.isTrangThaiXoa());
         }
 		
         LoadingDialog loading = new LoadingDialog();

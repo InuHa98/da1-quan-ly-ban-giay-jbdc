@@ -31,13 +31,13 @@ public class NhanVienRoute {
     public List<SidebarMenuItem> getItemSideMenu() {
 	List<SidebarMenuItem> itemSideMenu = new ArrayList<>();
 	
-        itemSideMenu.add(new SidebarMenuItem(1, "sell", "Bán hàng", RouterConstant.BAN_HANG));
-        itemSideMenu.add(new SidebarMenuItem(2, "receipt", "Hoá đơn", RouterConstant.HOA_DON));
-        itemSideMenu.add(new SidebarMenuItem(3, "customer", "Khách hàng", RouterConstant.KHACH_HANG));
-        itemSideMenu.add(new SidebarMenuItem(4, "password", "Đổi mật khẩu", (button) -> {
+        itemSideMenu.add(new SidebarMenuItem(1, "sell-l", "Bán hàng", RouterConstant.BAN_HANG));
+        itemSideMenu.add(new SidebarMenuItem(2, "receipt-l", "Hoá đơn", RouterConstant.HOA_DON));
+        itemSideMenu.add(new SidebarMenuItem(3, "customer-l", "Khách hàng", RouterConstant.KHACH_HANG));
+        itemSideMenu.add(new SidebarMenuItem(4, "password-l", "Đổi mật khẩu", (button) -> {
             SessionLogin.getInstance().changePassword();
         }));
-        itemSideMenu.add(new SidebarMenuItem(5, "logout", "Đăng xuất", (button) -> {
+        itemSideMenu.add(new SidebarMenuItem(5, "logout-l", "Đăng xuất", (button) -> {
             SessionLogin.getInstance().logout();
         }));
 	

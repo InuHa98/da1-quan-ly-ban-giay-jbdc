@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  *
@@ -19,6 +20,9 @@ public class JbdcHelper {
 
     @Getter
     private static Integer lastInsertedId = -1;
+    
+    @Setter
+    private static boolean debug = false;
     
     public static ResultSet query(String query, Object... args) throws SQLException {
         ResultSet resultSet = null;
@@ -119,6 +123,11 @@ public class JbdcHelper {
         for (int i = 0; i < args.length; i++) {
             stmt.setObject(i + 1, args[i]);
         }
+	
+	if (debug) {
+	    System.out.println("\n\n" + String.format(query.replaceAll("\\?", "%s"), args));
+	    System.out.println("\n\n");
+	}
 
         return stmt;
     }

@@ -27,7 +27,6 @@ public class RoundPanel extends JPanel {
     private int roundBottomRight = 20;
 
     public RoundPanel() {
-	setBackground(ColorUtils.BACKGROUND_GRAY);
         setOpaque(false);
     }
 

@@ -50,7 +50,7 @@ public class DashboardView extends JPanel {
     }
 
     private void initComponents() {
-        this.setBackground(ColorUtils.BACKGROUND_DASHBOARD);
+        this.setBackground(ColorUtils.SIDEBAR);
         this.setLayout(new MigLayout("fill, insets 0 0 -10 0", "[left]0[grow,fill]", "[top]"));
     }
 

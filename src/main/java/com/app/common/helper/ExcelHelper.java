@@ -1,12 +1,9 @@
 package com.app.common.helper;
 
 import com.app.Application;
-import com.app.utils.QrCodeUtils;
 import com.app.views.UI.dialog.LoadingDialog;
-import com.google.zxing.WriterException;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 

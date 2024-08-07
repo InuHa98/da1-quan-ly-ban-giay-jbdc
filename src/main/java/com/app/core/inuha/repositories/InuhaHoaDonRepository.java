@@ -12,6 +12,7 @@ import com.app.core.inuha.models.InuhaPhieuGiamGiaModel;
 import com.app.core.inuha.models.InuhaTaiKhoanModel;
 import com.app.utils.SessionUtils;
 import com.app.utils.TimeUtils;
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -124,7 +125,7 @@ public class InuhaHoaDonRepository implements IDAOinterface<InuhaHoaDonModel, In
 
     @Override
     public boolean has(Integer id) throws SQLException {
-        String query = String.format("SELECT TOP(1) 1 FROM %s WHERE id = ? AND trang_thai_xoa = 0", TABLE_NAME);
+        String query = String.format("SELECT TOP(1) 1 FROM %s WHERE id = ? AND trang_thai_xoa != 1", TABLE_NAME);
         try {
             return JbdcHelper.value(query, id) != null;
         } catch (Exception e) {
@@ -154,7 +155,7 @@ public class InuhaHoaDonRepository implements IDAOinterface<InuhaHoaDonModel, In
             FROM %s AS hd
             WHERE 
                 hd.id = ? AND
-                hd.trang_thai_xoa = 0
+                hd.trang_thai_xoa != 1
         """, TABLE_NAME);
 
         try {
@@ -199,7 +200,7 @@ public class InuhaHoaDonRepository implements IDAOinterface<InuhaHoaDonModel, In
                 (SELECT ISNULL(SUM(gia_ban), 0) FROM HoaDonChiTiet WHERE id_hoa_don = hd.id) AS tong_tien_hang
             FROM %s AS hd
             WHERE 
-                hd.trang_thai_xoa = 0 AND
+                hd.trang_thai_xoa != 1 AND
                 hd.trang_thai = %d
                 %s
             ORDER BY hd.id DESC 
@@ -244,7 +245,7 @@ public class InuhaHoaDonRepository implements IDAOinterface<InuhaHoaDonModel, In
                     ROW_NUMBER() OVER (ORDER BY hd.id DESC) AS stt,
 		    (SELECT ISNULL(SUM(gia_ban), 0) FROM HoaDonChiTiet WHERE id_hoa_don = hd.id) AS tong_tien_hang
                 FROM %s AS hd
-                WHERE hd.trang_thai_xoa = 0
+                WHERE hd.trang_thai_xoa != 1
             )
             SELECT *
             FROM TableCTE
@@ -296,7 +297,7 @@ public class InuhaHoaDonRepository implements IDAOinterface<InuhaHoaDonModel, In
         int totalPages = 0;
         int totalRows = 0;
 
-        String query = String.format("SELECT COUNT(*) FROM %s WHERE trang_thai_xoa = 0", TABLE_NAME);
+        String query = String.format("SELECT COUNT(*) FROM %s WHERE trang_thai_xoa != 1", TABLE_NAME);
 
         try {
             totalRows = (int) JbdcHelper.value(query);
@@ -341,10 +342,11 @@ public class InuhaHoaDonRepository implements IDAOinterface<InuhaHoaDonModel, In
 	    .build();
     }
     
-    public String getLastCode() throws SQLException {
-        String query = String.format("SELECT TOP(1) id FROM %s ORDER BY id DESC", TABLE_NAME);
+    public String getLastId() throws SQLException {
+        String query = String.format("SELECT IDENT_CURRENT('%s') AS NextId", TABLE_NAME);
         try {
-            return String.valueOf(JbdcHelper.value(query));
+	    BigDecimal id = (BigDecimal) JbdcHelper.value(query);
+            return String.valueOf(id.intValue());
         } catch (Exception e) {
             e.printStackTrace();
             throw new SQLException(e.getMessage());

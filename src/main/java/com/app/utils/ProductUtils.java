@@ -1,5 +1,8 @@
 package com.app.utils;
 
+import com.app.common.infrastructure.request.FillterRequest;
+import com.app.core.inuha.request.InuhaFilterSanPhamChiTietRequest;
+import com.app.core.inuha.request.InuhaFilterSanPhamRequest;
 import com.app.core.inuha.services.InuhaSanPhamChiTietService;
 import com.app.core.inuha.services.InuhaSanPhamService;
 import javax.swing.*;
@@ -23,31 +26,23 @@ public class ProductUtils {
     public static final int MAX_HEIGHT_UPLOAD = 200;
 
     public static String generateCodeSanPham() {
-        String lastCode = InuhaSanPhamService.getInstance().getLastCode();
-        
-        int number = 1;
-        
-        if (lastCode != null && !lastCode.equalsIgnoreCase("null")) { 
-            int indexOfDash = lastCode.indexOf('-');
-            String numberPart = lastCode.substring(indexOfDash + 1);
-            number = Integer.parseInt(numberPart);
+        int lastId = Integer.parseInt(InuhaSanPhamService.getInstance().getLastId());
+        if (lastId == 1) { 
+            if (InuhaSanPhamService.getInstance().count(new InuhaFilterSanPhamRequest()) < 1) {
+                lastId--;
+            }
         }
-
-        return PREFIX_CODE_SANPHAM + CurrencyUtils.startPad(String.valueOf(++number), LENGTH_CODE, '0');
+        return PREFIX_CODE_SANPHAM + CurrencyUtils.startPad(String.valueOf(++lastId), LENGTH_CODE, '0');
     }
 
     public static String generateCodeSanPhamChiTiet() {
-        String lastCode = InuhaSanPhamChiTietService.getInstance().getLastCode();
-        
-        int number = 1;
-        
-        if (lastCode != null && !lastCode.equalsIgnoreCase("null")) { 
-            int indexOfDash = lastCode.indexOf('-');
-            String numberPart = lastCode.substring(indexOfDash + 1);
-            number = Integer.parseInt(numberPart);
+        int lastId = Integer.parseInt(InuhaSanPhamChiTietService.getInstance().getLastId());
+        if (lastId == 1) { 
+            if (InuhaSanPhamChiTietService.getInstance().count(new InuhaFilterSanPhamChiTietRequest()) < 1) {
+                lastId--;
+            }
         }
-
-        return PREFIX_CODE_SANPHAMCHITIET + CurrencyUtils.startPad(String.valueOf(++number), LENGTH_CODE, '0');
+        return PREFIX_CODE_SANPHAMCHITIET + CurrencyUtils.startPad(String.valueOf(++lastId), LENGTH_CODE, '0');
     }
 	
     public static String uploadImage(String code, String pathImage) {

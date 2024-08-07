@@ -171,13 +171,22 @@ public class InuhaHoaDonService implements IInuhaHoaDonServiceInterface {
     }
 
     @Override
-    public String getLastCode() {
+    public String getLastId() {
         try {
-            return repository.getLastCode();
+            return repository.getLastId();
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
         return null;
+    }
+    
+    public int count(FillterRequest request) {
+        try {
+            return repository.count(request);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return 0;
     }
     
 }

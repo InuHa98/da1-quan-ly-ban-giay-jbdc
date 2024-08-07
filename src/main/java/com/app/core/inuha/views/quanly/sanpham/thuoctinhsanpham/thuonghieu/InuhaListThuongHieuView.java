@@ -23,10 +23,13 @@ import javax.swing.table.DefaultTableModel;
 import raven.modal.ModalDialog;
 import raven.modal.component.SimpleModalBorder;
 import com.app.views.UI.table.ITableActionEvent;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import javax.swing.SwingWorker;
 
 /**
  *
@@ -46,6 +49,8 @@ public class InuhaListThuongHieuView extends javax.swing.JPanel {
     
     private List<InuhaThuongHieuModel> dataItems = new ArrayList<>();
     
+    private final LoadingDialog loading = new LoadingDialog();
+    
     public final static String MODAL_ID_CREATE = "modal_create_danh_muc";
         
     public final static String MODAL_ID_EDIT = "modal_edit_danh_muc";
@@ -64,7 +69,8 @@ public class InuhaListThuongHieuView extends javax.swing.JPanel {
         initComponents();
         instance = this;
 
-        btnAdd.setBackground(ColorUtils.PRIMARY_COLOR);
+        btnAdd.setBackground(ColorUtils.BUTTON_PRIMARY);
+        btnAdd.setForeground(Color.WHITE);
         btnAdd.setIcon(ResourceUtils.getSVG("/svg/plus.svg", new Dimension(20, 20)));
         
         setupTable(tblDanhSach);
@@ -88,28 +94,40 @@ public class InuhaListThuongHieuView extends javax.swing.JPanel {
                 }
                 InuhaThuongHieuModel item = dataItems.get(row);
                 
-                LoadingDialog loadingDialog = new LoadingDialog();
-
-                executorService.submit(() -> {
-                    if (MessageModal.confirmWarning("Xoá: " + item.getTen(), "Bạn thực sự muốn xoá thương hiệu này?")) {
-                        executorService.submit(() -> {
-                            try {
-                                thuongHieuService.delete(item.getId());
-                                loadingDialog.dispose();
-                                InuhaAddSanPhamView.getInstance().loadDataThuongHieu();
-                                loadDataPage();
-                                MessageToast.success("Xoá thành công thương hiệu: " + item.getTen());
-                            } catch (ServiceResponseException e) {
-                                loadingDialog.dispose();
-                                MessageToast.error(e.getMessage());
-                            } catch (Exception e) {
-                                loadingDialog.dispose();
-                                MessageModal.error(ErrorConstant.DEFAULT_ERROR);
-                            } 
-                        });
-                        loadingDialog.setVisible(true);
+                SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
+                    @Override
+                    protected Boolean doInBackground() throws Exception {
+                        return MessageModal.confirmWarning("Xoá: " + item.getTen(), "Bạn thực sự muốn xoá thương hiệu này?");
                     }
-                });
+
+                    @Override
+                    protected void done() {
+                        try {
+                            if (get()) {
+                                executorService.submit(() -> {
+                                    try {
+                                        thuongHieuService.delete(item.getId());
+                                        InuhaAddSanPhamView.getInstance().loadDataThuongHieu();
+                                        loadDataPage();
+                                        MessageToast.success("Xoá thành công thương hiệu: " + item.getTen());
+                                    } catch (ServiceResponseException e) {
+                                        MessageToast.error(e.getMessage());
+                                    } catch (Exception e) {
+
+                                        MessageModal.error(ErrorConstant.DEFAULT_ERROR);
+                                    } finally {
+                                        loading.dispose();
+                                    }
+                                });
+                                loading.setVisible(true);
+                            }
+                        } catch (InterruptedException | ExecutionException ex) {
+                        }
+                    }
+                    
+                };
+                worker.execute();
+                
             }
 
             @Override
@@ -118,9 +136,7 @@ public class InuhaListThuongHieuView extends javax.swing.JPanel {
         };
         
         TableCustomUI.apply(scrDanhSach, TableCustomUI.TableType.DEFAULT);
-        pnlDanhSach.setBackground(ColorUtils.BACKGROUND_GRAY);
-        tblDanhSach.setBackground(ColorUtils.BACKGROUND_GRAY);
-        tblDanhSach.getTableHeader().setBackground(ColorUtils.BACKGROUND_GRAY);
+        pnlDanhSach.setBackground(ColorUtils.BACKGROUND_TABLE);
         
         table.getColumnModel().getColumn(4).setCellRenderer(new InuhaThuocTinhTableActionCellRender(table));
         table.getColumnModel().getColumn(4).setCellEditor(new InuhaThuocTinhTableActionCellEditor(event));

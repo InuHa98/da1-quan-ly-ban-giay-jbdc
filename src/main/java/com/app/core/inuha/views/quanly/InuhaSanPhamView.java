@@ -41,6 +41,7 @@ import com.app.utils.CurrencyUtils;
 import com.app.utils.ProductUtils;
 import com.app.utils.QrCodeUtils;
 import com.app.utils.ResourceUtils;
+import com.app.utils.ThemeUtils;
 import com.app.utils.TimeUtils;
 import com.app.views.UI.combobox.ComboBoxItem;
 import com.app.views.UI.dialog.LoadingDialog;
@@ -61,6 +62,7 @@ import com.app.views.UI.table.celll.TableActionCellEditor;
 import com.app.views.UI.table.celll.TableActionCellRender;
 import com.app.views.UI.table.celll.TableImageCellRender;
 import com.google.zxing.WriterException;
+import java.awt.Color;
 import java.awt.event.ItemEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -70,10 +72,14 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import jnafilechooser.api.JnaFileChooser;
 
 /**
@@ -136,6 +142,8 @@ public class InuhaSanPhamView extends RoundPanel {
     
     private List<InuhaSanPhamChiTietModel> dataItemsSPCT = new ArrayList<>();
     
+    private final LoadingDialog loading = new LoadingDialog();
+    
     private boolean firstLoad = true;
     
     /**
@@ -176,8 +184,15 @@ public class InuhaSanPhamView extends RoundPanel {
                 }
             }
         });
+        
+        if (ThemeUtils.isLight()) { 
+            btnSearch.setBackground(ColorUtils.BUTTON_PRIMARY);
+            btnSearch.setForeground(Color.WHITE);
+            btnSearch2.setBackground(ColorUtils.BUTTON_PRIMARY);
+            btnSearch2.setForeground(Color.WHITE);
+        }
 		
-        pnlContainer.setBackground(ColorUtils.BACKGROUND_PRIMARY);
+        pnlContainer.setOpaque(false);
 	pnlContainer.setRound(0, 0, 0, 0);
 	pnlFilter.setBackground(ColorUtils.BACKGROUND_DASHBOARD);
 	pnlFilter2.setBackground(ColorUtils.BACKGROUND_DASHBOARD);
@@ -186,7 +201,6 @@ public class InuhaSanPhamView extends RoundPanel {
 	pnlDanhSachChiTiet.setRound(0, 0, 0, 0);
 	pnlDanhSach.setRound(0, 0, 0, 0);
 	
-        tbpTab.setBackground(ColorUtils.BACKGROUND_PRIMARY);
         lblFilter.setIcon(ResourceUtils.getSVG("/svg/filter.svg", new Dimension(20, 20)));
 	lblFilter2.setIcon(ResourceUtils.getSVG("/svg/filter.svg", new Dimension(20, 20)));
         lblList.setIcon(ResourceUtils.getSVG("/svg/list.svg", new Dimension(20, 20)));
@@ -204,6 +218,7 @@ public class InuhaSanPhamView extends RoundPanel {
         btnClear.setBackground(ColorUtils.BUTTON_GRAY);
 	btnClear2.setBackground(ColorUtils.BUTTON_GRAY);
         btnThemSanPham.setBackground(ColorUtils.BUTTON_PRIMARY);
+        btnThemSanPham.setForeground(Color.WHITE);
         
         cboTrangThai.removeAllItems();
         cboTrangThai.addItem(new ComboBoxItem<>("-- Tất cả trạng thái --", -1));
@@ -278,27 +293,39 @@ public class InuhaSanPhamView extends RoundPanel {
                 }
                 InuhaSanPhamModel item = dataItems.get(row);
                 
-                LoadingDialog loadingDialog = new LoadingDialog();
+		SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
+		    @Override
+		    protected Boolean doInBackground() throws Exception {
+			return MessageModal.confirmWarning("Xoá: " + item.getTen(), "Bạn thực sự muốn xoá sản phẩm này?");
+		    }
 
-                executorService.submit(() -> {
-                    if (MessageModal.confirmWarning("Xoá: " + item.getTen(), "Bạn thực sự muốn xoá sản phẩm này?")) {
-                        executorService.submit(() -> {
-                            try {
-                                sanPhamService.delete(item.getId());
-                                loadDataPage();
-				loadDataPageSPCT();
-                                MessageToast.success("Xoá thành công sản phẩm: " + item.getTen());
-                            } catch (ServiceResponseException e) {
-                                MessageToast.error(e.getMessage());
-                            } catch (Exception e) {
-                                MessageModal.error(ErrorConstant.DEFAULT_ERROR);
-                            } finally {
-				loadingDialog.dispose();
+		    @Override
+		    protected void done() {
+			try {
+			    if (get()) {
+				executorService.submit(() -> {
+				    try {
+					sanPhamService.delete(item.getId());
+					loadDataPage();
+					loadDataPageSPCT();
+					MessageToast.success("Xoá thành công sản phẩm: " + item.getTen());
+				    } catch (ServiceResponseException e) {
+					MessageToast.error(e.getMessage());
+				    } catch (Exception e) {
+					MessageModal.error(ErrorConstant.DEFAULT_ERROR);
+				    } finally {
+					loading.dispose();
+				    }
+				});
+				loading.setVisible(true);
 			    }
-                        });
-                        loadingDialog.setVisible(true);
-                    }
-                });
+			} catch (InterruptedException ex) {
+			} catch (ExecutionException ex) {
+			}
+		    }
+		    
+		};
+		worker.execute();
             }
 
             @Override
@@ -312,7 +339,6 @@ public class InuhaSanPhamView extends RoundPanel {
         pnlDanhSach.setBackground(ColorUtils.BACKGROUND_TABLE);
         TableCustomUI.apply(scrDanhSach, TableCustomUI.TableType.DEFAULT);
 	
-        table.setRowHeight(50);
         table.getColumnModel().getColumn(0).setHeaderRenderer(new CheckBoxTableHeaderRenderer(table, 0));
         table.getColumnModel().getColumn(3).setCellRenderer(new TableImageCellRender(table));
 	table.getColumnModel().getColumn(7).setCellRenderer(new InuhaSoLuongTonSanPhamTableCellRender(table));
@@ -323,40 +349,10 @@ public class InuhaSanPhamView extends RoundPanel {
     
     private void setupTableSPCT(JTable table) { 
         
-        ITableActionEvent event = new ITableActionEvent() {
-            @Override
-            public void onEdit(int row) {
-                InuhaSanPhamChiTietModel item = dataItemsSPCT.get(row);
-
-            }
-
-            @Override
-            public void onDelete(int row) {
-                if (table.isEditing()) {
-                    table.getCellEditor().stopCellEditing();
-                }
-                InuhaSanPhamChiTietModel item = dataItemsSPCT.get(row);
-                
-                LoadingDialog loading = new LoadingDialog();
-
-                executorService.submit(() -> {
-
-                });
-            }
-
-            @Override
-            public void onView(int row) {
-                InuhaSanPhamChiTietModel item = dataItemsSPCT.get(row);
-
-            }
-
-        };
-        
         pnlDanhSachChiTiet.setBackground(ColorUtils.BACKGROUND_TABLE);
         TableCustomUI.apply(scrDanhSachChiTiet, TableCustomUI.TableType.DEFAULT);
         TableCustomUI.resizeColumnHeader(table);
 	
-        table.setRowHeight(50);
         table.getColumnModel().getColumn(0).setHeaderRenderer(new CheckBoxTableHeaderRenderer(table, 0));
         table.getColumnModel().getColumn(4).setCellRenderer(new TableImageCellRender(table));
 	table.getColumnModel().getColumn(6).setCellRenderer(new InuhaSoLuongTonSanPhamTableCellRender(table));
@@ -491,7 +487,6 @@ public class InuhaSanPhamView extends RoundPanel {
             @Override
             public void onChangeLimitItem(JComboBox<Integer> comboBox) {
                 sizePage = (int) comboBox.getSelectedItem();
-		LoadingDialog loading = new LoadingDialog();
 		executorService.submit(() -> { 
 		    loadDataPage(1);
 		    loading.dispose();
@@ -501,7 +496,6 @@ public class InuhaSanPhamView extends RoundPanel {
 
             @Override
             public void onClickPage(int page) {
-		LoadingDialog loading = new LoadingDialog();
 		executorService.submit(() -> { 
 		    loadDataPage(page);
 		    loading.dispose();
@@ -518,7 +512,6 @@ public class InuhaSanPhamView extends RoundPanel {
             @Override
             public void onChangeLimitItem(JComboBox<Integer> comboBox) {
                 sizePage = (int) comboBox.getSelectedItem();
-		LoadingDialog loading = new LoadingDialog();
 		executorService.submit(() -> { 
 		    loadDataPageSPCT(1);
 		    loading.dispose();
@@ -528,7 +521,6 @@ public class InuhaSanPhamView extends RoundPanel {
 
             @Override
             public void onClickPage(int page) {
-		LoadingDialog loading = new LoadingDialog();
 		executorService.submit(() -> { 
 		    loadDataPageSPCT(page);
 		    loading.dispose();
@@ -693,8 +685,6 @@ public class InuhaSanPhamView extends RoundPanel {
         btnSearch2 = new javax.swing.JButton();
         btnClear2 = new javax.swing.JButton();
         cboSoLuong2 = new javax.swing.JComboBox();
-
-        tbpTab.setForeground(new java.awt.Color(255, 255, 255));
 
         pnlDanhSachSanPham.setOpaque(false);
 
@@ -979,7 +969,6 @@ public class InuhaSanPhamView extends RoundPanel {
         pnlDanhSachSanPhamChiTiet.setOpaque(false);
 
         lblList2.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
-        lblList2.setForeground(new java.awt.Color(255, 255, 255));
         lblList2.setText("Danh sách chi tiết sản phẩm");
 
         javax.swing.GroupLayout splitLine3Layout = new javax.swing.GroupLayout(splitLine3);
@@ -1131,7 +1120,6 @@ public class InuhaSanPhamView extends RoundPanel {
         );
 
         lblFilter2.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
-        lblFilter2.setForeground(new java.awt.Color(255, 255, 255));
         lblFilter2.setText("Bộ lọc");
 
         javax.swing.GroupLayout splitLine4Layout = new javax.swing.GroupLayout(splitLine4);
@@ -1687,27 +1675,38 @@ public class InuhaSanPhamView extends RoundPanel {
             return;
         }
         
-        LoadingDialog loading = new LoadingDialog();
-        executorService.submit(() -> {
-            if (MessageModal.confirmError("Xoá sản phẩm đã chọn ", "Bạn thực sự muốn xoá những sản phẩm này?")) {
-                executorService.submit(() -> {
-                    try {
-                        sanPhamService.deleteAll(ids);
-                        loading.dispose();
-                        loadDataPage();
-                        MessageToast.success("Xoá thành công " + ids.size() + " sản phẩm đã chọn");
-                    } catch (ServiceResponseException e) {
-                        loading.dispose();
-                        MessageToast.error(e.getMessage());
-                    } catch (Exception e) {
-                        loading.dispose();
-                        MessageModal.error(ErrorConstant.DEFAULT_ERROR);
-                    }  
-                });
-                loading.setVisible(true);
+        SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
+            @Override
+            protected Boolean doInBackground() throws Exception {
+                return MessageModal.confirmError("Xoá sản phẩm đã chọn ", "Bạn thực sự muốn xoá những sản phẩm này?");
             }
-        });
 
+            @Override
+            protected void done() {
+                try {
+                    if(get()) {
+                        executorService.submit(() -> {
+                            try {
+                                sanPhamService.deleteAll(ids);
+                                loadDataPage();
+                                MessageToast.success("Xoá thành công " + ids.size() + " sản phẩm đã chọn");
+                            } catch (ServiceResponseException e) {
+                                MessageToast.error(e.getMessage());
+                            } catch (Exception e) {
+                                MessageModal.error(ErrorConstant.DEFAULT_ERROR);
+                            }  finally { 
+                                loading.dispose();
+                            }
+                        });
+                        loading.setVisible(true);
+                    }
+                } catch (InterruptedException | ExecutionException ex) {
+                }
+            }
+            
+            
+        };
+        worker.execute();
     }
     
     private List<Integer> findSelectedSanPhamIds(JTable table) {
@@ -1733,11 +1732,11 @@ public class InuhaSanPhamView extends RoundPanel {
     }
 	
     private void handleClickButtonAdd() {
+	ModalDialog.closeAllModal();
         ModalDialog.showModal(this, new SimpleModalBorder(new InuhaAddSanPhamView(), "Thêm sản phẩm"));
     }
 
     private void handleClickButtonSearch() {
-        LoadingDialog loading = new LoadingDialog();
         executorService.submit(() -> {
             loadDataPage();
             loading.dispose();
@@ -1746,7 +1745,6 @@ public class InuhaSanPhamView extends RoundPanel {
     }
 
     private void handleClickButtonSeachChiTiet() {
-        LoadingDialog loading = new LoadingDialog();
         executorService.submit(() -> {
             loadDataPageSPCT();
             loading.dispose();
@@ -1755,7 +1753,6 @@ public class InuhaSanPhamView extends RoundPanel {
     }
 
     private void handleClickButtonClearChiTiet() {
-        LoadingDialog loading = new LoadingDialog();
         executorService.submit(() -> {
             txtTuKhoa2.setText(null);
             cboDanhMuc2.setSelectedIndex(0);
@@ -1775,7 +1772,6 @@ public class InuhaSanPhamView extends RoundPanel {
     }
     
     private void handleClickButtonClear() {
-        LoadingDialog loading = new LoadingDialog();
         executorService.submit(() -> {
             txtTuKhoa.setText(null);
             cboDanhMuc.setSelectedIndex(0);
@@ -1791,7 +1787,6 @@ public class InuhaSanPhamView extends RoundPanel {
     private void handleClickButtonScanQrCode() {
         QrCodeHelper.showWebcam("Tìm kiếm sản phẩm bằng QR", result -> {
 
-            LoadingDialog loading = new LoadingDialog();
             executorService.submit(() -> {
                 try {
                     String code = result.getText();
@@ -1835,6 +1830,7 @@ public class InuhaSanPhamView extends RoundPanel {
     }
 
     private void showDetailChiTiet(InuhaSanPhamChiTietModel item) {
+	ModalDialog.closeAllModal();
         ModalDialog.showModal(instance, new SimpleModalBorder(new InuhaDetailSanPhamChiTietView(item), null), ID_MODAL_DEAIL);
     }
     
@@ -1895,7 +1891,6 @@ public class InuhaSanPhamView extends RoundPanel {
 	    "Trạng thái"
 	};
 
-	LoadingDialog loading = new LoadingDialog();
 	executorService.submit(() -> { 
 	    List<InuhaSanPhamChiTietModel> items = findSelectedSanPhamChiTietIds(tblDanhSachChiTiet);
 	    try {
@@ -1955,7 +1950,6 @@ public class InuhaSanPhamView extends RoundPanel {
 		dir.mkdirs();
 	    }
 	    
-	    LoadingDialog loading = new LoadingDialog();
 	    executorService.submit(() -> { 
 		List<InuhaSanPhamChiTietModel> items = findSelectedSanPhamChiTietIds(tblDanhSachChiTiet);
 		try {
@@ -1991,7 +1985,6 @@ public class InuhaSanPhamView extends RoundPanel {
     private void handleClickButtonScanQrCodeChiTiet() {
 	QrCodeHelper.showWebcam("Tìm kiếm sản phẩm chi tiết", (result) -> { 
 	    String code = result.getText();
-	    LoadingDialog loading = new LoadingDialog();
 	    executorService.submit(() -> { 
 		try {
 		    int id = QrCodeUtils.getIdSanPhamChiTiet(code);
@@ -2021,84 +2014,97 @@ public class InuhaSanPhamView extends RoundPanel {
 	    return;
 	}
 	
-	LoadingDialog loading = new LoadingDialog();
-	executorService.submit(() -> { 
-	    if (MessageModal.confirmWarning("Cảnh báo", "Dữ liệu chưa tồn tại thì sẽ được thêm vào còn dữ liệu đã tồn tại sẽ được cập nhật?")) { 
-		executorService.submit(() -> {
-		    List<String[]> rows = new ArrayList<>();
-		    try {
-			rows = ExcelHelper.readFile(fileExcel, false);
-		    } catch (Exception e) { 
-			e.printStackTrace();
-			loading.dispose();
-		    }
-		    int results = 0;
+        SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
+            @Override
+            protected Boolean doInBackground() throws Exception {
+                return MessageModal.confirmWarning("Cảnh báo", "Dữ liệu chưa tồn tại thì sẽ được thêm vào còn dữ liệu đã tồn tại sẽ được cập nhật?");
+            }
 
-		    List<String> keywords = Arrays.asList("Mã sản phẩm", "Mã chi tiết", "Kích cỡ", "Màu sắc", "Số lượng", "Trạng thái");
-		    String[] headers = rows.get(0);
-		    Map<String, Integer> keywordPositions = new HashMap<>();
-		    for (int i = 0; i < headers.length; i++) {
-			keywordPositions.put(headers[i], i);
-		    }
+            @Override
+            protected void done() {
+                try {
+                    if (get()) {
+                        executorService.submit(() -> {
+                            List<String[]> rows = new ArrayList<>();
+                            try {
+                                rows = ExcelHelper.readFile(fileExcel, false);
+                            } catch (Exception e) { 
+                                e.printStackTrace();
+                                loading.dispose();
+                            }
+                            int results = 0;
 
-		    List<Integer> positions = keywords.stream()
-			.map(keyword -> keywordPositions.getOrDefault(keyword, -1))
-			.collect(Collectors.toList());
+                            List<String> keywords = Arrays.asList("Mã sản phẩm", "Mã chi tiết", "Kích cỡ", "Màu sắc", "Số lượng", "Trạng thái");
+                            String[] headers = rows.get(0);
+                            Map<String, Integer> keywordPositions = new HashMap<>();
+                            for (int i = 0; i < headers.length; i++) {
+                                keywordPositions.put(headers[i], i);
+                            }
 
-		    int posSanPham = positions.get(0);
-		    int posChiTiet = positions.get(1);
-		    int posKichCo = positions.get(2);
-		    int posMauSac = positions.get(3);
-		    int posSoLuong = positions.get(4);
-		    int posTrangThai = positions.get(5);
+                            List<Integer> positions = keywords.stream()
+                                .map(keyword -> keywordPositions.getOrDefault(keyword, -1))
+                                .collect(Collectors.toList());
 
-		    for(String[] row : rows) { 
-			try {
-			    String maSanPham = posSanPham != -1 && posSanPham < row.length ? row[posSanPham] : null;
-			    String maChiTiet = posChiTiet != -1 && posChiTiet < row.length ? row[posChiTiet] : null;
-			    String tenKichCo = posKichCo != -1 && posKichCo < row.length ? row[posKichCo] : null;
-			    String tenMauSac = posMauSac != -1 && posMauSac < row.length ? row[posMauSac] : null;
-			    Integer soLuong = posSoLuong != -1 && posSoLuong < row.length ? (int) CurrencyUtils.parseNumber(row[posSoLuong]) : null;
-			    Boolean trangThai = posTrangThai != -1 && posTrangThai < row.length ? row[posTrangThai].equalsIgnoreCase("Đang bán") : null;
+                            int posSanPham = positions.get(0);
+                            int posChiTiet = positions.get(1);
+                            int posKichCo = positions.get(2);
+                            int posMauSac = positions.get(3);
+                            int posSoLuong = positions.get(4);
+                            int posTrangThai = positions.get(5);
 
-			    if ((maSanPham == null && maChiTiet == null) || tenKichCo == null || tenMauSac == null || soLuong == null || trangThai == null) { 
-				continue;
-			    }
+                            for(String[] row : rows) { 
+                                try {
+                                    String maSanPham = posSanPham != -1 && posSanPham < row.length ? row[posSanPham] : null;
+                                    String maChiTiet = posChiTiet != -1 && posChiTiet < row.length ? row[posChiTiet] : null;
+                                    String tenKichCo = posKichCo != -1 && posKichCo < row.length ? row[posKichCo] : null;
+                                    String tenMauSac = posMauSac != -1 && posMauSac < row.length ? row[posMauSac] : null;
+                                    Integer soLuong = posSoLuong != -1 && posSoLuong < row.length ? (int) CurrencyUtils.parseNumber(row[posSoLuong]) : null;
+                                    Boolean trangThai = posTrangThai != -1 && posTrangThai < row.length ? row[posTrangThai].equalsIgnoreCase("Đang bán") : null;
 
-			    InuhaKichCoModel kichCo = kichCoService.insertByExcel(tenKichCo);
-			    InuhaMauSacModel mauSac = mauSacService.insertByExcel(tenMauSac);
+                                    if ((maSanPham == null && maChiTiet == null) || tenKichCo == null || tenMauSac == null || soLuong == null || trangThai == null) { 
+                                        continue;
+                                    }
 
-			    InuhaSanPhamModel sanPham = new InuhaSanPhamModel();
-			    sanPham.setMa(maSanPham);
+                                    InuhaKichCoModel kichCo = kichCoService.insertByExcel(tenKichCo);
+                                    InuhaMauSacModel mauSac = mauSacService.insertByExcel(tenMauSac);
 
-			    InuhaSanPhamChiTietModel sanPhamChiTiet = new InuhaSanPhamChiTietModel();
-			    sanPhamChiTiet.setMa(maChiTiet);
-			    sanPhamChiTiet.setSoLuong(soLuong);
-			    sanPhamChiTiet.setTrangThai(trangThai);
-			    sanPhamChiTiet.setKichCo(kichCo);
-			    sanPhamChiTiet.setMauSac(mauSac);
-			    sanPhamChiTiet.setSanPham(sanPham);
+                                    InuhaSanPhamModel sanPham = new InuhaSanPhamModel();
+                                    sanPham.setMa(maSanPham);
 
-			    if (sanPhamChiTietService.insertByExcel(sanPhamChiTiet)) {
-				results++;
-			    }
-			} catch (Exception e) { 
-			}
-		    }
+                                    InuhaSanPhamChiTietModel sanPhamChiTiet = new InuhaSanPhamChiTietModel();
+                                    sanPhamChiTiet.setMa(maChiTiet);
+                                    sanPhamChiTiet.setSoLuong(soLuong);
+                                    sanPhamChiTiet.setTrangThai(trangThai);
+                                    sanPhamChiTiet.setKichCo(kichCo);
+                                    sanPhamChiTiet.setMauSac(mauSac);
+                                    sanPhamChiTiet.setSanPham(sanPham);
+
+                                    if (sanPhamChiTietService.insertByExcel(sanPhamChiTiet)) {
+                                        results++;
+                                    }
+                                } catch (Exception e) { 
+                                }
+                            }
 
 
-		    if (results > 0) { 
-			MessageToast.success(results + " hàng dữ liệu chịu tác động");
-			loadDataPageSPCT(1);
-		    } else {
-			MessageToast.warning("Không có hàng dữ liệu nào chịu tác động");
-		    }
-		    loading.dispose();
-		});
-		loading.setVisible(true);
-	    }
-	    
-	});
+                            if (results > 0) { 
+                                MessageToast.success(results + " hàng dữ liệu chịu tác động");
+                                loadDataPageSPCT(1);
+                            } else {
+                                MessageToast.warning("Không có hàng dữ liệu nào chịu tác động");
+                            }
+                            loading.dispose();
+                        });
+                        loading.setVisible(true);
+                    }
+                } catch (InterruptedException | ExecutionException ex) {
+                }
+            }
+            
+            
+        };
+        worker.execute();
+       
     }
 
 

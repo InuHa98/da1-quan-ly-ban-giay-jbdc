@@ -84,11 +84,18 @@ public class QrCodeUtils {
         return -1;
     }
 	
-    public static boolean isValidCanCuocCongDan(String code) { 
-        String regex = "^\\d{12}\\|\\d{9}\\|[\\p{L}\\s]+\\|\\d{8}\\|(Nam|Nữ)\\|[\\p{L}\\s,]+\\|\\d{8}$";
+    public static String[] getDataCanCuocCongDan(String code) { 
+        String regex = "^\\d{12}\\|\\d{9}\\|([\\p{L}\\s]+)\\|\\d{8}\\|(Nam|Nữ)\\|([\\p{L}\\s,]+)\\|\\d{8}$";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(code);
-        return matcher.matches();
+        if (matcher.matches()) { 
+            String[] result = new String[matcher.groupCount()];
+            for (int i = 1; i <= matcher.groupCount(); i++) {
+                result[i - 1] = matcher.group(i);
+            }
+            return result;
+        }
+        return null;
     }
         
     public static void generateQRCodeImage(String text, File file) throws WriterException, IOException {

@@ -119,7 +119,7 @@ public class InuhaPhieuGiamGiaRepository implements IDAOinterface<InuhaPhieuGiam
 
     @Override
     public boolean has(Integer id) throws SQLException {
-        String query = String.format("SELECT TOP(1) 1 FROM %s WHERE id = ? AND trang_thai_xoa = 0", TABLE_NAME);
+        String query = String.format("SELECT TOP(1) 1 FROM %s WHERE id = ? AND trang_thai_xoa != 1", TABLE_NAME);
         try {
             return JbdcHelper.value(query, id) != null;
         } catch (Exception e) {
@@ -132,7 +132,7 @@ public class InuhaPhieuGiamGiaRepository implements IDAOinterface<InuhaPhieuGiam
         String query = String.format("""
             SELECT TOP(1) 1 
             FROM %s 
-            WHERE ma LIKE ? AND trang_thai_xoa = 0 AND ngay_ket_thuc >= GETDATE()
+            WHERE ma LIKE ? AND trang_thai_xoa != 1 AND ngay_ket_thuc >= GETDATE()
         """, TABLE_NAME);
         try {
             return JbdcHelper.value(query, ma) != null;
@@ -159,7 +159,7 @@ public class InuhaPhieuGiamGiaRepository implements IDAOinterface<InuhaPhieuGiam
             WHERE
                 ma LIKE ? AND
                 id != ? AND
-                trang_thai_xoa = 0 AND
+                trang_thai_xoa != 1 AND
                 ngay_ket_thuc >= GETDATE() 
         """, TABLE_NAME);
         try {
@@ -175,7 +175,7 @@ public class InuhaPhieuGiamGiaRepository implements IDAOinterface<InuhaPhieuGiam
         ResultSet resultSet = null;
         InuhaPhieuGiamGiaModel model = null;
 
-        String query = String.format("SELECT * FROM %s WHERE id = ? AND trang_thai_xoa = 0", TABLE_NAME);
+        String query = String.format("SELECT * FROM %s WHERE id = ? AND trang_thai_xoa != 1", TABLE_NAME);
 
         try {
             resultSet = JbdcHelper.query(query, id);
@@ -203,7 +203,7 @@ public class InuhaPhieuGiamGiaRepository implements IDAOinterface<InuhaPhieuGiam
                 *,
                 ROW_NUMBER() OVER (ORDER BY id DESC) AS stt
             FROM %s
-            WHERE trang_thai_xoa = 0
+            WHERE trang_thai_xoa != 1
             ORDER BY id DESC 
         """, TABLE_NAME);
 
@@ -237,7 +237,7 @@ public class InuhaPhieuGiamGiaRepository implements IDAOinterface<InuhaPhieuGiam
                     ROW_NUMBER() OVER (ORDER BY id DESC) AS stt
                 FROM %s
                 WHERE 
-		    trang_thai_xoa = 0 AND
+		    trang_thai_xoa != 1 AND
 		    (
                         (? IS NULL OR ma LIKE ? OR ten LIKE ?) AND
                         (COALESCE(?, NULL) IS NULL OR ngay_bat_dau >= ?) AND
@@ -303,7 +303,7 @@ public class InuhaPhieuGiamGiaRepository implements IDAOinterface<InuhaPhieuGiam
             SELECT COUNT(*)
             FROM %s
             WHERE
-                trang_thai_xoa = 0 AND
+                trang_thai_xoa != 1 AND
 		(
 		    (? IS NULL OR ma LIKE ? OR ten LIKE ?) AND
 		    (COALESCE(?, NULL) IS NULL OR ngay_bat_dau >= ?) AND
@@ -331,7 +331,6 @@ public class InuhaPhieuGiamGiaRepository implements IDAOinterface<InuhaPhieuGiam
 	    filter.getTrangThai().getValue(),
 	    filter.getTrangThai().getValue()
         };
-		
         try {
             totalRows = (int) JbdcHelper.value(query, args);
             totalPages = (int) Math.ceil((double) totalRows / request.getSize());
@@ -351,7 +350,7 @@ public class InuhaPhieuGiamGiaRepository implements IDAOinterface<InuhaPhieuGiam
             FROM %s 
             WHERE 
                 ma LIKE ? AND
-                trang_thai_xoa = 0
+                trang_thai_xoa != 1
         """, TABLE_NAME);
 
         try {

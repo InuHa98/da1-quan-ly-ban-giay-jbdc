@@ -13,46 +13,99 @@ import java.awt.Color;
  */
 public class ColorUtils {
 
-    public static Color PRIMARY_COLOR = new Color(234, 108, 32);
+    public static Color SIDEBAR;
     
-    public static Color PRIMARY_COLOR2 = new Color(100, 110, 177);
+    public static Color SIDEBAR_HOVER;
+    
+    public static Color SIDEBAR_TITLE;
+    
+    public static Color PRIMARY_COLOR;
+    
+    public static Color PRIMARY_TEXT;
+    
+    public static Color TEXT_GRAY;
 
-    public static Color PRIMARY_TEXT = new Color(189, 189, 189);
+    public static Color DANGER_COLOR;
 
-    public static Color DANGER_COLOR = new Color(255, 0, 98);
+    public static Color INFO_COLOR;
 
-    public static Color INFO_COLOR = new Color(0, 153, 255);
+    public static Color SUCCESS_COLOR;
 
-    public static Color SUCCESS_COLOR = new Color(74, 175, 9);
+    public static Color WARNING_COLOR;
+    
+    public static Color BORDER;
 
-    public static Color WARNING_COLOR = new Color(253, 174, 0);
-
-    public static Color BACKGROUND_PRIMARY = new Color(30, 31, 34);
-
-    public static Color BACKGROUND_GRAY = new Color(49, 51, 56);
-
-    public static Color BACKGROUND_DARK = new Color(30, 31, 34);
+    public static Color BACKGROUND_GRAY;
 	
-    public static Color BACKGROUND_HOVER = new Color(113, 84, 68);
+    public static Color BACKGROUND_SELECTED;
 
-    public static Color BACKGROUND_DASHBOARD = new Color(35, 36, 40);
+    public static Color BACKGROUND_DASHBOARD;
 	
-    public static Color BACKGROUND_TABLE = new Color(43, 45, 49);
+    public static Color BACKGROUND_TABLE;
     
-    public static Color BACKGROUND_TABLE_ODD = new Color(63, 66, 72);
-        
-    public static Color TEXT_TABLE = new Color(181, 186, 193);
-        
-    public static Color BACKGROUND_TABLE_SELECTION = new Color(234, 108, 32);
+    public static Color BACKGROUND_HOVER;
     
-    public static Color BUTTON_PRIMARY = new Color(234, 108, 32);
+    public static Color BACKGROUND_TABLE_ODD;
+        
+    public static Color TEXT_TABLE;
+    
+    public static Color TEXT_SELECTION_TABLE;
+            
+    public static Color BUTTON_PRIMARY;
 
-    public static Color BUTTON_GRAY = new Color(49, 51, 56);
+    public static Color BUTTON_GRAY;
         
-    public static Color INPUT_PRIMARY = new Color(43, 45, 49);
-
-    public static Color SELECT_PRIMARY = new Color(57, 60, 65);
+    public static Color INPUT_PRIMARY;
     
+    static {
+        if (ThemeUtils.isLight()) {
+            changeColorLight();
+        } else {
+            changeColorDark();
+        }
+    }
+    
+    public static void changeColorLight() { 
+        SIDEBAR = new Color(34, 34, 34);
+        PRIMARY_TEXT = new Color(63, 66, 72);
+        BACKGROUND_GRAY = new Color(248, 249, 249);
+        BACKGROUND_SELECTED = new Color(34, 34, 34);
+        BACKGROUND_DASHBOARD = new Color(248, 249, 249);
+        BACKGROUND_TABLE = new Color(241, 243, 244);
+        BACKGROUND_TABLE_ODD = new Color(241, 243, 244);
+        TEXT_TABLE = new Color(51, 51, 51);
+        TEXT_SELECTION_TABLE = new Color(255, 255, 255);
+        BUTTON_PRIMARY = new Color(56, 53, 67);
+        BUTTON_GRAY = new Color(221, 226, 228);
+        INPUT_PRIMARY = new Color(241, 243, 244);
+        BORDER = new Color(212, 219, 221);
+    }
+    
+    public static void changeColorDark() {
+        SIDEBAR = new Color(35, 36, 40);
+        SIDEBAR_HOVER = new Color(63, 66, 72);
+        SIDEBAR_TITLE = new Color(234, 108, 32);
+        PRIMARY_COLOR = new Color(234, 108, 32);
+        PRIMARY_TEXT = new Color(189, 189, 189);
+        DANGER_COLOR = new Color(255, 0, 98);
+        INFO_COLOR = new Color(0, 153, 255);
+        SUCCESS_COLOR = new Color(74, 175, 9);
+        WARNING_COLOR = new Color(253, 174, 0);
+        BORDER = new Color(63, 66, 72);
+        BACKGROUND_GRAY = new Color(43, 45, 49);
+        BACKGROUND_SELECTED = new Color(113, 84, 68);
+        BACKGROUND_DASHBOARD = new Color(35, 36, 40);
+        BACKGROUND_TABLE = new Color(43, 45, 49);
+        BACKGROUND_HOVER = new Color(63, 66, 72);
+        BACKGROUND_TABLE_ODD = new Color(43, 45, 49); //new Color(63, 66, 72);
+        TEXT_TABLE = new Color(144, 147, 153);
+        TEXT_GRAY = new Color(189, 189, 189);
+        TEXT_SELECTION_TABLE = new Color(189, 189, 189);
+        BUTTON_PRIMARY = new Color(234, 108, 32);
+        BUTTON_GRAY = new Color(49, 51, 56);
+        INPUT_PRIMARY = new Color(43, 45, 49);
+    }
+        
     /**
      * Chuyển đổi mã hex thành color
      * @param hex VD: #FFFFFF
@@ -123,5 +176,7 @@ public class ColorUtils {
     public static Color lighten(String hex, float factor) {
         return lighten(hexToColor(hex), factor);
     }
+
+
 
 }

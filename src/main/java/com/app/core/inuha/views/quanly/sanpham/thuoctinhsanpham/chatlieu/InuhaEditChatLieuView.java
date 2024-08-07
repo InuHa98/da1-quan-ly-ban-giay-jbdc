@@ -40,7 +40,9 @@ public class InuhaEditChatLieuView extends JPanel {
         initComponents();
         currentColor = lblTen.getForeground();
         txtTen.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Tối đa 250 ký tự...");
-        btnSubmit.setBackground(ColorUtils.PRIMARY_COLOR);
+        btnSubmit.setBackground(ColorUtils.BUTTON_PRIMARY);
+        btnSubmit.setForeground(Color.WHITE);
+        
     }
 
     public InuhaEditChatLieuView(InuhaChatLieuModel model) {

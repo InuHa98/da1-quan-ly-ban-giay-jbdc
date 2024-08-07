@@ -61,7 +61,9 @@ public class QrCodeHelper {
     }
 	
     public static void closeWebcam() { 
-        ModalDialog.closeModal(QrCodeUtils.MODAL_SCAN_ID);
+        if (ModalDialog.isIdExist(QrCodeUtils.MODAL_SCAN_ID)) {
+            ModalDialog.closeModal(QrCodeUtils.MODAL_SCAN_ID);
+        }
         WebcamQRCodeScanPanel.dispose();
     }
     
