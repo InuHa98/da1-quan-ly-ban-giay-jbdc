@@ -41,6 +41,7 @@ import com.app.utils.CurrencyUtils;
 import com.app.utils.ProductUtils;
 import com.app.utils.QrCodeUtils;
 import com.app.utils.ResourceUtils;
+import com.app.utils.ThemeUtils;
 import com.app.utils.TimeUtils;
 import com.app.views.UI.combobox.ComboBoxItem;
 import com.app.views.UI.dialog.LoadingDialog;
@@ -61,6 +62,7 @@ import com.app.views.UI.table.celll.TableActionCellEditor;
 import com.app.views.UI.table.celll.TableActionCellRender;
 import com.app.views.UI.table.celll.TableImageCellRender;
 import com.google.zxing.WriterException;
+import java.awt.Color;
 import java.awt.event.ItemEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -182,8 +184,15 @@ public class InuhaSanPhamView extends RoundPanel {
                 }
             }
         });
+        
+        if (ThemeUtils.isLight()) { 
+            btnSearch.setBackground(ColorUtils.BUTTON_PRIMARY);
+            btnSearch.setForeground(Color.WHITE);
+            btnSearch2.setBackground(ColorUtils.BUTTON_PRIMARY);
+            btnSearch2.setForeground(Color.WHITE);
+        }
 		
-        pnlContainer.setBackground(ColorUtils.BACKGROUND_PRIMARY);
+        pnlContainer.setOpaque(false);
 	pnlContainer.setRound(0, 0, 0, 0);
 	pnlFilter.setBackground(ColorUtils.BACKGROUND_DASHBOARD);
 	pnlFilter2.setBackground(ColorUtils.BACKGROUND_DASHBOARD);
@@ -192,7 +201,6 @@ public class InuhaSanPhamView extends RoundPanel {
 	pnlDanhSachChiTiet.setRound(0, 0, 0, 0);
 	pnlDanhSach.setRound(0, 0, 0, 0);
 	
-        tbpTab.setBackground(ColorUtils.BACKGROUND_PRIMARY);
         lblFilter.setIcon(ResourceUtils.getSVG("/svg/filter.svg", new Dimension(20, 20)));
 	lblFilter2.setIcon(ResourceUtils.getSVG("/svg/filter.svg", new Dimension(20, 20)));
         lblList.setIcon(ResourceUtils.getSVG("/svg/list.svg", new Dimension(20, 20)));
@@ -210,6 +218,7 @@ public class InuhaSanPhamView extends RoundPanel {
         btnClear.setBackground(ColorUtils.BUTTON_GRAY);
 	btnClear2.setBackground(ColorUtils.BUTTON_GRAY);
         btnThemSanPham.setBackground(ColorUtils.BUTTON_PRIMARY);
+        btnThemSanPham.setForeground(Color.WHITE);
         
         cboTrangThai.removeAllItems();
         cboTrangThai.addItem(new ComboBoxItem<>("-- Tất cả trạng thái --", -1));
@@ -677,8 +686,6 @@ public class InuhaSanPhamView extends RoundPanel {
         btnClear2 = new javax.swing.JButton();
         cboSoLuong2 = new javax.swing.JComboBox();
 
-        tbpTab.setForeground(new java.awt.Color(255, 255, 255));
-
         pnlDanhSachSanPham.setOpaque(false);
 
         pnlSearchBox.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -962,7 +969,6 @@ public class InuhaSanPhamView extends RoundPanel {
         pnlDanhSachSanPhamChiTiet.setOpaque(false);
 
         lblList2.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
-        lblList2.setForeground(new java.awt.Color(255, 255, 255));
         lblList2.setText("Danh sách chi tiết sản phẩm");
 
         javax.swing.GroupLayout splitLine3Layout = new javax.swing.GroupLayout(splitLine3);
@@ -1114,7 +1120,6 @@ public class InuhaSanPhamView extends RoundPanel {
         );
 
         lblFilter2.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
-        lblFilter2.setForeground(new java.awt.Color(255, 255, 255));
         lblFilter2.setText("Bộ lọc");
 
         javax.swing.GroupLayout splitLine4Layout = new javax.swing.GroupLayout(splitLine4);

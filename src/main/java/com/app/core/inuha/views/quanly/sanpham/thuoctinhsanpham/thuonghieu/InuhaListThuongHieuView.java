@@ -23,6 +23,7 @@ import javax.swing.table.DefaultTableModel;
 import raven.modal.ModalDialog;
 import raven.modal.component.SimpleModalBorder;
 import com.app.views.UI.table.ITableActionEvent;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -68,7 +69,8 @@ public class InuhaListThuongHieuView extends javax.swing.JPanel {
         initComponents();
         instance = this;
 
-        btnAdd.setBackground(ColorUtils.PRIMARY_COLOR);
+        btnAdd.setBackground(ColorUtils.BUTTON_PRIMARY);
+        btnAdd.setForeground(Color.WHITE);
         btnAdd.setIcon(ResourceUtils.getSVG("/svg/plus.svg", new Dimension(20, 20)));
         
         setupTable(tblDanhSach);

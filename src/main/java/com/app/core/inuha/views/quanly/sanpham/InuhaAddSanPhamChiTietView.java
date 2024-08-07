@@ -114,8 +114,8 @@ public class InuhaAddSanPhamChiTietView extends javax.swing.JPanel {
 	}
 		
         currentColor = lblSoLuong.getForeground();
-        roundPanel1.setBackground(ColorUtils.BACKGROUND_PRIMARY);
         btnSubmit.setBackground(ColorUtils.BUTTON_PRIMARY);
+        btnSubmit.setForeground(Color.WHITE);
         
         txtSoLuong.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Tối đa " + MAX);
         
@@ -332,7 +332,7 @@ public class InuhaAddSanPhamChiTietView extends javax.swing.JPanel {
                         .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(btnCmdMauSac, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(cboMauSac, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(18, 18, 18)
                 .addComponent(lblSoLuong)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)

@@ -350,6 +350,20 @@ public class InuhaHoaDonChiTietRepository implements IDAOinterface<InuhaHoaDonCh
         }
         return totalPages;
     }
+    
+    public int count() throws SQLException {
+        String query = String.format("""
+            SELECT COUNT(*) 
+            FROM %s
+        """, TABLE_NAME);
+        try {
+            return (int) JbdcHelper.value(query);
+        } catch(Exception e) {
+            e.printStackTrace();
+            throw new SQLException(e.getMessage());
+        }
+    }
+    
 	
     public Optional<InuhaHoaDonChiTietModel> getDuplicate(InuhaHoaDonChiTietModel hoaDonChiTiet) throws SQLException {
         ResultSet resultSet = null;

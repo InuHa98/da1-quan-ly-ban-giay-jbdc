@@ -16,11 +16,13 @@ import com.app.core.inuha.views.quanly.components.table.phieugiamgia.InuhaTrangT
 import com.app.core.inuha.views.quanly.phieugiamgia.InuhaAddPhieuGiamGiaView;
 import com.app.utils.ColorUtils;
 import com.app.utils.ResourceUtils;
+import com.app.utils.ThemeUtils;
 import com.app.utils.TimeUtils;
 import com.app.views.UI.combobox.ComboBoxItem;
 import com.app.views.UI.dialog.LoadingDialog;
 import com.app.views.UI.table.ITableActionEvent;
 import com.app.views.UI.table.TableCustomUI;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -86,7 +88,8 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
 	initComponents();
 	instance = this;
 	
-	btnCreate.setBackground(ColorUtils.PRIMARY_COLOR);
+	btnCreate.setBackground(ColorUtils.BUTTON_PRIMARY);
+        btnCreate.setForeground(Color.WHITE);
 	btnCreate.setIcon(ResourceUtils.getSVG("/svg/plus.svg", new Dimension(20, 20)));
 	
 	datePickerNgayBatDau.setEditor(txtNgayBatDau);
@@ -117,6 +120,11 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
             }
         });
 	
+        if (ThemeUtils.isLight()) { 
+            btnSearch.setBackground(ColorUtils.BUTTON_PRIMARY);
+            btnSearch.setForeground(Color.WHITE);
+        }
+        
 	cboTrangThai.removeAllItems();
         cboTrangThai.addItem(new ComboBoxItem<>("-- Tất cả trạng thái --", -1));
         cboTrangThai.addItem(new ComboBoxItem<>("Đang diễn ra", TrangThaiPhieuGiamGiaConstant.DANG_DIEN_RA));

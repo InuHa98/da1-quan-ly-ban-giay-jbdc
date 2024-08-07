@@ -1,6 +1,8 @@
 package com.app.utils;
 
 import com.app.common.infrastructure.request.FillterRequest;
+import com.app.core.inuha.request.InuhaFilterSanPhamChiTietRequest;
+import com.app.core.inuha.request.InuhaFilterSanPhamRequest;
 import com.app.core.inuha.services.InuhaSanPhamChiTietService;
 import com.app.core.inuha.services.InuhaSanPhamService;
 import javax.swing.*;
@@ -26,7 +28,7 @@ public class ProductUtils {
     public static String generateCodeSanPham() {
         int lastId = Integer.parseInt(InuhaSanPhamService.getInstance().getLastId());
         if (lastId == 1) { 
-            if (InuhaSanPhamService.getInstance().count(new FillterRequest()) < 1) {
+            if (InuhaSanPhamService.getInstance().count(new InuhaFilterSanPhamRequest()) < 1) {
                 lastId--;
             }
         }
@@ -36,7 +38,7 @@ public class ProductUtils {
     public static String generateCodeSanPhamChiTiet() {
         int lastId = Integer.parseInt(InuhaSanPhamChiTietService.getInstance().getLastId());
         if (lastId == 1) { 
-            if (InuhaSanPhamChiTietService.getInstance().count(new FillterRequest()) < 1) {
+            if (InuhaSanPhamChiTietService.getInstance().count(new InuhaFilterSanPhamChiTietRequest()) < 1) {
                 lastId--;
             }
         }

@@ -3,6 +3,7 @@ package com.app.utils;
 import com.app.common.helper.TestConnection;
 import com.app.common.infrastructure.constants.TrangThaiHoaDonConstant;
 import com.app.common.infrastructure.request.FillterRequest;
+import com.app.core.inuha.request.InuhaFilterHoaDonChiTietRequest;
 import com.app.core.inuha.services.InuhaHoaDonChiTietService;
 import com.app.core.inuha.services.InuhaHoaDonService;
 import io.github.cdimascio.dotenv.Dotenv;
@@ -33,7 +34,7 @@ public class BillUtils {
     public static String generateCodeHoaDonChiTiet() {
         int lastId = Integer.parseInt(InuhaHoaDonChiTietService.getInstance().getLastId());
         if (lastId == 1) { 
-            if (InuhaHoaDonChiTietService.getInstance().count(new FillterRequest()) < 1) {
+            if (InuhaHoaDonChiTietService.getInstance().count() < 1) {
                 lastId--;
             }
         }

@@ -27,6 +27,7 @@ import com.app.views.UI.dialog.LoadingDialog;
 import com.app.views.UI.picturebox.DefaultPictureBoxRender;
 import com.app.views.UI.picturebox.PictureBox;
 import com.app.views.UI.picturebox.SuperEllipse2D;
+import com.app.views.UI.sidebarmenu.SidebarMenu;
 import com.formdev.flatlaf.FlatClientProperties;
 import java.awt.Color;
 import java.awt.Cursor;
@@ -130,7 +131,8 @@ public class InuhaAddNhanVienView extends javax.swing.JPanel {
 	txtSoDienThoai.addKeyListener(eventSubmit);
 
 	btnChangePassword.setVisible(false);
-	btnSubmit.setBackground(ColorUtils.PRIMARY_COLOR);
+	btnSubmit.setBackground(ColorUtils.BUTTON_PRIMARY);
+        btnSubmit.setForeground(Color.WHITE);
     }
 
     /**
@@ -595,6 +597,9 @@ public class InuhaAddNhanVienView extends javax.swing.JPanel {
                                     InuhaNhanVienView.getInstance().loadDataPage(1);
                                 } else {
                                     taiKhoanService.update(taiKhoan);
+                                    if (taiKhoan.getId() == SessionLogin.getInstance().getData().getId()) { 
+                                        SidebarMenu.getInstance().setAvatar(SessionUtils.getAvatar(taiKhoan));
+                                    }
                                     MessageToast.success("Lưu thông tin nhân viên thành công.");
                                     InuhaNhanVienView.getInstance().loadDataPage();
                                 }
@@ -633,14 +638,15 @@ public class InuhaAddNhanVienView extends javax.swing.JPanel {
                 try {
                     ImageIcon imageIcon = new ImageIcon(file.getAbsolutePath());
                     Image image = imageIcon.getImage().getScaledInstance(pictureBox.getWidth(), pictureBox.getHeight(), Image.SCALE_SMOOTH);
-                    loading.dispose();
+                    
                     pictureBox.setImage(new ImageIcon(image));
                     pictureBox.putClientProperty("path-image", file.getAbsolutePath());
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    loading.dispose();
                     MessageToast.error(ErrorConstant.DEFAULT_ERROR);
-                } 
+                }  finally {
+                    loading.dispose();
+                }
             });
             loading.setVisible(true);
 

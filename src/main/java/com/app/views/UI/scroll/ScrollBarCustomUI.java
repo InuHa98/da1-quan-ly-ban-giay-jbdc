@@ -42,7 +42,12 @@ public class ScrollBarCustomUI extends BasicScrollBarUI {
         scrollbar.addAdjustmentListener(new AdjustmentListener() {
             @Override
             public void adjustmentValueChanged(AdjustmentEvent e) {
+                if (scrollbar == null) { 
+                    return;
+                }
+                
                 BoundedRangeModel br = scrollbar.getModel();
+
                 boolean min = br.getValue() == br.getMinimum();
                 boolean max = br.getValue() + br.getExtent() == br.getMaximum();
                 if (isMin != min) {

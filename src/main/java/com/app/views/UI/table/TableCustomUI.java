@@ -6,8 +6,8 @@ import com.app.views.UI.table.celll.TableHeaderCustomCellRender;
 import com.app.views.UI.table.celll.BooleanCellRenderer;
 import com.app.views.UI.table.celll.TextAreaCellRenderer;
 import com.app.utils.ColorUtils;
+import static com.app.utils.ColorUtils.TEXT_SELECTION_TABLE;
 import com.app.views.UI.scroll.ScrollBarCustomUI;
-import com.app.views.UI.table.celll.TableImageCellRender;
 import com.formdev.flatlaf.FlatClientProperties;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -30,26 +30,17 @@ import javax.swing.table.TableColumnModel;
  * @author InuHa
  */
 public class TableCustomUI {
-
-    private final static Color COLOR_HEADER = ColorUtils.BACKGROUND_TABLE;
-    private final static Color COLOR_HEADER_TEXT = ColorUtils.TEXT_TABLE;
-    private final static Color COLOR_BACKGROUND = ColorUtils.BACKGROUND_TABLE;
-    private final static Color COLOR_GRID_COLOR = ColorUtils.lighten(ColorUtils.BACKGROUND_TABLE, 0.1f);
-    private final static Color COLOR_SELECTION_TEXT = ColorUtils.PRIMARY_TEXT;
-    private final static Color COLOR_SELECTION_BACKGROUND = ColorUtils.BACKGROUND_SELECTED;
-
     
-       
     public static void apply(JScrollPane scroll, TableType type) {
 
         JTable table = (JTable) scroll.getViewport().getComponent(0);
 
         table.setFocusable(false);
         table.setBorder(BorderFactory.createEmptyBorder());
-        table.setBackground(COLOR_BACKGROUND);
-        table.setSelectionForeground(COLOR_SELECTION_TEXT);
-        table.setSelectionBackground(COLOR_SELECTION_BACKGROUND);
-        table.setGridColor(COLOR_GRID_COLOR);
+        table.setBackground(ColorUtils.BACKGROUND_TABLE);
+        table.setSelectionForeground(ColorUtils.TEXT_SELECTION_TABLE);
+        table.setSelectionBackground(ColorUtils.BACKGROUND_SELECTED);
+        table.setGridColor(ColorUtils.BORDER);
 	
         table.getTableHeader().setReorderingAllowed(false);
         table.getTableHeader().putClientProperty(FlatClientProperties.STYLE, """
@@ -87,7 +78,7 @@ public class TableCustomUI {
             public void paint(Graphics g) {
                 super.paintComponent(g);
                 Graphics2D g2 = (Graphics2D) g.create();
-                g2.setColor(ColorUtils.BACKGROUND_GRAY);
+                g2.setColor(ColorUtils.BORDER);
                 g2.setStroke(new BasicStroke(1));
                 //g2.drawLine(getWidth() - 1, 0, getWidth() - 1, getHeight());
                 g2.drawLine(0, getHeight() - 1, getWidth() - 1, getHeight() - 1);
@@ -96,7 +87,7 @@ public class TableCustomUI {
         };
         
         panel.setOpaque(false);
-        panel.setBackground(COLOR_HEADER);
+        panel.setBackground(ColorUtils.BACKGROUND_TABLE);
         scroll.setCorner(JScrollPane.UPPER_RIGHT_CORNER, panel);
         scroll.setOpaque(false);
         scroll.getViewport().setBackground(table.getBackground());
@@ -104,7 +95,7 @@ public class TableCustomUI {
         scroll.getHorizontalScrollBar().setUI(new ScrollBarCustomUI());
         
         table.getTableHeader().setBackground(table.getBackground());
-        table.getTableHeader().setForeground(COLOR_HEADER_TEXT);
+        table.getTableHeader().setForeground(ColorUtils.TEXT_TABLE);
 
         table.addMouseListener(new MouseAdapter() {
             @Override

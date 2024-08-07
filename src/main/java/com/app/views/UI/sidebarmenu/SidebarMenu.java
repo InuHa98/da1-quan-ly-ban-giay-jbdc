@@ -15,14 +15,12 @@ import com.app.utils.*;
 import com.app.views.UI.ImageRound;
 import com.app.views.UI.dialog.LoadingDialog;
 import com.app.views.UI.scroll.ScrollBarCustomUI;
-import com.app.views.DashboardView;
 import com.app.views.UI.panel.qrcode.WebcamQRCodeScanPanel;
 import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.util.Animator;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -78,9 +76,17 @@ public class SidebarMenu extends JPanel {
     
     private final List<SidebarMenuItem> itemsMenu = SessionUtils.isManager() ? QuanLyRoute.getInstance().getItemSideMenu() : NhanVienRoute.getInstance().getItemSideMenu();
 
+    public static SidebarMenu getInstance() {
+        if (instance == null) { 
+            instance = new SidebarMenu();
+        }
+        return instance;
+    }
+    
     public SidebarMenu() {
-	instance = this;
+        instance = this;
         initComponents();
+        
 	ISidebarMenuEvent event = (index) -> {
 
             Optional<SidebarMenuItem> item = itemsMenu.stream().filter(o -> o.getIndex() == index).findFirst();
@@ -145,17 +151,18 @@ public class SidebarMenu extends JPanel {
         lbEmail = new JLabel();
         lbRole = new JLabel();
 
-        lbUsername.setForeground(ColorUtils.PRIMARY_COLOR);
+        lbUsername.setForeground(ColorUtils.SIDEBAR_TITLE);
 
-        lbEmail.setForeground(ColorUtils.PRIMARY_TEXT);
-
+        lbEmail.setForeground(ColorUtils.TEXT_GRAY);
+        lbRole.setForeground(ColorUtils.TEXT_GRAY);
+        
         Dimension avatarSize = new Dimension(64, 64);
         lbAvatar.setCursor(new Cursor(Cursor.HAND_CURSOR));
         lbAvatar.setPreferredSize(avatarSize);
         lbAvatar.setMinimumSize(avatarSize);
         lbAvatar.setBorderSize(2);
         lbAvatar.setBorderSpace(2);
-        lbAvatar.setImage(SessionUtils.getAvatar(SessionLogin.getInstance().getData()));
+        setAvatar(SessionUtils.getAvatar(SessionLogin.getInstance().getData()));
         lbAvatar.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -251,17 +258,16 @@ public class SidebarMenu extends JPanel {
 
                                 try {
                                     nhanVienService.changeAvatar(avatarUpload.getFileName());
-                                    loading.dispose();
 
-                                    lbAvatar.setImage(avatarUpload.getDataImage());
+                                    setAvatar(avatarUpload.getDataImage());
                                     MessageToast.success("Cập nhật ảnh đại diện thành công.");
 
                                 } catch (ServiceResponseException e) {
-                                    loading.dispose();
                                     MessageToast.error(e.getMessage());
                                 } catch (Exception e) {
-                                    loading.dispose();
                                     MessageToast.error(ErrorConstant.DEFAULT_ERROR);
+                                } finally {
+                                    loading.dispose();
                                 }
                             });
 
@@ -295,6 +301,7 @@ public class SidebarMenu extends JPanel {
     private void addMenu(int index, String icon, String text, ISidebarMenuButtonCallback callback) {
         SidebarMenuButton menuButton = new SidebarMenuButton(index, callback);
         setFont(menuButton.getFont().deriveFont(Font.PLAIN, 14));
+
         menuButton.setIcon(ComponentUtils.resizeImage(ResourceUtils.getImageAssets("sidemenu/" + icon + ".png"), 24, 24));
         menuButton.setText("        " + text);
         menuButton.addActionListener((e) -> {
@@ -306,10 +313,21 @@ public class SidebarMenu extends JPanel {
                         unSelectedMenu = selectedMenu;
                         selectedMenu = menuButton;
                         animator.start();
-			executor.submit(() -> { 
-			    menuEvent.menuSelected(menuButton.getIndex());
-			    loading.dispose();
-			});
+                        
+                        SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+                            @Override
+                            protected Void doInBackground() throws Exception {
+                                menuEvent.menuSelected(menuButton.getIndex());
+                                return null;
+                            }
+
+                            @Override
+                            protected void done() {
+                                loading.dispose();
+                            }
+                            
+                        };
+                        worker.execute();
                         loading.setVisible(true);
                     }
                 }
@@ -317,6 +335,10 @@ public class SidebarMenu extends JPanel {
         });
 	menuButton.addMouseListener(eventHoverMenu); 
         plMenu.add(menuButton);
+    }
+    
+    public void setAvatar(ImageIcon image) {
+        instance.lbAvatar.setImage(image);
     }
 
     public void setSelected(int index) {

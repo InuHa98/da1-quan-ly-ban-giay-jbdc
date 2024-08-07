@@ -42,6 +42,7 @@ import raven.modal.component.SimpleModalBorder;
 import com.app.views.UI.table.ITableActionEvent;
 import com.app.views.UI.table.celll.TableActionCellEditor;
 import com.app.views.UI.table.celll.TableActionCellRender;
+import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.event.ItemEvent;
@@ -112,10 +113,12 @@ public class InuhaDetailSanPhamView extends JPanel {
 	}
 	
         this.sanPham = sanPham;
+        
+        pnlQR.setBackground(ColorUtils.BACKGROUND_DASHBOARD);
 	
 	pnlList.setBackground(ColorUtils.BACKGROUND_DASHBOARD);
-	pnlInfo.setBackground(ColorUtils.BACKGROUND_PRIMARY);
 	pnlInfo.setOpaque(false);
+
 	
 	lblTenSanPham.setForeground(ColorUtils.PRIMARY_COLOR);
 	
@@ -128,6 +131,7 @@ public class InuhaDetailSanPhamView extends JPanel {
         btnThemSanPhamChiTiet.setIcon(ResourceUtils.getSVG("/svg/plus.svg", new Dimension(20, 20)));
         
         btnThemSanPhamChiTiet.setBackground(ColorUtils.BUTTON_PRIMARY);
+        btnThemSanPhamChiTiet.setForeground(Color.WHITE);
         
         cboTrangThai.removeAllItems();
         cboTrangThai.addItem(new ComboBoxItem<>("-- Tất cả trạng thái --", -1));
@@ -392,7 +396,7 @@ public class InuhaDetailSanPhamView extends JPanel {
         lblDeGiay = new javax.swing.JLabel();
         lblGiaNhap = new javax.swing.JLabel();
         lblGN = new javax.swing.JLabel();
-        roundPanel1 = new com.app.views.UI.panel.RoundPanel();
+        pnlQR = new com.app.views.UI.panel.RoundPanel();
         pictureBox = new com.app.views.UI.picturebox.PictureBox();
         btnScanQR = new javax.swing.JButton();
         btnSaveQR = new javax.swing.JButton();
@@ -501,26 +505,26 @@ public class InuhaDetailSanPhamView extends JPanel {
             }
         });
 
-        javax.swing.GroupLayout roundPanel1Layout = new javax.swing.GroupLayout(roundPanel1);
-        roundPanel1.setLayout(roundPanel1Layout);
-        roundPanel1Layout.setHorizontalGroup(
-            roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(roundPanel1Layout.createSequentialGroup()
+        javax.swing.GroupLayout pnlQRLayout = new javax.swing.GroupLayout(pnlQR);
+        pnlQR.setLayout(pnlQRLayout);
+        pnlQRLayout.setHorizontalGroup(
+            pnlQRLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlQRLayout.createSequentialGroup()
                 .addGap(10, 10, 10)
                 .addComponent(pictureBox, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(pnlQRLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(btnScanQR, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnSaveQR, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnEdit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(14, Short.MAX_VALUE))
         );
-        roundPanel1Layout.setVerticalGroup(
-            roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(roundPanel1Layout.createSequentialGroup()
+        pnlQRLayout.setVerticalGroup(
+            pnlQRLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlQRLayout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(roundPanel1Layout.createSequentialGroup()
+                .addGroup(pnlQRLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlQRLayout.createSequentialGroup()
                         .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(13, 13, 13)
                         .addComponent(btnSaveQR, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -535,7 +539,7 @@ public class InuhaDetailSanPhamView extends JPanel {
         pnlInfoLayout.setHorizontalGroup(
             pnlInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlInfoLayout.createSequentialGroup()
-                .addComponent(roundPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(pnlQR, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(pnlInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlInfoLayout.createSequentialGroup()
@@ -582,7 +586,7 @@ public class InuhaDetailSanPhamView extends JPanel {
             .addGroup(pnlInfoLayout.createSequentialGroup()
                 .addGap(0, 0, 0)
                 .addGroup(pnlInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(roundPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(pnlQR, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(pnlInfoLayout.createSequentialGroup()
                         .addComponent(lblTenSanPham, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -904,7 +908,7 @@ public class InuhaDetailSanPhamView extends JPanel {
     private com.app.views.UI.panel.RoundPanel pnlInfo;
     private com.app.views.UI.panel.RoundPanel pnlList;
     private javax.swing.JPanel pnlPhanTrang;
-    private com.app.views.UI.panel.RoundPanel roundPanel1;
+    private com.app.views.UI.panel.RoundPanel pnlQR;
     private javax.swing.JScrollPane scrDanhSach;
     private javax.swing.JTable tblDanhSach;
     // End of variables declaration//GEN-END:variables

@@ -22,11 +22,13 @@ import com.app.core.inuha.views.quanly.phieugiamgia.InuhaAddPhieuGiamGiaView;
 import com.app.utils.ColorUtils;
 import com.app.utils.QrCodeUtils;
 import com.app.utils.ResourceUtils;
+import com.app.utils.ThemeUtils;
 import com.app.views.UI.combobox.ComboBoxItem;
 import com.app.views.UI.dialog.LoadingDialog;
 import com.app.views.UI.table.ITableActionEvent;
 import com.app.views.UI.table.TableCustomUI;
 import com.app.views.UI.table.celll.TableImageCellRender;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -83,7 +85,8 @@ public class InuhaNhanVienView extends javax.swing.JPanel {
 	initComponents();
 	instance = this;
 	
-	btnCreate.setBackground(ColorUtils.PRIMARY_COLOR);
+	btnCreate.setBackground(ColorUtils.BUTTON_PRIMARY);
+        btnCreate.setForeground(Color.WHITE);
 	btnCreate.setIcon(ResourceUtils.getSVG("/svg/plus.svg", new Dimension(20, 20)));
 
 	pnlSearchBox.setPlaceholder("Nhập tên, tài khoản hoặc email ...");
@@ -105,6 +108,11 @@ public class InuhaNhanVienView extends javax.swing.JPanel {
                 }
             }
         });
+        
+        if (ThemeUtils.isLight()) { 
+            btnSearch.setBackground(ColorUtils.BUTTON_PRIMARY);
+            btnSearch.setForeground(Color.WHITE);
+        }
 	
 	cboTrangThai.removeAllItems();
         cboTrangThai.addItem(new ComboBoxItem<>("-- Tất cả trạng thái --", -1));
@@ -503,9 +511,9 @@ public class InuhaNhanVienView extends javax.swing.JPanel {
             pnlListLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlListLayout.createSequentialGroup()
                 .addGap(10, 10, 10)
-                .addGroup(pnlListLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblDanhSach, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnCreate, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(pnlListLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnCreate, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblDanhSach, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(10, 10, 10)
                 .addComponent(splitLine1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)

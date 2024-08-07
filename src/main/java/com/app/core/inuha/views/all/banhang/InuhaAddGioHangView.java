@@ -1,10 +1,10 @@
-package com.app.core.inuha.views.all.banhang.components;
+package com.app.core.inuha.views.all.banhang;
 
 import com.app.core.inuha.models.InuhaSanPhamChiTietModel;
 import com.app.core.inuha.models.InuhaSanPhamModel;
 import com.app.core.inuha.models.sanpham.InuhaKichCoModel;
 import com.app.core.inuha.services.InuhaSanPhamChiTietService;
-import com.app.core.inuha.views.all.banhang.InuhaBanHangView;
+import com.app.core.inuha.views.all.InuhaBanHangView;
 import com.app.utils.ColorUtils;
 import com.app.utils.ProductUtils;
 import com.app.utils.ResourceUtils;
@@ -13,6 +13,7 @@ import com.app.views.UI.dialog.LoadingDialog;
 import com.app.views.UI.picturebox.DefaultPictureBoxRender;
 import com.app.views.UI.picturebox.PictureBox;
 import com.app.views.UI.picturebox.SuperEllipse2D;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.Shape;
@@ -57,6 +58,7 @@ public class InuhaAddGioHangView extends javax.swing.JPanel {
 	this.sanPham = sanPham;
 	
 	btnAdd.setBackground(ColorUtils.BUTTON_PRIMARY);
+        btnAdd.setForeground(Color.WHITE);
 	btnAdd.setIcon(ResourceUtils.getSVG("/svg/plus.svg", new Dimension(20, 20)));
 	
 	pictureBox1.setImage(ProductUtils.getImage(sanPham.getHinhAnh()));

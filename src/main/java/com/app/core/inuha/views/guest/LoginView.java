@@ -15,9 +15,11 @@ import com.app.core.inuha.services.InuhaTaiKhoanService;
 import com.app.utils.ColorUtils;
 import com.app.utils.ComponentUtils;
 import com.app.utils.ResourceUtils;
+import com.app.utils.ThemeUtils;
 import com.app.views.UI.dialog.LoadingDialog;
 import com.app.views.DashboardView;
 import com.formdev.flatlaf.FlatClientProperties;
+import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -49,6 +51,7 @@ public class LoginView extends javax.swing.JPanel {
         this();
         txtUsername.setText(username);
         txtPassword.requestFocus();
+       
     }
 
     /** Creates new form LoginView */
@@ -56,7 +59,6 @@ public class LoginView extends javax.swing.JPanel {
         initComponents();
         setLayout(new MigLayout("fill, insets 20", "[center]", "[center]"));
 	lblTitle.setForeground(ColorUtils.PRIMARY_COLOR);
-        pnlLogin.setBackground(ColorUtils.BACKGROUND_PRIMARY);
         lbForgotPassword.setForeground(ColorUtils.PRIMARY_COLOR);
 
         txtUsername.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Vui lòng nhập email hoặc tên người dùng");
@@ -64,9 +66,6 @@ public class LoginView extends javax.swing.JPanel {
 
         txtUsername.setText("admin");
         txtPassword.setText("123");
-
-        lbPassword.setForeground(ColorUtils.PRIMARY_TEXT);
-        lbUsername.setForeground(ColorUtils.PRIMARY_TEXT);
 
         currentUsername = lbUsername.getText();
         currentPassword = lbPassword.getText();
@@ -84,6 +83,9 @@ public class LoginView extends javax.swing.JPanel {
         txtPassword.addKeyListener(keyEnter);
 
         txtUsername.requestFocus();
+        
+        lblTheme.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        lblTheme.setIcon(ComponentUtils.resizeImageByWidth(ResourceUtils.getImageAssets("/sidemenu/theme.png"), 20));
     }
 
     /**
@@ -105,24 +107,19 @@ public class LoginView extends javax.swing.JPanel {
         btnSubmit = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
         lbForgotPassword = new javax.swing.JLabel();
-
-        pnlLogin.setBackground(new java.awt.Color(51, 51, 51));
+        lblTheme = new javax.swing.JLabel();
 
         lblTitle.setFont(lblTitle.getFont().deriveFont(lblTitle.getFont().getStyle() | java.awt.Font.BOLD, lblTitle.getFont().getSize()+10));
-        lblTitle.setForeground(new java.awt.Color(255, 255, 255));
         lblTitle.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        lblTitle.setText("Chào mừng trở lại!");
+        lblTitle.setText("I-SHOES");
 
         jLabel2.setFont(jLabel2.getFont().deriveFont(jLabel2.getFont().getSize()+1f));
-        jLabel2.setForeground(new java.awt.Color(204, 204, 204));
         jLabel2.setText("Vui lòng đăng nhập để sử dụng các chức năng");
 
         lbUsername.setFont(lbUsername.getFont().deriveFont(lbUsername.getFont().getStyle() | java.awt.Font.BOLD, lbUsername.getFont().getSize()+2));
-        lbUsername.setForeground(new java.awt.Color(204, 204, 204));
         lbUsername.setText("Username");
 
         lbPassword.setFont(lbPassword.getFont().deriveFont(lbPassword.getFont().getStyle() | java.awt.Font.BOLD, lbPassword.getFont().getSize()+2));
-        lbPassword.setForeground(new java.awt.Color(204, 204, 204));
         lbPassword.setText("Password");
 
         btnSubmit.setText("Đăng nhập");
@@ -134,7 +131,6 @@ public class LoginView extends javax.swing.JPanel {
         });
 
         jLabel5.setFont(jLabel5.getFont().deriveFont(jLabel5.getFont().getSize()+1f));
-        jLabel5.setForeground(new java.awt.Color(204, 204, 204));
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel5.setText("Quên mật khẩu?");
 
@@ -145,6 +141,17 @@ public class LoginView extends javax.swing.JPanel {
         lbForgotPassword.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 lbForgotPasswordMouseClicked(evt);
+            }
+        });
+
+        lblTheme.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblThemeMouseClicked(evt);
+            }
+        });
+        lblTheme.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                lblThemeKeyPressed(evt);
             }
         });
 
@@ -167,6 +174,10 @@ public class LoginView extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(lbForgotPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(42, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlLoginLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(lblTheme, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(20, 20, 20))
         );
         pnlLoginLayout.setVerticalGroup(
             pnlLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -189,7 +200,9 @@ public class LoginView extends javax.swing.JPanel {
                 .addGroup(pnlLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(lbForgotPassword, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(42, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblTheme, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(14, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -216,6 +229,18 @@ public class LoginView extends javax.swing.JPanel {
 	redirectForgotPassword(evt);
     }//GEN-LAST:event_lbForgotPasswordMouseClicked
 
+    private void lblThemeKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_lblThemeKeyPressed
+        // TODO add your handling code here:
+
+    }//GEN-LAST:event_lblThemeKeyPressed
+
+    private void lblThemeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblThemeMouseClicked
+        // TODO add your handling code here:
+        if (SwingUtilities.isLeftMouseButton(evt)) { 
+            ThemeUtils.switchTheme();
+        }
+    }//GEN-LAST:event_lblThemeMouseClicked
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnSubmit;
     private javax.swing.JLabel jLabel2;
@@ -223,6 +248,7 @@ public class LoginView extends javax.swing.JPanel {
     private javax.swing.JLabel lbForgotPassword;
     private javax.swing.JLabel lbPassword;
     private javax.swing.JLabel lbUsername;
+    private javax.swing.JLabel lblTheme;
     private javax.swing.JLabel lblTitle;
     private com.app.views.UI.panel.RoundPanel pnlLogin;
     private javax.swing.JPasswordField txtPassword;

@@ -153,7 +153,8 @@ public class Pagination {
             page.addActionListener(onClick);
             page.setMaximumSize(maxSize);
             if (currentPage == i) {
-                page.setBackground(ColorUtils.PRIMARY_COLOR);
+                page.setBackground(ColorUtils.BUTTON_PRIMARY);
+                page.setForeground(Color.WHITE);
                 page.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
             }
             listPage.add(page);

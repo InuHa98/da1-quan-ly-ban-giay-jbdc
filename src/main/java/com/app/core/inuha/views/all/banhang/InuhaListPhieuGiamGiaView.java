@@ -1,97 +1,95 @@
-package com.app.core.inuha.views.all.banhang.components;
+package com.app.core.inuha.views.all.banhang;
 
 import com.app.common.helper.MessageModal;
 import com.app.common.helper.MessageToast;
 import com.app.common.helper.Pagination;
 import com.app.common.infrastructure.constants.ErrorConstant;
+import com.app.common.infrastructure.constants.TrangThaiPhieuGiamGiaConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
-import com.app.common.infrastructure.request.FillterRequest;
-import com.app.core.inuha.models.InuhaKhachHangModel;
-import com.app.core.inuha.request.InuhaFilterKhachHangRequest;
-import com.app.core.inuha.services.InuhaKhachHangService;
-import com.app.core.inuha.views.all.banhang.InuhaBanHangView;
-import com.app.core.inuha.views.quanly.components.table.khachhang.InuhaKhachHangTableActionCellEditor;
-import com.app.core.inuha.views.quanly.components.table.khachhang.InuhaKhachHangTableActionCellRender;
+import com.app.core.inuha.models.InuhaPhieuGiamGiaModel;
+import com.app.core.inuha.models.InuhaPhieuGiamGiaModel;
+import com.app.core.inuha.request.InuhaFilterPhieuGiamGiaRequest;
+import com.app.core.inuha.request.InuhaFilterPhieuGiamGiaRequest;
+import com.app.core.inuha.services.InuhaPhieuGiamGiaService;
+import com.app.core.inuha.services.InuhaPhieuGiamGiaService;
+import com.app.core.inuha.views.all.InuhaBanHangView;
+import com.app.core.inuha.views.all.InuhaBanHangView.ChiTietThanhToan;
 import com.app.core.inuha.views.quanly.components.table.thuoctinhsanpham.InuhaThuocTinhTableActionCellEditor;
 import com.app.core.inuha.views.quanly.components.table.thuoctinhsanpham.InuhaThuocTinhTableActionCellRender;
 import com.app.utils.ColorUtils;
-import com.app.utils.ResourceUtils;
+import com.app.utils.CurrencyUtils;
+import com.app.views.UI.combobox.ComboBoxItem;
 import com.app.views.UI.dialog.LoadingDialog;
 import com.app.views.UI.table.TableCustomUI;
-import java.awt.Dimension;
 import javax.swing.JComboBox;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import raven.modal.ModalDialog;
 import raven.modal.component.SimpleModalBorder;
 import com.app.views.UI.table.ITableActionEvent;
+import com.formdev.flatlaf.FlatClientProperties;
+import java.awt.Color;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JTextField;
-import javax.swing.SwingWorker;
 
 /**
  *
  * @author InuHa
  */
-public class InuhaListKhachHangView extends javax.swing.JPanel {
+public class InuhaListPhieuGiamGiaView extends javax.swing.JPanel {
 
-    private static InuhaListKhachHangView instance;
+    private static InuhaListPhieuGiamGiaView instance;
     
     private final ExecutorService executorService = Executors.newFixedThreadPool(2);
     
-    private final InuhaKhachHangService khachHangService = InuhaKhachHangService.getInstance();
+    private final InuhaPhieuGiamGiaService phieuGiamGiaService = InuhaPhieuGiamGiaService.getInstance();
     
     public Pagination pagination = new Pagination();
     
     private int sizePage = pagination.getLimitItem();
     
-    private List<InuhaKhachHangModel> dataItems = new ArrayList<>();
+    private List<InuhaPhieuGiamGiaModel> dataItems = new ArrayList<>();
     
-    public final static String MODAL_ID_CREATE = "modal_create_khach_hang";
+    public final static String MODAL_ID_CREATE = "modal_create_phieu_giam_gia";
             
-    private JTextField txtTuKhoa;
-    
     private final LoadingDialog loading = new LoadingDialog();
         
-    public static InuhaListKhachHangView getInstance() { 
+    public static InuhaListPhieuGiamGiaView getInstance() { 
         if (instance == null) { 
-            instance = new InuhaListKhachHangView(null);
+            instance = new InuhaListPhieuGiamGiaView(null);
         }
         return instance;
     }
     
-    private InuhaKhachHangModel khachHang;
+    private ChiTietThanhToan chiTietThanhToan = null;
+    
+    private InuhaPhieuGiamGiaModel phieuGiamGia = null;
     
     /**
-     * Creates new form InuhaQuanLyKhachHangView
+     * Creates new form InuhaQuanLyPhieuGiamGiaView
      */
-    public InuhaListKhachHangView(InuhaKhachHangModel khachHang) {
+    public InuhaListPhieuGiamGiaView(ChiTietThanhToan chiTietThanhToan) {
         initComponents();
         instance = this;
-	this.khachHang = khachHang;
-		
-	pnlSearchBox.setPlaceholder("Nhập tên hoặc số điện thoại ...");
-	txtTuKhoa = pnlSearchBox.getKeyword();
+	this.chiTietThanhToan = chiTietThanhToan;
+	
 
-	txtTuKhoa.addKeyListener(new KeyAdapter() {
+	txtMa.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Nhập mã giảm giá...");
+	txtMa.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) { 
-                    handleClickButtonSearch();
+                    handleClickButtonAdd();
                 }
             }
         });
 	
-        btnAdd.setBackground(ColorUtils.PRIMARY_COLOR);
-        btnAdd.setIcon(ResourceUtils.getSVG("/svg/plus.svg", new Dimension(20, 20)));
+        btnAdd.setBackground(ColorUtils.BUTTON_PRIMARY);
+        btnAdd.setForeground(Color.WHITE);
         
         setupTable(tblDanhSach);
         loadDataPage(1);
@@ -99,69 +97,9 @@ public class InuhaListKhachHangView extends javax.swing.JPanel {
     }
 
     private void setupTable(JTable table) { 
-        
-        ITableActionEvent event = new ITableActionEvent() {
-            @Override
-            public void onEdit(int row) {
-                InuhaKhachHangModel item = dataItems.get(row);
-                ModalDialog.showModal(instance, new SimpleModalBorder(new InuhaAddKhachHangView(item), null), MODAL_ID_CREATE);
-            }
-
-            @Override
-            public void onDelete(int row) {
-                if (table.isEditing()) {
-                    table.getCellEditor().stopCellEditing();
-                }
-                InuhaKhachHangModel item = dataItems.get(row);
-                SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
-                    @Override
-                    protected Boolean doInBackground() throws Exception {
-                        return MessageModal.confirmWarning("Xoá: " + item.getHoTen(), "Bạn thực sự muốn xoá khách hàng này?");
-                    }
-
-                    @Override
-                    protected void done() {
-                        try {
-                            if(get()) {
-                                executorService.submit(() -> {
-                                    try {
-                                        khachHangService.delete(item.getId());
-                                        int currentId = khachHang == null ? -1 : khachHang.getId();
-                                        if (item.getId() == currentId) {
-                                            InuhaBanHangView.getInstance().setKhachHang(null);
-                                        }
-                                        loadDataPage();
-                                        MessageToast.success("Xoá thành công khách hàng: " + item.getHoTen());
-                                    } catch (ServiceResponseException e) {
-                                        MessageToast.error(e.getMessage());
-                                    } catch (Exception e) {
-                                        MessageModal.error(ErrorConstant.DEFAULT_ERROR);
-                                    }  finally {
-                                        loading.dispose();
-                                    }
-                                });
-                                loading.setVisible(true);
-                            }
-                        } catch (InterruptedException | ExecutionException ex) {
-                        }
-                    }
-                    
-                };
-                worker.execute();
-               
-            }
-
-            @Override
-            public void onView(int row) {
-            }
-        };
-        
-        TableCustomUI.apply(scrDanhSach, TableCustomUI.TableType.DEFAULT);
+	TableCustomUI.apply(scrDanhSach, TableCustomUI.TableType.DEFAULT);
 	TableCustomUI.resizeColumnHeader(table);
         pnlDanhSach.setBackground(ColorUtils.BACKGROUND_TABLE);
-        
-        table.getColumnModel().getColumn(1).setCellRenderer(new InuhaKhachHangTableActionCellRender(table));
-        table.getColumnModel().getColumn(1).setCellEditor(new InuhaKhachHangTableActionCellEditor(event));
     }
     
     public void loadDataPage() { 
@@ -175,22 +113,13 @@ public class InuhaListKhachHangView extends javax.swing.JPanel {
                 tblDanhSach.getCellEditor().stopCellEditing();
             }
             
-	    String keyword = txtTuKhoa.getText().trim();
-            keyword = keyword.replaceAll("\\s+", " ");
-	    
-	    if (keyword.length() > 250) {
-		MessageToast.warning("Từ khoá tìm kiếm chỉ được chứa tối đa 250 kí tự");
-		return;
-	    }
-		    
             model.setRowCount(0);
             
-	    
-            InuhaFilterKhachHangRequest request = new InuhaFilterKhachHangRequest();
-	    request.setKeyword(keyword);
+            InuhaFilterPhieuGiamGiaRequest request = new InuhaFilterPhieuGiamGiaRequest();
+	    request.setTrangThai(new ComboBoxItem<Integer>("Đang diễn ra", TrangThaiPhieuGiamGiaConstant.DANG_DIEN_RA));
             request.setSize(sizePage);
 	    
-            int totalPages = khachHangService.getTotalPage(request);
+            int totalPages = phieuGiamGiaService.getTotalPage(request);
             if (totalPages < page) { 
                 page = totalPages;
             }
@@ -198,10 +127,10 @@ public class InuhaListKhachHangView extends javax.swing.JPanel {
             request.setPage(page);
 
            
-            dataItems = khachHangService.getPage(request);
+            dataItems = phieuGiamGiaService.getPage(request);
             
-            for(InuhaKhachHangModel m: dataItems) { 
-                model.addRow(m.toDataRow());
+            for(InuhaPhieuGiamGiaModel m: dataItems) { 
+                model.addRow(m.toDataRowBanHang());
             }
 
             rerenderPagination(page, totalPages);
@@ -216,6 +145,7 @@ public class InuhaListKhachHangView extends javax.swing.JPanel {
             @Override
             public void onChangeLimitItem(JComboBox<Integer> comboBox) {
                 sizePage = (int) comboBox.getSelectedItem();
+		
 		executorService.submit(() -> { 
 		    loadDataPage(1);
 		    loading.dispose();
@@ -225,6 +155,7 @@ public class InuhaListKhachHangView extends javax.swing.JPanel {
 
             @Override
             public void onClickPage(int page) {
+		
 		executorService.submit(() -> { 
 		    loadDataPage(page);
 		    loading.dispose();
@@ -253,9 +184,9 @@ public class InuhaListKhachHangView extends javax.swing.JPanel {
         scrDanhSach = new javax.swing.JScrollPane();
         tblDanhSach = new javax.swing.JTable();
         pnlPhanTrang = new javax.swing.JPanel();
-        pnlSearchBox = new com.app.views.UI.panel.SearchBox();
+        txtMa = new javax.swing.JTextField();
 
-        btnAdd.setText("Khách hàng mới");
+        btnAdd.setText("Áp dụng mã");
         btnAdd.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnAdd.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -268,11 +199,11 @@ public class InuhaListKhachHangView extends javax.swing.JPanel {
 
             },
             new String [] {
-                "#", "", "Số điện thoại", "Tên khách hàng", "Lượt mua hàng", "Giới tính", "Địa chỉ"
+                "#", "Mã", "Tên", "Số lượng", "Kiểu giảm", "Giá trị giảm", "Giảm tối đa", "Hoá đơn tối thiểu", "Ngày bắt đầu", "Ngày kết thúc", "Trạng thái"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, true, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -291,15 +222,13 @@ public class InuhaListKhachHangView extends javax.swing.JPanel {
             tblDanhSach.getColumnModel().getColumn(0).setMaxWidth(50);
             tblDanhSach.getColumnModel().getColumn(1).setMinWidth(100);
             tblDanhSach.getColumnModel().getColumn(2).setMinWidth(100);
-            tblDanhSach.getColumnModel().getColumn(3).setMinWidth(150);
-            tblDanhSach.getColumnModel().getColumn(6).setMinWidth(200);
         }
 
         javax.swing.GroupLayout pnlDanhSachLayout = new javax.swing.GroupLayout(pnlDanhSach);
         pnlDanhSach.setLayout(pnlDanhSachLayout);
         pnlDanhSachLayout.setHorizontalGroup(
             pnlDanhSachLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scrDanhSach, javax.swing.GroupLayout.DEFAULT_SIZE, 621, Short.MAX_VALUE)
+            .addComponent(scrDanhSach, javax.swing.GroupLayout.DEFAULT_SIZE, 718, Short.MAX_VALUE)
         );
         pnlDanhSachLayout.setVerticalGroup(
             pnlDanhSachLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -322,6 +251,12 @@ public class InuhaListKhachHangView extends javax.swing.JPanel {
             .addGap(0, 36, Short.MAX_VALUE)
         );
 
+        txtMa.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtMaActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -332,8 +267,8 @@ public class InuhaListKhachHangView extends javax.swing.JPanel {
                     .addComponent(pnlPhanTrang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(pnlDanhSach, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(pnlSearchBox, javax.swing.GroupLayout.PREFERRED_SIZE, 343, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(txtMa)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnAdd)))
                 .addGap(41, 41, 41))
         );
@@ -341,10 +276,10 @@ public class InuhaListKhachHangView extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(pnlSearchBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(20, 20, 20)
+                    .addComponent(txtMa, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
                 .addComponent(pnlDanhSach, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(pnlPhanTrang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -359,32 +294,54 @@ public class InuhaListKhachHangView extends javax.swing.JPanel {
 
     private void tblDanhSachMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblDanhSachMouseClicked
         // TODO add your handling code here:
-	if (evt.getClickCount() > 1) { 
-	    ModalDialog.closeAllModal();
-	    InuhaBanHangView.getInstance().setKhachHang(dataItems.get(tblDanhSach.getSelectedRow()));
+	phieuGiamGia = dataItems.get(tblDanhSach.getSelectedRow());
+	txtMa.setText(phieuGiamGia.getMa().trim());
+	
+	if (evt.getClickCount() > 1) {
+	    handleClickButtonAdd();
 	}
     }//GEN-LAST:event_tblDanhSachMouseClicked
+
+    private void txtMaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtMaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtMaActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdd;
     private com.app.views.UI.panel.RoundPanel pnlDanhSach;
     private javax.swing.JPanel pnlPhanTrang;
-    private com.app.views.UI.panel.SearchBox pnlSearchBox;
     private javax.swing.JScrollPane scrDanhSach;
     private javax.swing.JTable tblDanhSach;
+    private javax.swing.JTextField txtMa;
     // End of variables declaration//GEN-END:variables
 
     
     private void handleClickButtonAdd() {
-        ModalDialog.showModal(this, new SimpleModalBorder(new InuhaAddKhachHangView(), null), MODAL_ID_CREATE);
-    }
-    
-    private void handleClickButtonSearch() {
+	String ma = txtMa.getText().trim();
+	if (ma.isEmpty()) { 
+	    MessageToast.error("Vui lòng nhập mã giảm giá");
+	    return;
+	}
+	
 	executorService.submit(() -> {
-	    loadDataPage();
-	    loading.dispose();
+	    try {
+		InuhaPhieuGiamGiaModel model = phieuGiamGiaService.getByCode(ma);
+		if (chiTietThanhToan.getTongTienHang() < model.getDonToiThieu()) { 
+		    throw new ServiceResponseException("Giá trị đơn hàng phải thấp nhất là " + CurrencyUtils.parseString(model.getDonToiThieu()) + " để có thể áp dụng");
+		}
+		InuhaBanHangView.getInstance().setVoucher(phieuGiamGia);
+		ModalDialog.closeAllModal();
+	    } catch (ServiceResponseException e) {
+		MessageToast.error(e.getMessage());
+	    } catch (Exception e) {
+		MessageToast.error(ErrorConstant.DEFAULT_ERROR);
+	    } finally {
+		txtMa.requestFocus();
+		loading.dispose();
+	    }
 	});
 	loading.setVisible(true);
     }
+    
 }

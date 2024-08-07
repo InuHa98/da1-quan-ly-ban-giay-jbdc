@@ -17,6 +17,7 @@ import com.app.core.inuha.services.InuhaThongKeService;
 import com.app.utils.ColorUtils;
 import com.app.utils.CurrencyUtils;
 import com.app.utils.ResourceUtils;
+import com.app.utils.ThemeUtils;
 import com.app.utils.TimeUtils;
 import com.app.views.UI.combobox.ComboBoxItem;
 import com.app.views.UI.curvelinechart.chart.ModelChart;
@@ -89,7 +90,9 @@ public class InuhaThongKeView extends javax.swing.JPanel {
 	btnExport.setIcon(ResourceUtils.getSVG("/svg/export.svg", new Dimension(20, 20)));
 	
 	btnFilter.setIcon(ResourceUtils.getSVG("/svg/filter-n.svg", new Dimension(20, 20)));
-	btnFilter.setBackground(ColorUtils.PRIMARY_COLOR);
+	btnFilter.setBackground(ColorUtils.BUTTON_PRIMARY);
+        btnFilter.setForeground(Color.WHITE);
+        
 	pnlSoLuongBan.setBackground(ColorUtils.BACKGROUND_DASHBOARD);
 	pnlDoanhThu.setBackground(ColorUtils.BACKGROUND_DASHBOARD);
 	pnlLoiNhuan.setBackground(ColorUtils.BACKGROUND_DASHBOARD);
@@ -108,6 +111,8 @@ public class InuhaThongKeView extends javax.swing.JPanel {
 	cboSapXep.addItem(new ComboBoxItem<>("Doanh thu cao nhất", 1));
 	cboSapXep.addItem(new ComboBoxItem<>("Lợi nhuận cao nhất", 2));
 	
+        btnClear.setBackground(ColorUtils.BUTTON_GRAY);
+        
 	Dimension cboSize = new Dimension(150, 36);
 	cboSanPham.setPreferredSize(cboSize);
 	cboSapXep.setPreferredSize(cboSize);
@@ -121,8 +126,13 @@ public class InuhaThongKeView extends javax.swing.JPanel {
 	});
 	
 	
+        if (ThemeUtils.isLight()) {
+            chartDoanhThu.setColorLabel(ColorUtils.PRIMARY_TEXT);
+            chartDoanhThu.setForeground(ColorUtils.PRIMARY_TEXT);
+        } else {
+            chartDoanhThu.setColorLabel(Color.WHITE);
+        }
 	
-	chartDoanhThu.setColorLabel(Color.WHITE);
 	chartDoanhThu.setLabelName("đ");
 	chartDoanhThu.setTitle("Biểu đồ chi tiết");
         chartDoanhThu.addLegend("Doanh thu", Color.decode("#e65c00"), Color.decode("#F9D423"));
@@ -146,24 +156,25 @@ public class InuhaThongKeView extends javax.swing.JPanel {
 	dataRangeDate.clear();
 	
 	ComboBoxItem<Integer> kieuNgay = (ComboBoxItem<Integer>) cboThoiGian.getSelectedItem();
-	String start = null;
-	String end = null;
+        
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                
+	String start = thongKeService.getFirstDate();
+	String end = dtf.format(LocalDateTime.now());
 	
-	DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 	
 	if (kieuNgay.getValue() == 0) {
 	    LocalDate today = LocalDate.now();
 	    start = today.format(dtf);
 	    end = today.minusDays(6).format(dtf);
-	} else if (kieuNgay.getValue() == 1) { 
-	    start = thongKeService.getFirstDate();
-	    end = dtf.format(LocalDateTime.now());
 	} else {
 	    LocalDate[] dates = datePicker.getSelectedDateRange();
 	    if (dates != null) { 
 		start = dates[0].toString();
 		end = dates[1].toString();
-	    }
+	    } else {
+                datePicker.setSelectedDateRange(LocalDate.parse(start), LocalDate.parse(end));
+            }
 	}
 	
 	if (start == null || end == null) { 
@@ -189,51 +200,49 @@ public class InuhaThongKeView extends javax.swing.JPanel {
     
     private void loadDataChart() { 
 	getRangeDate();
-	
-	if (dataRangeDate.isEmpty()) { 
-	    MessageToast.error("Vui lòng chọn ít nhất một ngày muốn thống kê!");
-	    return;
-	}
-	
 	chartLabels.clear();
 	
-	LocalDate startDate = LocalDate.parse(dataRangeDate.get(0));
-	LocalDate endDate = LocalDate.parse(dataRangeDate.get(dataRangeDate.size() - 1));
-	
-	long intervalInDays = ChronoUnit.DAYS.between(startDate, endDate);
-	
-	ChartConstant type = null;
-	
-        if (intervalInDays >= 365) {
-	    type = ChartConstant.TYPE_YEAR;
-            LocalDate currentDate = startDate;
-            while (currentDate.isBefore(endDate) || currentDate.equals(endDate)) {
-                chartLabels.add(String.valueOf(currentDate.getYear()));
-                currentDate = currentDate.plusYears(1);
-            }
-        } else if (intervalInDays >= 31) {
-	    type = ChartConstant.TYPE_MONTH;
-            for (int i = 1; i <= 12; i++) {
-                String month = String.format("%02d", i);
-                chartLabels.add("Tháng " + month);
-            }
-        } else if (intervalInDays >= 1) {
-	    type = ChartConstant.TYPE_DAY;
-            LocalDate currentDate = startDate;
-            while (currentDate.isBefore(endDate) || currentDate.equals(endDate)) {
-                chartLabels.add(currentDate.format(DateTimeFormatter.ofPattern("dd/MM")));
-                currentDate = currentDate.plusDays(1);
-            }
-        } else {
-	    type = ChartConstant.TYPE_HOUR;
-	    LocalTime startTime = LocalTime.of(0, 0);
-	    DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+	LocalDate startDate = null; 
+	LocalDate endDate = null;
+        ChartConstant type = null;
 
-	    LocalTime currentTime = startTime;
-	    for(int i = 0; i < 24; i++) {
-		chartLabels.add(currentTime.format(timeFormatter));
-		currentTime = currentTime.plusHours(1);
-	    }
+        if (!dataRangeDate.isEmpty()) {
+            startDate = LocalDate.parse(dataRangeDate.get(0));
+            endDate = LocalDate.parse(dataRangeDate.get(dataRangeDate.size() - 1));
+
+            long intervalInDays = ChronoUnit.DAYS.between(startDate, endDate);
+
+            if (intervalInDays >= 365) {
+                type = ChartConstant.TYPE_YEAR;
+                LocalDate currentDate = startDate;
+                while (currentDate.isBefore(endDate) || currentDate.equals(endDate)) {
+                    chartLabels.add(String.valueOf(currentDate.getYear()));
+                    currentDate = currentDate.plusYears(1);
+                }
+            } else if (intervalInDays >= 31) {
+                type = ChartConstant.TYPE_MONTH;
+                for (int i = 1; i <= 12; i++) {
+                    String month = String.format("%02d", i);
+                    chartLabels.add("Tháng " + month);
+                }
+            } else if (intervalInDays >= 1) {
+                type = ChartConstant.TYPE_DAY;
+                LocalDate currentDate = startDate;
+                while (currentDate.isBefore(endDate) || currentDate.equals(endDate)) {
+                    chartLabels.add(currentDate.format(DateTimeFormatter.ofPattern("dd/MM")));
+                    currentDate = currentDate.plusDays(1);
+                }
+            } else {
+                type = ChartConstant.TYPE_HOUR;
+                LocalTime startTime = LocalTime.of(0, 0);
+                DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+
+                LocalTime currentTime = startTime;
+                for(int i = 0; i < 24; i++) {
+                    chartLabels.add(currentTime.format(timeFormatter));
+                    currentTime = currentTime.plusHours(1);
+                }
+            }
         }
 	
 	chartDoanhThu.clear();

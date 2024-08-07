@@ -55,7 +55,8 @@ public class InuhaChangePasswordNhanVienView extends javax.swing.JPanel {
 	txtPassword.addKeyListener(eventSubmit);
 	txtConfirmPassword.addKeyListener(eventSubmit);
 	
-	btnSubmit.setBackground(ColorUtils.PRIMARY_COLOR);
+	btnSubmit.setBackground(ColorUtils.BUTTON_PRIMARY);
+        btnSubmit.setForeground(Color.WHITE);
     }
 
     /**

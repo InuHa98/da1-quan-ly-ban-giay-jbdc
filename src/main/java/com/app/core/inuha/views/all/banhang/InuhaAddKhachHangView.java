@@ -1,4 +1,4 @@
-package com.app.core.inuha.views.all.banhang.components;
+package com.app.core.inuha.views.all.banhang;
 
 import com.app.common.helper.MessageModal;
 import com.app.common.helper.MessageToast;
@@ -6,7 +6,7 @@ import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
 import com.app.core.inuha.models.InuhaKhachHangModel;
 import com.app.core.inuha.services.InuhaKhachHangService;
-import com.app.core.inuha.views.all.banhang.InuhaBanHangView;
+import com.app.core.inuha.views.all.InuhaBanHangView;
 import com.app.core.inuha.views.quanly.InuhaSanPhamView;
 import com.app.utils.ColorUtils;
 import com.app.utils.NumberPhoneUtils;
@@ -41,7 +41,8 @@ public class InuhaAddKhachHangView extends JPanel {
         currentColor = lblTen.getForeground();
         txtTen.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Tối đa 250 ký tự...");
 	txtSoDienThoai.setFormatterFactory(NumberPhoneUtils.getDefaultFormat());
-        btnSubmit.setBackground(ColorUtils.PRIMARY_COLOR);
+        btnSubmit.setBackground(ColorUtils.BUTTON_PRIMARY);
+        btnSubmit.setForeground(Color.WHITE);
 	btnSubmit.setText("Thêm mới");
     }
 

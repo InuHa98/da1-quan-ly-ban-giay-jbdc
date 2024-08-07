@@ -1,9 +1,10 @@
-package com.app.core.inuha.views.all.banhang.components;
+package com.app.core.inuha.views.all.banhang;
 
 import com.app.core.inuha.models.InuhaHoaDonChiTietModel;
-import com.app.core.inuha.views.all.banhang.InuhaBanHangView;
+import com.app.core.inuha.views.all.InuhaBanHangView;
 import com.app.utils.ColorUtils;
 import com.app.utils.ResourceUtils;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -42,6 +43,7 @@ public class InuhaEditGioHangView extends javax.swing.JPanel {
 	});
 		
 	btnSubmit.setBackground(ColorUtils.BUTTON_PRIMARY);
+        btnSubmit.setForeground(Color.WHITE);
 	
 	setLimit(hoaDonChiTiet.getSanPhamChiTiet().getSoLuong() + hoaDonChiTiet.getSoLuong());
 	spnSoLuong.setValue(hoaDonChiTiet.getSoLuong());

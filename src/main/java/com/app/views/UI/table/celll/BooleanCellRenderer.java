@@ -24,7 +24,7 @@ public class BooleanCellRenderer extends TableCustomCellRender {
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
                 Graphics2D g2 = (Graphics2D) g.create();
-                g2.setColor(ColorUtils.BACKGROUND_GRAY);
+                g2.setColor(ColorUtils.BORDER);
                 g2.setStroke(new BasicStroke(1));
                 //g2.drawLine(getWidth() - 1, 0, getWidth() - 1, getHeight());
                 g2.drawLine(0, getHeight() - 1, getWidth() - 1, getHeight() - 1);

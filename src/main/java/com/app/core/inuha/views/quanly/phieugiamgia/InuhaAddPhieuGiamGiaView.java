@@ -105,7 +105,8 @@ public class InuhaAddPhieuGiamGiaView extends javax.swing.JPanel {
 	cboKieuGiamGia.addItem(new ComboBoxItem<>("Giảm theo phần trăm (%)", true));
 	cboKieuGiamGia.addItem(new ComboBoxItem<>("Giảm theo số tiền (vnđ)", false));
 	
-	btnSubmit.setBackground(ColorUtils.PRIMARY_COLOR);
+	btnSubmit.setBackground(ColorUtils.BUTTON_PRIMARY);
+        btnSubmit.setForeground(Color.WHITE);
     }
 
     /**

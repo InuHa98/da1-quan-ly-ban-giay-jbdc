@@ -215,9 +215,9 @@ public class InuhaHoaDonChiTietService implements IInuhaHoaDonChiTietServiceInte
         return new ArrayList<>();
     }
     
-    public int count(FillterRequest request) {
+    public int count() {
         try {
-            return repository.count(request);
+            return repository.count();
         } catch (SQLException ex) {
             ex.printStackTrace();
         }

@@ -58,14 +58,10 @@ public class ChangePasswordForgotPasswordView extends javax.swing.JPanel {
         setLayout(new MigLayout("fill, insets 20", "[center]", "[center]"));
 	
 	lblTitle.setForeground(ColorUtils.PRIMARY_COLOR);
-        pnlLogin.setBackground(ColorUtils.BACKGROUND_PRIMARY);
         lbLogin.setForeground(ColorUtils.PRIMARY_COLOR);
 
         txtPassword.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Vui lòng nhập mật khẩu mới");
         txtConfirmPassword.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Vui lòng xác nhận mật khẩu mới");
-
-        lbConfirmPassword.setForeground(ColorUtils.PRIMARY_TEXT);
-        lbPassword.setForeground(ColorUtils.PRIMARY_TEXT);
 
         currentPassword = lbPassword.getText();
         currentConfirmPassword = lbConfirmPassword.getText();
@@ -112,23 +108,17 @@ public class ChangePasswordForgotPasswordView extends javax.swing.JPanel {
         lbLogin = new javax.swing.JLabel();
         txtPassword = new javax.swing.JPasswordField();
 
-        pnlLogin.setBackground(new java.awt.Color(51, 51, 51));
-
         lblTitle.setFont(lblTitle.getFont().deriveFont(lblTitle.getFont().getStyle() | java.awt.Font.BOLD, lblTitle.getFont().getSize()+10));
-        lblTitle.setForeground(new java.awt.Color(255, 255, 255));
         lblTitle.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         lblTitle.setText("Thay đổi mật khẩu!");
 
         lbDesc.setFont(lbDesc.getFont().deriveFont(lbDesc.getFont().getSize()+1f));
-        lbDesc.setForeground(new java.awt.Color(204, 204, 204));
         lbDesc.setText("Mật khẩu phải có từ %d đến %d kí tự");
 
         lbPassword.setFont(lbPassword.getFont().deriveFont(lbPassword.getFont().getStyle() | java.awt.Font.BOLD, lbPassword.getFont().getSize()+2));
-        lbPassword.setForeground(new java.awt.Color(204, 204, 204));
         lbPassword.setText("New Password");
 
         lbConfirmPassword.setFont(lbConfirmPassword.getFont().deriveFont(lbConfirmPassword.getFont().getStyle() | java.awt.Font.BOLD, lbConfirmPassword.getFont().getSize()+2));
-        lbConfirmPassword.setForeground(new java.awt.Color(204, 204, 204));
         lbConfirmPassword.setText("Confirm New Password");
 
         btnSubmit.setText("Lấy lại mật khẩu");
@@ -140,7 +130,6 @@ public class ChangePasswordForgotPasswordView extends javax.swing.JPanel {
         });
 
         jLabel5.setFont(jLabel5.getFont().deriveFont(jLabel5.getFont().getSize()+1f));
-        jLabel5.setForeground(new java.awt.Color(204, 204, 204));
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel5.setText("Đã có tài khoản?");
 

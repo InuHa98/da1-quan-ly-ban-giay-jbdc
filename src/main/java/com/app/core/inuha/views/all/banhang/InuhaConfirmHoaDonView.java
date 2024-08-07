@@ -3,11 +3,12 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
 
-package com.app.core.inuha.views.all.banhang.components;
+package com.app.core.inuha.views.all.banhang;
 
-import com.app.core.inuha.views.all.banhang.InuhaBanHangView;
+import com.app.core.inuha.views.all.InuhaBanHangView;
 import com.app.utils.ColorUtils;
 import com.app.utils.ResourceUtils;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.util.concurrent.ExecutorService;
@@ -19,8 +20,6 @@ import raven.modal.ModalDialog;
  * @author inuHa
  */
 public class InuhaConfirmHoaDonView extends javax.swing.JPanel {
-
-    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
     
     /** Creates new form InuhaConfirmHoaDonView */
     public InuhaConfirmHoaDonView() {
@@ -31,8 +30,10 @@ public class InuhaConfirmHoaDonView extends javax.swing.JPanel {
         msg.setFont(msg.getFont().deriveFont(Font.PLAIN, 14));
 	msg.setIcon(ResourceUtils.getSVG("/svg/info.svg", new Dimension(64, 64)));
 	
-	btnSaveAndPrint.setBackground(ColorUtils.PRIMARY_COLOR);
-	btnSave.setBackground(ColorUtils.PRIMARY_COLOR);
+	btnSaveAndPrint.setBackground(ColorUtils.BUTTON_PRIMARY);
+        btnSaveAndPrint.setForeground(Color.WHITE);
+	btnSave.setBackground(ColorUtils.BUTTON_PRIMARY);
+        btnSave.setForeground(Color.WHITE);
 	btnSaveAndPrint.setIcon(ResourceUtils.getSVG("/svg/paid.svg", new Dimension(24, 24)));
     }
 
@@ -115,20 +116,14 @@ public class InuhaConfirmHoaDonView extends javax.swing.JPanel {
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
         // TODO add your handling code here:
-	executorService.submit(() -> {
-	    InuhaBanHangView.getInstance().submitSave(false);
-	    executorService.shutdown();
-	});
 	ModalDialog.closeAllModal();
+        InuhaBanHangView.getInstance().submitSave(false);
     }//GEN-LAST:event_btnSaveActionPerformed
 
     private void btnSaveAndPrintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveAndPrintActionPerformed
         // TODO add your handling code here:
-	executorService.submit(() -> {
-	    InuhaBanHangView.getInstance().submitSave(true);
-	    executorService.shutdown();
-	});
 	ModalDialog.closeAllModal();
+        InuhaBanHangView.getInstance().submitSave(true);
     }//GEN-LAST:event_btnSaveAndPrintActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

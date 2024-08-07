@@ -1,7 +1,7 @@
 package com.app.common.infrastructure.constants;
 
 import com.app.core.dattv.views.DatHoaDonView;
-import com.app.core.inuha.views.all.banhang.InuhaBanHangView;
+import com.app.core.inuha.views.all.InuhaBanHangView;
 import com.app.core.inuha.views.quanly.InuhaNhanVienView;
 import com.app.core.inuha.views.quanly.InuhaThongKeView;
 import com.app.core.inuha.views.quanly.InuhaSanPhamView;

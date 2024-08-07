@@ -31,18 +31,17 @@ public class QuanLyRoute {
     }
 
     private void init() {
-        itemSideMenu.add(new SidebarMenuItem(1, "statistic", "Thống kê", RouterConstant.THONG_KE));
-        itemSideMenu.add(new SidebarMenuItem(2, "sell", "Bán hàng", RouterConstant.BAN_HANG));
-        itemSideMenu.add(new SidebarMenuItem(3, "product", "Sản phẩm", RouterConstant.SAN_PHAM));
-        itemSideMenu.add(new SidebarMenuItem(4, "voucher", "Phiếu giảm giá", RouterConstant.PHIEU_GIAM_GIA));
-//        itemSideMenu.add(new SidebarMenuItem(5, "sale", "Đợt giảm giá", RouterConstant.DOT_GIAM_GIA));
-        itemSideMenu.add(new SidebarMenuItem(6, "receipt", "Hoá đơn", RouterConstant.HOA_DON));
-        itemSideMenu.add(new SidebarMenuItem(7, "customer", "Khách hàng", RouterConstant.KHACH_HANG));
-        itemSideMenu.add(new SidebarMenuItem(8, "users", "Nhân viên", RouterConstant.NHAN_VIEN));
-        itemSideMenu.add(new SidebarMenuItem(9, "password", "Đổi mật khẩu", (button) -> {
+        itemSideMenu.add(new SidebarMenuItem(1, "statistic-l", "Thống kê", RouterConstant.THONG_KE));
+        itemSideMenu.add(new SidebarMenuItem(2, "sell-l", "Bán hàng", RouterConstant.BAN_HANG));
+        itemSideMenu.add(new SidebarMenuItem(3, "product-l", "Sản phẩm", RouterConstant.SAN_PHAM));
+        itemSideMenu.add(new SidebarMenuItem(4, "voucher-l", "Phiếu giảm giá", RouterConstant.PHIEU_GIAM_GIA));
+        itemSideMenu.add(new SidebarMenuItem(5, "receipt-l", "Hoá đơn", RouterConstant.HOA_DON));
+        itemSideMenu.add(new SidebarMenuItem(6, "customer-l", "Khách hàng", RouterConstant.KHACH_HANG));
+        itemSideMenu.add(new SidebarMenuItem(7, "users-l", "Nhân viên", RouterConstant.NHAN_VIEN));
+        itemSideMenu.add(new SidebarMenuItem(9, "password-l", "Đổi mật khẩu", (button) -> {
             SessionLogin.getInstance().changePassword();
         }));
-        itemSideMenu.add(new SidebarMenuItem(10, "logout", "Đăng xuất", (button) -> {
+        itemSideMenu.add(new SidebarMenuItem(10, "logout-l", "Đăng xuất", (button) -> {
             SessionLogin.getInstance().logout();
         }));
     }

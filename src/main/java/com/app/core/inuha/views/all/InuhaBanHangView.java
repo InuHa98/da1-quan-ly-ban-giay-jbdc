@@ -1,4 +1,4 @@
-package com.app.core.inuha.views.all.banhang;
+package com.app.core.inuha.views.all;
 
 import com.app.common.helper.MessageModal;
 import com.app.common.helper.MessageToast;
@@ -36,17 +36,18 @@ import com.app.core.inuha.services.InuhaSanPhamChiTietService;
 import com.app.core.inuha.services.InuhaSanPhamService;
 import com.app.core.inuha.services.InuhaThuongHieuService;
 import com.app.core.inuha.services.InuhaXuatXuService;
-import com.app.core.inuha.views.all.banhang.components.InuhaAddGioHangView;
-import com.app.core.inuha.views.all.banhang.components.InuhaConfirmHoaDonView;
-import com.app.core.inuha.views.all.banhang.components.InuhaEditGioHangView;
-import com.app.core.inuha.views.all.banhang.components.InuhaListKhachHangView;
-import com.app.core.inuha.views.all.banhang.components.InuhaListPhieuGiamGiaView;
+import com.app.core.inuha.views.all.banhang.InuhaAddGioHangView;
+import com.app.core.inuha.views.all.banhang.InuhaConfirmHoaDonView;
+import com.app.core.inuha.views.all.banhang.InuhaEditGioHangView;
+import com.app.core.inuha.views.all.banhang.InuhaListKhachHangView;
+import com.app.core.inuha.views.all.banhang.InuhaListPhieuGiamGiaView;
 import com.app.core.inuha.views.quanly.components.table.soluongton.InuhaSoLuongTonSanPhamTableCellRender;
 import com.app.utils.BillUtils;
 import com.app.utils.ColorUtils;
 import com.app.utils.CurrencyUtils;
 import com.app.utils.QrCodeUtils;
 import com.app.utils.ResourceUtils;
+import com.app.utils.ThemeUtils;
 import com.app.utils.TimeUtils;
 import com.app.utils.VoucherUtils;
 import com.app.views.UI.combobox.ComboBoxItem;
@@ -55,6 +56,7 @@ import com.app.views.UI.table.TableCustomUI;
 import com.app.views.UI.table.celll.TableAlignCenterCellRender;
 import com.app.views.UI.table.celll.TableImageCellRender;
 import com.formdev.flatlaf.FlatClientProperties;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ItemEvent;
 import java.awt.event.KeyAdapter;
@@ -66,8 +68,6 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JComboBox;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -174,12 +174,8 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 	pnlSanPham.setBackground(ColorUtils.BACKGROUND_DASHBOARD);
 	pnlGioHang.setBackground(ColorUtils.BACKGROUND_DASHBOARD);
 	btnSubmit.setBackground(ColorUtils.BUTTON_PRIMARY);
+        btnSubmit.setForeground(Color.WHITE);
 	
-	lblBill.setForeground(ColorUtils.PRIMARY_COLOR);
-	lblCart.setForeground(ColorUtils.PRIMARY_COLOR);
-	lblProducts.setForeground(ColorUtils.PRIMARY_COLOR);
-	lblThongTinHoaDon.setForeground(ColorUtils.PRIMARY_COLOR);
-	lblMaHoaDon.setForeground(ColorUtils.PRIMARY_COLOR);
 	
 	cboHinhThucThanhToan.removeAllItems();
 	cboHinhThucThanhToan.addItem(new ComboBoxItem<Integer>("Thanh toán tiền mặt", PhuongThucThanhToanConstant.TIEN_MAT));
@@ -198,8 +194,26 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 	btnScanQr.setIcon(ResourceUtils.getSVG("/svg/qr.svg", new Dimension(20, 20)));
 	btnRemoveSanPham.setIcon(ResourceUtils.getSVG("/svg/times.svg", new Dimension(20, 20)));
 	
+        if (ThemeUtils.isLight()) { 
+            btnAddBill.setBackground(ColorUtils.BUTTON_PRIMARY);
+            btnAddBill.setForeground(Color.WHITE);
+            
+            btnSelectKhachHang.setBackground(ColorUtils.BUTTON_PRIMARY);
+            btnSelectKhachHang.setForeground(Color.WHITE);
+            
+            btnScanQr.setBackground(ColorUtils.BUTTON_PRIMARY);
+            btnScanQr.setForeground(Color.WHITE);
+            
+            btnReset.setBackground(ColorUtils.BUTTON_PRIMARY);
+            
+            txtTienMat.putClientProperty(FlatClientProperties.STYLE, "background: #fff");
+            txtTienChuyenKhoan.putClientProperty(FlatClientProperties.STYLE, "background: #fff");            
+        }
+
+        
 	pnlDanhSachSanPham.setRound(0, 0, 0, 0);
-	
+	pnlThongTinHoaDon.setBackground(ColorUtils.BACKGROUND_GRAY);
+        
 	txtTuKhoa.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
@@ -634,13 +648,14 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 
         jLabel12.setText("Mã hoá đơn:");
 
-        txtSoDienThoai.setEnabled(false);
+        txtSoDienThoai.setEditable(false);
+        txtSoDienThoai.setFocusable(false);
 
         jLabel13.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel13.setForeground(new java.awt.Color(204, 204, 204));
         jLabel13.setText("Thông tin khách hàng:");
 
-        txtTenKhachHang.setEnabled(false);
+        txtTenKhachHang.setEditable(false);
+        txtTenKhachHang.setFocusable(false);
 
         btnClearKhachHang.setText("Khách lẻ");
         btnClearKhachHang.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -659,7 +674,6 @@ public class InuhaBanHangView extends javax.swing.JPanel {
         });
 
         lblThongTinHoaDon.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
-        lblThongTinHoaDon.setForeground(new java.awt.Color(255, 255, 255));
         lblThongTinHoaDon.setText("Thông tin hoá đơn");
         lblThongTinHoaDon.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
 
@@ -677,7 +691,6 @@ public class InuhaBanHangView extends javax.swing.JPanel {
         );
 
         jLabel15.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel15.setForeground(new java.awt.Color(204, 204, 204));
         jLabel15.setText("Chi tiết hoá đơn:");
 
         lblMaHoaDon.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -714,7 +727,6 @@ public class InuhaBanHangView extends javax.swing.JPanel {
         );
 
         jLabel19.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel19.setForeground(new java.awt.Color(204, 204, 204));
         jLabel19.setText("Chi tiết thanh toán:");
 
         jLabel20.setText("Voucher:");
@@ -808,15 +820,15 @@ public class InuhaBanHangView extends javax.swing.JPanel {
                 .addComponent(lblThongTinHoaDon, javax.swing.GroupLayout.PREFERRED_SIZE, 272, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlThongTinHoaDonLayout.createSequentialGroup()
-                .addGap(10, 10, 10)
+                .addGap(20, 20, 20)
                 .addComponent(jLabel13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
             .addGroup(pnlThongTinHoaDonLayout.createSequentialGroup()
-                .addGap(10, 10, 10)
+                .addGap(20, 20, 20)
                 .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
             .addGroup(pnlThongTinHoaDonLayout.createSequentialGroup()
-                .addGap(10, 10, 10)
+                .addGap(20, 20, 20)
                 .addComponent(jLabel19, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
             .addComponent(splitLine8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -932,7 +944,6 @@ public class InuhaBanHangView extends javax.swing.JPanel {
         );
 
         lblProducts.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
-        lblProducts.setForeground(new java.awt.Color(255, 255, 255));
         lblProducts.setText("Sản phẩm");
         lblProducts.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
 
@@ -1033,7 +1044,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
         pnlDanhSachSanPham.setLayout(pnlDanhSachSanPhamLayout);
         pnlDanhSachSanPhamLayout.setHorizontalGroup(
             pnlDanhSachSanPhamLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scrDanhSachSanPham, javax.swing.GroupLayout.DEFAULT_SIZE, 863, Short.MAX_VALUE)
+            .addComponent(scrDanhSachSanPham)
         );
         pnlDanhSachSanPhamLayout.setVerticalGroup(
             pnlDanhSachSanPhamLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1163,7 +1174,6 @@ public class InuhaBanHangView extends javax.swing.JPanel {
         );
 
         lblBill.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
-        lblBill.setForeground(new java.awt.Color(255, 255, 255));
         lblBill.setText("Hoá đơn chờ");
         lblBill.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
 
@@ -1273,7 +1283,6 @@ public class InuhaBanHangView extends javax.swing.JPanel {
         );
 
         lblCart.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
-        lblCart.setForeground(new java.awt.Color(255, 255, 255));
         lblCart.setText("Giỏ hàng");
         lblCart.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
 
@@ -1741,15 +1750,20 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 		txtTienMat.setText(null);
 		txtTienMat.setEnabled(false);
 		txtTienChuyenKhoan.setEnabled(true);
+                
+                txtTienChuyenKhoan.requestFocus();
 	    }
 	    case PhuongThucThanhToanConstant.KET_HOP -> {
 		txtTienMat.setEnabled(true);
 		txtTienChuyenKhoan.setEnabled(true);
+                
+                txtTienMat.requestFocus();
 	    }
 	    default -> {
 		txtTienMat.setEnabled(true);
 		txtTienChuyenKhoan.setText(null);
 		txtTienChuyenKhoan.setEnabled(false);
+                txtTienMat.requestFocus();
 	    }
 	}
     }
@@ -2077,54 +2091,73 @@ public class InuhaBanHangView extends javax.swing.JPanel {
     }
     
     public void submitSave(boolean printInvoice) { 
-	try {
-	    String tienMat = txtTienMat.getText().trim();
-	    String tienChuyenKhoan = txtTienChuyenKhoan.getText().trim();
-	
-	    currentHoaDon.setTrangThai(TrangThaiHoaDonConstant.STATUS_DA_THANH_TOAN);
-	    currentHoaDon.setPhieuGiamGia(currentPhieuGiamGia);
-	    currentHoaDon.setTienGiam(chiTietThanhToan.getTongGiamGia());
-	    currentHoaDon.setTienMat(CurrencyUtils.parseNumber(tienMat));
-	    currentHoaDon.setTienChuyenKhoan(CurrencyUtils.parseNumber(tienChuyenKhoan));
-	    hoaDonService.update(currentHoaDon);
+        SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                try {
+                    String tienMat = txtTienMat.getText().trim();
+                    String tienChuyenKhoan = txtTienChuyenKhoan.getText().trim();
 
-	    loadDataHoaDonCho();
-	    loadDataGioHang();
+                    currentHoaDon.setTrangThai(TrangThaiHoaDonConstant.STATUS_DA_THANH_TOAN);
+                    currentHoaDon.setPhieuGiamGia(currentPhieuGiamGia);
+                    currentHoaDon.setTienGiam(chiTietThanhToan.getTongGiamGia());
+                    currentHoaDon.setTienMat(CurrencyUtils.parseNumber(tienMat));
+                    currentHoaDon.setTienChuyenKhoan(CurrencyUtils.parseNumber(tienChuyenKhoan));
+                    hoaDonService.update(currentHoaDon);
 
-	    if (printInvoice) {
-		loading.dispose();
-		InvoiceDataModel invoiceData = new InvoiceDataModel();
-		invoiceData.setMaHoaDon(currentHoaDon.getMa());
-		invoiceData.setTenKhachHang(currentHoaDon.getKhachHang() != null ? currentHoaDon.getKhachHang().getHoTen() : "Khách lẻ");
-		invoiceData.setSoDienThoai(currentHoaDon.getKhachHang() != null ? currentHoaDon.getKhachHang().getSdt(): "");
-		invoiceData.setTaiKhoan(currentHoaDon.getTaiKhoan().getHoTen());
-		List<InvoiceProduct> products = new ArrayList<>();
-		for(InuhaHoaDonChiTietModel m: dataItemsGioHang) { 
-		    products.add(new InvoiceProduct(m.getSanPhamChiTiet().getSanPham().getTen() + " - " + m.getSanPhamChiTiet().getKichCo().getTen() + " - " + m.getSanPhamChiTiet().getMauSac().getTen(), m.getSoLuong(), (float) m.getGiaBan()));
-		}
-		invoiceData.setHoaDonChiTiet(products);
-		invoiceData.setTongTienHang(chiTietThanhToan.getTongTienHang());
-		invoiceData.setTongTienGiam(chiTietThanhToan.getTongGiamGia());
-		invoiceData.setTienKhachTra(currentHoaDon.getTienMat() + currentHoaDon.getTienChuyenKhoan());
-		
-		File folder = PdfHelper.selectFolder();
-		if (folder != null) {
-		    File invoiceFile = PdfHelper.createPDF(invoiceData, folder);
-		    PdfHelper.openFile(invoiceFile);
-		}
-	    }
-	    MessageToast.success("Xác nhận thanh toán thành công đơn hàng #" + currentHoaDon.getMa());
-	    handleClear();
-	    ModalDialog.closeAllModal();
-	} catch (ServiceResponseException e) {
-	    e.printStackTrace();
-	    MessageToast.error(e.getMessage());
-	} catch (Exception e) {
-	    e.printStackTrace();
-	    MessageModal.error(ErrorConstant.DEFAULT_ERROR);
-	} finally {
-	    loading.dispose();
-	}
+                    loadDataHoaDonCho();
+                    loadDataGioHang();
+                } catch (ServiceResponseException e) {
+                    e.printStackTrace();
+                    MessageToast.error(e.getMessage());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    MessageModal.error(ErrorConstant.DEFAULT_ERROR);
+                } finally {
+                    loading.dispose();
+                }
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                try {
+                    if (printInvoice) {
+                        InvoiceDataModel invoiceData = new InvoiceDataModel();
+                        invoiceData.setMaHoaDon(currentHoaDon.getMa());
+                        invoiceData.setTenKhachHang(currentHoaDon.getKhachHang() != null ? currentHoaDon.getKhachHang().getHoTen() : "Khách lẻ");
+                        invoiceData.setSoDienThoai(currentHoaDon.getKhachHang() != null ? currentHoaDon.getKhachHang().getSdt(): "");
+                        invoiceData.setTaiKhoan(currentHoaDon.getTaiKhoan().getHoTen());
+                        List<InvoiceProduct> products = new ArrayList<>();
+                        for(InuhaHoaDonChiTietModel m: dataItemsGioHang) { 
+                            products.add(new InvoiceProduct(m.getSanPhamChiTiet().getSanPham().getTen() + " - " + m.getSanPhamChiTiet().getKichCo().getTen() + " - " + m.getSanPhamChiTiet().getMauSac().getTen(), m.getSoLuong(), (float) m.getGiaBan()));
+                        }
+                        invoiceData.setHoaDonChiTiet(products);
+                        invoiceData.setTongTienHang(chiTietThanhToan.getTongTienHang());
+                        invoiceData.setTongTienGiam(chiTietThanhToan.getTongGiamGia());
+                        invoiceData.setTienKhachTra(currentHoaDon.getTienMat() + currentHoaDon.getTienChuyenKhoan());
+
+                        File folder = PdfHelper.selectFolder();
+                        if (folder != null) {
+                            File invoiceFile = PdfHelper.createPDF(invoiceData, folder);
+                            PdfHelper.openFile(invoiceFile);
+                        }
+                    }
+                    MessageToast.success("Xác nhận thanh toán thành công đơn hàng #" + currentHoaDon.getMa());
+                    handleClear();
+                    ModalDialog.closeAllModal();
+                } catch (ServiceResponseException e) {
+                    e.printStackTrace();
+                    MessageToast.error(e.getMessage());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    MessageModal.error(ErrorConstant.DEFAULT_ERROR);
+                }
+            }
+        };
+        worker.execute();
+        loading.setVisible(true);
+        
     }
     
     private void updateTienTraLai() {
@@ -2167,10 +2200,10 @@ public class InuhaBanHangView extends javax.swing.JPanel {
     }
     
     private void showSelectVoucher() {
-	if (currentKhachHang == null || currentKhachHang.getSoLanMuaHang() < 1) {
-	    MessageToast.warning("Phiếu giảm giá chỉ áp dụng cho khách hàng đã từng mua hàng tại đây!");
-	    return;
-	}
+//	if (currentKhachHang == null || currentKhachHang.getSoLanMuaHang() < 1) {
+//	    MessageToast.warning("Phiếu giảm giá chỉ áp dụng cho khách hàng đã từng mua hàng tại đây!");
+//	    return;
+//	}
 	ModalDialog.closeAllModal();
 	ModalDialog.showModal(instance, new SimpleModalBorder(new InuhaListPhieuGiamGiaView(chiTietThanhToan), "Danh sách Voucher"));
     }
