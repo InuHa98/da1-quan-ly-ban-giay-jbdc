@@ -977,6 +977,9 @@ public class InuhaDetailSanPhamView extends JPanel {
     }
 
     private void handleClickButtonAdd() {
+        if (ModalDialog.isIdExist(ID_MODAL_ADD)) {
+            return;
+        }
         ModalDialog.showModal(this, new SimpleModalBorder(new InuhaAddSanPhamChiTietView(this.sanPham), "Thêm sản phẩm chi tiết"), ID_MODAL_ADD);
     }
     
@@ -1043,10 +1046,16 @@ public class InuhaDetailSanPhamView extends JPanel {
     public final static String ID_MODAL_DEAIL = "detail-sanphamchitiet";
 
     private void showEdit(InuhaSanPhamChiTietModel item) {
+        if (ModalDialog.isIdExist(ID_MODAL_ADD)) {
+            return;
+        }
         ModalDialog.showModal(instance, new SimpleModalBorder(new InuhaAddSanPhamChiTietView(this.sanPham, item), "Chỉnh sửa chi tiết sản phẩm"), ID_MODAL_ADD);
     }
 
     private void showDetail(InuhaSanPhamChiTietModel item) {
+        if (ModalDialog.isIdExist(ID_MODAL_DEAIL)) {
+            return;
+        }
         ModalDialog.showModal(instance, new SimpleModalBorder(new InuhaDetailSanPhamChiTietView(item), null), ID_MODAL_DEAIL);
     }
 	
@@ -1055,11 +1064,17 @@ public class InuhaDetailSanPhamView extends JPanel {
     }
     
     private void handleClickButtomView(InuhaSanPhamChiTietModel item) {
-	ModalDialog.showModal(this, new SimpleModalBorder(new InuhaDetailSanPhamChiTietView(item), null));
+        if (ModalDialog.isIdExist("handleClickButtomView")) {
+            return;
+        }
+	ModalDialog.showModal(this, new SimpleModalBorder(new InuhaDetailSanPhamChiTietView(item), null), "handleClickButtomView");
     }
 
     private void handleClickButtonEdit() {
+        if (ModalDialog.isIdExist("handleClickButtonEdit")) {
+            return;
+        }
 	ModalDialog.closeAllModal();
-	ModalDialog.showModal(instance, new SimpleModalBorder(new InuhaAddSanPhamView(sanPham), "Chỉnh sửa sản phẩm"));
+	ModalDialog.showModal(instance, new SimpleModalBorder(new InuhaAddSanPhamView(sanPham), "Chỉnh sửa sản phẩm"), "handleClickButtonEdit");
     }
 }

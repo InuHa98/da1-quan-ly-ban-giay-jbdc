@@ -1732,8 +1732,11 @@ public class InuhaSanPhamView extends RoundPanel {
     }
 	
     private void handleClickButtonAdd() {
+        if (ModalDialog.isIdExist("handleClickButtonAdd")) {
+            return;
+        }
 	ModalDialog.closeAllModal();
-        ModalDialog.showModal(this, new SimpleModalBorder(new InuhaAddSanPhamView(), "Thêm sản phẩm"));
+        ModalDialog.showModal(this, new SimpleModalBorder(new InuhaAddSanPhamView(), "Thêm sản phẩm"), "handleClickButtonAdd");
     }
 
     private void handleClickButtonSearch() {
@@ -1820,16 +1823,25 @@ public class InuhaSanPhamView extends RoundPanel {
     }
 
     private void showEditSanPham(InuhaSanPhamModel item) {
+        if (ModalDialog.isIdExist("showEditSanPham")) {
+            return;
+        }
 	ModalDialog.closeAllModal();
-        ModalDialog.showModal(instance, new SimpleModalBorder(new InuhaAddSanPhamView(item), "Chỉnh sửa sản phẩm"));
+        ModalDialog.showModal(instance, new SimpleModalBorder(new InuhaAddSanPhamView(item), "Chỉnh sửa sản phẩm"), "showEditSanPham");
     }
     
     private void showDetailSanPham(InuhaSanPhamModel item) {
+        if (ModalDialog.isIdExist("showDetailSanPham")) {
+            return;
+        }
 	ModalDialog.closeAllModal();
-        ModalDialog.showModal(instance, new SimpleModalBorder(new InuhaDetailSanPhamView(item), null));
+        ModalDialog.showModal(instance, new SimpleModalBorder(new InuhaDetailSanPhamView(item), null), "showDetailSanPham");
     }
 
     private void showDetailChiTiet(InuhaSanPhamChiTietModel item) {
+        if (ModalDialog.isIdExist(ID_MODAL_DEAIL)) {
+            return;
+        }
 	ModalDialog.closeAllModal();
         ModalDialog.showModal(instance, new SimpleModalBorder(new InuhaDetailSanPhamChiTietView(item), null), ID_MODAL_DEAIL);
     }

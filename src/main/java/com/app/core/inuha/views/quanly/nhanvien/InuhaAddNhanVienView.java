@@ -396,8 +396,11 @@ public class InuhaAddNhanVienView extends javax.swing.JPanel {
 
     private void btnChangePasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChangePasswordActionPerformed
         // TODO add your handling code here:
+        if (ModalDialog.isIdExist("btnChangePasswordActionPerformed")) {
+            return;
+        }
 	ModalDialog.closeAllModal();
-	ModalDialog.showModal(this, new SimpleModalBorder(new InuhaChangePasswordNhanVienView(model), "Thay đổi mật khẩu"));
+	ModalDialog.showModal(this, new SimpleModalBorder(new InuhaChangePasswordNhanVienView(model), "Thay đổi mật khẩu"), "btnChangePasswordActionPerformed");
     }//GEN-LAST:event_btnChangePasswordActionPerformed
 
     private void rdoNhanVienActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rdoNhanVienActionPerformed

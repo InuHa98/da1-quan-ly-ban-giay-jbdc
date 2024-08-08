@@ -149,6 +149,11 @@ public class MessageModal {
     }
 
     private static boolean messageConfirm(String title, JComponent content, String[] labelButton) {
+        final String name = "POPUP_MODAL_CONFIRM";
+        if (GlassPanePopup.isShowing(name)) { 
+            return false;
+        }
+        
         final boolean[] isConfirm = { false };
         CountDownLatch latch = new CountDownLatch(1);
 
@@ -164,7 +169,8 @@ public class MessageModal {
             }
         );
 
-        GlassPanePopup.showPopup(simplePopupBorder);
+        
+        GlassPanePopup.showPopup(simplePopupBorder, name);
 
         try {
             latch.await();

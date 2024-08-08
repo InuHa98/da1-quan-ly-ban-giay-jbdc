@@ -85,6 +85,9 @@ public class InuhaListKichCoView extends javax.swing.JPanel {
             @Override
             public void onEdit(int row) {
                 InuhaKichCoModel item = dataItems.get(row);
+                if (ModalDialog.isIdExist(MODAL_ID_EDIT)) {
+                    return;
+                }
                 ModalDialog.showModal(instance, new SimpleModalBorder(new InuhaEditKichCoView(item), "Chỉnh sửa kích cỡ"), MODAL_ID_EDIT);
             }
 
@@ -324,6 +327,9 @@ public class InuhaListKichCoView extends javax.swing.JPanel {
 
     
     private void handleClickButtonAdd() {
+        if (ModalDialog.isIdExist(MODAL_ID_CREATE)) {
+            return;
+        }
         ModalDialog.showModal(this, new SimpleModalBorder(new InuhaAddKichCoView(), "Thêm kích cỡ mới"), MODAL_ID_CREATE);
     }
 }

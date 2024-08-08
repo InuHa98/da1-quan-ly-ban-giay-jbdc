@@ -106,6 +106,9 @@ public class InuhaListKhachHangView extends javax.swing.JPanel {
             @Override
             public void onEdit(int row) {
                 InuhaKhachHangModel item = dataItems.get(row);
+                if (ModalDialog.isIdExist(MODAL_ID_CREATE)) {
+                    return;
+                }
                 ModalDialog.showModal(instance, new SimpleModalBorder(new InuhaAddKhachHangView(item), null), MODAL_ID_CREATE);
             }
 
@@ -379,6 +382,9 @@ public class InuhaListKhachHangView extends javax.swing.JPanel {
 
     
     private void handleClickButtonAdd() {
+        if (ModalDialog.isIdExist(MODAL_ID_CREATE)) {
+            return;
+        }
         ModalDialog.showModal(this, new SimpleModalBorder(new InuhaAddKhachHangView(), null), MODAL_ID_CREATE);
     }
     

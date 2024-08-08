@@ -631,13 +631,19 @@ public class InuhaNhanVienView extends javax.swing.JPanel {
     }
 
     private void handleClickButtonAdd() {
+        if (ModalDialog.isIdExist("handleClickButtonAdd")) {
+            return;
+        }
 	ModalDialog.closeAllModal();
-	ModalDialog.showModal(this, new SimpleModalBorder(new InuhaAddNhanVienView(), "Thêm nhân viên"));
+	ModalDialog.showModal(this, new SimpleModalBorder(new InuhaAddNhanVienView(), "Thêm nhân viên"), "handleClickButtonAdd");
     }
     
     private void showEdit(InuhaTaiKhoanModel item) { 
+        if (ModalDialog.isIdExist("showEdit")) {
+            return;
+        }
 	ModalDialog.closeAllModal();
-	ModalDialog.showModal(instance, new SimpleModalBorder(new InuhaAddNhanVienView(item), "Chỉnh sửa thông tin"));
+	ModalDialog.showModal(instance, new SimpleModalBorder(new InuhaAddNhanVienView(item), "Chỉnh sửa thông tin"), "showEdit");
     }
 
 

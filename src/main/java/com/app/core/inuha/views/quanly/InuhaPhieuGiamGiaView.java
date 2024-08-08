@@ -147,7 +147,10 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
             @Override
             public void onEdit(int row) {
                 InuhaPhieuGiamGiaModel item = dataItems.get(row);
-		ModalDialog.showModal(instance, new SimpleModalBorder(new InuhaAddPhieuGiamGiaView(item), "Chỉnh sửa"));
+                if (ModalDialog.isIdExist("showEdit")) {
+                    return;
+                }
+		ModalDialog.showModal(instance, new SimpleModalBorder(new InuhaAddPhieuGiamGiaView(item), "Chỉnh sửa"), "showEdit");
             }
 
             @Override
@@ -609,7 +612,10 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
     }
 
     private void handleClickButtonAdd() {
+        if (ModalDialog.isIdExist("handleClickButtonAdd")) {
+            return;
+        }
 	ModalDialog.closeAllModal();
-	ModalDialog.showModal(this, new SimpleModalBorder(new InuhaAddPhieuGiamGiaView(), "Thêm mới"));
+	ModalDialog.showModal(this, new SimpleModalBorder(new InuhaAddPhieuGiamGiaView(), "Thêm mới"), "handleClickButtonAdd");
     }
 }

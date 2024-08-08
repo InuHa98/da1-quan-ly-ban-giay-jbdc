@@ -85,6 +85,9 @@ public class InuhaListMauSacView extends javax.swing.JPanel {
             @Override
             public void onEdit(int row) {
                 InuhaMauSacModel item = dataItems.get(row);
+                if (ModalDialog.isIdExist(MODAL_ID_EDIT)) {
+                    return;
+                }
                 ModalDialog.showModal(instance, new SimpleModalBorder(new InuhaEditMauSacView(item), "Chỉnh sửa màu sắc"), MODAL_ID_EDIT);
             }
 
@@ -324,6 +327,9 @@ public class InuhaListMauSacView extends javax.swing.JPanel {
 
     
     private void handleClickButtonAdd() {
+        if (ModalDialog.isIdExist(MODAL_ID_CREATE)) {
+            return;
+        }
         ModalDialog.showModal(this, new SimpleModalBorder(new InuhaAddMauSacView(), "Thêm màu sắc mới"), MODAL_ID_CREATE);
     }
 }

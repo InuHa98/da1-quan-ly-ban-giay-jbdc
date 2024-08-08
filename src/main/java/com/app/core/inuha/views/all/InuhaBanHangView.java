@@ -81,6 +81,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import raven.modal.ModalDialog;
 import raven.modal.component.SimpleModalBorder;
+import raven.popup.GlassPanePopup;
 
 /**
  *
@@ -1652,13 +1653,19 @@ public class InuhaBanHangView extends javax.swing.JPanel {
     }
     
     private void showModalAddToCart(InuhaSanPhamModel sanPham) { 
+        if (ModalDialog.isIdExist("showModalAddToCart")) {
+            return;
+        }
 	ModalDialog.closeAllModal();
-	ModalDialog.showModal(this, new SimpleModalBorder(new InuhaAddGioHangView(sanPham), sanPham.getMa() + " - " + sanPham.getTen()));
+	ModalDialog.showModal(this, new SimpleModalBorder(new InuhaAddGioHangView(sanPham), sanPham.getMa() + " - " + sanPham.getTen()), "showModalAddToCart");
     }
 
     private void showModalEditCart(InuhaHoaDonChiTietModel hoaDonChiTiet) { 
+        if (ModalDialog.isIdExist("showModalEditCart")) {
+            return;
+        }
 	ModalDialog.closeAllModal();
-	ModalDialog.showModal(this, new SimpleModalBorder(new InuhaEditGioHangView(hoaDonChiTiet), hoaDonChiTiet.getSanPhamChiTiet().getMa() + " - " + hoaDonChiTiet.getSanPhamChiTiet().getSanPham().getTen()));
+	ModalDialog.showModal(this, new SimpleModalBorder(new InuhaEditGioHangView(hoaDonChiTiet), hoaDonChiTiet.getSanPhamChiTiet().getMa() + " - " + hoaDonChiTiet.getSanPhamChiTiet().getSanPham().getTen()), "showModalEditCart");
     }
 	
     private void handleSelectBill(int i) {
@@ -1769,6 +1776,8 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 	    }
 	}
     }
+    
+   
 
     private void handleClickButtonCancel() {
 	SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
@@ -1814,8 +1823,11 @@ public class InuhaBanHangView extends javax.swing.JPanel {
     }
     
     private void handleClickButtonSelectKhachHang() {
+        if (ModalDialog.isIdExist("handleClickButtonSelectKhachHang")) {
+            return;
+        }
 	ModalDialog.closeAllModal();
-	ModalDialog.showModal(this, new SimpleModalBorder(new InuhaListKhachHangView(currentKhachHang), "Danh sách khách hàng"));
+	ModalDialog.showModal(this, new SimpleModalBorder(new InuhaListKhachHangView(currentKhachHang), "Danh sách khách hàng"), "handleClickButtonSelectKhachHang");
     }
 
     public void setKhachHang(InuhaKhachHangModel khachHang) {
@@ -2033,6 +2045,10 @@ public class InuhaBanHangView extends javax.swing.JPanel {
     }
 
     private void handleClickButtonSubmit() {
+        if (ModalDialog.isIdExist("handleClickButtonSubmit")) {
+            return;
+        }
+        
 	if (currentHoaDon == null) { 
 	    MessageToast.warning("Vui lòng chọn một hoá đơn");
 	    return;
@@ -2089,7 +2105,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 	}
 	
 	ModalDialog.closeAllModal();
-	ModalDialog.showModal(this, new SimpleModalBorder(new InuhaConfirmHoaDonView(), null));
+	ModalDialog.showModal(this, new SimpleModalBorder(new InuhaConfirmHoaDonView(), null), "handleClickButtonSubmit");
     }
     
     public void submitSave(boolean printInvoice) { 
@@ -2202,12 +2218,15 @@ public class InuhaBanHangView extends javax.swing.JPanel {
     }
     
     private void showSelectVoucher() {
+        if (ModalDialog.isIdExist("showSelectVoucher")) {
+            return;
+        }
 //	if (currentKhachHang == null || currentKhachHang.getSoLanMuaHang() < 1) {
 //	    MessageToast.warning("Phiếu giảm giá chỉ áp dụng cho khách hàng đã từng mua hàng tại đây!");
 //	    return;
 //	}
 	ModalDialog.closeAllModal();
-	ModalDialog.showModal(instance, new SimpleModalBorder(new InuhaListPhieuGiamGiaView(chiTietThanhToan), "Danh sách Voucher"));
+	ModalDialog.showModal(instance, new SimpleModalBorder(new InuhaListPhieuGiamGiaView(chiTietThanhToan), "Danh sách Voucher"), "showSelectVoucher");
     }
 
     private void clearVoucher() {

@@ -431,6 +431,9 @@ public class InuhaDetailSanPhamChiTietView extends javax.swing.JPanel {
     }
     
     private void handleClickButtonEdit() {
+        if (ModalDialog.isIdExist(InuhaDetailSanPhamView.ID_MODAL_ADD)) {
+            return;
+        }
 	ModalDialog.showModal(this, new SimpleModalBorder(new InuhaAddSanPhamChiTietView(sanPhamChiTiet.getSanPham(), sanPhamChiTiet), "Chỉnh sửa chi tiết sản phẩm"), InuhaDetailSanPhamView.ID_MODAL_ADD);
     }
 

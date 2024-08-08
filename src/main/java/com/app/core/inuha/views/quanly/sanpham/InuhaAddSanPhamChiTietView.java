@@ -403,11 +403,17 @@ public class InuhaAddSanPhamChiTietView extends javax.swing.JPanel {
     // End of variables declaration//GEN-END:variables
 
     private void handleClickButtonDanhMuc() {
-        ModalDialog.showModal(this, new SimpleModalBorder(new InuhaListKichCoView(), "Kích cỡ sản phẩm"));
+        if (ModalDialog.isIdExist("handleClickButtonDanhMuc")) {
+            return;
+        }
+        ModalDialog.showModal(this, new SimpleModalBorder(new InuhaListKichCoView(), "Kích cỡ sản phẩm"), "handleClickButtonDanhMuc");
     }
 
     private void handleClickButtonThuongHieu() {
-        ModalDialog.showModal(this, new SimpleModalBorder(new InuhaListMauSacView(), "Màu sắc sản phẩm"));
+        if (ModalDialog.isIdExist("handleClickButtonThuongHieu")) {
+            return;
+        }
+        ModalDialog.showModal(this, new SimpleModalBorder(new InuhaListMauSacView(), "Màu sắc sản phẩm"), "handleClickButtonThuongHieu");
     }
 
     private void handleClickButtonSubmit() {
