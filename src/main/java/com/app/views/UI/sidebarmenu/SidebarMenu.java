@@ -11,6 +11,7 @@ import com.app.common.infrastructure.session.AvatarUpload;
 import com.app.common.infrastructure.session.SessionLogin;
 import com.app.core.inuha.models.InuhaTaiKhoanModel;
 import com.app.core.inuha.services.InuhaTaiKhoanService;
+import com.app.core.inuha.views.all.InuhaBanHangView;
 import com.app.utils.*;
 import com.app.views.UI.ImageRound;
 import com.app.views.UI.dialog.LoadingDialog;
@@ -102,7 +103,19 @@ public class SidebarMenu extends JPanel {
 	    }
 	    
             try {
-		WebcamQRCodeScanPanel.dispose();
+                SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+                    @Override
+                    protected Void doInBackground() throws Exception {
+                        WebcamQRCodeScanPanel.dispose();
+                        InuhaBanHangView banHangView = InuhaBanHangView.getInstance();
+                        if (banHangView != null) { 
+                            banHangView.updateTienThanhToan();
+                        }
+                        return null;
+                    }
+                };
+                worker.execute();
+		
                 Class<?> loadClass = Class.forName(className);
                 DashboardController.getInstance().show((JComponent) loadClass.getDeclaredConstructor().newInstance());
             } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException |

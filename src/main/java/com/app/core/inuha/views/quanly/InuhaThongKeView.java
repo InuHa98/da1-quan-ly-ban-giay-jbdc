@@ -38,6 +38,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import javax.swing.JComboBox;
 import javax.swing.JTable;
+import javax.swing.SwingWorker;
 import javax.swing.table.DefaultTableModel;
 import raven.datetime.component.date.DatePicker;
 
@@ -118,14 +119,17 @@ public class InuhaThongKeView extends javax.swing.JPanel {
 	cboSapXep.setPreferredSize(cboSize);
 	cboThoiGian.setPreferredSize(cboSize);
 	
-	
-	executorService.submit(() -> {
-	    getListSanPham();
-	    loadDataChart();
-	    firstLoad = false;
-	});
-	
-	
+	SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                getListSanPham();
+                loadDataChart();
+                firstLoad = false;
+                return null;
+            }
+        };
+        worker.execute();
+
         if (ThemeUtils.isLight()) {
             chartDoanhThu.setColorLabel(ColorUtils.PRIMARY_TEXT);
             chartDoanhThu.setForeground(ColorUtils.PRIMARY_TEXT);

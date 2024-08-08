@@ -75,8 +75,16 @@ public class InuhaListChatLieuView extends javax.swing.JPanel {
         btnAdd.setForeground(Color.WHITE);
         btnAdd.setIcon(ResourceUtils.getSVG("/svg/plus.svg", new Dimension(20, 20)));
         
+        SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                loadDataPage(1);
+                return null;
+            }
+        };
+        worker.execute();
+        
         setupTable(tblDanhSach);
-        loadDataPage(1);
         setupPagination();
     }
 

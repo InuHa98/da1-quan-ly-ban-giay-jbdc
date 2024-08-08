@@ -3,23 +3,18 @@ package com.app.common.helper;
 
 import com.app.Application;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
-import com.app.common.infrastructure.session.SessionLogin;
 import com.app.core.common.models.invoice.InvoiceAddressDetails;
 import com.app.core.common.models.invoice.InvoiceDataModel;
 import com.app.core.common.models.invoice.InvoiceHeaderDetails;
-import com.app.core.common.models.invoice.InvoiceProduct;
 import com.app.core.common.models.invoice.InvoiceProductTableHeader;
 import com.app.core.common.services.InvoiceCreatorPdfService;
+import com.app.utils.QrCodeUtils;
 import com.app.utils.TimeUtils;
 import java.awt.Desktop;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import jnafilechooser.api.JnaFileChooser;
 
 
@@ -40,7 +35,7 @@ public class PdfHelper {
 	return null;
     }
     
-    public static File createPDF(InvoiceDataModel data, File path) {
+    public static File createInvoicePDF(InvoiceDataModel data, File path) {
 	String fileName = data.getMaHoaDon() + "-" + TimeUtils.now("dd_MM_yyyy__hh_mm_a") + ".pdf";
 	File pathFile = new File(path, fileName);
 	try {
@@ -70,7 +65,7 @@ public class PdfHelper {
 	    
 
 	    cepdf.createProduct(data);
-	    
+	    cepdf.createQrCode(QrCodeHelper.getImage(QrCodeUtils.generateCodeHoaDon(data.getId())));
 	    cepdf.close();
 	} catch (Exception ex) {
 	    ex.printStackTrace();

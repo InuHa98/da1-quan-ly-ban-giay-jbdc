@@ -181,16 +181,27 @@ public class InuhaDetailSanPhamView extends JPanel {
 	cboTrangThai.setPreferredSize(cboSize);
 	cboSoLuong.setPreferredSize(cboSize);
 	
-	executorService.submit(() -> { 
-	    loadDataKichCo();
-	    loadDataMauSac();
+        
+        SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                loadDataKichCo();
+                loadDataMauSac();
 
-	    setupTable(tblDanhSach);
-	    loadDataPage(1);
-	    setupPagination();
-	    reLoad = false;
-	    loading.dispose();
-	});
+                setupTable(tblDanhSach);
+                loadDataPage(1);
+                setupPagination();
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                reLoad = false;
+                loading.dispose();
+            }
+            
+        };
+        worker.execute();
 	loading.setVisible(true);
     }
     

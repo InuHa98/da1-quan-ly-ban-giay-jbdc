@@ -261,20 +261,26 @@ public class InuhaSanPhamView extends RoundPanel {
         setupPagination();
 	setupPaginationSPCT();
 	
-	executorService.submit(() -> { 
-	    loadDataDanhMuc();
-	    loadDataThuongHieu();
-	    loadDataXuatXu();
-	    loadDataKieuDang();
-	    loadDataChatLieu();
-	    loadDataDeGiay();
-	    loadDataKichCo();
-	    loadDataMauSac();
+        SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                loadDataDanhMuc();
+                loadDataThuongHieu();
+                loadDataXuatXu();
+                loadDataKieuDang();
+                loadDataChatLieu();
+                loadDataDeGiay();
+                loadDataKichCo();
+                loadDataMauSac();
 
-	    loadDataPage(1);
-	    loadDataPageSPCT(1);
-	    firstLoad = false;
-	});
+                loadDataPage(1);
+                loadDataPageSPCT(1);
+                firstLoad = false;
+                return null;
+            }
+        };
+        worker.execute();
+        
     }
     
     private void setupTable(JTable table) { 

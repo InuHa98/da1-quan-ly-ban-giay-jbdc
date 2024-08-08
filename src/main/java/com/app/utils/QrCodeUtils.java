@@ -1,7 +1,5 @@
 package com.app.utils;
 
-import com.app.Application;
-import com.app.common.helper.MessageToast;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
@@ -14,7 +12,6 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.ImageIcon;
-import jnafilechooser.api.JnaFileChooser;
 
 
 /**

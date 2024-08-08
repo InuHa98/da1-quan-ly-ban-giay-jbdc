@@ -134,10 +134,17 @@ public class InuhaNhanVienView extends javax.swing.JPanel {
 	
 	setupTable(tblDanhSach);
         setupPagination();
-	executorService.submit(() -> {
-	    loadDataPage(1);
-	    firstLoad = false;
-	});
+        
+        SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                loadDataPage(1);
+                firstLoad = false;
+                return null;
+            }
+        };
+        worker.execute();
+
     }
 
     private void setupTable(JTable table) { 

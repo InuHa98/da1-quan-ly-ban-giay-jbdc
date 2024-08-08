@@ -16,6 +16,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class InvoiceDataModel {
 
+    private int id;
+    
     private String maHoaDon;
     
     private String taiKhoan;

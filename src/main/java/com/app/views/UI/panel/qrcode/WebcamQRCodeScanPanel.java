@@ -62,14 +62,22 @@ public class WebcamQRCodeScanPanel extends RoundPanel implements Closeable {
         }
 	
         LoadingDialog loading = new LoadingDialog();
-	ExecutorService executorService = Executors.newSingleThreadExecutor();
-	executorService.submit(() -> {
-	    instance.event = event;
-	    instance.close();
-	    instance.initializeWebcam(WebcamResolution.VGA.getSize());
-	    loading.dispose();
-	    executorService.shutdown();
-	});
+        SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                instance.event = event;
+                instance.close();
+                instance.initializeWebcam(WebcamResolution.VGA.getSize());
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                loading.dispose();
+            }
+            
+        };
+        worker.execute();
         loading.setVisible(true);
 
         return instance;
