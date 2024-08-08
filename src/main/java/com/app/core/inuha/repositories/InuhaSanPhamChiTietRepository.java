@@ -233,9 +233,11 @@ public class InuhaSanPhamChiTietRepository implements IDAOinterface<InuhaSanPham
                 ms.ngay_tao AS ngay_tao_mau_sac,
                 ms.ngay_cap_nhat AS ngay_cap_nhat_mau_sac
             FROM %s AS spct
+                JOIN SanPham AS sp ON sp.id = spct.id_san_pham 
                 LEFT JOIN KichCo AS kc ON kc.id = spct.id_kich_co
                 LEFT JOIN MauSac AS ms ON ms.id = spct.id_mau_sac
             WHERE
+                sp.trang_thai_xoa != 1 AND
                 spct.trang_thai_xoa != 1                    
             ORDER BY spct.id DESC 
         """, TABLE_NAME);
@@ -244,6 +246,7 @@ public class InuhaSanPhamChiTietRepository implements IDAOinterface<InuhaSanPham
             resultSet = JbdcHelper.query(query);
             while(resultSet.next()) {
                 InuhaSanPhamChiTietModel model = buildData(resultSet);
+		
                 Optional<InuhaSanPhamModel> sanPham = sanPhamRepository.getById(resultSet.getInt("id_san_pham"));
                 if (sanPham.isPresent()) { 
                     model.setSanPham(sanPham.get());
