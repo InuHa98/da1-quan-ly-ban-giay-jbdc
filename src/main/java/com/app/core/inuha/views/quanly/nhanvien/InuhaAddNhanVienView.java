@@ -507,6 +507,10 @@ public class InuhaAddNhanVienView extends javax.swing.JPanel {
             MessageToast.error("Họ tên không được vượt quá 250 ký tự");
             return;
         }
+        if (!ValidateUtils.isFullName(hoTen)) {
+            MessageToast.error("Tên nhân viên không được chứa ký tự đặc biệt");
+            return;
+        }
         lblHoTen.setForeground(currentColor);
 	
 	lblEmail.setForeground(ColorUtils.DANGER_COLOR);

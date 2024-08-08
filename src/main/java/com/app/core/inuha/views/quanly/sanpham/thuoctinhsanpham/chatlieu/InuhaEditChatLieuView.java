@@ -10,6 +10,7 @@ import com.app.core.inuha.services.InuhaChatLieuService;
 import com.app.core.inuha.views.quanly.InuhaSanPhamView;
 import com.app.core.inuha.views.quanly.sanpham.InuhaAddSanPhamView;
 import com.app.utils.ColorUtils;
+import com.app.utils.ValidateUtils;
 import com.app.views.UI.dialog.LoadingDialog;
 import com.formdev.flatlaf.FlatClientProperties;
 import java.awt.Color;
@@ -167,6 +168,11 @@ public class InuhaEditChatLieuView extends JPanel {
         
         if (ten.length() > 250) { 
             MessageToast.error("Tên chất liệu không được vượt quá 250 ký tự");
+            return;
+        }
+        
+        if (ValidateUtils.isSpecialCharacters(ten)) {
+            MessageToast.error("Tên chất liệu không được chứa ký tự đặc biệt");
             return;
         }
         

@@ -189,17 +189,12 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 	lblCart.setIcon(ResourceUtils.getSVG("/svg/cart.svg", new Dimension(20, 20)));
 	btnReset.setIcon(ResourceUtils.getSVG("/svg/reload-n.svg", new Dimension(20, 20)));
 	btnSubmit.setIcon(ResourceUtils.getSVG("/svg/paid.svg", new Dimension(24, 24)));
-	btnAddBill.setIcon(ResourceUtils.getSVG("/svg/plus-c.svg", new Dimension(20, 20)));
 	btnCancel.setIcon(ResourceUtils.getSVG("/svg/times.svg", new Dimension(32, 32)));
 	btnScanQr.setIcon(ResourceUtils.getSVG("/svg/qr.svg", new Dimension(20, 20)));
 	btnRemoveSanPham.setIcon(ResourceUtils.getSVG("/svg/times.svg", new Dimension(20, 20)));
 	
         if (ThemeUtils.isLight()) { 
-            btnAddBill.setBackground(ColorUtils.BUTTON_PRIMARY);
-            btnAddBill.setForeground(Color.WHITE);
-            
-            btnSelectKhachHang.setBackground(ColorUtils.BUTTON_PRIMARY);
-            btnSelectKhachHang.setForeground(Color.WHITE);
+            btnAddBill.setIcon(ResourceUtils.getSVG("/svg/plus-c.svg", new Dimension(20, 20)));
             
             btnScanQr.setBackground(ColorUtils.BUTTON_PRIMARY);
             btnScanQr.setForeground(Color.WHITE);
@@ -208,7 +203,14 @@ public class InuhaBanHangView extends javax.swing.JPanel {
             
             txtTienMat.putClientProperty(FlatClientProperties.STYLE, "background: #fff");
             txtTienChuyenKhoan.putClientProperty(FlatClientProperties.STYLE, "background: #fff");            
+        } else  {
+            btnAddBill.setIcon(ResourceUtils.getSVG("/svg/plus.svg", new Dimension(20, 20)));
         }
+        
+        btnSelectKhachHang.setBackground(ColorUtils.BUTTON_PRIMARY);
+        btnSelectKhachHang.setForeground(Color.WHITE);
+        btnAddBill.setBackground(ColorUtils.BUTTON_PRIMARY);
+        btnAddBill.setForeground(Color.WHITE);
 
         
 	pnlDanhSachSanPham.setRound(0, 0, 0, 0);

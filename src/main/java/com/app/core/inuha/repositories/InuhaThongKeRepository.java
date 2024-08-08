@@ -74,7 +74,7 @@ public class InuhaThongKeRepository {
     }
     
     public String getFirstDate() throws SQLException {
-        String query = "SELECT TOP(1) ngay_tao FROM HoaDon ORDER BY ngay_tao ASC";
+        String query = "SELECT COALESCE((SELECT TOP(1) ngay_tao FROM HoaDon ORDER BY ngay_tao ASC), GETDATE())";
         try {
 	    java.sql.Timestamp date = (java.sql.Timestamp) JbdcHelper.value(query);
 	    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");

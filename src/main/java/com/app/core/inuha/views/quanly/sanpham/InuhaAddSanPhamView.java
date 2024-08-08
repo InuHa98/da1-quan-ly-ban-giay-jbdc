@@ -32,6 +32,7 @@ import com.app.utils.ColorUtils;
 import com.app.utils.CurrencyUtils;
 import com.app.utils.ProductUtils;
 import com.app.utils.ResourceUtils;
+import com.app.utils.ValidateUtils;
 import com.app.views.UI.combobox.ComboBoxItem;
 import com.app.views.UI.dialog.LoadingDialog;
 import com.app.views.UI.picturebox.DefaultPictureBoxRender;
@@ -991,6 +992,12 @@ public class InuhaAddSanPhamView extends javax.swing.JPanel {
             txtTen.requestFocus();
             return;
         }
+        
+        if (ValidateUtils.isSpecialCharacters(ten)) {
+            MessageToast.error("Tên sản phẩm không được chứa ký tự đặc biệt");
+            return;
+        }
+        
         lblTen.setForeground(currentColor);
 	
         lblGiaNhap.setForeground(ColorUtils.DANGER_COLOR);
