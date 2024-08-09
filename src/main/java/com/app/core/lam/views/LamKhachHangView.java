@@ -25,6 +25,7 @@ import com.app.utils.TimeUtils;
 import com.app.utils.ValidateUtils;
 import com.app.views.UI.dialog.LoadingDialog;
 import com.app.views.UI.table.TableCustomUI;
+import com.formdev.flatlaf.FlatClientProperties;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.util.ArrayList;
@@ -249,6 +250,9 @@ public final class LamKhachHangView extends javax.swing.JPanel {
         tblKhachHang.getSelectionModel().clearSelection();
         tblLichSuMuaHang.clearSelection();
         tblLichSuMuaHang.getSelectionModel().clearSelection();
+        
+        dtmLS.setRowCount(0);
+        rerenderPaginationLs(0, 0);
     }
     
     public LamKhachHangView() {
@@ -275,6 +279,8 @@ public final class LamKhachHangView extends javax.swing.JPanel {
 
         dtm = (DefaultTableModel) tblKhachHang.getModel();
         dtmLS = (DefaultTableModel) tblLichSuMuaHang.getModel();
+        
+        txtTimKiemKH.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Tìm kiếm theo tên hoặc số điện thoại");
 
         txtSoDienThoai.setFormatterFactory(NumberPhoneUtils.getDefaultFormat());
 
