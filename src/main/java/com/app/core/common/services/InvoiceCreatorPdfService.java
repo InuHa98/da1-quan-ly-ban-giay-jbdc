@@ -78,7 +78,7 @@ public class InvoiceCreatorPdfService {
             BufferedImage bufferedImage = new BufferedImage(
                 image.getIconWidth(),
                 image.getIconHeight(),
-                BufferedImage.TYPE_INT_ARGB
+                BufferedImage.TYPE_INT_RGB
             );
 
             Graphics2D g2d = bufferedImage.createGraphics();

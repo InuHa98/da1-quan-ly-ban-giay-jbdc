@@ -192,6 +192,7 @@ public class WebcamQRCodeScanPanel extends RoundPanel implements Closeable {
             BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
             try {
                 result = new MultiFormatReader().decode(bitmap);
+                playSound();
                 event.onScanning(result);
             } catch (NotFoundException e) {
             }

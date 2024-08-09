@@ -41,7 +41,6 @@ public class QrCodeHelper {
         }
         
         IQRCodeScanEvent callback = (Result result) -> {
-            WebcamQRCodeScanPanel.playSound();
             event.onScanning(result);
             closeWebcam();
         };
