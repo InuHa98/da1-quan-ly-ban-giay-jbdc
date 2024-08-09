@@ -11,6 +11,7 @@ import com.app.core.inuha.views.quanly.InuhaSanPhamView;
 import static com.app.core.inuha.views.quanly.sanpham.thuoctinhsanpham.danhmuc.InuhaListDanhMucView.MODAL_ID_EDIT;
 import com.app.core.inuha.views.quanly.sanpham.InuhaAddSanPhamView;
 import com.app.utils.ColorUtils;
+import com.app.utils.ValidateUtils;
 import com.app.views.UI.dialog.LoadingDialog;
 import com.formdev.flatlaf.FlatClientProperties;
 import java.awt.Color;
@@ -168,6 +169,11 @@ public class InuhaEditDanhMucView extends JPanel {
         
         if (ten.length() > 250) { 
             MessageToast.error("Tên danh mục không được vượt quá 250 ký tự");
+            return;
+        }
+        
+        if (ValidateUtils.isSpecialCharacters(ten)) {
+            MessageToast.error("Tên danh mục không được chứa ký tự đặc biệt");
             return;
         }
         

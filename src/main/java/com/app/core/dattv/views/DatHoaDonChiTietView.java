@@ -255,8 +255,11 @@ public class DatHoaDonChiTietView extends javax.swing.JPanel {
         }
     }
      private void showDetailSanPham(InuhaSanPhamModel item) {
-	ModalDialog.closeAllModal();
-        ModalDialog.showModal(instance, new SimpleModalBorder(new InuhaDetailSanPhamView(item), null));
+        if (ModalDialog.isIdExist("showDetailSanPham")) {
+            return;
+        }
+        ModalDialog.closeAllModal();
+        ModalDialog.showModal(instance, new SimpleModalBorder(new InuhaDetailSanPhamView(item), null), "showDetailSanPham");
     }
     
    

@@ -14,7 +14,7 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class FillterRequest {
+public class FilterRequest {
 
     protected int page = PagableConstant.PAGE;
 

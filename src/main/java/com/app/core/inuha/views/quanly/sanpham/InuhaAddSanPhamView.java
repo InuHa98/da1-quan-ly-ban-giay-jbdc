@@ -32,6 +32,7 @@ import com.app.utils.ColorUtils;
 import com.app.utils.CurrencyUtils;
 import com.app.utils.ProductUtils;
 import com.app.utils.ResourceUtils;
+import com.app.utils.ValidateUtils;
 import com.app.views.UI.combobox.ComboBoxItem;
 import com.app.views.UI.dialog.LoadingDialog;
 import com.app.views.UI.picturebox.DefaultPictureBoxRender;
@@ -914,27 +915,45 @@ public class InuhaAddSanPhamView extends javax.swing.JPanel {
     // End of variables declaration//GEN-END:variables
 
     private void handleClickButtonDanhMuc() {
-        ModalDialog.showModal(this, new SimpleModalBorder(new InuhaListDanhMucView(), "Danh mục sản phẩm"));
+        if (ModalDialog.isIdExist("handleClickButtonDanhMuc")) {
+            return;
+        }
+        ModalDialog.showModal(this, new SimpleModalBorder(new InuhaListDanhMucView(), "Danh mục sản phẩm"), "handleClickButtonDanhMuc");
     }
 
     private void handleClickButtonThuongHieu() {
-        ModalDialog.showModal(this, new SimpleModalBorder(new InuhaListThuongHieuView(), "Thương hiệu sản phẩm"));
+        if (ModalDialog.isIdExist("handleClickButtonThuongHieu")) {
+            return;
+        }
+        ModalDialog.showModal(this, new SimpleModalBorder(new InuhaListThuongHieuView(), "Thương hiệu sản phẩm"), "handleClickButtonThuongHieu");
     }
 
     private void handleClickButtonXuatXu() {
-        ModalDialog.showModal(this, new SimpleModalBorder(new InuhaListXuatXuView(), "Xuất xứ sản phẩm"));
+        if (ModalDialog.isIdExist("handleClickButtonXuatXu")) {
+            return;
+        }
+        ModalDialog.showModal(this, new SimpleModalBorder(new InuhaListXuatXuView(), "Xuất xứ sản phẩm"), "handleClickButtonXuatXu");
     }
 
     private void handleClickButtonKieuDang() {
-        ModalDialog.showModal(this, new SimpleModalBorder(new InuhaListKieuDangView(), "Kiểu dáng sản phẩm"));
+        if (ModalDialog.isIdExist("handleClickButtonKieuDang")) {
+            return;
+        }
+        ModalDialog.showModal(this, new SimpleModalBorder(new InuhaListKieuDangView(), "Kiểu dáng sản phẩm"), "handleClickButtonKieuDang");
     }
 
     private void handleClickButtonChatLieu() {
-        ModalDialog.showModal(this, new SimpleModalBorder(new InuhaListChatLieuView(), "Chất liệu sản phẩm"));
+        if (ModalDialog.isIdExist("handleClickButtonChatLieu")) {
+            return;
+        }
+        ModalDialog.showModal(this, new SimpleModalBorder(new InuhaListChatLieuView(), "Chất liệu sản phẩm"), "handleClickButtonChatLieu");
     }
 
     private void handleClickButtonDeGiay() {
-        ModalDialog.showModal(this, new SimpleModalBorder(new InuhaListDeGiayView(), "Đế giày sản phẩm"));
+        if (ModalDialog.isIdExist("handleClickButtonDeGiay")) {
+            return;
+        }
+        ModalDialog.showModal(this, new SimpleModalBorder(new InuhaListDeGiayView(), "Đế giày sản phẩm"), "handleClickButtonDeGiay");
     }
 
     private void handleClickButtonImage() {
@@ -991,6 +1010,12 @@ public class InuhaAddSanPhamView extends javax.swing.JPanel {
             txtTen.requestFocus();
             return;
         }
+        
+        if (ValidateUtils.isSpecialCharacters(ten)) {
+            MessageToast.error("Tên sản phẩm không được chứa ký tự đặc biệt");
+            return;
+        }
+        
         lblTen.setForeground(currentColor);
 	
         lblGiaNhap.setForeground(ColorUtils.DANGER_COLOR);
@@ -1204,8 +1229,11 @@ public class InuhaAddSanPhamView extends javax.swing.JPanel {
     }
 
     private void handleClickButtonDetail() {
+        if (ModalDialog.isIdExist("handleClickButtonDetail")) {
+            return;
+        }
         ModalDialog.closeAllModal();
-        ModalDialog.showModal(instance, new SimpleModalBorder(new InuhaDetailSanPhamView(this.sanPham), "Chi tiết sản phẩm"));
+        ModalDialog.showModal(instance, new SimpleModalBorder(new InuhaDetailSanPhamView(this.sanPham), "Chi tiết sản phẩm"), "handleClickButtonDetail");
     }
     
 }

@@ -181,16 +181,27 @@ public class InuhaDetailSanPhamView extends JPanel {
 	cboTrangThai.setPreferredSize(cboSize);
 	cboSoLuong.setPreferredSize(cboSize);
 	
-	executorService.submit(() -> { 
-	    loadDataKichCo();
-	    loadDataMauSac();
+        
+        SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                loadDataKichCo();
+                loadDataMauSac();
 
-	    setupTable(tblDanhSach);
-	    loadDataPage(1);
-	    setupPagination();
-	    reLoad = false;
-	    loading.dispose();
-	});
+                setupTable(tblDanhSach);
+                loadDataPage(1);
+                setupPagination();
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                reLoad = false;
+                loading.dispose();
+            }
+            
+        };
+        worker.execute();
 	loading.setVisible(true);
     }
     
@@ -252,11 +263,8 @@ public class InuhaDetailSanPhamView extends JPanel {
 		handleClickButtomView(item);
             }
         };
-        
-        pnlDanhSach.setBackground(ColorUtils.BACKGROUND_DASHBOARD);
+        pnlDanhSach.setRound(0, 0, 0, 0);
         TableCustomUI.apply(scrDanhSach, TableCustomUI.TableType.DEFAULT);
-        tblDanhSach.setBackground(ColorUtils.BACKGROUND_DASHBOARD);
-        tblDanhSach.getTableHeader().setBackground(ColorUtils.BACKGROUND_DASHBOARD);
 
         table.getColumnModel().getColumn(0).setHeaderRenderer(new CheckBoxTableHeaderRenderer(table, 0));
 	table.getColumnModel().getColumn(5).setCellRenderer(new InuhaSoLuongTonSanPhamTableCellRender(table));
@@ -687,10 +695,7 @@ public class InuhaDetailSanPhamView extends JPanel {
         );
         pnlDanhSachLayout.setVerticalGroup(
             pnlDanhSachLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlDanhSachLayout.createSequentialGroup()
-                .addGap(8, 8, 8)
-                .addComponent(scrDanhSach, javax.swing.GroupLayout.DEFAULT_SIZE, 252, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(scrDanhSach, javax.swing.GroupLayout.DEFAULT_SIZE, 266, Short.MAX_VALUE)
         );
 
         cboKichCo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "-- Tất cả kích cỡ --" }));
@@ -776,7 +781,7 @@ public class InuhaDetailSanPhamView extends JPanel {
                         .addComponent(cboTrangThai, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(cboMauSac, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(cboKichCo, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(pnlDanhSach, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(10, 10, 10)
                 .addComponent(pnlPhanTrang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -977,6 +982,9 @@ public class InuhaDetailSanPhamView extends JPanel {
     }
 
     private void handleClickButtonAdd() {
+        if (ModalDialog.isIdExist(ID_MODAL_ADD)) {
+            return;
+        }
         ModalDialog.showModal(this, new SimpleModalBorder(new InuhaAddSanPhamChiTietView(this.sanPham), "Thêm sản phẩm chi tiết"), ID_MODAL_ADD);
     }
     
@@ -1043,10 +1051,16 @@ public class InuhaDetailSanPhamView extends JPanel {
     public final static String ID_MODAL_DEAIL = "detail-sanphamchitiet";
 
     private void showEdit(InuhaSanPhamChiTietModel item) {
+        if (ModalDialog.isIdExist(ID_MODAL_ADD)) {
+            return;
+        }
         ModalDialog.showModal(instance, new SimpleModalBorder(new InuhaAddSanPhamChiTietView(this.sanPham, item), "Chỉnh sửa chi tiết sản phẩm"), ID_MODAL_ADD);
     }
 
     private void showDetail(InuhaSanPhamChiTietModel item) {
+        if (ModalDialog.isIdExist(ID_MODAL_DEAIL)) {
+            return;
+        }
         ModalDialog.showModal(instance, new SimpleModalBorder(new InuhaDetailSanPhamChiTietView(item), null), ID_MODAL_DEAIL);
     }
 	
@@ -1055,11 +1069,17 @@ public class InuhaDetailSanPhamView extends JPanel {
     }
     
     private void handleClickButtomView(InuhaSanPhamChiTietModel item) {
-	ModalDialog.showModal(this, new SimpleModalBorder(new InuhaDetailSanPhamChiTietView(item), null));
+        if (ModalDialog.isIdExist("handleClickButtomView")) {
+            return;
+        }
+	ModalDialog.showModal(this, new SimpleModalBorder(new InuhaDetailSanPhamChiTietView(item), null), "handleClickButtomView");
     }
 
     private void handleClickButtonEdit() {
+        if (ModalDialog.isIdExist("handleClickButtonEdit")) {
+            return;
+        }
 	ModalDialog.closeAllModal();
-	ModalDialog.showModal(instance, new SimpleModalBorder(new InuhaAddSanPhamView(sanPham), "Chỉnh sửa sản phẩm"));
+	ModalDialog.showModal(instance, new SimpleModalBorder(new InuhaAddSanPhamView(sanPham), "Chỉnh sửa sản phẩm"), "handleClickButtonEdit");
     }
 }

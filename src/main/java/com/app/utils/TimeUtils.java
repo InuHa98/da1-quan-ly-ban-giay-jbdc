@@ -35,12 +35,22 @@ public class TimeUtils {
     
     public static String date(String format, String timestamp) { 
 	boolean hasTime = timestamp.length() > 10;
-        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern(hasTime ? "yyyy-MM-dd HH:mm:ss.S" : "yyyy-MM-dd");
+        
 	if (hasTime) {
+            String formatTime = "yyyy-MM-dd HH:mm:ss";
+            int lenghtSecond = getMiliSecondLength(timestamp);
+            if (lenghtSecond > 0) {
+                formatTime += ".";
+                for(int i = 0; i < lenghtSecond; i++) { 
+                    formatTime += "S";
+                }
+            }
+            DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern(formatTime);
 	    LocalDateTime dateTime = LocalDateTime.parse(timestamp, inputFormatter);
 	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
 	    return dateTime.format(formatter);
-	} else {	    
+	} else {	
+            DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 	    LocalDate dateTime = LocalDate.parse(timestamp, inputFormatter);
 	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
 	    return dateTime.format(formatter);
@@ -57,4 +67,14 @@ public class TimeUtils {
         return dateFormat.format(new Date());
     }
 	
+    public static int getMiliSecondLength(String timestamp) {
+        if (timestamp.contains(".")) {
+            String[] parts = timestamp.split("\\.");
+            if (parts.length > 1) {
+                String milliseconds = parts[1];
+                return milliseconds.length();
+            }
+        }
+        return 0;
+    }
 }

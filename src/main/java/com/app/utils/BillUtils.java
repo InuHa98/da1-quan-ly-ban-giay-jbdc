@@ -2,7 +2,7 @@ package com.app.utils;
 
 import com.app.common.helper.TestConnection;
 import com.app.common.infrastructure.constants.TrangThaiHoaDonConstant;
-import com.app.common.infrastructure.request.FillterRequest;
+import com.app.common.infrastructure.request.FilterRequest;
 import com.app.core.inuha.request.InuhaFilterHoaDonChiTietRequest;
 import com.app.core.inuha.services.InuhaHoaDonChiTietService;
 import com.app.core.inuha.services.InuhaHoaDonService;
@@ -24,7 +24,7 @@ public class BillUtils {
     public static String generateCodeHoaDon() {
         int lastId = Integer.parseInt(InuhaHoaDonService.getInstance().getLastId());
         if (lastId == 1) { 
-            if (InuhaHoaDonService.getInstance().count(new FillterRequest()) < 1) {
+            if (InuhaHoaDonService.getInstance().count(new FilterRequest()) < 1) {
                 lastId--;
             }
         }

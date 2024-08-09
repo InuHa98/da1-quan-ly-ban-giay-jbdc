@@ -4,7 +4,7 @@ import com.app.common.helper.JbdcHelper;
 import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.constants.TrangThaiXoaConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
-import com.app.common.infrastructure.request.FillterRequest;
+import com.app.common.infrastructure.request.FilterRequest;
 import com.app.common.infrastructure.session.SessionLogin;
 import com.app.core.inuha.models.InuhaTaiKhoanModel;
 import com.app.core.inuha.models.InuhaTaiKhoanModel;
@@ -148,7 +148,7 @@ public class InuhaTaiKhoanService implements IInuhaNhanVienServiceInterface {
     }
 
     @Override
-    public List<InuhaTaiKhoanModel> getPage(FillterRequest request) {
+    public List<InuhaTaiKhoanModel> getPage(FilterRequest request) {
         try {
             return repository.selectPage(request);
         } catch (SQLException ex) {
@@ -159,7 +159,7 @@ public class InuhaTaiKhoanService implements IInuhaNhanVienServiceInterface {
    
 
     @Override
-    public Integer getTotalPage(FillterRequest request) {
+    public Integer getTotalPage(FilterRequest request) {
         try {
             return repository.count(request);
         } catch (SQLException ex) {
@@ -329,7 +329,7 @@ public class InuhaTaiKhoanService implements IInuhaNhanVienServiceInterface {
         }
     }
     
-    public int count(FillterRequest request) {
+    public int count(FilterRequest request) {
         try {
             return repository.count(request);
         } catch (SQLException ex) {

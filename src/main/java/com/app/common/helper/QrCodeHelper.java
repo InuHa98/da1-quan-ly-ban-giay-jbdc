@@ -36,15 +36,15 @@ public class QrCodeHelper {
     }
      
     public static void showWebcam(String title, IQRCodeScanEvent event) { 
-        IQRCodeScanEvent callback = new IQRCodeScanEvent() { 
-            @Override
-            public void onScanning(Result result) {
-		WebcamQRCodeScanPanel.playSound();
-                event.onScanning(result);
-                closeWebcam();
-            }
-        };
+        if (ModalDialog.isIdExist(QrCodeUtils.MODAL_SCAN_ID)) {
+            return;
+        }
         
+        IQRCodeScanEvent callback = (Result result) -> {
+            event.onScanning(result);
+            closeWebcam();
+        };
+
         ModalDialog.showModal(Application.app, new SimpleModalBorder(WebcamQRCodeScanPanel.getInstance(callback), title), QrCodeUtils.MODAL_SCAN_ID);
     }
     

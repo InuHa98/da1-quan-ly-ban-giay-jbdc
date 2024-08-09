@@ -3,7 +3,7 @@ package com.app.core.inuha.services;
 import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.constants.TrangThaiXoaConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
-import com.app.common.infrastructure.request.FillterRequest;
+import com.app.common.infrastructure.request.FilterRequest;
 import com.app.core.inuha.models.InuhaPhieuGiamGiaModel;
 import com.app.core.inuha.models.InuhaSanPhamModel;
 import com.app.core.inuha.models.sanpham.InuhaKichCoModel;
@@ -147,7 +147,7 @@ public class InuhaSanPhamService implements IInuhaSanPhamServiceInterface {
     }
 
     @Override
-    public List<InuhaSanPhamModel> getPage(FillterRequest request) {
+    public List<InuhaSanPhamModel> getPage(FilterRequest request) {
         try {
             return repository.selectPage(request);
         } catch (SQLException ex) {
@@ -156,7 +156,7 @@ public class InuhaSanPhamService implements IInuhaSanPhamServiceInterface {
         return new ArrayList<>();
     }
 
-    public List<InuhaSanPhamModel> getPage(FillterRequest request, boolean isBanHang) {
+    public List<InuhaSanPhamModel> getPage(FilterRequest request, boolean isBanHang) {
         try {
             return repository.selectPage(request, isBanHang);
         } catch (SQLException ex) {
@@ -166,7 +166,7 @@ public class InuhaSanPhamService implements IInuhaSanPhamServiceInterface {
     }
 	
     @Override
-    public Integer getTotalPage(FillterRequest request) {
+    public Integer getTotalPage(FilterRequest request) {
         try {
             return repository.count(request);
         } catch (SQLException ex) {
@@ -197,7 +197,7 @@ public class InuhaSanPhamService implements IInuhaSanPhamServiceInterface {
         }
     }
     
-    public int count(FillterRequest request) {
+    public int count(FilterRequest request) {
         try {
             return repository.count(request);
         } catch (SQLException ex) {

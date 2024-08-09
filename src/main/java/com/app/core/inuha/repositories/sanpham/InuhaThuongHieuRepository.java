@@ -2,7 +2,7 @@ package com.app.core.inuha.repositories.sanpham;
 
 import com.app.common.helper.JbdcHelper;
 import com.app.common.infrastructure.interfaces.IDAOinterface;
-import com.app.common.infrastructure.request.FillterRequest;
+import com.app.common.infrastructure.request.FilterRequest;
 import com.app.core.inuha.models.sanpham.InuhaMauSacModel;
 import com.app.core.inuha.models.sanpham.InuhaThuongHieuModel;
 import com.app.utils.TimeUtils;
@@ -196,7 +196,7 @@ public class InuhaThuongHieuRepository implements IDAOinterface<InuhaThuongHieuM
     }
 
     @Override
-    public List<InuhaThuongHieuModel> selectPage(FillterRequest request) throws SQLException {
+    public List<InuhaThuongHieuModel> selectPage(FilterRequest request) throws SQLException {
         List<InuhaThuongHieuModel> list = new ArrayList<>();
         ResultSet resultSet = null;
 
@@ -213,7 +213,7 @@ public class InuhaThuongHieuRepository implements IDAOinterface<InuhaThuongHieuM
             WHERE stt BETWEEN ? AND ?
         """, TABLE_NAME);
 
-        int[] offset = FillterRequest.getOffset(request.getPage(), request.getSize());
+        int[] offset = FilterRequest.getOffset(request.getPage(), request.getSize());
         int start = offset[0];
         int limit = offset[1];
 
@@ -240,7 +240,7 @@ public class InuhaThuongHieuRepository implements IDAOinterface<InuhaThuongHieuM
     }
 
     @Override
-    public int count(FillterRequest request) throws SQLException {
+    public int count(FilterRequest request) throws SQLException {
         int totalPages = 0;
         int totalRows = 0;
 

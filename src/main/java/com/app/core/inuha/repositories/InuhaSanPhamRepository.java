@@ -3,7 +3,7 @@ package com.app.core.inuha.repositories;
 import com.app.common.helper.JbdcHelper;
 import com.app.common.infrastructure.constants.TrangThaiHoaDonConstant;
 import com.app.common.infrastructure.interfaces.IDAOinterface;
-import com.app.common.infrastructure.request.FillterRequest;
+import com.app.common.infrastructure.request.FilterRequest;
 import com.app.core.inuha.models.InuhaSanPhamModel;
 import com.app.core.inuha.models.sanpham.InuhaChatLieuModel;
 import com.app.core.inuha.models.sanpham.InuhaDanhMucModel;
@@ -320,7 +320,7 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
 
 
 
-    public List<InuhaSanPhamModel> selectPage(FillterRequest request, boolean isBanHang) throws SQLException {
+    public List<InuhaSanPhamModel> selectPage(FilterRequest request, boolean isBanHang) throws SQLException {
         
         InuhaFilterSanPhamRequest filter = (InuhaFilterSanPhamRequest) request;
         
@@ -377,7 +377,7 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
             WHERE stt BETWEEN ? AND ?
         """, isBanHang ? " AND trang_thai = 1 " : "", TABLE_NAME);
 
-        int[] offset = FillterRequest.getOffset(filter.getPage(), filter.getSize());
+        int[] offset = FilterRequest.getOffset(filter.getPage(), filter.getSize());
         int start = offset[0];
         int limit = offset[1];
 
@@ -425,12 +425,12 @@ public class InuhaSanPhamRepository implements IDAOinterface<InuhaSanPhamModel, 
     }
     
     @Override
-    public List<InuhaSanPhamModel> selectPage(FillterRequest request) throws SQLException {
+    public List<InuhaSanPhamModel> selectPage(FilterRequest request) throws SQLException {
 	return selectPage(request, false);
     }
 
     @Override
-    public int count(FillterRequest request) throws SQLException {
+    public int count(FilterRequest request) throws SQLException {
         
         InuhaFilterSanPhamRequest filter = (InuhaFilterSanPhamRequest) request;
         

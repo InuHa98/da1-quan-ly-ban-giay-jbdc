@@ -1,6 +1,6 @@
 package com.app.core.inuha.request;
 
-import com.app.common.infrastructure.request.FillterRequest;
+import com.app.common.infrastructure.request.FilterRequest;
 import com.app.views.UI.combobox.ComboBoxItem;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,7 +11,7 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class InuhaFilterTaiKhoanRequest extends FillterRequest {
+public class InuhaFilterTaiKhoanRequest extends FilterRequest {
 
     private String keyword;
 

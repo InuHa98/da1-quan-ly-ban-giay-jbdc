@@ -8,6 +8,7 @@ import com.app.core.inuha.models.InuhaPhieuGiamGiaModel;
 import com.app.core.inuha.services.InuhaPhieuGiamGiaService;
 import com.app.utils.ColorUtils;
 import com.app.utils.CurrencyUtils;
+import com.app.utils.ValidateUtils;
 import com.app.views.UI.combobox.ComboBoxItem;
 import com.app.views.UI.dialog.LoadingDialog;
 import com.formdev.flatlaf.FlatClientProperties;
@@ -338,6 +339,10 @@ public class InuhaAddPhieuGiamGiaView extends javax.swing.JPanel {
         }
         if (ten.length() > 250) { 
             MessageToast.error("Tên phiếu không được vượt quá 250 ký tự");
+            return;
+        }
+        if (ValidateUtils.isSpecialCharacters(ten)) {
+            MessageToast.error("Tên phiếu không được chứa ký tự đặc biệt");
             return;
         }
         lblTen.setForeground(currentColor);

@@ -3,7 +3,7 @@ package com.app.core.inuha.repositories;
 import com.app.common.helper.JbdcHelper;
 import com.app.common.infrastructure.constants.TrangThaiHoaDonConstant;
 import com.app.common.infrastructure.interfaces.IDAOinterface;
-import com.app.common.infrastructure.request.FillterRequest;
+import com.app.common.infrastructure.request.FilterRequest;
 import com.app.core.inuha.models.InuhaKhachHangModel;
 import com.app.core.inuha.request.InuhaFilterKhachHangRequest;
 import com.app.utils.NumberPhoneUtils;
@@ -216,7 +216,7 @@ public class InuhaKhachHangRepository implements IDAOinterface<InuhaKhachHangMod
     }
 
     @Override
-    public List<InuhaKhachHangModel> selectPage(FillterRequest request) throws SQLException {
+    public List<InuhaKhachHangModel> selectPage(FilterRequest request) throws SQLException {
 	InuhaFilterKhachHangRequest filter = (InuhaFilterKhachHangRequest) request;
         List<InuhaKhachHangModel> list = new ArrayList<>();
         ResultSet resultSet = null;
@@ -240,7 +240,7 @@ public class InuhaKhachHangRepository implements IDAOinterface<InuhaKhachHangMod
             WHERE stt BETWEEN ? AND ?
         """, TrangThaiHoaDonConstant.STATUS_DA_THANH_TOAN, TABLE_NAME);
 
-        int[] offset = FillterRequest.getOffset(request.getPage(), request.getSize());
+        int[] offset = FilterRequest.getOffset(request.getPage(), request.getSize());
         int start = offset[0];
         int limit = offset[1];
 
@@ -272,7 +272,7 @@ public class InuhaKhachHangRepository implements IDAOinterface<InuhaKhachHangMod
     }
 
     @Override
-    public int count(FillterRequest request) throws SQLException {
+    public int count(FilterRequest request) throws SQLException {
 	InuhaFilterKhachHangRequest filter = (InuhaFilterKhachHangRequest) request;
         int totalPages = 0;
         int totalRows = 0;

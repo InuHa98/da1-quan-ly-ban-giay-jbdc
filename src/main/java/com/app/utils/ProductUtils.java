@@ -1,6 +1,6 @@
 package com.app.utils;
 
-import com.app.common.infrastructure.request.FillterRequest;
+import com.app.common.infrastructure.request.FilterRequest;
 import com.app.core.inuha.request.InuhaFilterSanPhamChiTietRequest;
 import com.app.core.inuha.request.InuhaFilterSanPhamRequest;
 import com.app.core.inuha.services.InuhaSanPhamChiTietService;

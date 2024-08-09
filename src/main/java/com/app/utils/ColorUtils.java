@@ -74,7 +74,6 @@ public class ColorUtils {
         BACKGROUND_TABLE = new Color(241, 243, 244);
         BACKGROUND_TABLE_ODD = new Color(241, 243, 244);
         TEXT_TABLE = new Color(51, 51, 51);
-        TEXT_SELECTION_TABLE = new Color(255, 255, 255);
         BUTTON_PRIMARY = new Color(56, 53, 67);
         BUTTON_GRAY = new Color(221, 226, 228);
         INPUT_PRIMARY = new Color(241, 243, 244);
@@ -93,14 +92,14 @@ public class ColorUtils {
         WARNING_COLOR = new Color(253, 174, 0);
         BORDER = new Color(63, 66, 72);
         BACKGROUND_GRAY = new Color(43, 45, 49);
-        BACKGROUND_SELECTED = new Color(113, 84, 68);
+        BACKGROUND_SELECTED = new Color(234, 108, 32);
         BACKGROUND_DASHBOARD = new Color(35, 36, 40);
         BACKGROUND_TABLE = new Color(43, 45, 49);
         BACKGROUND_HOVER = new Color(63, 66, 72);
         BACKGROUND_TABLE_ODD = new Color(43, 45, 49); //new Color(63, 66, 72);
         TEXT_TABLE = new Color(144, 147, 153);
         TEXT_GRAY = new Color(189, 189, 189);
-        TEXT_SELECTION_TABLE = new Color(189, 189, 189);
+        TEXT_SELECTION_TABLE = new Color(255, 255, 255);
         BUTTON_PRIMARY = new Color(234, 108, 32);
         BUTTON_GRAY = new Color(49, 51, 56);
         INPUT_PRIMARY = new Color(43, 45, 49);

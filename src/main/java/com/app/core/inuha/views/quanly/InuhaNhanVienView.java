@@ -134,10 +134,17 @@ public class InuhaNhanVienView extends javax.swing.JPanel {
 	
 	setupTable(tblDanhSach);
         setupPagination();
-	executorService.submit(() -> {
-	    loadDataPage(1);
-	    firstLoad = false;
-	});
+        
+        SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                loadDataPage(1);
+                firstLoad = false;
+                return null;
+            }
+        };
+        worker.execute();
+
     }
 
     private void setupTable(JTable table) { 
@@ -466,9 +473,7 @@ public class InuhaNhanVienView extends javax.swing.JPanel {
         );
         pnlDanhSachLayout.setVerticalGroup(
             pnlDanhSachLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlDanhSachLayout.createSequentialGroup()
-                .addGap(10, 10, 10)
-                .addComponent(scrDanhSach, javax.swing.GroupLayout.DEFAULT_SIZE, 274, Short.MAX_VALUE))
+            .addComponent(scrDanhSach, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 284, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout pnlPhanTrangLayout = new javax.swing.GroupLayout(pnlPhanTrang);
@@ -631,13 +636,19 @@ public class InuhaNhanVienView extends javax.swing.JPanel {
     }
 
     private void handleClickButtonAdd() {
+        if (ModalDialog.isIdExist("handleClickButtonAdd")) {
+            return;
+        }
 	ModalDialog.closeAllModal();
-	ModalDialog.showModal(this, new SimpleModalBorder(new InuhaAddNhanVienView(), "Thêm nhân viên"));
+	ModalDialog.showModal(this, new SimpleModalBorder(new InuhaAddNhanVienView(), "Thêm nhân viên"), "handleClickButtonAdd");
     }
     
     private void showEdit(InuhaTaiKhoanModel item) { 
+        if (ModalDialog.isIdExist("showEdit")) {
+            return;
+        }
 	ModalDialog.closeAllModal();
-	ModalDialog.showModal(instance, new SimpleModalBorder(new InuhaAddNhanVienView(item), "Chỉnh sửa thông tin"));
+	ModalDialog.showModal(instance, new SimpleModalBorder(new InuhaAddNhanVienView(item), "Chỉnh sửa thông tin"), "showEdit");
     }
 
 

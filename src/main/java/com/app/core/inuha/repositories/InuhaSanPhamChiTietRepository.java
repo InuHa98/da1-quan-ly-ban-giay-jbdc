@@ -3,7 +3,7 @@ package com.app.core.inuha.repositories;
 import com.app.common.helper.JbdcHelper;
 import com.app.common.infrastructure.constants.TrangThaiHoaDonConstant;
 import com.app.common.infrastructure.interfaces.IDAOinterface;
-import com.app.common.infrastructure.request.FillterRequest;
+import com.app.common.infrastructure.request.FilterRequest;
 import com.app.core.inuha.models.InuhaSanPhamChiTietModel;
 import com.app.core.inuha.models.InuhaSanPhamModel;
 import com.app.core.inuha.models.sanpham.InuhaKichCoModel;
@@ -233,9 +233,11 @@ public class InuhaSanPhamChiTietRepository implements IDAOinterface<InuhaSanPham
                 ms.ngay_tao AS ngay_tao_mau_sac,
                 ms.ngay_cap_nhat AS ngay_cap_nhat_mau_sac
             FROM %s AS spct
+                JOIN SanPham AS sp ON sp.id = spct.id_san_pham 
                 LEFT JOIN KichCo AS kc ON kc.id = spct.id_kich_co
                 LEFT JOIN MauSac AS ms ON ms.id = spct.id_mau_sac
             WHERE
+                sp.trang_thai_xoa != 1 AND
                 spct.trang_thai_xoa != 1                    
             ORDER BY spct.id DESC 
         """, TABLE_NAME);
@@ -244,6 +246,7 @@ public class InuhaSanPhamChiTietRepository implements IDAOinterface<InuhaSanPham
             resultSet = JbdcHelper.query(query);
             while(resultSet.next()) {
                 InuhaSanPhamChiTietModel model = buildData(resultSet);
+		
                 Optional<InuhaSanPhamModel> sanPham = sanPhamRepository.getById(resultSet.getInt("id_san_pham"));
                 if (sanPham.isPresent()) { 
                     model.setSanPham(sanPham.get());
@@ -306,7 +309,7 @@ public class InuhaSanPhamChiTietRepository implements IDAOinterface<InuhaSanPham
     }
 
     @Override
-    public List<InuhaSanPhamChiTietModel> selectPage(FillterRequest request) throws SQLException {
+    public List<InuhaSanPhamChiTietModel> selectPage(FilterRequest request) throws SQLException {
         
         InuhaFilterSanPhamChiTietRequest filter = (InuhaFilterSanPhamChiTietRequest) request;
         
@@ -357,7 +360,7 @@ public class InuhaSanPhamChiTietRepository implements IDAOinterface<InuhaSanPham
             WHERE stt BETWEEN ? AND ?
         """, TABLE_NAME);
 
-        int[] offset = FillterRequest.getOffset(filter.getPage(), filter.getSize());
+        int[] offset = FilterRequest.getOffset(filter.getPage(), filter.getSize());
         int start = offset[0];
         int limit = offset[1];
 
@@ -415,7 +418,7 @@ public class InuhaSanPhamChiTietRepository implements IDAOinterface<InuhaSanPham
     }
 
     @Override
-    public int count(FillterRequest request) throws SQLException {
+    public int count(FilterRequest request) throws SQLException {
         
         InuhaFilterSanPhamChiTietRequest filter = (InuhaFilterSanPhamChiTietRequest) request;
         

@@ -83,7 +83,7 @@ public class CheckBoxTableHeaderRenderer extends JCheckBox implements TableCellR
 
     @Override
     public Component getTableCellRendererComponent(JTable jtable, Object o, boolean bln, boolean bln1, int i, int i1) {
-        setBorder(new EmptyBorder(0, 10, 10, 10));
+        setBorder(new EmptyBorder(10, 10, 10, 10));
         setFont(table.getTableHeader().getFont());
         setBackground(table.getTableHeader().getBackground());
         setForeground(table.getTableHeader().getForeground());

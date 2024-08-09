@@ -7,7 +7,7 @@ import com.app.common.helper.MessageToast;
 import com.app.common.helper.Pagination;
 import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
-import com.app.common.infrastructure.request.FillterRequest;
+import com.app.common.infrastructure.request.FilterRequest;
 import com.app.core.inuha.models.sanpham.InuhaDanhMucModel;
 import com.app.core.inuha.services.InuhaDanhMucService;
 import com.app.core.inuha.views.guest.LoginView;
@@ -76,8 +76,16 @@ public class InuhaListDanhMucView extends javax.swing.JPanel {
         btnAdd.setForeground(Color.WHITE);
         btnAdd.setIcon(ResourceUtils.getSVG("/svg/plus.svg", new Dimension(20, 20)));
         
+        SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                loadDataPage(1);
+                return null;
+            }
+        };
+        worker.execute();
+        
         setupTable(tblDanhSach);
-        loadDataPage(1);
         setupPagination();
     }
 
@@ -87,6 +95,9 @@ public class InuhaListDanhMucView extends javax.swing.JPanel {
             @Override
             public void onEdit(int row) {
                 InuhaDanhMucModel item = dataItems.get(row);
+                if (ModalDialog.isIdExist(MODAL_ID_EDIT)) {
+                    return;
+                }
                 ModalDialog.showModal(instance, new SimpleModalBorder(new InuhaEditDanhMucView(item), "Chỉnh sửa danh mục"), MODAL_ID_EDIT);
             }
 
@@ -157,7 +168,7 @@ public class InuhaListDanhMucView extends javax.swing.JPanel {
             
             model.setRowCount(0);
             
-            FillterRequest request = new FillterRequest();
+            FilterRequest request = new FilterRequest();
             request.setSize(sizePage);
 	    
             int totalPages = danhMucService.getTotalPage(request);
@@ -265,9 +276,9 @@ public class InuhaListDanhMucView extends javax.swing.JPanel {
         pnlDanhSachLayout.setVerticalGroup(
             pnlDanhSachLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlDanhSachLayout.createSequentialGroup()
-                .addGap(15, 15, 15)
-                .addComponent(scrDanhSach, javax.swing.GroupLayout.PREFERRED_SIZE, 303, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(10, Short.MAX_VALUE))
+                .addContainerGap()
+                .addComponent(scrDanhSach, javax.swing.GroupLayout.PREFERRED_SIZE, 312, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pnlPhanTrang.setOpaque(false);
@@ -326,6 +337,9 @@ public class InuhaListDanhMucView extends javax.swing.JPanel {
 
     
     private void handleClickButtonAdd() {
+        if (ModalDialog.isIdExist(MODAL_ID_CREATE)) {
+            return;
+        }
         ModalDialog.showModal(this, new SimpleModalBorder(new InuhaAddDanhMucView(), "Thêm danh mục mới"), MODAL_ID_CREATE);
     }
 }

@@ -10,6 +10,7 @@ import com.app.core.inuha.views.all.InuhaBanHangView;
 import com.app.core.inuha.views.quanly.InuhaSanPhamView;
 import com.app.utils.ColorUtils;
 import com.app.utils.NumberPhoneUtils;
+import com.app.utils.ValidateUtils;
 import com.app.views.UI.dialog.LoadingDialog;
 import com.formdev.flatlaf.FlatClientProperties;
 import java.awt.Color;
@@ -256,6 +257,12 @@ public class InuhaAddKhachHangView extends JPanel {
             MessageToast.error("Tên khách hàng không được vượt quá 250 ký tự");
             return;
         }
+        
+        if (!ValidateUtils.isFullName(ten)) {
+            MessageToast.error("Tên khách hàng không được chứa ký tự đặc biệt");
+            return;
+        }
+        
         lblTen.setForeground(currentColor);
 	
 	lblSoDienThoai.setForeground(ColorUtils.DANGER_COLOR);

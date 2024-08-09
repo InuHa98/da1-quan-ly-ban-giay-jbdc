@@ -38,6 +38,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import javax.swing.JComboBox;
 import javax.swing.JTable;
+import javax.swing.SwingWorker;
 import javax.swing.table.DefaultTableModel;
 import raven.datetime.component.date.DatePicker;
 
@@ -118,14 +119,17 @@ public class InuhaThongKeView extends javax.swing.JPanel {
 	cboSapXep.setPreferredSize(cboSize);
 	cboThoiGian.setPreferredSize(cboSize);
 	
-	
-	executorService.submit(() -> {
-	    getListSanPham();
-	    loadDataChart();
-	    firstLoad = false;
-	});
-	
-	
+	SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                getListSanPham();
+                loadDataChart();
+                firstLoad = false;
+                return null;
+            }
+        };
+        worker.execute();
+
         if (ThemeUtils.isLight()) {
             chartDoanhThu.setColorLabel(ColorUtils.PRIMARY_TEXT);
             chartDoanhThu.setForeground(ColorUtils.PRIMARY_TEXT);
@@ -598,9 +602,7 @@ public class InuhaThongKeView extends javax.swing.JPanel {
         );
         pnlDanhSachLayout.setVerticalGroup(
             pnlDanhSachLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlDanhSachLayout.createSequentialGroup()
-                .addGap(10, 10, 10)
-                .addComponent(scrDanhSach, javax.swing.GroupLayout.DEFAULT_SIZE, 315, Short.MAX_VALUE))
+            .addComponent(scrDanhSach, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 325, Short.MAX_VALUE)
         );
 
         btnExport.setText("Xuất Excel");

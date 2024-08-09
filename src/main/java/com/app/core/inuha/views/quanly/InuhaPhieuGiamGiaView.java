@@ -136,10 +136,16 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
 	
 	setupTable(tblDanhSach);
         setupPagination();
-	executorService.submit(() -> {
-	    loadDataPage(1);
-	    firstLoad = false;
-	});
+        
+        SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                loadDataPage(1);
+                firstLoad = false;
+                return null;
+            }
+        };
+        worker.execute();
     }
 
     private void setupTable(JTable table) { 
@@ -147,7 +153,10 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
             @Override
             public void onEdit(int row) {
                 InuhaPhieuGiamGiaModel item = dataItems.get(row);
-		ModalDialog.showModal(instance, new SimpleModalBorder(new InuhaAddPhieuGiamGiaView(item), "Chỉnh sửa"));
+                if (ModalDialog.isIdExist("showEdit")) {
+                    return;
+                }
+		ModalDialog.showModal(instance, new SimpleModalBorder(new InuhaAddPhieuGiamGiaView(item), "Chỉnh sửa"), "showEdit");
             }
 
             @Override
@@ -462,9 +471,7 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
         );
         pnlDanhSachLayout.setVerticalGroup(
             pnlDanhSachLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlDanhSachLayout.createSequentialGroup()
-                .addGap(10, 10, 10)
-                .addComponent(scrDanhSach, javax.swing.GroupLayout.DEFAULT_SIZE, 275, Short.MAX_VALUE))
+            .addComponent(scrDanhSach, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 285, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout pnlPhanTrangLayout = new javax.swing.GroupLayout(pnlPhanTrang);
@@ -609,7 +616,10 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
     }
 
     private void handleClickButtonAdd() {
+        if (ModalDialog.isIdExist("handleClickButtonAdd")) {
+            return;
+        }
 	ModalDialog.closeAllModal();
-	ModalDialog.showModal(this, new SimpleModalBorder(new InuhaAddPhieuGiamGiaView(), "Thêm mới"));
+	ModalDialog.showModal(this, new SimpleModalBorder(new InuhaAddPhieuGiamGiaView(), "Thêm mới"), "handleClickButtonAdd");
     }
 }

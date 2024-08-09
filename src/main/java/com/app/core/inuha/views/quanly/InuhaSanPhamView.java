@@ -261,20 +261,26 @@ public class InuhaSanPhamView extends RoundPanel {
         setupPagination();
 	setupPaginationSPCT();
 	
-	executorService.submit(() -> { 
-	    loadDataDanhMuc();
-	    loadDataThuongHieu();
-	    loadDataXuatXu();
-	    loadDataKieuDang();
-	    loadDataChatLieu();
-	    loadDataDeGiay();
-	    loadDataKichCo();
-	    loadDataMauSac();
+        SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                loadDataDanhMuc();
+                loadDataThuongHieu();
+                loadDataXuatXu();
+                loadDataKieuDang();
+                loadDataChatLieu();
+                loadDataDeGiay();
+                loadDataKichCo();
+                loadDataMauSac();
 
-	    loadDataPage(1);
-	    loadDataPageSPCT(1);
-	    firstLoad = false;
-	});
+                loadDataPage(1);
+                loadDataPageSPCT(1);
+                firstLoad = false;
+                return null;
+            }
+        };
+        worker.execute();
+        
     }
     
     private void setupTable(JTable table) { 
@@ -896,10 +902,7 @@ public class InuhaSanPhamView extends RoundPanel {
         );
         pnlDanhSachLayout.setVerticalGroup(
             pnlDanhSachLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlDanhSachLayout.createSequentialGroup()
-                .addGap(10, 10, 10)
-                .addComponent(scrDanhSach, javax.swing.GroupLayout.DEFAULT_SIZE, 293, Short.MAX_VALUE)
-                .addGap(8, 8, 8))
+            .addComponent(scrDanhSach, javax.swing.GroupLayout.DEFAULT_SIZE, 311, Short.MAX_VALUE)
         );
 
         btnScanQR.setText("Quét QR");
@@ -1053,9 +1056,8 @@ public class InuhaSanPhamView extends RoundPanel {
         );
         pnlDanhSachChiTietLayout.setVerticalGroup(
             pnlDanhSachChiTietLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlDanhSachChiTietLayout.createSequentialGroup()
-                .addGap(10, 10, 10)
-                .addComponent(scrDanhSachChiTiet, javax.swing.GroupLayout.DEFAULT_SIZE, 199, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlDanhSachChiTietLayout.createSequentialGroup()
+                .addComponent(scrDanhSachChiTiet, javax.swing.GroupLayout.DEFAULT_SIZE, 218, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -1732,8 +1734,11 @@ public class InuhaSanPhamView extends RoundPanel {
     }
 	
     private void handleClickButtonAdd() {
+        if (ModalDialog.isIdExist("handleClickButtonAdd")) {
+            return;
+        }
 	ModalDialog.closeAllModal();
-        ModalDialog.showModal(this, new SimpleModalBorder(new InuhaAddSanPhamView(), "Thêm sản phẩm"));
+        ModalDialog.showModal(this, new SimpleModalBorder(new InuhaAddSanPhamView(), "Thêm sản phẩm"), "handleClickButtonAdd");
     }
 
     private void handleClickButtonSearch() {
@@ -1820,16 +1825,25 @@ public class InuhaSanPhamView extends RoundPanel {
     }
 
     private void showEditSanPham(InuhaSanPhamModel item) {
+        if (ModalDialog.isIdExist("showEditSanPham")) {
+            return;
+        }
 	ModalDialog.closeAllModal();
-        ModalDialog.showModal(instance, new SimpleModalBorder(new InuhaAddSanPhamView(item), "Chỉnh sửa sản phẩm"));
+        ModalDialog.showModal(instance, new SimpleModalBorder(new InuhaAddSanPhamView(item), "Chỉnh sửa sản phẩm"), "showEditSanPham");
     }
     
     private void showDetailSanPham(InuhaSanPhamModel item) {
+        if (ModalDialog.isIdExist("showDetailSanPham")) {
+            return;
+        }
 	ModalDialog.closeAllModal();
-        ModalDialog.showModal(instance, new SimpleModalBorder(new InuhaDetailSanPhamView(item), null));
+        ModalDialog.showModal(instance, new SimpleModalBorder(new InuhaDetailSanPhamView(item), null), "showDetailSanPham");
     }
 
     private void showDetailChiTiet(InuhaSanPhamChiTietModel item) {
+        if (ModalDialog.isIdExist(ID_MODAL_DEAIL)) {
+            return;
+        }
 	ModalDialog.closeAllModal();
         ModalDialog.showModal(instance, new SimpleModalBorder(new InuhaDetailSanPhamChiTietView(item), null), ID_MODAL_DEAIL);
     }

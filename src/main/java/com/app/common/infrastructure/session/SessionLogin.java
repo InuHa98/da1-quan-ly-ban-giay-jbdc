@@ -8,6 +8,7 @@ import com.app.core.inuha.models.InuhaTaiKhoanModel;
 import com.app.core.inuha.services.InuhaTaiKhoanService;
 import com.app.core.inuha.views.all.InuhaChangePasswordView;
 import com.app.core.inuha.views.guest.LoginView;
+import com.app.utils.QrCodeUtils;
 import com.app.views.UI.dialog.LoadingDialog;
 import java.util.concurrent.ExecutionException;
 import lombok.Getter;
@@ -112,6 +113,9 @@ public class SessionLogin {
     }
 
     public void changePassword() {
-        ModalDialog.showModal(Application.app, new SimpleModalBorder(new InuhaChangePasswordView(), "Thay đổi mật khẩu"));
+        if (ModalDialog.isIdExist("THAY_DOI_MAT_KHAU")) {
+            return;
+        }
+        ModalDialog.showModal(Application.app, new SimpleModalBorder(new InuhaChangePasswordView(), "Thay đổi mật khẩu"), "THAY_DOI_MAT_KHAU");
     }
 }

@@ -5,7 +5,7 @@ import static com.app.common.infrastructure.constants.ChartConstant.TYPE_DAY;
 import static com.app.common.infrastructure.constants.ChartConstant.TYPE_MONTH;
 import static com.app.common.infrastructure.constants.ChartConstant.TYPE_YEAR;
 import com.app.common.infrastructure.constants.TrangThaiHoaDonConstant;
-import com.app.common.infrastructure.request.FillterRequest;
+import com.app.common.infrastructure.request.FilterRequest;
 import com.app.core.inuha.models.InuhaSanPhamModel;
 import com.app.core.inuha.models.thongke.InuhaThongKeChartModel;
 import com.app.core.inuha.models.thongke.InuhaThongKeChiTietModel;
@@ -74,7 +74,7 @@ public class InuhaThongKeRepository {
     }
     
     public String getFirstDate() throws SQLException {
-        String query = "SELECT TOP(1) ngay_tao FROM HoaDon ORDER BY ngay_tao ASC";
+        String query = "SELECT COALESCE((SELECT TOP(1) ngay_tao FROM HoaDon ORDER BY ngay_tao ASC), GETDATE())";
         try {
 	    java.sql.Timestamp date = (java.sql.Timestamp) JbdcHelper.value(query);
 	    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -540,7 +540,7 @@ public class InuhaThongKeRepository {
 	    """, TrangThaiHoaDonConstant.STATUS_DA_THANH_TOAN, orderBy);
 	}
 
-        int[] offset = FillterRequest.getOffset(filter.getPage(), filter.getSize());
+        int[] offset = FilterRequest.getOffset(filter.getPage(), filter.getSize());
         int start = offset[0];
         int limit = offset[1];
 
