@@ -13,36 +13,29 @@ import java.time.LocalDateTime;
  */
 public class LamLichSuModels {
 
-    private int idKH;
+    private int id;
+    
+    private int stt;
 
     private String maHD;
 
-    private Double giaBan;
+    private Double tongTien;
 
-    private int soLuong;
-
-    private LocalDateTime ngayMua;
-
-    private boolean trangThaiXoa;
+    private String ngayMua;
+    
+    private int trangThai;
 
     public LamLichSuModels() {
     }
 
-    public LamLichSuModels(int idKH, String maHD, Double giaBan, int soLuong,LocalDateTime ngayMua) {
-        this.idKH = idKH;
+    
+    
+    public LamLichSuModels(int id, String maHD, Double tongTien, String ngayMua, int trangThai) {
+        this.id = id;
         this.maHD = maHD;
-        this.giaBan = giaBan;
-        this.soLuong = soLuong;
-        this.ngayMua = LocalDateTime.now();
-        this.trangThaiXoa = trangThaiXoa;
-    }
-
-    public int getIdKH() {
-        return idKH;
-    }
-
-    public void setIdKH(int idKH) {
-        this.idKH = idKH;
+        this.tongTien = tongTien;
+        this.ngayMua = ngayMua;
+        this.trangThai = trangThai;
     }
 
     public String getMaHD() {
@@ -53,41 +46,46 @@ public class LamLichSuModels {
         this.maHD = maHD;
     }
 
-    public Double getGiaBan() {
-        return giaBan;
+    public Double getTongTien() {
+        return tongTien;
     }
 
-    public void setGiaBan(Double giaBan) {
-        this.giaBan = giaBan;
+    public void setTongTien(Double tongTien) {
+        this.tongTien = tongTien;
     }
 
-    public int getSoLuong() {
-        return soLuong;
-    }
-
-    public void setSoLuong(int soLuong) {
-        this.soLuong = soLuong;
-    }
-
-    public LocalDateTime getNgayMua() {
+    public String getNgayMua() {
         return ngayMua;
     }
 
-    public void setNgayMua(LocalDateTime ngayMua) {
+    public void setNgayMua(String ngayMua) {
         this.ngayMua = ngayMua;
     }
 
-    public boolean isTrangThaiXoa() {
-        return trangThaiXoa;
+    public int isTrangThai() {
+        return trangThai;
     }
 
-    public void setTrangThaiXoa(boolean trangThaiXoa) {
-        this.trangThaiXoa = trangThaiXoa;
+    public void setTrangThai(int trangThai) {
+        this.trangThai = trangThai;
     }
 
-    @Override
-    public String toString() {
-        return "LichSuModels{" + "idKH=" + idKH + ", maHD=" + maHD + ", giaBan=" + giaBan + ", soLuong=" + soLuong + ", ngayMua=" + ngayMua + ", trangThaiXoa=" + trangThaiXoa + '}';
+    public int getId() {
+        return id;
     }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getStt() {
+        return stt;
+    }
+
+    public void setStt(int stt) {
+        this.stt = stt;
+    }
+
+    
 
 }
