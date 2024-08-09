@@ -4,6 +4,7 @@
  */
 package com.app.core.lam.models;
 
+import com.app.utils.TimeUtils;
 import java.time.LocalDateTime;
 
 
@@ -15,6 +16,8 @@ import java.time.LocalDateTime;
 public class LamKhachHangModels {
 
     private int idKH;
+    
+    private int stt;
 
     private String tenKH;
 
@@ -24,7 +27,9 @@ public class LamKhachHangModels {
 
     private String diaChi;
     
-    private LocalDateTime ngayTao;
+    private int soLanMuaHang;
+    
+    private String ngayTao;
 
     private boolean trangThaiXoa;
 
@@ -37,7 +42,7 @@ public class LamKhachHangModels {
         this.soDienThoai = soDienThoai;
         this.gioiTinh = gioiTinh;
         this.diaChi = diaChi;
-        this.ngayTao = LocalDateTime.now();
+        this.ngayTao = TimeUtils.currentDateTime();
         this.trangThaiXoa = trangThaiXoa;
     }
 
@@ -81,11 +86,11 @@ public class LamKhachHangModels {
         this.diaChi = diaChi;
     }
 
-    public LocalDateTime getNgayTao() {
+    public String getNgayTao() {
         return ngayTao;
     }
 
-    public void setNgayTao(LocalDateTime ngayTao) {
+    public void setNgayTao(String ngayTao) {
         this.ngayTao = ngayTao;
     }
 
@@ -97,6 +102,24 @@ public class LamKhachHangModels {
         this.trangThaiXoa = trangThaiXoa;
     }
 
+    public int getSoLanMuaHang() {
+        return soLanMuaHang;
+    }
+
+    public void setSoLanMuaHang(int soLanMuaHang) {
+        this.soLanMuaHang = soLanMuaHang;
+    }
+
+    public int getStt() {
+        return stt;
+    }
+
+    public void setStt(int stt) {
+        this.stt = stt;
+    }
+
+    
+    
     @Override
     public String toString() {
         return "KhachHangModels{" + "idKH=" + idKH + ", tenKH=" + tenKH + ", soDienThoai=" + soDienThoai + ", gioiTinh=" + gioiTinh + ", diaChi=" + diaChi + ", ngayTao=" + ngayTao + ", trangThaiXoa=" + trangThaiXoa + '}';
