@@ -1,7 +1,7 @@
 package com.app.utils;
 
 import com.app.common.helper.MailerHelper;
-import com.app.common.infrastructure.request.FillterRequest;
+import com.app.common.infrastructure.request.FilterRequest;
 import com.app.common.infrastructure.session.AvatarUpload;
 import com.app.common.infrastructure.session.SessionLogin;
 import com.app.core.inuha.models.InuhaTaiKhoanModel;
@@ -42,7 +42,7 @@ public class SessionUtils {
     public static int getInsertId() {
         int lastId = InuhaTaiKhoanService.getInstance().getLastId();
         if (lastId == 1) { 
-            if (InuhaTaiKhoanService.getInstance().count(new FillterRequest()) < 1) {
+            if (InuhaTaiKhoanService.getInstance().count(new FilterRequest()) < 1) {
                 lastId--;
             }
         }

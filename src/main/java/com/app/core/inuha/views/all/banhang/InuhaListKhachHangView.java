@@ -5,7 +5,7 @@ import com.app.common.helper.MessageToast;
 import com.app.common.helper.Pagination;
 import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
-import com.app.common.infrastructure.request.FillterRequest;
+import com.app.common.infrastructure.request.FilterRequest;
 import com.app.core.inuha.models.InuhaKhachHangModel;
 import com.app.core.inuha.request.InuhaFilterKhachHangRequest;
 import com.app.core.inuha.services.InuhaKhachHangService;
@@ -309,8 +309,8 @@ public class InuhaListKhachHangView extends javax.swing.JPanel {
         pnlDanhSachLayout.setVerticalGroup(
             pnlDanhSachLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlDanhSachLayout.createSequentialGroup()
-                .addGap(15, 15, 15)
-                .addComponent(scrDanhSach, javax.swing.GroupLayout.PREFERRED_SIZE, 303, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap()
+                .addComponent(scrDanhSach, javax.swing.GroupLayout.PREFERRED_SIZE, 312, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 

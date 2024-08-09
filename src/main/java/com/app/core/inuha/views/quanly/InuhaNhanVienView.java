@@ -473,9 +473,7 @@ public class InuhaNhanVienView extends javax.swing.JPanel {
         );
         pnlDanhSachLayout.setVerticalGroup(
             pnlDanhSachLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlDanhSachLayout.createSequentialGroup()
-                .addGap(10, 10, 10)
-                .addComponent(scrDanhSach, javax.swing.GroupLayout.DEFAULT_SIZE, 274, Short.MAX_VALUE))
+            .addComponent(scrDanhSach, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 284, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout pnlPhanTrangLayout = new javax.swing.GroupLayout(pnlPhanTrang);

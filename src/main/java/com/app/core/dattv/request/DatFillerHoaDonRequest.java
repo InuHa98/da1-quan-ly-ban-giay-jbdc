@@ -4,7 +4,7 @@
  */
 package com.app.core.dattv.request;
 
-import com.app.common.infrastructure.request.FillterRequest;
+import com.app.common.infrastructure.request.FilterRequest;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,7 +18,7 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class DatFillerHoaDonRequest extends FillterRequest{
+public class DatFillerHoaDonRequest extends FilterRequest{
      private String keyword;
     
     private int idPhuongThucthanhtoan;

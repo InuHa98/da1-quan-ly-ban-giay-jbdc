@@ -902,10 +902,7 @@ public class InuhaSanPhamView extends RoundPanel {
         );
         pnlDanhSachLayout.setVerticalGroup(
             pnlDanhSachLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlDanhSachLayout.createSequentialGroup()
-                .addGap(10, 10, 10)
-                .addComponent(scrDanhSach, javax.swing.GroupLayout.DEFAULT_SIZE, 293, Short.MAX_VALUE)
-                .addGap(8, 8, 8))
+            .addComponent(scrDanhSach, javax.swing.GroupLayout.DEFAULT_SIZE, 311, Short.MAX_VALUE)
         );
 
         btnScanQR.setText("Quét QR");
@@ -1059,9 +1056,8 @@ public class InuhaSanPhamView extends RoundPanel {
         );
         pnlDanhSachChiTietLayout.setVerticalGroup(
             pnlDanhSachChiTietLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlDanhSachChiTietLayout.createSequentialGroup()
-                .addGap(10, 10, 10)
-                .addComponent(scrDanhSachChiTiet, javax.swing.GroupLayout.DEFAULT_SIZE, 199, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlDanhSachChiTietLayout.createSequentialGroup()
+                .addComponent(scrDanhSachChiTiet, javax.swing.GroupLayout.DEFAULT_SIZE, 218, Short.MAX_VALUE)
                 .addContainerGap())
         );
 

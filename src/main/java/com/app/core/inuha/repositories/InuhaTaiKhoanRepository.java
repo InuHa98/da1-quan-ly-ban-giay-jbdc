@@ -4,7 +4,7 @@ package com.app.core.inuha.repositories;
 import com.app.common.helper.JbdcHelper;
 import com.app.common.infrastructure.constants.TrangThaiHoaDonConstant;
 import com.app.common.infrastructure.interfaces.IDAOinterface;
-import com.app.common.infrastructure.request.FillterRequest;
+import com.app.common.infrastructure.request.FilterRequest;
 import com.app.core.inuha.models.InuhaTaiKhoanModel;
 import com.app.core.inuha.models.InuhaTaiKhoanModel;
 import com.app.core.inuha.request.InuhaFilterTaiKhoanRequest;
@@ -299,7 +299,7 @@ public class InuhaTaiKhoanRepository implements IDAOinterface<InuhaTaiKhoanModel
     }
 
     @Override
-    public List<InuhaTaiKhoanModel> selectPage(FillterRequest request) throws SQLException {
+    public List<InuhaTaiKhoanModel> selectPage(FilterRequest request) throws SQLException {
 	InuhaFilterTaiKhoanRequest filter = (InuhaFilterTaiKhoanRequest) request;
         List<InuhaTaiKhoanModel> list = new ArrayList<>();
         ResultSet resultSet = null;
@@ -324,7 +324,7 @@ public class InuhaTaiKhoanRepository implements IDAOinterface<InuhaTaiKhoanModel
             WHERE stt BETWEEN ? AND ?
         """, TABLE_NAME);
 
-        int[] offset = FillterRequest.getOffset(request.getPage(), request.getSize());
+        int[] offset = FilterRequest.getOffset(request.getPage(), request.getSize());
         int start = offset[0];
         int limit = offset[1];
 
@@ -361,7 +361,7 @@ public class InuhaTaiKhoanRepository implements IDAOinterface<InuhaTaiKhoanModel
     }
 
     @Override
-    public int count(FillterRequest request) throws SQLException {
+    public int count(FilterRequest request) throws SQLException {
         InuhaFilterTaiKhoanRequest filter = (InuhaFilterTaiKhoanRequest) request;
         int totalPages = 0;
         int totalRows = 0;

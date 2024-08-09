@@ -3,7 +3,7 @@ package com.app.core.inuha.repositories;
 import com.app.common.helper.JbdcHelper;
 import com.app.common.infrastructure.constants.TrangThaiPhieuGiamGiaConstant;
 import com.app.common.infrastructure.interfaces.IDAOinterface;
-import com.app.common.infrastructure.request.FillterRequest;
+import com.app.common.infrastructure.request.FilterRequest;
 import com.app.core.inuha.models.InuhaPhieuGiamGiaModel;
 import com.app.core.inuha.request.InuhaFilterPhieuGiamGiaRequest;
 import com.app.utils.TimeUtils;
@@ -225,7 +225,7 @@ public class InuhaPhieuGiamGiaRepository implements IDAOinterface<InuhaPhieuGiam
     }
 
     @Override
-    public List<InuhaPhieuGiamGiaModel> selectPage(FillterRequest request) throws SQLException {
+    public List<InuhaPhieuGiamGiaModel> selectPage(FilterRequest request) throws SQLException {
 	InuhaFilterPhieuGiamGiaRequest filter = (InuhaFilterPhieuGiamGiaRequest) request;
         List<InuhaPhieuGiamGiaModel> list = new ArrayList<>();
         ResultSet resultSet = null;
@@ -255,7 +255,7 @@ public class InuhaPhieuGiamGiaRepository implements IDAOinterface<InuhaPhieuGiam
             WHERE stt BETWEEN ? AND ?
         """, TABLE_NAME, TrangThaiPhieuGiamGiaConstant.DANG_DIEN_RA, TrangThaiPhieuGiamGiaConstant.SAP_DIEN_RA, TrangThaiPhieuGiamGiaConstant.DA_DIEN_RA);
 
-        int[] offset = FillterRequest.getOffset(request.getPage(), request.getSize());
+        int[] offset = FilterRequest.getOffset(request.getPage(), request.getSize());
         int start = offset[0];
         int limit = offset[1];
 
@@ -293,7 +293,7 @@ public class InuhaPhieuGiamGiaRepository implements IDAOinterface<InuhaPhieuGiam
     }
 
     @Override
-    public int count(FillterRequest request) throws SQLException {
+    public int count(FilterRequest request) throws SQLException {
 	InuhaFilterPhieuGiamGiaRequest filter = (InuhaFilterPhieuGiamGiaRequest) request;
 	
         int totalPages = 0;

@@ -1072,8 +1072,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
         );
         pnlDanhSachSanPhamLayout.setVerticalGroup(
             pnlDanhSachSanPhamLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlDanhSachSanPhamLayout.createSequentialGroup()
-                .addContainerGap()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlDanhSachSanPhamLayout.createSequentialGroup()
                 .addComponent(scrDanhSachSanPham, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                 .addContainerGap())
         );
@@ -1209,7 +1208,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
         );
         splitLine3Layout.setVerticalGroup(
             splitLine3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 5, Short.MAX_VALUE)
+            .addGap(0, 2, Short.MAX_VALUE)
         );
 
         btnAddBill.setText("Tạo hoá đơn");
@@ -1264,9 +1263,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
         );
         pnlDanhSachHoaDonLayout.setVerticalGroup(
             pnlDanhSachHoaDonLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlDanhSachHoaDonLayout.createSequentialGroup()
-                .addGap(10, 10, 10)
-                .addComponent(scrDanhSachHoaDon, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+            .addComponent(scrDanhSachHoaDon, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout pnlHoaDonLayout = new javax.swing.GroupLayout(pnlHoaDon);
@@ -1303,7 +1300,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
         );
         splitLine5Layout.setVerticalGroup(
             splitLine5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 8, Short.MAX_VALUE)
+            .addGap(0, 2, Short.MAX_VALUE)
         );
 
         lblCart.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
@@ -1349,9 +1346,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
         );
         pnlDanhSachGioHangLayout.setVerticalGroup(
             pnlDanhSachGioHangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlDanhSachGioHangLayout.createSequentialGroup()
-                .addGap(10, 10, 10)
-                .addComponent(scrDanhSachGioHang, javax.swing.GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE))
+            .addComponent(scrDanhSachGioHang, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE)
         );
 
         btnRemoveSanPham.setText("Xoá sản phẩm");

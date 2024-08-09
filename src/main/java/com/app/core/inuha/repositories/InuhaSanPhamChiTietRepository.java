@@ -3,7 +3,7 @@ package com.app.core.inuha.repositories;
 import com.app.common.helper.JbdcHelper;
 import com.app.common.infrastructure.constants.TrangThaiHoaDonConstant;
 import com.app.common.infrastructure.interfaces.IDAOinterface;
-import com.app.common.infrastructure.request.FillterRequest;
+import com.app.common.infrastructure.request.FilterRequest;
 import com.app.core.inuha.models.InuhaSanPhamChiTietModel;
 import com.app.core.inuha.models.InuhaSanPhamModel;
 import com.app.core.inuha.models.sanpham.InuhaKichCoModel;
@@ -309,7 +309,7 @@ public class InuhaSanPhamChiTietRepository implements IDAOinterface<InuhaSanPham
     }
 
     @Override
-    public List<InuhaSanPhamChiTietModel> selectPage(FillterRequest request) throws SQLException {
+    public List<InuhaSanPhamChiTietModel> selectPage(FilterRequest request) throws SQLException {
         
         InuhaFilterSanPhamChiTietRequest filter = (InuhaFilterSanPhamChiTietRequest) request;
         
@@ -360,7 +360,7 @@ public class InuhaSanPhamChiTietRepository implements IDAOinterface<InuhaSanPham
             WHERE stt BETWEEN ? AND ?
         """, TABLE_NAME);
 
-        int[] offset = FillterRequest.getOffset(filter.getPage(), filter.getSize());
+        int[] offset = FilterRequest.getOffset(filter.getPage(), filter.getSize());
         int start = offset[0];
         int limit = offset[1];
 
@@ -418,7 +418,7 @@ public class InuhaSanPhamChiTietRepository implements IDAOinterface<InuhaSanPham
     }
 
     @Override
-    public int count(FillterRequest request) throws SQLException {
+    public int count(FilterRequest request) throws SQLException {
         
         InuhaFilterSanPhamChiTietRequest filter = (InuhaFilterSanPhamChiTietRequest) request;
         

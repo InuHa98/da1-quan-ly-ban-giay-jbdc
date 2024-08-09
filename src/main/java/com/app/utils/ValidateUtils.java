@@ -73,7 +73,7 @@ public class ValidateUtils {
      * @return trả về true nếu đúng và false nếu sai
      */
     public static boolean isFullName(String str) {
-        String regex = "^[\\p{L}\\p{N} ]+$";
+        String regex = "^[\\p{L} ]+$";
         
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(str);

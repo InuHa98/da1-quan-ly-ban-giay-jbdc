@@ -17,7 +17,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import com.app.common.helper.JbdcHelper;
 import com.app.common.infrastructure.interfaces.IDAOinterface;
-import com.app.common.infrastructure.request.FillterRequest;
+import com.app.common.infrastructure.request.FilterRequest;
 import com.app.core.dattv.request.DatFillerHoaDonRequest;
 import com.app.utils.TimeUtils;
 import java.util.Date;

@@ -263,11 +263,8 @@ public class InuhaDetailSanPhamView extends JPanel {
 		handleClickButtomView(item);
             }
         };
-        
-        pnlDanhSach.setBackground(ColorUtils.BACKGROUND_DASHBOARD);
+        pnlDanhSach.setRound(0, 0, 0, 0);
         TableCustomUI.apply(scrDanhSach, TableCustomUI.TableType.DEFAULT);
-        tblDanhSach.setBackground(ColorUtils.BACKGROUND_DASHBOARD);
-        tblDanhSach.getTableHeader().setBackground(ColorUtils.BACKGROUND_DASHBOARD);
 
         table.getColumnModel().getColumn(0).setHeaderRenderer(new CheckBoxTableHeaderRenderer(table, 0));
 	table.getColumnModel().getColumn(5).setCellRenderer(new InuhaSoLuongTonSanPhamTableCellRender(table));
@@ -698,10 +695,7 @@ public class InuhaDetailSanPhamView extends JPanel {
         );
         pnlDanhSachLayout.setVerticalGroup(
             pnlDanhSachLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlDanhSachLayout.createSequentialGroup()
-                .addGap(8, 8, 8)
-                .addComponent(scrDanhSach, javax.swing.GroupLayout.DEFAULT_SIZE, 252, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(scrDanhSach, javax.swing.GroupLayout.DEFAULT_SIZE, 266, Short.MAX_VALUE)
         );
 
         cboKichCo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "-- Tất cả kích cỡ --" }));
@@ -787,7 +781,7 @@ public class InuhaDetailSanPhamView extends JPanel {
                         .addComponent(cboTrangThai, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(cboMauSac, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(cboKichCo, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(pnlDanhSach, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(10, 10, 10)
                 .addComponent(pnlPhanTrang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)

@@ -5,7 +5,7 @@ import com.app.common.infrastructure.constants.PhuongThucThanhToanConstant;
 import com.app.common.infrastructure.constants.TrangThaiHoaDonConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
 import com.app.common.infrastructure.interfaces.IDAOinterface;
-import com.app.common.infrastructure.request.FillterRequest;
+import com.app.common.infrastructure.request.FilterRequest;
 import com.app.common.infrastructure.session.SessionLogin;
 import com.app.core.inuha.models.InuhaHoaDonChiTietModel;
 import com.app.core.inuha.models.InuhaHoaDonModel;
@@ -275,7 +275,7 @@ public class InuhaHoaDonChiTietRepository implements IDAOinterface<InuhaHoaDonCh
     }
 	
     @Override
-    public List<InuhaHoaDonChiTietModel> selectPage(FillterRequest request) throws SQLException {
+    public List<InuhaHoaDonChiTietModel> selectPage(FilterRequest request) throws SQLException {
 	InuhaFilterHoaDonChiTietRequest filter = (InuhaFilterHoaDonChiTietRequest) request;
         List<InuhaHoaDonChiTietModel> list = new ArrayList<>();
         ResultSet resultSet = null;
@@ -293,7 +293,7 @@ public class InuhaHoaDonChiTietRepository implements IDAOinterface<InuhaHoaDonCh
             WHERE stt BETWEEN ? AND ?
         """, TABLE_NAME);
 
-        int[] offset = FillterRequest.getOffset(filter.getPage(), filter.getSize());
+        int[] offset = FilterRequest.getOffset(filter.getPage(), filter.getSize());
         int start = offset[0];
         int limit = offset[1];
 
@@ -330,7 +330,7 @@ public class InuhaHoaDonChiTietRepository implements IDAOinterface<InuhaHoaDonCh
     }
 
     @Override
-    public int count(FillterRequest request) throws SQLException {
+    public int count(FilterRequest request) throws SQLException {
 	InuhaFilterHoaDonChiTietRequest filter = (InuhaFilterHoaDonChiTietRequest) request;
         int totalPages = 0;
         int totalRows = 0;

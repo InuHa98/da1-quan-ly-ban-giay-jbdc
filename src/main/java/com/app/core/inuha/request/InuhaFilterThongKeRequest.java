@@ -1,7 +1,7 @@
 package com.app.core.inuha.request;
 
 import com.app.common.infrastructure.constants.ChartConstant;
-import com.app.common.infrastructure.request.FillterRequest;
+import com.app.common.infrastructure.request.FilterRequest;
 import com.app.views.UI.combobox.ComboBoxItem;
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
@@ -13,7 +13,7 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class InuhaFilterThongKeRequest extends FillterRequest {
+public class InuhaFilterThongKeRequest extends FilterRequest {
 
     private ComboBoxItem<Integer> sanPham = new ComboBoxItem<>();
     

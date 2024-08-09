@@ -6,7 +6,7 @@ import com.app.common.helper.MessageToast;
 import com.app.common.helper.Pagination;
 import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
-import com.app.common.infrastructure.request.FillterRequest;
+import com.app.common.infrastructure.request.FilterRequest;
 import com.app.core.inuha.models.sanpham.InuhaXuatXuModel;
 import com.app.core.inuha.services.InuhaXuatXuService;
 import com.app.core.inuha.views.quanly.sanpham.InuhaAddSanPhamView;
@@ -164,7 +164,7 @@ public class InuhaListXuatXuView extends javax.swing.JPanel {
             
             model.setRowCount(0);
             
-            FillterRequest request = new FillterRequest();
+            FilterRequest request = new FilterRequest();
             request.setSize(sizePage);
 	    
             int totalPages = xuatXuService.getTotalPage(request);
@@ -272,9 +272,9 @@ public class InuhaListXuatXuView extends javax.swing.JPanel {
         pnlDanhSachLayout.setVerticalGroup(
             pnlDanhSachLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlDanhSachLayout.createSequentialGroup()
-                .addGap(15, 15, 15)
-                .addComponent(scrDanhSach, javax.swing.GroupLayout.PREFERRED_SIZE, 303, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(10, Short.MAX_VALUE))
+                .addContainerGap()
+                .addComponent(scrDanhSach, javax.swing.GroupLayout.PREFERRED_SIZE, 312, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pnlPhanTrang.setOpaque(false);
