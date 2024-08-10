@@ -1,5 +1,6 @@
 package com.app.core.inuha.views.all.banhang;
 
+import com.app.common.helper.JbdcHelper;
 import com.app.common.helper.MessageModal;
 import com.app.common.helper.MessageToast;
 import com.app.common.helper.Pagination;
@@ -118,7 +119,7 @@ public class InuhaListPhieuGiamGiaView extends javax.swing.JPanel {
             InuhaFilterPhieuGiamGiaRequest request = new InuhaFilterPhieuGiamGiaRequest();
 	    request.setTrangThai(new ComboBoxItem<Integer>("Đang diễn ra", TrangThaiPhieuGiamGiaConstant.DANG_DIEN_RA));
             request.setSize(sizePage);
-	    
+            
             int totalPages = phieuGiamGiaService.getTotalPage(request);
             if (totalPages < page) { 
                 page = totalPages;
@@ -126,7 +127,7 @@ public class InuhaListPhieuGiamGiaView extends javax.swing.JPanel {
             
             request.setPage(page);
 
-           
+            
             dataItems = phieuGiamGiaService.getPage(request);
             
             for(InuhaPhieuGiamGiaModel m: dataItems) { 

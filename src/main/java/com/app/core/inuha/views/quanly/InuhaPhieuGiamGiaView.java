@@ -153,10 +153,7 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
             @Override
             public void onEdit(int row) {
                 InuhaPhieuGiamGiaModel item = dataItems.get(row);
-                if (ModalDialog.isIdExist("showEdit")) {
-                    return;
-                }
-		ModalDialog.showModal(instance, new SimpleModalBorder(new InuhaAddPhieuGiamGiaView(item), "Chỉnh sửa"), "showEdit");
+                showModalEdit(item);
             }
 
             @Override
@@ -204,6 +201,8 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
             @Override
             public void onView(int row) {
             }
+
+            
         };
 		
 	pnlList.setBackground(ColorUtils.BACKGROUND_DASHBOARD);
@@ -233,7 +232,7 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
             keyword = keyword.replaceAll("\\s+", " ");
 	    
 	    if (keyword.length() > 250) {
-		MessageToast.warning("Từ khoá tìm kiếm chỉ được chứa tối đa 250 kí tự");
+		MessageToast.warning("Từ khoá tìm kiếm chỉ được chứa tối đa 250 ký tự");
 		return;
 	    }
             
@@ -457,6 +456,11 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
         });
         tblDanhSach.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         tblDanhSach.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        tblDanhSach.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblDanhSachMouseClicked(evt);
+            }
+        });
         scrDanhSach.setViewportView(tblDanhSach);
         if (tblDanhSach.getColumnModel().getColumnCount() > 0) {
             tblDanhSach.getColumnModel().getColumn(1).setMinWidth(100);
@@ -569,6 +573,13 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
 	}
     }//GEN-LAST:event_cboTrangThaiItemStateChanged
 
+    private void tblDanhSachMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblDanhSachMouseClicked
+        // TODO add your handling code here:
+        if(evt.getClickCount() > 1) { 
+            showModalEdit(dataItems.get(tblDanhSach.getSelectedRow()));
+        }
+    }//GEN-LAST:event_tblDanhSachMouseClicked
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnClear;
     private javax.swing.JButton btnCreate;
@@ -621,5 +632,12 @@ public class InuhaPhieuGiamGiaView extends javax.swing.JPanel {
         }
 	ModalDialog.closeAllModal();
 	ModalDialog.showModal(this, new SimpleModalBorder(new InuhaAddPhieuGiamGiaView(), "Thêm mới"), "handleClickButtonAdd");
+    }
+    
+    private void showModalEdit(InuhaPhieuGiamGiaModel item) {
+        if (ModalDialog.isIdExist("showModalEdit")) {
+            return;
+        }
+        ModalDialog.showModal(instance, new SimpleModalBorder(new InuhaAddPhieuGiamGiaView(item), "Chỉnh sửa"), "showModalEdit");
     }
 }

@@ -113,7 +113,7 @@ public class ChangePasswordForgotPasswordView extends javax.swing.JPanel {
         lblTitle.setText("Thay đổi mật khẩu!");
 
         lbDesc.setFont(lbDesc.getFont().deriveFont(lbDesc.getFont().getSize()+1f));
-        lbDesc.setText("Mật khẩu phải có từ %d đến %d kí tự");
+        lbDesc.setText("Mật khẩu phải có từ %d đến %d ký tự");
 
         lbPassword.setFont(lbPassword.getFont().deriveFont(lbPassword.getFont().getStyle() | java.awt.Font.BOLD, lbPassword.getFont().getSize()+2));
         lbPassword.setText("New Password");
@@ -242,11 +242,11 @@ public class ChangePasswordForgotPasswordView extends javax.swing.JPanel {
 
         if (txtErrorPassword == null) {
             if (lenPassword < ValidateUtils.MIN_LENGTH_PASSWORD) {
-                txtErrorPassword = currentPassword + " - Phải có ít nhất " + ValidateUtils.MIN_LENGTH_PASSWORD + " kí tự";
+                txtErrorPassword = currentPassword + " - Phải có ít nhất " + ValidateUtils.MIN_LENGTH_PASSWORD + " ký tự";
             }
 
             if (lenPassword > ValidateUtils.MAX_LENGTH_PASSWORD) {
-                txtErrorPassword = currentPassword + " - Nhiều nhất " + ValidateUtils.MAX_LENGTH_PASSWORD + " kí tự";
+                txtErrorPassword = currentPassword + " - Nhiều nhất " + ValidateUtils.MAX_LENGTH_PASSWORD + " ký tự";
             }
         }
 

@@ -132,7 +132,7 @@ public class InuhaPhieuGiamGiaRepository implements IDAOinterface<InuhaPhieuGiam
         String query = String.format("""
             SELECT TOP(1) 1 
             FROM %s 
-            WHERE ma LIKE ? AND trang_thai_xoa != 1 AND ngay_ket_thuc >= GETDATE()
+            WHERE ma LIKE ? AND trang_thai_xoa != 1 AND ngay_ket_thuc >= CONVERT(DATE, GETDATE())
         """, TABLE_NAME);
         try {
             return JbdcHelper.value(query, ma) != null;
@@ -160,7 +160,7 @@ public class InuhaPhieuGiamGiaRepository implements IDAOinterface<InuhaPhieuGiam
                 ma LIKE ? AND
                 id != ? AND
                 trang_thai_xoa != 1 AND
-                ngay_ket_thuc >= GETDATE() 
+                ngay_ket_thuc >= CONVERT(DATE, GETDATE()) 
         """, TABLE_NAME);
         try {
             return JbdcHelper.value(query, model.getMa(), model.getId()) != null;
@@ -244,9 +244,9 @@ public class InuhaPhieuGiamGiaRepository implements IDAOinterface<InuhaPhieuGiam
 			(COALESCE(?, NULL) IS NULL OR ngay_ket_thuc <= ?) AND
                         (
                             COALESCE(?, 0) < 1 OR
-                            (? = %d AND ngay_bat_dau <= GETDATE() AND ngay_ket_thuc >= GETDATE()) OR
-                            (? = %d AND ngay_bat_dau >= GETDATE()) OR 
-                            (? = %d AND ngay_ket_thuc <= GETDATE())
+                            (? = %d AND ngay_bat_dau <= CONVERT(DATE, GETDATE()) AND ngay_ket_thuc >= CONVERT(DATE, GETDATE())) OR
+                            (? = %d AND ngay_bat_dau > CONVERT(DATE, GETDATE())) OR 
+                            (? = %d AND ngay_ket_thuc < CONVERT(DATE, GETDATE()))
                         )
 		    )
             )
@@ -310,9 +310,9 @@ public class InuhaPhieuGiamGiaRepository implements IDAOinterface<InuhaPhieuGiam
 		    (COALESCE(?, NULL) IS NULL OR ngay_ket_thuc <= ?) AND
 		    (
 			COALESCE(?, 0) < 1 OR
-			(? = %d AND ngay_bat_dau <= GETDATE() AND ngay_ket_thuc >= GETDATE()) OR
-			(? = %d AND ngay_bat_dau >= GETDATE()) OR 
-			(? = %d AND ngay_ket_thuc <= GETDATE())
+			(? = %d AND ngay_bat_dau <= CONVERT(DATE, GETDATE()) AND ngay_ket_thuc >= CONVERT(DATE, GETDATE())) OR
+			(? = %d AND ngay_bat_dau > CONVERT(DATE, GETDATE())) OR 
+			(? = %d AND ngay_ket_thuc < CONVERT(DATE, GETDATE()))
 		    )
 		)
         """, TABLE_NAME, TrangThaiPhieuGiamGiaConstant.DANG_DIEN_RA, TrangThaiPhieuGiamGiaConstant.SAP_DIEN_RA, TrangThaiPhieuGiamGiaConstant.DA_DIEN_RA);

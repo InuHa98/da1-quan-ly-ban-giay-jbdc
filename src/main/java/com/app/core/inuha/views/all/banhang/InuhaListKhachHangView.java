@@ -184,7 +184,7 @@ public class InuhaListKhachHangView extends javax.swing.JPanel {
             keyword = keyword.replaceAll("\\s+", " ");
 	    
 	    if (keyword.length() > 250) {
-		MessageToast.warning("Từ khoá tìm kiếm chỉ được chứa tối đa 250 kí tự");
+		MessageToast.warning("Từ khoá tìm kiếm chỉ được chứa tối đa 250 ký tự");
 		return;
 	    }
 		    

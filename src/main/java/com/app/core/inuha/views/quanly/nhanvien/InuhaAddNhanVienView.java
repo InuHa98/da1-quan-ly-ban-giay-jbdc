@@ -100,7 +100,7 @@ public class InuhaAddNhanVienView extends javax.swing.JPanel {
 	
 	currentColor = lblUsername.getForeground();
 	
-	txtUsername.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Phải từ " + ValidateUtils.MIN_LENGTH_USERNAME + " đến " + ValidateUtils.MAX_LENGTH_USERNAME + " kí tự");
+	txtUsername.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Phải từ " + ValidateUtils.MIN_LENGTH_USERNAME + " đến " + ValidateUtils.MAX_LENGTH_USERNAME + " ký tự");
 	txtSoDienThoai.setFormatterFactory(NumberPhoneUtils.getDefaultFormat());
 	
 	pictureBox.setCursor(new Cursor(Cursor.HAND_CURSOR));
