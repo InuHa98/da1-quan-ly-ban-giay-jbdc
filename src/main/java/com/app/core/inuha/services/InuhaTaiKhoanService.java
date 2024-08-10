@@ -1,17 +1,22 @@
 package com.app.core.inuha.services;
 
+import com.app.common.helper.JbdcHelper;
 import com.app.common.infrastructure.constants.ErrorConstant;
+import com.app.common.infrastructure.constants.TrangThaiXoaConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
-import com.app.common.infrastructure.request.FillterRequest;
+import com.app.common.infrastructure.request.FilterRequest;
 import com.app.common.infrastructure.session.SessionLogin;
+import com.app.core.inuha.models.InuhaTaiKhoanModel;
 import com.app.core.inuha.models.InuhaTaiKhoanModel;
 import com.app.core.inuha.repositories.InuhaTaiKhoanRepository;
 import com.app.core.inuha.services.impl.IInuhaNhanVienServiceInterface;
+import com.app.utils.ProductUtils;
 import com.app.utils.SessionUtils;
 import com.app.utils.ValidateUtils;
 
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -23,7 +28,7 @@ import java.util.Set;
 
 public class InuhaTaiKhoanService implements IInuhaNhanVienServiceInterface {
 
-    private final InuhaTaiKhoanRepository nhanVienRepository = InuhaTaiKhoanRepository.getInstance();
+    private final InuhaTaiKhoanRepository repository = InuhaTaiKhoanRepository.getInstance();
 
     private static InuhaTaiKhoanService instance = null;
     
@@ -39,53 +44,133 @@ public class InuhaTaiKhoanService implements IInuhaNhanVienServiceInterface {
     }
     
     @Override
-    public List<InuhaTaiKhoanModel> getPage(FillterRequest request) {
-	return null;
-    }
-
-    @Override
-    public Integer getTotalPage(FillterRequest request) {
-        return 0;
-    }
-
-    @Override
     public InuhaTaiKhoanModel getById(Integer id) {
-	    return null;
+        return null;
     }
 
     @Override
-    public Integer insert(InuhaTaiKhoanModel e) {
-	return null;
+    public Integer insert(InuhaTaiKhoanModel model) {
+        try {
+            if (repository.hasUsername(model.getUsername())) { 
+                throw new ServiceResponseException("Tên tài khoản đã tồn tại trên hệ thống");
+            }
+            if (repository.hasEmail(model.getEmail())) { 
+                throw new ServiceResponseException("Email đã tồn tại trên hệ thống");
+            }
+            if (repository.hasSdt(model.getSdt())) { 
+                throw new ServiceResponseException("Số điện thoại đã tồn tại trên hệ thống");
+            }
+	    
+            if (!SessionUtils.sendPassword(model.getPassword(), model.getEmail())) {
+                throw new ServiceResponseException("Không thể gửi mật khẩu. Vui lòng thử lại sau ít phút.");
+            }
+	    
+            int rows = repository.insert(model);
+            if (rows < 1) { 
+                throw new ServiceResponseException("Không thể thêm nhân viên. Vui lòng thử lại sau ít phút!");
+            }
+            return rows;
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            throw new ServiceResponseException(ErrorConstant.DEFAULT_ERROR);
+        }
     }
 
     @Override
     public boolean has(Integer id) {
-        return false;
+        try {
+            return repository.has(id);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            throw new ServiceResponseException("Không thể tìm kiếm nhân viên");
+        }
     }
 
     @Override
-    public void update(InuhaTaiKhoanModel e) {
-
+    public void update(InuhaTaiKhoanModel model) {
+        try {
+            Optional<InuhaTaiKhoanModel> find = repository.getById(model.getId());
+            if (find.isEmpty()) { 
+                throw new ServiceResponseException("Không tìm thấy nhân viên");
+            }
+            
+            if (repository.hasUsername(model)) { 
+                throw new ServiceResponseException("Tên tài khoản đã tồn tại trên hệ thống");
+            }
+            if (repository.hasEmail(model)) { 
+                throw new ServiceResponseException("Email đã tồn tại trên hệ thống");
+            }
+            if (repository.hasSdt(model)) { 
+                throw new ServiceResponseException("Số điện thoại đã tồn tại trên hệ thống");
+            }
+	    
+            repository.update(model);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            throw new ServiceResponseException("Không thể cập nhật nhân viên");
+        }
     }
 
     @Override
     public void delete(Integer id) {
-
+        try {
+            Optional<InuhaTaiKhoanModel> find = repository.getById(id);
+            if (find.isEmpty()) { 
+                throw new ServiceResponseException("Không tìm thấy nhân viên");
+            }
+            
+	    InuhaTaiKhoanModel item = find.get();
+            if (repository.hasUse(id)) { 
+                item.setTrangThaiXoa(TrangThaiXoaConstant.DA_XOA);
+                repository.update(item);
+            } else { 
+                repository.delete(id);
+		SessionUtils.removeImageAvatar(item.getAvatar());
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            throw new ServiceResponseException("Không thể xoá nhân viên này");
+        }
     }
 
     @Override
     public void deleteAll(List<Integer> ids) {
-
     }
 
     @Override
     public List<InuhaTaiKhoanModel> getAll() {
-        return null;
+        try {
+            return repository.selectAll();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            throw new ServiceResponseException("Không thể lấy danh sách nhân viên");
+        }
+    }
+
+    @Override
+    public List<InuhaTaiKhoanModel> getPage(FilterRequest request) {
+        try {
+            return repository.selectPage(request);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return new ArrayList<>();
+    }
+   
+
+    @Override
+    public Integer getTotalPage(FilterRequest request) {
+        try {
+            return repository.count(request);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return 0;
     }
 
     public InuhaTaiKhoanModel login(String username, String password) {
         try {
-            Optional<InuhaTaiKhoanModel> find = ValidateUtils.isEmail(username) ? nhanVienRepository.findByEmail(username) : nhanVienRepository.findByUsername(username);
+            Optional<InuhaTaiKhoanModel> find = ValidateUtils.isEmail(username) ? repository.findByEmail(username) : repository.findByUsername(username);
             if (find.isEmpty() || !find.get().getPassword().equals(password)) {
                 throw new ServiceResponseException("Tài khoản hoặc mật khẩu không chính xác!");
             }
@@ -108,14 +193,14 @@ public class InuhaTaiKhoanService implements IInuhaNhanVienServiceInterface {
         }
 
         try {
-            Optional<InuhaTaiKhoanModel> nhanVien = nhanVienRepository.findByEmail(email);
+            Optional<InuhaTaiKhoanModel> nhanVien = repository.findByEmail(email);
             if (nhanVien.isEmpty()) {
                 throw new ServiceResponseException("Email vừa nhập không tồn tại trên hệ thống.");
             }
 
             String codeOTP = SessionUtils.generateCode(100000, 999999);
 
-            if (nhanVienRepository.updateOTPById(nhanVien.get().getId(), codeOTP) < 1) {
+            if (repository.updateOTPById(nhanVien.get().getId(), codeOTP) < 1) {
                 throw new RuntimeException("Không thể update OTP");
             }
 
@@ -134,7 +219,7 @@ public class InuhaTaiKhoanService implements IInuhaNhanVienServiceInterface {
                 throw new ServiceResponseException(ErrorConstant.EMAIL_FORMAT);
             }
 
-            if (!nhanVienRepository.checkOtp(email, otp)) {
+            if (!repository.checkOtp(email, otp)) {
                 throw new ServiceResponseException("Mã OTP không chính xác.");
             }
         } catch (SQLException e) {
@@ -155,7 +240,7 @@ public class InuhaTaiKhoanService implements IInuhaNhanVienServiceInterface {
                 throw new ServiceResponseException("Mật khẩu nhập lại không chính xác");
             }
 
-            if (nhanVienRepository.updateForgotPassword(password, email, otp) < 1) {
+            if (repository.updateForgotPassword(password, email, otp) < 1) {
                 throw new ServiceResponseException("Không thể cập nhật mật khẩu. Vui lòng thử lại");
             }
         } catch (SQLException e) {
@@ -173,7 +258,7 @@ public class InuhaTaiKhoanService implements IInuhaNhanVienServiceInterface {
 
             int id = SessionLogin.getInstance().getData().getId();
 
-            if (nhanVienRepository.updateAvatar(id, avatar) < 1) {
+            if (repository.updateAvatar(id, avatar) < 1) {
                 throw new ServiceResponseException("Không thể cập nhật ảnh đại diện. Vui lòng thử lại");
             }
         } catch (SQLException e) {
@@ -198,7 +283,7 @@ public class InuhaTaiKhoanService implements IInuhaNhanVienServiceInterface {
             }
 
             int id = SessionLogin.getInstance().getData().getId();
-            if (nhanVienRepository.updatePassword(id, oldPassword, newPassword) < 1) {
+            if (repository.updatePassword(id, oldPassword, newPassword) < 1) {
                 throw new ServiceResponseException("Không thể đổi mật khẩu. Vui lòng thử lại");
             }
 
@@ -212,4 +297,44 @@ public class InuhaTaiKhoanService implements IInuhaNhanVienServiceInterface {
 
     }
     
+    public void changePassword(InuhaTaiKhoanModel model, String newPassword, String confirmPassword) {
+
+        try {
+
+            if (!ValidateUtils.isPassword(newPassword)) {
+                throw new ServiceResponseException("Mật khẩu mới không hợp lệ");
+            }
+
+            if (!newPassword.equals(confirmPassword)) {
+                throw new ServiceResponseException("Mật khẩu nhập lại không chính xác");
+            }
+
+	    model.setPassword(newPassword);
+            if (repository.update(model) < 1) {
+                throw new ServiceResponseException("Không thể đổi mật khẩu. Vui lòng thử lại");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new ServiceResponseException(ErrorConstant.DEFAULT_ERROR);
+        }
+    }
+       
+       
+    public int getLastId() {
+        try {
+	    return repository.getLastId();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new ServiceResponseException(ErrorConstant.DEFAULT_ERROR);
+        }
+    }
+    
+    public int count(FilterRequest request) {
+        try {
+            return repository.count(request);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return 0;
+    }
 }

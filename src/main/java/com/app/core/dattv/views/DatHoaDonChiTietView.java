@@ -68,7 +68,7 @@ public class DatHoaDonChiTietView extends javax.swing.JPanel {
     DatHoaDonChiTietRepository datHoaDonChiTietRepository=new DatHoaDonChiTietRepository();
     private final LoadingDialog loading = new LoadingDialog();
     DatHoaDonRequest datHoaDonRequest= null;
-    
+
     private ArrayList<DatHoaDonChiTietModel> list = new ArrayList<>();
     private static DatHoaDonChiTietView instance;
     
@@ -79,23 +79,23 @@ public class DatHoaDonChiTietView extends javax.swing.JPanel {
         initComponents();
         instance = this;
         this.datHoaDonRequest=datHoaDonRequest;
-        
+
         list=datHoaDonChiTietRepository.loadDatHoaDonChiTietTable(datHoaDonRequest.getId());
         loadData(list);
-        
+
         btnInHoaDon.setBackground(ColorUtils.BUTTON_PRIMARY);
         setupTable(tblHoadonchitiet);
-        
+
         double tienThua = 0;
-        if (datHoaDonRequest.getTienMat() > 0 || datHoaDonRequest.getTienChuyenKhoan() > 0) { 
+        if (datHoaDonRequest.getTienMat() > 0 || datHoaDonRequest.getTienChuyenKhoan() > 0) {
             tienThua = (datHoaDonRequest.getTienMat() + datHoaDonRequest.getTienChuyenKhoan()) - datHoaDonRequest.getThanhTien();
         }
-        
+
         String khachHang = datHoaDonRequest.getKhachHang();
-        if (datHoaDonRequest.getSdt() != null && !datHoaDonRequest.getSdt().isEmpty()) { 
+        if (datHoaDonRequest.getSdt() != null && !datHoaDonRequest.getSdt().isEmpty()) {
             khachHang += " - " + datHoaDonRequest.getSdt();
         }
-                
+
         lblMaHd.setText(datHoaDonRequest.getMaHd());
         lblNgayTao.setText(String.valueOf(datHoaDonRequest.getThoiGian()));
         lblTenkhachhang.setText(khachHang);
@@ -108,17 +108,17 @@ public class DatHoaDonChiTietView extends javax.swing.JPanel {
         lblTongtienhang.setText(CurrencyUtils.parseString(datHoaDonRequest.getTongTienhang()));
         lblGiamgia.setText(CurrencyUtils.parseString(datHoaDonRequest.getGiamGia()));
         lblThanhtoan.setText(CurrencyUtils.parseString(datHoaDonRequest.getThanhTien()));
-        
+
     }
     
     private void setupTable(JTable table){
         TableCustomUI.apply(jScrollPane3, TableCustomUI.TableType.DEFAULT);
     }
-    
+
     void loadData(ArrayList<DatHoaDonChiTietModel> list) {
         DefaultTableModel tableModel = (DefaultTableModel) tblHoadonchitiet.getModel();
         tableModel.setRowCount(0);
-        
+
         int i = 1;
         for (DatHoaDonChiTietModel datHoaDonChiTietModel : list) {
            Object[] row={
@@ -134,7 +134,7 @@ public class DatHoaDonChiTietView extends javax.swing.JPanel {
             tableModel.addRow(row);
         }
     }
-    
+
     public void inDanhSach(){
         String fileName = "HoaDon_" + datHoaDonRequest.getMaHd() + "-" + TimeUtils.now("dd_MM_yyyy__hh_mm_a");
 	String[] headers = new String[] {
@@ -147,15 +147,15 @@ public class DatHoaDonChiTietView extends javax.swing.JPanel {
 	    "Đơn giá"
 	};
 
-	executorService.submit(() -> { 
-	    
+	executorService.submit(() -> {
+
 	    try {
-		
+
 
 		List<String[]> rows = new ArrayList<>();
                 int i = 1;
-		for(DatHoaDonChiTietModel item: list) { 
-		    rows.add(new String[]{ 
+		for(DatHoaDonChiTietModel item: list) {
+		    rows.add(new String[]{
                         String.valueOf(i++),
                         item.getMa(),
                         item.getTen(),
@@ -165,7 +165,7 @@ public class DatHoaDonChiTietView extends javax.swing.JPanel {
                         String.valueOf(item.getGiaBan())
                     });
 		}
-				
+
 		ExcelHelper.writeFile(fileName, headers, rows);
 	    } catch (ServiceResponseException e) {
 		e.printStackTrace();
@@ -179,7 +179,7 @@ public class DatHoaDonChiTietView extends javax.swing.JPanel {
 	});
 	loading.setVisible(true);
     }
-    
+
     private void showDetailSanPham(InuhaSanPhamChiTietModel item) {
         if (ModalDialog.isIdExist("showDetailSanPham")) {
             return;
@@ -296,27 +296,7 @@ public class DatHoaDonChiTietView extends javax.swing.JPanel {
         lblThanhtoan.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblThanhtoan.setText("jLabel11");
 
-        lblGiamgia.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        lblGiamgia.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblGiamgia.setText("jLabel11");
-
-        jLabel11.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel11.setText("Tiền mặt khách trả:");
-
-        lblTienMat.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        lblTienMat.setText("jLabel11");
-
-        jLabel12.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabel12.setText("Tiền khách chuyển khoản:");
-
-        lblTienChuyenKhoan.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        lblTienChuyenKhoan.setText("jLabel11");
-
-        jLabel13.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabel13.setText("Tiền trả lại khách:");
-
-        lblTienThua.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        lblTienThua.setText("jLabel11");
 
         javax.swing.GroupLayout roundPanel4Layout = new javax.swing.GroupLayout(roundPanel4);
         roundPanel4.setLayout(roundPanel4Layout);
@@ -521,7 +501,7 @@ public class DatHoaDonChiTietView extends javax.swing.JPanel {
     private void tblHoadonchitietMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblHoadonchitietMouseClicked
         // TODO add your handling code here:
         if (evt.getClickCount() > 1) { 
-            executorService.submit(() -> { 
+            executorService.submit(() -> {
                 try {
                     DatHoaDonChiTietModel hoaDonChiTiet = list.get(tblHoadonchitiet.getSelectedRow());
                     InuhaSanPhamChiTietModel sanPhamChiTiet = InuhaSanPhamChiTietService.getInstance().getById(hoaDonChiTiet.getIdSanPhamChiTiet());
@@ -585,7 +565,7 @@ public class DatHoaDonChiTietView extends javax.swing.JPanel {
         invoiceData.setSoDienThoai(datHoaDonRequest.getSdt());
         invoiceData.setTaiKhoan(datHoaDonRequest.getTenNv());
         List<InvoiceProduct> products = new ArrayList<>();
-        for(DatHoaDonChiTietModel m: list) { 
+        for(DatHoaDonChiTietModel m: list) {
             products.add(new InvoiceProduct(m.getTen()+ " - " + m.getKichCo()+ " - " + m.getMauSac(), m.getSoLuong(), (float) m.getGiaBan()));
         }
         invoiceData.setHoaDonChiTiet(products);

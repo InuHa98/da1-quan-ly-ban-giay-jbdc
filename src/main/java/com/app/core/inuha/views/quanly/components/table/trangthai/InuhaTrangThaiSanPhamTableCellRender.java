@@ -1,15 +1,10 @@
 package com.app.core.inuha.views.quanly.components.table.trangthai;
 
-import com.app.core.inuha.views.quanly.components.table.thuoctinhsanpham.*;
 import com.app.utils.ColorUtils;
-import com.app.utils.ProductUtils;
-import com.app.views.UI.label.Badge;
-import com.app.views.UI.table.celll.TableActionCellRender;
 import java.awt.BasicStroke;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
@@ -35,7 +30,7 @@ public class InuhaTrangThaiSanPhamTableCellRender implements TableCellRenderer {
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
                 Graphics2D g2 = (Graphics2D) g.create();
-                g2.setColor(ColorUtils.BACKGROUND_GRAY);
+                g2.setColor(ColorUtils.BORDER);
                 g2.setStroke(new BasicStroke(1));
                 //g2.drawLine(getWidth() - 1, 0, getWidth() - 1, getHeight());
                 g2.drawLine(0, getHeight() - 1, getWidth() - 1, getHeight() - 1);

@@ -10,6 +10,7 @@ import com.app.core.inuha.services.InuhaKieuDangService;
 import com.app.core.inuha.views.quanly.InuhaSanPhamView;
 import com.app.core.inuha.views.quanly.sanpham.InuhaAddSanPhamView;
 import com.app.utils.ColorUtils;
+import com.app.utils.ValidateUtils;
 import com.app.views.UI.dialog.LoadingDialog;
 import com.formdev.flatlaf.FlatClientProperties;
 import java.awt.Color;
@@ -38,7 +39,8 @@ public class InuhaAddKieuDangView extends JPanel {
         initComponents();
         currentColor = lblTen.getForeground();
         txtTen.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Tối đa 250 ký tự...");
-        btnSubmit.setBackground(ColorUtils.PRIMARY_COLOR);
+        btnSubmit.setBackground(ColorUtils.BUTTON_PRIMARY);
+        btnSubmit.setForeground(Color.WHITE);
     }
 
 
@@ -158,6 +160,11 @@ public class InuhaAddKieuDangView extends JPanel {
         
         if (ten.length() > 250) { 
             MessageToast.error("Tên kiểu dáng không được vượt quá 250 ký tự");
+            return;
+        }
+        
+        if (ValidateUtils.isSpecialCharacters(ten)) {
+            MessageToast.error("Tên kiểu dáng không được chứa ký tự đặc biệt");
             return;
         }
         

@@ -3,7 +3,7 @@ package com.app.core.inuha.services;
 import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.constants.TrangThaiXoaConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
-import com.app.common.infrastructure.request.FillterRequest;
+import com.app.common.infrastructure.request.FilterRequest;
 import com.app.core.inuha.models.InuhaHoaDonChiTietModel;
 import com.app.core.inuha.models.InuhaSanPhamChiTietModel;
 import com.app.core.inuha.repositories.InuhaHoaDonChiTietRepository;
@@ -168,7 +168,7 @@ public class InuhaHoaDonChiTietService implements IInuhaHoaDonChiTietServiceInte
     }
 	
     @Override
-    public List<InuhaHoaDonChiTietModel> getPage(FillterRequest request) {
+    public List<InuhaHoaDonChiTietModel> getPage(FilterRequest request) {
         try {
             return repository.selectPage(request);
         } catch (SQLException ex) {
@@ -178,7 +178,7 @@ public class InuhaHoaDonChiTietService implements IInuhaHoaDonChiTietServiceInte
     }
 
     @Override
-    public Integer getTotalPage(FillterRequest request) {
+    public Integer getTotalPage(FilterRequest request) {
         try {
             return repository.count(request);
         } catch (SQLException ex) {
@@ -188,9 +188,9 @@ public class InuhaHoaDonChiTietService implements IInuhaHoaDonChiTietServiceInte
     }
 
     @Override
-    public String getLastCode() {
+    public String getLastId() {
         try {
-            return repository.getLastCode();
+            return repository.getLastId();
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
@@ -213,5 +213,14 @@ public class InuhaHoaDonChiTietService implements IInuhaHoaDonChiTietServiceInte
             ex.printStackTrace();
         }
         return new ArrayList<>();
+    }
+    
+    public int count() {
+        try {
+            return repository.count();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return 0;
     }
 }

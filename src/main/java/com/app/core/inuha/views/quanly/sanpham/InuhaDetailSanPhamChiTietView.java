@@ -1,8 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
-
 package com.app.core.inuha.views.quanly.sanpham;
 
 import com.app.common.helper.QrCodeHelper;
@@ -431,6 +426,9 @@ public class InuhaDetailSanPhamChiTietView extends javax.swing.JPanel {
     }
     
     private void handleClickButtonEdit() {
+        if (ModalDialog.isIdExist(InuhaDetailSanPhamView.ID_MODAL_ADD)) {
+            return;
+        }
 	ModalDialog.showModal(this, new SimpleModalBorder(new InuhaAddSanPhamChiTietView(sanPhamChiTiet.getSanPham(), sanPhamChiTiet), "Chỉnh sửa chi tiết sản phẩm"), InuhaDetailSanPhamView.ID_MODAL_ADD);
     }
 

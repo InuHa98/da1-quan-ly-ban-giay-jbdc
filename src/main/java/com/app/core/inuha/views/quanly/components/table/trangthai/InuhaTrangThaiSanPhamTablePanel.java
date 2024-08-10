@@ -22,11 +22,6 @@ public class InuhaTrangThaiSanPhamTablePanel extends javax.swing.JPanel {
     
     public InuhaTrangThaiSanPhamTablePanel(boolean trangThai) {
 	this();
-	pnlContainer.setRoundBottomLeft(25);
-	pnlContainer.setRoundBottomRight(25);
-	pnlContainer.setRoundTopLeft(25);
-	pnlContainer.setRoundTopRight(25);
-	txtText.setForeground(Color.WHITE);
 	setTrangThai(trangThai);
     }
     
@@ -40,12 +35,12 @@ public class InuhaTrangThaiSanPhamTablePanel extends javax.swing.JPanel {
     
     public void setDangBan() { 
 	txtText.setText(ProductUtils.getTrangThai(true));
-	pnlContainer.setBackground(ColorUtils.PRIMARY_COLOR);
+	txtText.setForeground(ColorUtils.SUCCESS_COLOR);
     }
 
     public void setNgungBan() { 
 	txtText.setText(ProductUtils.getTrangThai(false));
-	pnlContainer.setBackground(ColorUtils.DANGER_COLOR);
+	txtText.setForeground(ColorUtils.DANGER_COLOR);
     }
 	
     /**
@@ -57,43 +52,30 @@ public class InuhaTrangThaiSanPhamTablePanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        pnlContainer = new com.app.views.UI.panel.RoundPanel();
         txtText = new javax.swing.JLabel();
 
-        txtText.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        txtText.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         txtText.setText("Ngừng bán");
-
-        javax.swing.GroupLayout pnlContainerLayout = new javax.swing.GroupLayout(pnlContainer);
-        pnlContainer.setLayout(pnlContainerLayout);
-        pnlContainerLayout.setHorizontalGroup(
-            pnlContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(txtText, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 76, Short.MAX_VALUE)
-        );
-        pnlContainerLayout.setVerticalGroup(
-            pnlContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(txtText, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 22, Short.MAX_VALUE)
-        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 0, 0)
-                .addComponent(pnlContainer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(6, 6, 6)
+                .addComponent(txtText, javax.swing.GroupLayout.DEFAULT_SIZE, 76, Short.MAX_VALUE)
+                .addGap(6, 6, 6))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(pnlContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap()
+                .addComponent(txtText, javax.swing.GroupLayout.DEFAULT_SIZE, 22, Short.MAX_VALUE)
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.app.views.UI.panel.RoundPanel pnlContainer;
     private javax.swing.JLabel txtText;
     // End of variables declaration//GEN-END:variables
 

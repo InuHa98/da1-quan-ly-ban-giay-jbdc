@@ -30,11 +30,6 @@
   </Layout>
   <SubComponents>
     <Container class="com.app.views.UI.panel.RoundPanel" name="pnlLogin">
-      <Properties>
-        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-          <Color blue="33" green="33" red="33" type="rgb"/>
-        </Property>
-      </Properties>
 
       <Layout>
         <DimensionLayout dim="0">
@@ -56,6 +51,11 @@
                       </Group>
                   </Group>
                   <EmptySpace pref="42" max="32767" attributes="0"/>
+              </Group>
+              <Group type="102" alignment="1" attributes="0">
+                  <EmptySpace max="32767" attributes="0"/>
+                  <Component id="lblTheme" min="-2" pref="20" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -81,7 +81,9 @@
                       <Component id="lbForgotPassword" max="32767" attributes="0"/>
                       <Component id="jLabel5" min="-2" pref="34" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="42" max="32767" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="lblTheme" min="-2" pref="22" max="-2" attributes="0"/>
+                  <EmptySpace pref="14" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -94,11 +96,8 @@
                 <Font bold="true" component="lblTitle" property="font" relativeSize="true" size="10"/>
               </FontInfo>
             </Property>
-            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="ff" green="ff" red="ff" type="rgb"/>
-            </Property>
             <Property name="horizontalAlignment" type="int" value="2"/>
-            <Property name="text" type="java.lang.String" value="Ch&#xe0;o m&#x1eeb;ng tr&#x1edf; l&#x1ea1;i!"/>
+            <Property name="text" type="java.lang.String" value="I-SHOES"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel2">
@@ -107,9 +106,6 @@
               <FontInfo relative="true">
                 <Font component="jLabel2" property="font" relativeSize="true" size="1"/>
               </FontInfo>
-            </Property>
-            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="cc" green="cc" red="cc" type="rgb"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Vui l&#xf2;ng &#x111;&#x103;ng nh&#x1ead;p &#x111;&#x1ec3; s&#x1eed; d&#x1ee5;ng c&#xe1;c ch&#x1ee9;c n&#x103;ng"/>
           </Properties>
@@ -120,9 +116,6 @@
               <FontInfo relative="true">
                 <Font bold="true" component="lbUsername" property="font" relativeSize="true" size="2"/>
               </FontInfo>
-            </Property>
-            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="cc" green="cc" red="cc" type="rgb"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Username"/>
           </Properties>
@@ -135,9 +128,6 @@
               <FontInfo relative="true">
                 <Font bold="true" component="lbPassword" property="font" relativeSize="true" size="2"/>
               </FontInfo>
-            </Property>
-            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="cc" green="cc" red="cc" type="rgb"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Password"/>
           </Properties>
@@ -162,9 +152,6 @@
                 <Font component="jLabel5" property="font" relativeSize="true" size="1"/>
               </FontInfo>
             </Property>
-            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="cc" green="cc" red="cc" type="rgb"/>
-            </Property>
             <Property name="horizontalAlignment" type="int" value="4"/>
             <Property name="text" type="java.lang.String" value="Qu&#xea;n m&#x1ead;t kh&#x1ea9;u?"/>
           </Properties>
@@ -186,6 +173,12 @@
           </Properties>
           <Events>
             <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="lbForgotPasswordMouseClicked"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JLabel" name="lblTheme">
+          <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="lblThemeMouseClicked"/>
+            <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="lblThemeKeyPressed"/>
           </Events>
         </Component>
       </SubComponents>

@@ -53,11 +53,6 @@
       </Layout>
       <SubComponents>
         <Container class="javax.swing.JTabbedPane" name="tbpTab">
-          <Properties>
-            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="ff" green="ff" red="ff" type="rgb"/>
-            </Property>
-          </Properties>
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
           <SubComponents>
@@ -98,32 +93,30 @@
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" attributes="0">
+                              <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="102" attributes="0">
-                                      <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
-                                      <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="lblFilter" min="-2" pref="799" max="-2" attributes="0"/>
-                                          <Group type="102" attributes="0">
-                                              <Component id="pnlSearchBox" min="-2" pref="252" max="-2" attributes="0"/>
-                                              <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
-                                              <Component id="cboDanhMuc" pref="151" max="32767" attributes="0"/>
-                                              <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
-                                              <Component id="cboThuongHieu" pref="163" max="32767" attributes="0"/>
-                                              <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
-                                              <Component id="cboTrangThai" pref="151" max="32767" attributes="0"/>
-                                              <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
-                                              <Component id="btnSearch" min="-2" max="-2" attributes="0"/>
-                                              <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
-                                              <Component id="btnClear" min="-2" max="-2" attributes="0"/>
-                                              <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
-                                          </Group>
-                                      </Group>
-                                  </Group>
+                                  <Component id="lblFilter" min="-2" pref="799" max="-2" attributes="0"/>
                                   <Group type="102" alignment="0" attributes="0">
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="splitLine1" max="32767" attributes="0"/>
+                                      <Component id="pnlSearchBox" min="-2" pref="252" max="-2" attributes="0"/>
+                                      <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
+                                      <Component id="cboDanhMuc" max="32767" attributes="0"/>
+                                      <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
+                                      <Component id="cboThuongHieu" max="32767" attributes="0"/>
+                                      <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
+                                      <Component id="cboSoLuong" max="32767" attributes="0"/>
+                                      <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
+                                      <Component id="cboTrangThai" max="32767" attributes="0"/>
+                                      <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
+                                      <Component id="btnSearch" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
+                                      <Component id="btnClear" min="-2" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
+                              <EmptySpace min="-2" pref="76" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="splitLine1" max="32767" attributes="0"/>
                               <EmptySpace min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -138,14 +131,14 @@
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="pnlSearchBox" max="32767" attributes="0"/>
-                                  <Component id="btnClear" alignment="0" max="32767" attributes="0"/>
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <Component id="cboTrangThai" min="-2" pref="35" max="-2" attributes="0"/>
-                                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                                  <Group type="103" alignment="1" groupAlignment="3" attributes="0">
+                                      <Component id="btnSearch" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
+                                      <Component id="cboTrangThai" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
+                                      <Component id="cboSoLuong" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
+                                      <Component id="btnClear" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
                                   </Group>
-                                  <Component id="btnSearch" alignment="1" max="32767" attributes="0"/>
-                                  <Component id="cboThuongHieu" alignment="1" max="32767" attributes="0"/>
                                   <Component id="cboDanhMuc" alignment="1" max="32767" attributes="0"/>
+                                  <Component id="cboThuongHieu" alignment="1" max="32767" attributes="0"/>
                               </Group>
                               <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
                           </Group>
@@ -166,6 +159,9 @@
                           </StringArray>
                         </Property>
                       </Properties>
+                      <Events>
+                        <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="cboThuongHieuItemStateChanged"/>
+                      </Events>
                       <AuxValues>
                         <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value=""/>
                       </AuxValues>
@@ -178,6 +174,9 @@
                           </StringArray>
                         </Property>
                       </Properties>
+                      <Events>
+                        <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="cboTrangThaiItemStateChanged"/>
+                      </Events>
                       <AuxValues>
                         <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value=""/>
                       </AuxValues>
@@ -217,7 +216,7 @@
                       <Layout>
                         <DimensionLayout dim="0">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                              <EmptySpace min="0" pref="1141" max="32767" attributes="0"/>
                           </Group>
                         </DimensionLayout>
                         <DimensionLayout dim="1">
@@ -235,6 +234,24 @@
                           </StringArray>
                         </Property>
                       </Properties>
+                      <Events>
+                        <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="cboDanhMucItemStateChanged"/>
+                      </Events>
+                      <AuxValues>
+                        <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value=""/>
+                      </AuxValues>
+                    </Component>
+                    <Component class="javax.swing.JComboBox" name="cboSoLuong">
+                      <Properties>
+                        <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+                          <StringArray count="1">
+                            <StringItem index="0" value="-- T&#x1ea5;t c&#x1ea3; s&#x1ed1; l&#x1b0;&#x1ee3;ng --"/>
+                          </StringArray>
+                        </Property>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="cboSoLuongItemStateChanged"/>
+                      </Events>
                       <AuxValues>
                         <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value=""/>
                       </AuxValues>
@@ -362,16 +379,12 @@
                       <Layout>
                         <DimensionLayout dim="0">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="scrDanhSach" alignment="1" pref="1011" max="32767" attributes="0"/>
+                              <Component id="scrDanhSach" alignment="1" pref="1165" max="32767" attributes="0"/>
                           </Group>
                         </DimensionLayout>
                         <DimensionLayout dim="1">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" attributes="0">
-                                  <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
-                                  <Component id="scrDanhSach" pref="293" max="32767" attributes="0"/>
-                                  <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
-                              </Group>
+                              <Component id="scrDanhSach" alignment="0" pref="311" max="32767" attributes="0"/>
                           </Group>
                         </DimensionLayout>
                       </Layout>
@@ -507,7 +520,7 @@
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="roundPanel2" alignment="0" max="32767" attributes="0"/>
+                      <Component id="pnlFilter2" alignment="0" max="32767" attributes="0"/>
                       <Component id="pnlList2" alignment="0" max="32767" attributes="0"/>
                   </Group>
                 </DimensionLayout>
@@ -515,7 +528,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
-                          <Component id="roundPanel2" min="-2" max="-2" attributes="0"/>
+                          <Component id="pnlFilter2" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Component id="pnlList2" max="32767" attributes="0"/>
                       </Group>
@@ -579,9 +592,6 @@
                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                           <Font name="Segoe UI" size="16" style="1"/>
                         </Property>
-                        <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                          <Color blue="ff" green="ff" red="ff" type="rgb"/>
-                        </Property>
                         <Property name="text" type="java.lang.String" value="Danh s&#xe1;ch chi ti&#x1ebf;t s&#x1ea3;n ph&#x1ea9;m"/>
                       </Properties>
                     </Component>
@@ -638,14 +648,13 @@
                       <Layout>
                         <DimensionLayout dim="0">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="scrDanhSachChiTiet" alignment="0" pref="1011" max="32767" attributes="0"/>
+                              <Component id="scrDanhSachChiTiet" alignment="0" pref="1165" max="32767" attributes="0"/>
                           </Group>
                         </DimensionLayout>
                         <DimensionLayout dim="1">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
-                                  <Component id="scrDanhSachChiTiet" pref="199" max="32767" attributes="0"/>
+                              <Group type="102" alignment="1" attributes="0">
+                                  <Component id="scrDanhSachChiTiet" pref="218" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -669,6 +678,7 @@
                                     <Column editable="false" title="M&#xe3; s&#x1ea3;n ph&#x1ea9;m" type="java.lang.Object"/>
                                     <Column editable="false" title="" type="java.lang.Object"/>
                                     <Column editable="false" title="T&#xea;n s&#x1ea3;n ph&#x1ea9;m" type="java.lang.Object"/>
+                                    <Column editable="false" title="S&#x1ed1; l&#x1b0;&#x1ee3;ng t&#x1ed3;n" type="java.lang.Object"/>
                                     <Column editable="false" title="Danh m&#x1ee5;c" type="java.lang.Object"/>
                                     <Column editable="false" title="Th&#x1b0;&#x1a1;ng hi&#x1ec7;u" type="java.lang.Object"/>
                                     <Column editable="false" title="Xu&#x1ea5;t x&#x1ee9;" type="java.lang.Object"/>
@@ -679,7 +689,6 @@
                                     <Column editable="false" title="M&#xe0;u s&#x1eaf;c" type="java.lang.Object"/>
                                     <Column editable="false" title="Gi&#xe1; nh&#x1ead;p" type="java.lang.Object"/>
                                     <Column editable="false" title="Gi&#xe1; b&#xe1;n" type="java.lang.Object"/>
-                                    <Column editable="false" title="S&#x1ed1; l&#x1b0;&#x1ee3;ng t&#x1ed3;n" type="java.lang.Object"/>
                                     <Column editable="false" title="Tr&#x1ea1;ng th&#xe1;i" type="java.lang.Object"/>
                                   </Table>
                                 </Property>
@@ -823,7 +832,7 @@
                     </Component>
                   </SubComponents>
                 </Container>
-                <Container class="com.app.views.UI.panel.RoundPanel" name="roundPanel2">
+                <Container class="com.app.views.UI.panel.RoundPanel" name="pnlFilter2">
 
                   <Layout>
                     <DimensionLayout dim="0">
@@ -832,20 +841,27 @@
                           <Group type="102" attributes="0">
                               <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="lblFilter2" min="-2" pref="243" max="-2" attributes="0"/>
-                                  <Component id="cboKieuDang" alignment="1" max="32767" attributes="0"/>
-                                  <Component id="pnlSearchBox2" alignment="1" pref="329" max="32767" attributes="0"/>
+                                  <Component id="pnlSearchBox2" alignment="1" pref="397" max="32767" attributes="0"/>
+                                  <Group type="102" attributes="0">
+                                      <Component id="lblFilter2" min="-2" pref="243" max="-2" attributes="0"/>
+                                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Component id="cboKieuDang" max="32767" attributes="0"/>
+                                      <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
+                                      <Component id="cboSoLuong2" max="32767" attributes="0"/>
+                                  </Group>
                               </Group>
                               <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" attributes="0">
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="cboTrangThai2" pref="143" max="32767" attributes="0"/>
+                                          <Component id="cboTrangThai2" pref="185" max="32767" attributes="0"/>
                                           <Component id="cboChatLieu" max="32767" attributes="0"/>
                                       </Group>
                                       <EmptySpace type="separate" max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="cboDanhMuc2" pref="142" max="32767" attributes="0"/>
+                                          <Component id="cboDanhMuc2" pref="186" max="32767" attributes="0"/>
                                           <Component id="cboDeGiay" max="32767" attributes="0"/>
                                       </Group>
                                   </Group>
@@ -895,6 +911,7 @@
                                   <Component id="cboMauSac" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
                                   <Component id="cboKieuDang" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
                                   <Component id="cboDeGiay" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
+                                  <Component id="cboSoLuong2" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace type="unrelated" max="32767" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
@@ -911,9 +928,6 @@
                       <Properties>
                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                           <Font name="Segoe UI" size="16" style="1"/>
-                        </Property>
-                        <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                          <Color blue="ff" green="ff" red="ff" type="rgb"/>
                         </Property>
                         <Property name="text" type="java.lang.String" value="B&#x1ed9; l&#x1ecd;c"/>
                       </Properties>
@@ -941,6 +955,9 @@
                           </StringArray>
                         </Property>
                       </Properties>
+                      <Events>
+                        <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="cboDanhMuc2ItemStateChanged"/>
+                      </Events>
                       <AuxValues>
                         <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value=""/>
                       </AuxValues>
@@ -954,6 +971,7 @@
                         </Property>
                       </Properties>
                       <Events>
+                        <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="cboThuongHieu2ItemStateChanged"/>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cboThuongHieu2ActionPerformed"/>
                       </Events>
                       <AuxValues>
@@ -968,6 +986,9 @@
                           </StringArray>
                         </Property>
                       </Properties>
+                      <Events>
+                        <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="cboTrangThai2ItemStateChanged"/>
+                      </Events>
                       <AuxValues>
                         <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value=""/>
                       </AuxValues>
@@ -981,6 +1002,7 @@
                         </Property>
                       </Properties>
                       <Events>
+                        <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="cboXuatXuItemStateChanged"/>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cboXuatXuActionPerformed"/>
                       </Events>
                       <AuxValues>
@@ -996,6 +1018,7 @@
                         </Property>
                       </Properties>
                       <Events>
+                        <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="cboKieuDangItemStateChanged"/>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cboKieuDangActionPerformed"/>
                       </Events>
                       <AuxValues>
@@ -1010,6 +1033,9 @@
                           </StringArray>
                         </Property>
                       </Properties>
+                      <Events>
+                        <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="cboChatLieuItemStateChanged"/>
+                      </Events>
                       <AuxValues>
                         <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value=""/>
                       </AuxValues>
@@ -1022,6 +1048,9 @@
                           </StringArray>
                         </Property>
                       </Properties>
+                      <Events>
+                        <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="cboDeGiayItemStateChanged"/>
+                      </Events>
                       <AuxValues>
                         <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value=""/>
                       </AuxValues>
@@ -1035,6 +1064,7 @@
                         </Property>
                       </Properties>
                       <Events>
+                        <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="cboKichCoItemStateChanged"/>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cboKichCoActionPerformed"/>
                       </Events>
                       <AuxValues>
@@ -1050,6 +1080,7 @@
                         </Property>
                       </Properties>
                       <Events>
+                        <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="cboMauSacItemStateChanged"/>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cboMauSacActionPerformed"/>
                       </Events>
                       <AuxValues>
@@ -1082,6 +1113,22 @@
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnClear2ActionPerformed"/>
                       </Events>
+                    </Component>
+                    <Component class="javax.swing.JComboBox" name="cboSoLuong2">
+                      <Properties>
+                        <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+                          <StringArray count="1">
+                            <StringItem index="0" value="-- T&#x1ea5;t c&#x1ea3; s&#x1ed1; l&#x1b0;&#x1ee3;ng --"/>
+                          </StringArray>
+                        </Property>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="cboSoLuong2ItemStateChanged"/>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cboSoLuong2ActionPerformed"/>
+                      </Events>
+                      <AuxValues>
+                        <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value=""/>
+                      </AuxValues>
                     </Component>
                   </SubComponents>
                 </Container>

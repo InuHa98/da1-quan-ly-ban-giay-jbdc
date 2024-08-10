@@ -41,7 +41,7 @@ public class MessageModal {
         JPanel panel = new JPanel(new MigLayout("wrap, fillx, insets 0 40 10 40", "[left]", "[center]"));
         JLabel msg = new JLabel();
         msg.setMaximumSize(new Dimension(400, 100));
-        msg.setText("<html><body style='line-height: 30px'>"+ message +"</body></html>");
+        msg.setText("<html><body style='line-height: 2;padding-left:20px'>"+ message +"</body></html>");
         msg.setForeground(ColorUtils.PRIMARY_TEXT);
         msg.setFont(msg.getFont().deriveFont(Font.PLAIN, 14));
         if (type != null) {
@@ -149,6 +149,11 @@ public class MessageModal {
     }
 
     private static boolean messageConfirm(String title, JComponent content, String[] labelButton) {
+        final String name = "POPUP_MODAL_CONFIRM";
+        if (GlassPanePopup.isShowing(name)) { 
+            return false;
+        }
+        
         final boolean[] isConfirm = { false };
         CountDownLatch latch = new CountDownLatch(1);
 
@@ -164,7 +169,8 @@ public class MessageModal {
             }
         );
 
-        GlassPanePopup.showPopup(simplePopupBorder);
+        
+        GlassPanePopup.showPopup(simplePopupBorder, name);
 
         try {
             latch.await();

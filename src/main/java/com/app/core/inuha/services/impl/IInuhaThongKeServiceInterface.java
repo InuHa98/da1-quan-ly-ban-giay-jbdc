@@ -1,6 +1,6 @@
 package com.app.core.inuha.services.impl;
 
-import com.app.common.infrastructure.request.FillterRequest;
+import com.app.common.infrastructure.request.FilterRequest;
 import com.app.core.inuha.models.InuhaSanPhamChiTietModel;
 import com.app.core.inuha.models.InuhaSanPhamModel;
 import com.app.core.inuha.models.thongke.InuhaThongKeChartModel;

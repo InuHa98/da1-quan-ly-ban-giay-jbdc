@@ -1,10 +1,8 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-
 package com.app.core.inuha.models;
 
+import com.app.utils.SessionUtils;
+import com.app.utils.TimeUtils;
+import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,6 +20,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class InuhaTaiKhoanModel {
 
+    private int stt;
+    
     private int id;
 
     private String username;
@@ -47,5 +47,23 @@ public class InuhaTaiKhoanModel {
     private boolean isAdmin;
 
     private String ngayTao;
+    
+    private boolean trangThaiXoa;
+    
+    public Object[] toDataRow() {
+	return new Object[] {
+	    stt,
+	    SessionUtils.getAvatar(this),
+	    username,
+	    email,
+	    hoTen,
+	    sdt,
+	    SessionUtils.getGioiTinh(gioiTinh),
+	    diaChi,
+	    SessionUtils.getChucVu(isAdmin),
+	    trangThai,
+	    TimeUtils.date("dd-MM-yyyy", ngayTao)
+	};
+    }
 
 }

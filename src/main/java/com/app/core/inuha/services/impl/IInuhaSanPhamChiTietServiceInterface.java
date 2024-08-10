@@ -11,6 +11,6 @@ import java.util.List;
  */
 public interface IInuhaSanPhamChiTietServiceInterface extends IServiceInterface<InuhaSanPhamChiTietModel, Integer> {
 
-    String getLastCode();
+    String getLastId();
     
 }

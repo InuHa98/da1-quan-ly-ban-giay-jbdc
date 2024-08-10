@@ -11,18 +11,17 @@ import com.app.common.infrastructure.session.AvatarUpload;
 import com.app.common.infrastructure.session.SessionLogin;
 import com.app.core.inuha.models.InuhaTaiKhoanModel;
 import com.app.core.inuha.services.InuhaTaiKhoanService;
+import com.app.core.inuha.views.all.InuhaBanHangView;
 import com.app.utils.*;
 import com.app.views.UI.ImageRound;
 import com.app.views.UI.dialog.LoadingDialog;
 import com.app.views.UI.scroll.ScrollBarCustomUI;
-import com.app.views.DashboardView;
 import com.app.views.UI.panel.qrcode.WebcamQRCodeScanPanel;
 import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.util.Animator;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -31,8 +30,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Optional;
 import java.util.TimerTask;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import jnafilechooser.api.JnaFileChooser;
 
 /**
@@ -71,11 +73,21 @@ public class SidebarMenu extends JPanel {
 
     private MouseAdapter eventHoverMenu;
     
+    private final LoadingDialog loading = new LoadingDialog();
+    
     private final List<SidebarMenuItem> itemsMenu = SessionUtils.isManager() ? QuanLyRoute.getInstance().getItemSideMenu() : NhanVienRoute.getInstance().getItemSideMenu();
 
+    public static SidebarMenu getInstance() {
+        if (instance == null) { 
+            instance = new SidebarMenu();
+        }
+        return instance;
+    }
+    
     public SidebarMenu() {
-	instance = this;
+        instance = this;
         initComponents();
+        
 	ISidebarMenuEvent event = (index) -> {
 
             Optional<SidebarMenuItem> item = itemsMenu.stream().filter(o -> o.getIndex() == index).findFirst();
@@ -91,7 +103,19 @@ public class SidebarMenu extends JPanel {
 	    }
 	    
             try {
-		WebcamQRCodeScanPanel.dispose();
+                SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+                    @Override
+                    protected Void doInBackground() throws Exception {
+                        WebcamQRCodeScanPanel.dispose();
+                        InuhaBanHangView banHangView = InuhaBanHangView.getInstance();
+                        if (banHangView != null) { 
+                            banHangView.updateTienThanhToan();
+                        }
+                        return null;
+                    }
+                };
+                worker.execute();
+		
                 Class<?> loadClass = Class.forName(className);
                 DashboardController.getInstance().show((JComponent) loadClass.getDeclaredConstructor().newInstance());
             } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException |
@@ -112,7 +136,7 @@ public class SidebarMenu extends JPanel {
 
         lbUsername.setText(username);
         lbEmail.setText(email);
-        lbRole.setText(SessionUtils.isManager() ? "Quản lý" : "Nhân viên");
+        lbRole.setText(SessionUtils.getChucVu(SessionUtils.isManager()));
 	
 	setMaximumSize(new Dimension(MIN_WIDTH, getPreferredSize().height));
     }
@@ -140,17 +164,18 @@ public class SidebarMenu extends JPanel {
         lbEmail = new JLabel();
         lbRole = new JLabel();
 
-        lbUsername.setForeground(ColorUtils.PRIMARY_COLOR);
+        lbUsername.setForeground(ColorUtils.SIDEBAR_TITLE);
 
-        lbEmail.setForeground(ColorUtils.PRIMARY_TEXT);
-
+        lbEmail.setForeground(ColorUtils.TEXT_GRAY);
+        lbRole.setForeground(ColorUtils.TEXT_GRAY);
+        
         Dimension avatarSize = new Dimension(64, 64);
         lbAvatar.setCursor(new Cursor(Cursor.HAND_CURSOR));
         lbAvatar.setPreferredSize(avatarSize);
         lbAvatar.setMinimumSize(avatarSize);
         lbAvatar.setBorderSize(2);
         lbAvatar.setBorderSpace(2);
-        lbAvatar.setImage(SessionUtils.getAvatar(SessionLogin.getInstance().getData()));
+        setAvatar(SessionUtils.getAvatar(SessionLogin.getInstance().getData()));
         lbAvatar.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -222,47 +247,51 @@ public class SidebarMenu extends JPanel {
         boolean act = ch.showOpenDialog(SwingUtilities.getWindowAncestor(this));
         if (act) {
             File selectedFile = ch.getSelectedFile();
-
-            LoadingDialog loading = new LoadingDialog();
-
-            executor.submit(() -> {
-                if (MessageModal.confirmInfo("Cập nhật ảnh đại diện mới?")) {
-
-                    executor.submit(() -> {
-
-                        AvatarUpload avatarUpload = SessionUtils.uploadAvatar(SessionLogin.getInstance().getData(), selectedFile.getAbsolutePath());
-                        MessageToast.clearAll();
-
-                        if (avatarUpload.getFileName() == null) {
-                            loading.dispose();
-                            MessageToast.error("Không thể upload hình ảnh!");
-                            return;
-                        }
-
-                        try {
-                            nhanVienService.changeAvatar(avatarUpload.getFileName());
-                            loading.dispose();
-
-                            lbAvatar.setImage(avatarUpload.getDataImage());
-                            MessageToast.success("Cập nhật ảnh đại diện thành công.");
-
-                        } catch (ServiceResponseException e) {
-                            loading.dispose();
-                            MessageToast.error(e.getMessage());
-                        } catch (Exception e) {
-                            loading.dispose();
-                            MessageToast.error(ErrorConstant.DEFAULT_ERROR);
-                        }
-                    });
-
-                    loading.setVisible(true);
-		    
+            
+            SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
+                @Override
+                protected Boolean doInBackground() throws Exception {
+                    return MessageModal.confirmInfo("Cập nhật ảnh đại diện mới?");
                 }
-            });
 
+                @Override
+                protected void done() {
+                    try {
+                        if (get()) {
+                            executor.submit(() -> {
 
+                                AvatarUpload avatarUpload = SessionUtils.uploadAvatar(SessionLogin.getInstance().getData(), selectedFile.getAbsolutePath());
+                                MessageToast.clearAll();
 
+                                if (avatarUpload.getFileName() == null) {
+                                    loading.dispose();
+                                    MessageToast.error("Không thể upload hình ảnh!");
+                                    return;
+                                }
 
+                                try {
+                                    nhanVienService.changeAvatar(avatarUpload.getFileName());
+
+                                    setAvatar(avatarUpload.getDataImage());
+                                    MessageToast.success("Cập nhật ảnh đại diện thành công.");
+
+                                } catch (ServiceResponseException e) {
+                                    MessageToast.error(e.getMessage());
+                                } catch (Exception e) {
+                                    MessageToast.error(ErrorConstant.DEFAULT_ERROR);
+                                } finally {
+                                    loading.dispose();
+                                }
+                            });
+
+                            loading.setVisible(true);
+                        }
+                    } catch (InterruptedException | ExecutionException ex) {
+                    }
+                }
+                
+            };
+            worker.execute();
         }
     }
 
@@ -285,6 +314,7 @@ public class SidebarMenu extends JPanel {
     private void addMenu(int index, String icon, String text, ISidebarMenuButtonCallback callback) {
         SidebarMenuButton menuButton = new SidebarMenuButton(index, callback);
         setFont(menuButton.getFont().deriveFont(Font.PLAIN, 14));
+
         menuButton.setIcon(ComponentUtils.resizeImage(ResourceUtils.getImageAssets("sidemenu/" + icon + ".png"), 24, 24));
         menuButton.setText("        " + text);
         menuButton.addActionListener((e) -> {
@@ -296,11 +326,21 @@ public class SidebarMenu extends JPanel {
                         unSelectedMenu = selectedMenu;
                         selectedMenu = menuButton;
                         animator.start();
-			LoadingDialog loading = new LoadingDialog();
-			executor.submit(() -> { 
-			    menuEvent.menuSelected(menuButton.getIndex());
-			    loading.dispose();
-			});
+                        
+                        SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+                            @Override
+                            protected Void doInBackground() throws Exception {
+                                menuEvent.menuSelected(menuButton.getIndex());
+                                return null;
+                            }
+
+                            @Override
+                            protected void done() {
+                                loading.dispose();
+                            }
+                            
+                        };
+                        worker.execute();
                         loading.setVisible(true);
                     }
                 }
@@ -308,6 +348,10 @@ public class SidebarMenu extends JPanel {
         });
 	menuButton.addMouseListener(eventHoverMenu); 
         plMenu.add(menuButton);
+    }
+    
+    public void setAvatar(ImageIcon image) {
+        instance.lbAvatar.setImage(image);
     }
 
     public void setSelected(int index) {

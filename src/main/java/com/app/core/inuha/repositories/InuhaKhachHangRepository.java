@@ -1,8 +1,9 @@
 package com.app.core.inuha.repositories;
 
 import com.app.common.helper.JbdcHelper;
+import com.app.common.infrastructure.constants.TrangThaiHoaDonConstant;
 import com.app.common.infrastructure.interfaces.IDAOinterface;
-import com.app.common.infrastructure.request.FillterRequest;
+import com.app.common.infrastructure.request.FilterRequest;
 import com.app.core.inuha.models.InuhaKhachHangModel;
 import com.app.core.inuha.request.InuhaFilterKhachHangRequest;
 import com.app.utils.NumberPhoneUtils;
@@ -88,9 +89,12 @@ public class InuhaKhachHangRepository implements IDAOinterface<InuhaKhachHangMod
     @Override
     public int delete(Integer id) throws SQLException {
         int result = 0;
-        String query = String.format("DELETE FROM %s WHERE id = ?", TABLE_NAME);
+        String query = String.format("""
+            UPDATE HoaDon SET id_khach_hang = NULL WHERE id_khach_hang = ? AND trang_thai = ?;
+            DELETE FROM %s WHERE id = ?;
+        """, TABLE_NAME);
         try {
-            result = JbdcHelper.updateAndFlush(query, id);
+            result = JbdcHelper.updateAndFlush(query, id, TrangThaiHoaDonConstant.STATUS_CHO_THANH_TOAN, id);
         } catch(Exception e) {
             e.printStackTrace();
             throw new SQLException(e.getMessage());
@@ -100,7 +104,7 @@ public class InuhaKhachHangRepository implements IDAOinterface<InuhaKhachHangMod
 
     @Override
     public boolean has(Integer id) throws SQLException {
-        String query = String.format("SELECT TOP(1) 1 FROM %s WHERE id = ? AND trang_thai_xoa = 0", TABLE_NAME);
+        String query = String.format("SELECT TOP(1) 1 FROM %s WHERE id = ? AND trang_thai_xoa != 1", TABLE_NAME);
         try {
             return JbdcHelper.value(query, id) != null;
         } catch (Exception e) {
@@ -113,7 +117,7 @@ public class InuhaKhachHangRepository implements IDAOinterface<InuhaKhachHangMod
         String query = String.format("""
             SELECT TOP(1) 1 
             FROM %s 
-            WHERE sdt LIKE ? AND trang_thai_xoa = 0
+            WHERE sdt LIKE ? AND trang_thai_xoa != 1
         """, TABLE_NAME);
 	try {
             return JbdcHelper.value(query, NumberPhoneUtils.formatPhoneNumber(sdt)) != null;
@@ -124,7 +128,7 @@ public class InuhaKhachHangRepository implements IDAOinterface<InuhaKhachHangMod
     }
         
     public boolean hasUse(Integer id) throws SQLException {
-        String query = "SELECT TOP(1) 1 FROM HoaDon WHERE id_khach_hang = ?";
+        String query = String.format("SELECT TOP(1) 1 FROM HoaDon WHERE id_khach_hang = ? AND trang_thai != %d", TrangThaiHoaDonConstant.STATUS_CHO_THANH_TOAN);
         try {
             return JbdcHelper.value(query, id) != null;
         } catch (Exception e) {
@@ -140,7 +144,7 @@ public class InuhaKhachHangRepository implements IDAOinterface<InuhaKhachHangMod
             WHERE
                 sdt LIKE ? AND
                 id != ? AND
-                trang_thai_xoa = 0
+                trang_thai_xoa != 1
         """, TABLE_NAME);
         try {
             return JbdcHelper.value(query, NumberPhoneUtils.formatPhoneNumber(model.getSdt()), model.getId()) != null;
@@ -155,7 +159,13 @@ public class InuhaKhachHangRepository implements IDAOinterface<InuhaKhachHangMod
         ResultSet resultSet = null;
         InuhaKhachHangModel model = null;
 
-        String query = String.format("SELECT * FROM %s WHERE id = ? AND trang_thai_xoa = 0", TABLE_NAME);
+        String query = String.format("""
+            SELECT 
+                kh.*,
+                (SELECT COUNT(*) FROM HoaDon WHERE id_khach_hang = kh.id AND trang_thai = %d) AS luot_mua
+            FROM %s AS kh
+            WHERE kh.id = ? AND kh.trang_thai_xoa != 1
+        """, TrangThaiHoaDonConstant.STATUS_DA_THANH_TOAN, TABLE_NAME);
 
         try {
             resultSet = JbdcHelper.query(query, id);
@@ -180,12 +190,13 @@ public class InuhaKhachHangRepository implements IDAOinterface<InuhaKhachHangMod
 
         String query = String.format("""
             SELECT 
-                *,
-                ROW_NUMBER() OVER (ORDER BY id DESC) AS stt
-            FROM %s
-            WHERE trang_thai_xoa = 0
-            ORDER BY id DESC 
-        """, TABLE_NAME);
+                kh.*,
+                ROW_NUMBER() OVER (ORDER BY kh.id DESC) AS stt,
+                (SELECT COUNT(*) FROM HoaDon WHERE id_khach_hang = kh.id AND trang_thai = %d) AS luot_mua
+            FROM %s AS kh
+            WHERE kh.trang_thai_xoa != 1
+            ORDER BY kh.id DESC 
+        """, TrangThaiHoaDonConstant.STATUS_DA_THANH_TOAN, TABLE_NAME);
 
         try {
             resultSet = JbdcHelper.query(query);
@@ -205,7 +216,7 @@ public class InuhaKhachHangRepository implements IDAOinterface<InuhaKhachHangMod
     }
 
     @Override
-    public List<InuhaKhachHangModel> selectPage(FillterRequest request) throws SQLException {
+    public List<InuhaKhachHangModel> selectPage(FilterRequest request) throws SQLException {
 	InuhaFilterKhachHangRequest filter = (InuhaFilterKhachHangRequest) request;
         List<InuhaKhachHangModel> list = new ArrayList<>();
         ResultSet resultSet = null;
@@ -213,22 +224,23 @@ public class InuhaKhachHangRepository implements IDAOinterface<InuhaKhachHangMod
         String query = String.format("""
             WITH TableCTE AS (
                 SELECT
-                    *,
-                    ROW_NUMBER() OVER (ORDER BY id DESC) AS stt
-                FROM %s
+                    kh.*,
+                    ROW_NUMBER() OVER (ORDER BY kh.id DESC) AS stt,
+                    (SELECT COUNT(*) FROM HoaDon WHERE id_khach_hang = kh.id AND trang_thai = %d) AS luot_mua
+                FROM %s AS kh
                 WHERE 
-                    trang_thai_xoa = 0 AND
+                    kh.trang_thai_xoa != 1 AND
                     (
-			(? IS NULL OR ho_ten LIKE ? OR sdt LIKE ?) AND
-			(COALESCE(?, -1) < 0 OR gioi_tinh = ?)
+			(? IS NULL OR kh.ho_ten LIKE ? OR kh.sdt LIKE ?) AND
+			(COALESCE(?, -1) < 0 OR kh.gioi_tinh = ?)
 		    )
             )
             SELECT *
             FROM TableCTE
             WHERE stt BETWEEN ? AND ?
-        """, TABLE_NAME);
+        """, TrangThaiHoaDonConstant.STATUS_DA_THANH_TOAN, TABLE_NAME);
 
-        int[] offset = FillterRequest.getOffset(request.getPage(), request.getSize());
+        int[] offset = FilterRequest.getOffset(request.getPage(), request.getSize());
         int start = offset[0];
         int limit = offset[1];
 
@@ -260,7 +272,7 @@ public class InuhaKhachHangRepository implements IDAOinterface<InuhaKhachHangMod
     }
 
     @Override
-    public int count(FillterRequest request) throws SQLException {
+    public int count(FilterRequest request) throws SQLException {
 	InuhaFilterKhachHangRequest filter = (InuhaFilterKhachHangRequest) request;
         int totalPages = 0;
         int totalRows = 0;
@@ -269,7 +281,7 @@ public class InuhaKhachHangRepository implements IDAOinterface<InuhaKhachHangMod
             SELECT COUNT(*) 
             FROM %s 
             WHERE 
-                trang_thai_xoa = 0 AND
+                trang_thai_xoa != 1 AND
 		(
 		    (? IS NULL OR ho_ten LIKE ? OR sdt LIKE ?) AND
 		    (COALESCE(?, -1) < 0 OR gioi_tinh = ?)
@@ -305,6 +317,7 @@ public class InuhaKhachHangRepository implements IDAOinterface<InuhaKhachHangMod
             .stt(addSTT ? resultSet.getInt("stt") : -1)
             .hoTen(resultSet.getString("ho_ten"))
 	    .sdt(resultSet.getString("sdt"))
+	    .soLanMuaHang(resultSet.getInt("luot_mua"))
 	    .gioiTinh(resultSet.getBoolean("gioi_tinh"))
 	    .diaChi(resultSet.getString("dia_chi"))
 	    .trangThaiXoa(resultSet.getBoolean("trang_thai_xoa"))

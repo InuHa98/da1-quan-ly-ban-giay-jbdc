@@ -6,9 +6,13 @@ import com.app.core.common.models.invoice.InvoiceDataModel;
 import com.app.core.common.models.invoice.InvoiceHeaderDetails;
 import com.app.core.common.models.invoice.InvoiceProduct;
 import com.app.core.common.models.invoice.InvoiceProductTableHeader;
+import com.app.utils.CurrencyUtils;
 import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.image.ImageData;
+import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.DeviceRgb;
+import com.itextpdf.kernel.events.PdfDocumentEvent;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.PageSize;
@@ -19,9 +23,13 @@ import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.borders.DashedBorder;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.properties.TextAlignment;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -31,6 +39,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 
 public class InvoiceCreatorPdfService {
     Document document;
@@ -51,18 +61,51 @@ public class InvoiceCreatorPdfService {
     public void createDocument() throws FileNotFoundException {
         PdfWriter pdfWriter = new PdfWriter(pdfName);
         pdfDocument = new PdfDocument(pdfWriter);
-        pdfDocument.setDefaultPageSize(PageSize.A4);
+        //pdfDocument.setDefaultPageSize(PageSize.LETTER);
         this.document = new Document(pdfDocument);
 
 	try {
-	    InputStream fontStream = InvoiceCreatorPdfService.class.getResourceAsStream("/assets/fonts/arial.ttf");
-	    String fontPath = "C:/Windows/Fonts/arial.ttf";
+	    String fontPath = "/assets/fonts/arial.ttf";
 	    PdfFont font = PdfFontFactory.createFont(fontPath, PdfEncodings.IDENTITY_H);
 	    this.document.setFont(font);
 	} catch (IOException ex) {
 	    ex.printStackTrace();
 	}
-	
+    }
+    
+    public void createQrCode(ImageIcon image) {
+        if (image != null) { 
+            BufferedImage bufferedImage = new BufferedImage(
+                image.getIconWidth(),
+                image.getIconHeight(),
+                BufferedImage.TYPE_INT_RGB
+            );
+
+            Graphics2D g2d = bufferedImage.createGraphics();
+            g2d.drawImage(image.getImage(), 0, 0, null);
+            g2d.dispose();
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            try {
+                ImageIO.write(bufferedImage, "png", baos);
+            } catch (IOException ex) {
+            }
+            byte[] imageBytes = baos.toByteArray();
+
+            float newWidth = 200;
+            float newHeight = 200;
+
+
+            ImageData data = ImageDataFactory.create(imageBytes);
+            Image imageData = new Image(data);
+
+            imageData.setWidth(newWidth);
+            imageData.setHeight(newHeight);
+
+
+            document.add(imageData);
+        }
+        document.close();
     }
     
     public void close() {
@@ -78,8 +121,8 @@ public class InvoiceCreatorPdfService {
         for (InvoiceProduct product : productList) {
             float total = product.getQuantity() * product.getPriceperpeice();
             threeColTable2.addCell(new Cell().add(new Paragraph(product.getPname().orElse(""))).setBorder(Border.NO_BORDER).setMarginLeft(10f));
-            threeColTable2.addCell(new Cell().add(new Paragraph(String.valueOf(product.getQuantity()))).setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER));
-            threeColTable2.addCell(new Cell().add(new Paragraph(String.valueOf(total))).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER).setMarginRight(15f));
+            threeColTable2.addCell(new Cell().add(new Paragraph(CurrencyUtils.parseNumber(product.getQuantity()))).setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER));
+            threeColTable2.addCell(new Cell().add(new Paragraph(CurrencyUtils.parseString(total))).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER).setMarginRight(15f));                
         }
         document.add(threeColTable2.setMarginBottom(20f));
 
@@ -92,19 +135,19 @@ public class InvoiceCreatorPdfService {
         Table threeColTable3 = new Table(threeColumnWidth);
         threeColTable3.addCell(new Cell().add(new Paragraph("")).setBorder(Border.NO_BORDER).setMarginLeft(10f));
         threeColTable3.addCell(new Cell().add(new Paragraph(InvoiceConstant.TOTAL_PRICE)).setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER));
-        threeColTable3.addCell(new Cell().add(new Paragraph(String.valueOf(data.getTongTienHang()))).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER).setMarginRight(15f));
+        threeColTable3.addCell(new Cell().add(new Paragraph(CurrencyUtils.parseString(data.getTongTienHang()))).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER).setMarginRight(15f));
         document.add(threeColTable3);
 	
         Table threeColTable4 = new Table(threeColumnWidth);
         threeColTable4.addCell(new Cell().add(new Paragraph("")).setBorder(Border.NO_BORDER).setMarginLeft(10f));
         threeColTable4.addCell(new Cell().add(new Paragraph(InvoiceConstant.TOTAL_SALE)).setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER));
-        threeColTable4.addCell(new Cell().add(new Paragraph(String.valueOf(data.getTongTienGiam()))).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER).setMarginRight(15f));
+        threeColTable4.addCell(new Cell().add(new Paragraph(CurrencyUtils.parseString(data.getTongTienGiam()))).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER).setMarginRight(15f));
         document.add(threeColTable4);
 	
         Table threeColTable5 = new Table(threeColumnWidth);
         threeColTable5.addCell(new Cell().add(new Paragraph("")).setBorder(Border.NO_BORDER).setMarginLeft(10f));
         threeColTable5.addCell(new Cell().add(new Paragraph(InvoiceConstant.TOTAL_PAID)).setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER));
-        threeColTable5.addCell(new Cell().add(new Paragraph(String.valueOf(totalSum - data.getTongTienGiam()))).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER).setMarginRight(15f));
+        threeColTable5.addCell(new Cell().add(new Paragraph(CurrencyUtils.parseString(totalSum - data.getTongTienGiam()))).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER).setMarginRight(15f));
         document.add(threeColTable5);
 
 	Table threeColTable6 = new Table(onetwo);
@@ -115,13 +158,13 @@ public class InvoiceCreatorPdfService {
 	Table threeColTable7 = new Table(threeColumnWidth);
         threeColTable7.addCell(new Cell().add(new Paragraph("")).setBorder(Border.NO_BORDER).setMarginLeft(10f));
         threeColTable7.addCell(new Cell().add(new Paragraph(InvoiceConstant.PRICE_PAID)).setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER));
-        threeColTable7.addCell(new Cell().add(new Paragraph(String.valueOf(data.getTienKhachTra()))).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER).setMarginRight(15f));
+        threeColTable7.addCell(new Cell().add(new Paragraph(CurrencyUtils.parseString(data.getTienKhachTra()))).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER).setMarginRight(15f));
         document.add(threeColTable7);
 	
 	Table threeColTable8 = new Table(threeColumnWidth);
         threeColTable8.addCell(new Cell().add(new Paragraph("")).setBorder(Border.NO_BORDER).setMarginLeft(10f));
         threeColTable8.addCell(new Cell().add(new Paragraph(InvoiceConstant.PRICE_CHANGE)).setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER));
-        threeColTable8.addCell(new Cell().add(new Paragraph(String.valueOf(Math.abs(data.getTienKhachTra() - (totalSum - data.getTongTienGiam()))))).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER).setMarginRight(15f));
+        threeColTable8.addCell(new Cell().add(new Paragraph(CurrencyUtils.parseString(Math.abs(data.getTienKhachTra() - (totalSum - data.getTongTienGiam()))))).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER).setMarginRight(15f));
         document.add(threeColTable8);
 	
         document.add(fullwidthDashedBorder(fullwidth));

@@ -6,7 +6,7 @@ import com.app.common.helper.MessageToast;
 import com.app.common.helper.Pagination;
 import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
-import com.app.common.infrastructure.request.FillterRequest;
+import com.app.common.infrastructure.request.FilterRequest;
 import com.app.core.inuha.models.sanpham.InuhaKieuDangModel;
 import com.app.core.inuha.services.InuhaKieuDangService;
 import com.app.core.inuha.views.quanly.sanpham.InuhaAddSanPhamView;
@@ -23,10 +23,13 @@ import javax.swing.table.DefaultTableModel;
 import raven.modal.ModalDialog;
 import raven.modal.component.SimpleModalBorder;
 import com.app.views.UI.table.ITableActionEvent;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import javax.swing.SwingWorker;
 
 /**
  *
@@ -46,6 +49,8 @@ public class InuhaListKieuDangView extends javax.swing.JPanel {
     
     private List<InuhaKieuDangModel> dataItems = new ArrayList<>();
     
+    private final LoadingDialog loading = new LoadingDialog();
+    
     public final static String MODAL_ID_CREATE = "modal_create_kieu_dang";
         
     public final static String MODAL_ID_EDIT = "modal_edit_kieu_dang";
@@ -64,11 +69,20 @@ public class InuhaListKieuDangView extends javax.swing.JPanel {
         initComponents();
         instance = this;
 
-        btnAdd.setBackground(ColorUtils.PRIMARY_COLOR);
+        btnAdd.setBackground(ColorUtils.BUTTON_PRIMARY);
+        btnAdd.setForeground(Color.WHITE);
         btnAdd.setIcon(ResourceUtils.getSVG("/svg/plus.svg", new Dimension(20, 20)));
         
+        SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                loadDataPage(1);
+                return null;
+            }
+        };
+        worker.execute();
+        
         setupTable(tblDanhSach);
-        loadDataPage(1);
         setupPagination();
     }
 
@@ -78,6 +92,9 @@ public class InuhaListKieuDangView extends javax.swing.JPanel {
             @Override
             public void onEdit(int row) {
                 InuhaKieuDangModel item = dataItems.get(row);
+                if (ModalDialog.isIdExist(MODAL_ID_EDIT)) {
+                    return;
+                }
                 ModalDialog.showModal(instance, new SimpleModalBorder(new InuhaEditKieuDangView(item), "Chỉnh sửa kiểu dáng"), MODAL_ID_EDIT);
             }
 
@@ -88,28 +105,39 @@ public class InuhaListKieuDangView extends javax.swing.JPanel {
                 }
                 InuhaKieuDangModel item = dataItems.get(row);
                 
-                LoadingDialog loadingDialog = new LoadingDialog();
-
-                executorService.submit(() -> {
-                    if (MessageModal.confirmWarning("Xoá: " + item.getTen(), "Bạn thực sự muốn xoá kiểu dáng này?")) {
-                        executorService.submit(() -> {
-                            try {
-                                kieuDangService.delete(item.getId());
-                                loadingDialog.dispose();
-                                InuhaAddSanPhamView.getInstance().loadDataKieuDang();
-                                loadDataPage();
-                                MessageToast.success("Xoá thành công kiểu dáng: " + item.getTen());
-                            } catch (ServiceResponseException e) {
-                                loadingDialog.dispose();
-                                MessageToast.error(e.getMessage());
-                            } catch (Exception e) {
-                                loadingDialog.dispose();
-                                MessageModal.error(ErrorConstant.DEFAULT_ERROR);
-                            } 
-                        });
-                        loadingDialog.setVisible(true);
+                SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
+                    @Override
+                    protected Boolean doInBackground() throws Exception {
+                        return MessageModal.confirmWarning("Xoá: " + item.getTen(), "Bạn thực sự muốn xoá kiểu dáng này?");
                     }
-                });
+
+                    @Override
+                    protected void done() {
+                        try {
+                            if (get()) {
+                                executorService.submit(() -> {
+                                    try {
+                                        kieuDangService.delete(item.getId());
+                                        InuhaAddSanPhamView.getInstance().loadDataKieuDang();
+                                        loadDataPage();
+                                        MessageToast.success("Xoá thành công kiểu dáng: " + item.getTen());
+                                    } catch (ServiceResponseException e) {
+                                        MessageToast.error(e.getMessage());
+                                    } catch (Exception e) {
+                                        MessageModal.error(ErrorConstant.DEFAULT_ERROR);
+                                    } finally {
+                                        loading.dispose();
+                                    }
+                                });
+                                loading.setVisible(true);
+                            }
+                        } catch (InterruptedException | ExecutionException ex) {
+                        }
+                    }
+                    
+                };
+                worker.execute();
+                
             }
 
             @Override
@@ -118,9 +146,7 @@ public class InuhaListKieuDangView extends javax.swing.JPanel {
         };
         
         TableCustomUI.apply(scrDanhSach, TableCustomUI.TableType.DEFAULT);
-        pnlDanhSach.setBackground(ColorUtils.BACKGROUND_GRAY);
-        tblDanhSach.setBackground(ColorUtils.BACKGROUND_GRAY);
-        tblDanhSach.getTableHeader().setBackground(ColorUtils.BACKGROUND_GRAY);
+        pnlDanhSach.setBackground(ColorUtils.BACKGROUND_TABLE);
         
         table.getColumnModel().getColumn(4).setCellRenderer(new InuhaThuocTinhTableActionCellRender(table));
         table.getColumnModel().getColumn(4).setCellEditor(new InuhaThuocTinhTableActionCellEditor(event));
@@ -139,7 +165,7 @@ public class InuhaListKieuDangView extends javax.swing.JPanel {
             
             model.setRowCount(0);
             
-            FillterRequest request = new FillterRequest();
+            FilterRequest request = new FilterRequest();
             request.setSize(sizePage);
 	    
             int totalPages = kieuDangService.getTotalPage(request);
@@ -168,7 +194,6 @@ public class InuhaListKieuDangView extends javax.swing.JPanel {
             @Override
             public void onChangeLimitItem(JComboBox<Integer> comboBox) {
                 sizePage = (int) comboBox.getSelectedItem();
-		LoadingDialog loading = new LoadingDialog();
 		executorService.submit(() -> { 
 		    loadDataPage(1);
 		    loading.dispose();
@@ -178,7 +203,6 @@ public class InuhaListKieuDangView extends javax.swing.JPanel {
 
             @Override
             public void onClickPage(int page) {
-		LoadingDialog loading = new LoadingDialog();
 		executorService.submit(() -> { 
 		    loadDataPage(page);
 		    loading.dispose();
@@ -249,9 +273,9 @@ public class InuhaListKieuDangView extends javax.swing.JPanel {
         pnlDanhSachLayout.setVerticalGroup(
             pnlDanhSachLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlDanhSachLayout.createSequentialGroup()
-                .addGap(15, 15, 15)
-                .addComponent(scrDanhSach, javax.swing.GroupLayout.PREFERRED_SIZE, 303, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(10, Short.MAX_VALUE))
+                .addContainerGap()
+                .addComponent(scrDanhSach, javax.swing.GroupLayout.PREFERRED_SIZE, 312, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pnlPhanTrang.setOpaque(false);
@@ -310,6 +334,9 @@ public class InuhaListKieuDangView extends javax.swing.JPanel {
 
     
     private void handleClickButtonAdd() {
+        if (ModalDialog.isIdExist(MODAL_ID_CREATE)) {
+            return;
+        }
         ModalDialog.showModal(this, new SimpleModalBorder(new InuhaAddKieuDangView(), "Thêm kiểu dáng mới"), MODAL_ID_CREATE);
     }
 }

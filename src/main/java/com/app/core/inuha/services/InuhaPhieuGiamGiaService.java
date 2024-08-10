@@ -3,11 +3,12 @@ package com.app.core.inuha.services;
 import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.constants.TrangThaiXoaConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
-import com.app.common.infrastructure.request.FillterRequest;
+import com.app.common.infrastructure.request.FilterRequest;
 import com.app.core.inuha.models.InuhaPhieuGiamGiaModel;
 import com.app.core.inuha.models.InuhaSanPhamModel;
 import com.app.core.inuha.repositories.InuhaPhieuGiamGiaRepository;
 import com.app.core.inuha.services.impl.IInuhaPhieuGiamGiaServiceInterface;
+import com.app.utils.SessionUtils;
 import com.app.utils.VoucherUtils;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -121,7 +122,7 @@ public class InuhaPhieuGiamGiaService implements IInuhaPhieuGiamGiaServiceInterf
     }
 
     @Override
-    public List<InuhaPhieuGiamGiaModel> getPage(FillterRequest request) {
+    public List<InuhaPhieuGiamGiaModel> getPage(FilterRequest request) {
         try {
             return repository.selectPage(request);
         } catch (SQLException ex) {
@@ -129,9 +130,10 @@ public class InuhaPhieuGiamGiaService implements IInuhaPhieuGiamGiaServiceInterf
         }
         return new ArrayList<>();
     }
+   
 
     @Override
-    public Integer getTotalPage(FillterRequest request) {
+    public Integer getTotalPage(FilterRequest request) {
         try {
             return repository.count(request);
         } catch (SQLException ex) {
@@ -161,6 +163,7 @@ public class InuhaPhieuGiamGiaService implements IInuhaPhieuGiamGiaServiceInterf
 		    return item;
 		}
 	    }
+	    
         } catch (SQLException ex) {
             throw new ServiceResponseException("Phiếu giảm giá không tồn tại hoặc đã hết hạn");
         }

@@ -1,6 +1,6 @@
 package com.app.common.infrastructure.interfaces;
 
-import com.app.common.infrastructure.request.FillterRequest;
+import com.app.common.infrastructure.request.FilterRequest;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -25,8 +25,8 @@ public interface IDAOinterface<T, I> {
 
     List<T> selectAll() throws SQLException;
 
-    List<T> selectPage(FillterRequest request) throws SQLException;
+    List<T> selectPage(FilterRequest request) throws SQLException;
 
-    int count(FillterRequest request) throws SQLException;
+    int count(FilterRequest request) throws SQLException;
 
 }

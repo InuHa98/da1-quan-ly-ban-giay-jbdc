@@ -64,6 +64,7 @@ public class LoadingDialog extends JDialog {
 	panel.setBackground(Color.BLACK);
         panel.setLayout(new MigLayout("fill, insets 20, wrap", "[center]", "[center]"));
         JLabel text = new JLabel(title);
+        text.setForeground(Color.WHITE);
         JProgressBar progressBar = new JProgressBar();
         progressBar.setIndeterminate(true);
         progressBar.setStringPainted(false);

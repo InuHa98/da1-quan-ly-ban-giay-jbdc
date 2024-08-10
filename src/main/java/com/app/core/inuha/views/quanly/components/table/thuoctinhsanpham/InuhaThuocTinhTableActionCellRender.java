@@ -24,11 +24,14 @@ public class InuhaThuocTinhTableActionCellRender extends TableActionCellRender {
         if (isSeleted == false) {
             if (row == hoverRow.getIndex()) {
                 actionPanel.setBackground(ColorUtils.BACKGROUND_HOVER);
+                actionPanel.setForeground(table.getSelectionForeground());
             } else {
                 actionPanel.setBackground(row % 2 == 0 ? ColorUtils.BACKGROUND_TABLE_ODD : table.getBackground());
+                actionPanel.setForeground(ColorUtils.TEXT_TABLE);
             }
         } else {
             actionPanel.setBackground(table.getSelectionBackground());
+            actionPanel.setForeground(table.getSelectionForeground());
         }
         
         return actionPanel;

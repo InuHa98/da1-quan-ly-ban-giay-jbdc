@@ -110,15 +110,12 @@ public class InuhaChangePasswordView extends javax.swing.JPanel {
         pnlLogin.setOpaque(true);
 
         lbDesc.setFont(lbDesc.getFont().deriveFont(lbDesc.getFont().getSize()+1f));
-        lbDesc.setForeground(new java.awt.Color(204, 204, 204));
-        lbDesc.setText("Mật khẩu phải có từ %d đến %d kí tự");
+        lbDesc.setText("Mật khẩu phải có từ %d đến %d ký tự");
 
         lbNewPassword.setFont(lbNewPassword.getFont().deriveFont(lbNewPassword.getFont().getStyle() | java.awt.Font.BOLD, lbNewPassword.getFont().getSize()+2));
-        lbNewPassword.setForeground(new java.awt.Color(204, 204, 204));
         lbNewPassword.setText("New Password");
 
         lbConfirmPassword.setFont(lbConfirmPassword.getFont().deriveFont(lbConfirmPassword.getFont().getStyle() | java.awt.Font.BOLD, lbConfirmPassword.getFont().getSize()+2));
-        lbConfirmPassword.setForeground(new java.awt.Color(204, 204, 204));
         lbConfirmPassword.setText("Confirm New Password");
 
         btnSubmit.setText("Đổi mật khẩu");
@@ -130,7 +127,6 @@ public class InuhaChangePasswordView extends javax.swing.JPanel {
         });
 
         lbOldPassword.setFont(lbOldPassword.getFont().deriveFont(lbOldPassword.getFont().getStyle() | java.awt.Font.BOLD, lbOldPassword.getFont().getSize()+2));
-        lbOldPassword.setForeground(new java.awt.Color(204, 204, 204));
         lbOldPassword.setText("Old Password");
 
         javax.swing.GroupLayout pnlLoginLayout = new javax.swing.GroupLayout(pnlLogin);
@@ -219,11 +215,11 @@ public class InuhaChangePasswordView extends javax.swing.JPanel {
 
         if (txtErrorNewPassword == null) {
             if (lenPassword < ValidateUtils.MIN_LENGTH_PASSWORD) {
-                txtErrorNewPassword = currentNewPassword + " - Phải có ít nhất " + ValidateUtils.MIN_LENGTH_PASSWORD + " kí tự";
+                txtErrorNewPassword = currentNewPassword + " - Phải có ít nhất " + ValidateUtils.MIN_LENGTH_PASSWORD + " ký tự";
             }
 
             if (lenPassword > ValidateUtils.MAX_LENGTH_PASSWORD) {
-                txtErrorNewPassword = currentNewPassword + " - Nhiều nhất " + ValidateUtils.MAX_LENGTH_PASSWORD + " kí tự";
+                txtErrorNewPassword = currentNewPassword + " - Nhiều nhất " + ValidateUtils.MAX_LENGTH_PASSWORD + " ký tự";
             }
         }
 

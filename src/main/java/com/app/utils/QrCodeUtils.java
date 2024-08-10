@@ -1,7 +1,5 @@
 package com.app.utils;
 
-import com.app.Application;
-import com.app.common.helper.MessageToast;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
@@ -14,7 +12,6 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.ImageIcon;
-import jnafilechooser.api.JnaFileChooser;
 
 
 /**
@@ -25,7 +22,7 @@ public class QrCodeUtils {
     
     public final static String MODAL_SCAN_ID = "modal-webcam-scan";
     
-    public final static String PREFIX_CODE = "INUSHOES";
+    public final static String PREFIX_CODE = "I-SHOES";
         
     public final static String SEPERATOR = "|";
     
@@ -84,11 +81,18 @@ public class QrCodeUtils {
         return -1;
     }
 	
-    public static boolean isValidCanCuocCongDan(String code) { 
-        String regex = "^\\d{12}\\|\\d{9}\\|[\\p{L}\\s]+\\|\\d{8}\\|(Nam|Nữ)\\|[\\p{L}\\s,]+\\|\\d{8}$";
+    public static String[] getDataCanCuocCongDan(String code) { 
+        String regex = "^\\d{12}\\|\\d{9}\\|([\\p{L}\\s]+)\\|\\d{8}\\|(Nam|Nữ)\\|([\\p{L}\\s,]+)\\|\\d{8}$";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(code);
-        return matcher.matches();
+        if (matcher.matches()) { 
+            String[] result = new String[matcher.groupCount()];
+            for (int i = 1; i <= matcher.groupCount(); i++) {
+                result[i - 1] = matcher.group(i);
+            }
+            return result;
+        }
+        return null;
     }
         
     public static void generateQRCodeImage(String text, File file) throws WriterException, IOException {

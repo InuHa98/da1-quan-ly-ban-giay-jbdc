@@ -3,7 +3,7 @@ package com.app.core.inuha.repositories;
 import com.app.common.helper.JbdcHelper;
 import com.app.common.infrastructure.constants.TrangThaiPhieuGiamGiaConstant;
 import com.app.common.infrastructure.interfaces.IDAOinterface;
-import com.app.common.infrastructure.request.FillterRequest;
+import com.app.common.infrastructure.request.FilterRequest;
 import com.app.core.inuha.models.InuhaPhieuGiamGiaModel;
 import com.app.core.inuha.request.InuhaFilterPhieuGiamGiaRequest;
 import com.app.utils.TimeUtils;
@@ -119,7 +119,7 @@ public class InuhaPhieuGiamGiaRepository implements IDAOinterface<InuhaPhieuGiam
 
     @Override
     public boolean has(Integer id) throws SQLException {
-        String query = String.format("SELECT TOP(1) 1 FROM %s WHERE id = ? AND trang_thai_xoa = 0", TABLE_NAME);
+        String query = String.format("SELECT TOP(1) 1 FROM %s WHERE id = ? AND trang_thai_xoa != 1", TABLE_NAME);
         try {
             return JbdcHelper.value(query, id) != null;
         } catch (Exception e) {
@@ -132,7 +132,7 @@ public class InuhaPhieuGiamGiaRepository implements IDAOinterface<InuhaPhieuGiam
         String query = String.format("""
             SELECT TOP(1) 1 
             FROM %s 
-            WHERE ma LIKE ? AND trang_thai_xoa = 0 AND ngay_ket_thuc >= GETDATE()
+            WHERE ma LIKE ? AND trang_thai_xoa != 1 AND ngay_ket_thuc >= CONVERT(DATE, GETDATE())
         """, TABLE_NAME);
         try {
             return JbdcHelper.value(query, ma) != null;
@@ -159,8 +159,8 @@ public class InuhaPhieuGiamGiaRepository implements IDAOinterface<InuhaPhieuGiam
             WHERE
                 ma LIKE ? AND
                 id != ? AND
-                trang_thai_xoa = 0 AND
-                ngay_ket_thuc >= GETDATE() 
+                trang_thai_xoa != 1 AND
+                ngay_ket_thuc >= CONVERT(DATE, GETDATE()) 
         """, TABLE_NAME);
         try {
             return JbdcHelper.value(query, model.getMa(), model.getId()) != null;
@@ -175,7 +175,7 @@ public class InuhaPhieuGiamGiaRepository implements IDAOinterface<InuhaPhieuGiam
         ResultSet resultSet = null;
         InuhaPhieuGiamGiaModel model = null;
 
-        String query = String.format("SELECT * FROM %s WHERE id = ? AND trang_thai_xoa = 0", TABLE_NAME);
+        String query = String.format("SELECT * FROM %s WHERE id = ? AND trang_thai_xoa != 1", TABLE_NAME);
 
         try {
             resultSet = JbdcHelper.query(query, id);
@@ -203,7 +203,7 @@ public class InuhaPhieuGiamGiaRepository implements IDAOinterface<InuhaPhieuGiam
                 *,
                 ROW_NUMBER() OVER (ORDER BY id DESC) AS stt
             FROM %s
-            WHERE trang_thai_xoa = 0
+            WHERE trang_thai_xoa != 1
             ORDER BY id DESC 
         """, TABLE_NAME);
 
@@ -225,7 +225,7 @@ public class InuhaPhieuGiamGiaRepository implements IDAOinterface<InuhaPhieuGiam
     }
 
     @Override
-    public List<InuhaPhieuGiamGiaModel> selectPage(FillterRequest request) throws SQLException {
+    public List<InuhaPhieuGiamGiaModel> selectPage(FilterRequest request) throws SQLException {
 	InuhaFilterPhieuGiamGiaRequest filter = (InuhaFilterPhieuGiamGiaRequest) request;
         List<InuhaPhieuGiamGiaModel> list = new ArrayList<>();
         ResultSet resultSet = null;
@@ -237,16 +237,16 @@ public class InuhaPhieuGiamGiaRepository implements IDAOinterface<InuhaPhieuGiam
                     ROW_NUMBER() OVER (ORDER BY id DESC) AS stt
                 FROM %s
                 WHERE 
-		    trang_thai_xoa = 0 AND
+		    trang_thai_xoa != 1 AND
 		    (
                         (? IS NULL OR ma LIKE ? OR ten LIKE ?) AND
                         (COALESCE(?, NULL) IS NULL OR ngay_bat_dau >= ?) AND
 			(COALESCE(?, NULL) IS NULL OR ngay_ket_thuc <= ?) AND
                         (
                             COALESCE(?, 0) < 1 OR
-                            (? = %d AND ngay_bat_dau <= GETDATE() AND ngay_ket_thuc >= GETDATE()) OR
-                            (? = %d AND ngay_bat_dau >= GETDATE()) OR 
-                            (? = %d AND ngay_ket_thuc <= GETDATE())
+                            (? = %d AND ngay_bat_dau <= CONVERT(DATE, GETDATE()) AND ngay_ket_thuc >= CONVERT(DATE, GETDATE())) OR
+                            (? = %d AND ngay_bat_dau > CONVERT(DATE, GETDATE())) OR 
+                            (? = %d AND ngay_ket_thuc < CONVERT(DATE, GETDATE()))
                         )
 		    )
             )
@@ -255,7 +255,7 @@ public class InuhaPhieuGiamGiaRepository implements IDAOinterface<InuhaPhieuGiam
             WHERE stt BETWEEN ? AND ?
         """, TABLE_NAME, TrangThaiPhieuGiamGiaConstant.DANG_DIEN_RA, TrangThaiPhieuGiamGiaConstant.SAP_DIEN_RA, TrangThaiPhieuGiamGiaConstant.DA_DIEN_RA);
 
-        int[] offset = FillterRequest.getOffset(request.getPage(), request.getSize());
+        int[] offset = FilterRequest.getOffset(request.getPage(), request.getSize());
         int start = offset[0];
         int limit = offset[1];
 
@@ -293,7 +293,7 @@ public class InuhaPhieuGiamGiaRepository implements IDAOinterface<InuhaPhieuGiam
     }
 
     @Override
-    public int count(FillterRequest request) throws SQLException {
+    public int count(FilterRequest request) throws SQLException {
 	InuhaFilterPhieuGiamGiaRequest filter = (InuhaFilterPhieuGiamGiaRequest) request;
 	
         int totalPages = 0;
@@ -303,20 +303,21 @@ public class InuhaPhieuGiamGiaRepository implements IDAOinterface<InuhaPhieuGiam
             SELECT COUNT(*)
             FROM %s
             WHERE
-                trang_thai_xoa = 0 AND
+                trang_thai_xoa != 1 AND
 		(
 		    (? IS NULL OR ma LIKE ? OR ten LIKE ?) AND
 		    (COALESCE(?, NULL) IS NULL OR ngay_bat_dau >= ?) AND
 		    (COALESCE(?, NULL) IS NULL OR ngay_ket_thuc <= ?) AND
 		    (
 			COALESCE(?, 0) < 1 OR
-			(? = %d AND ngay_bat_dau <= GETDATE() AND ngay_ket_thuc >= GETDATE()) OR
-			(? = %d AND ngay_bat_dau >= GETDATE()) OR 
-			(? = %d AND ngay_ket_thuc <= GETDATE())
+			(? = %d AND ngay_bat_dau <= CONVERT(DATE, GETDATE()) AND ngay_ket_thuc >= CONVERT(DATE, GETDATE())) OR
+			(? = %d AND ngay_bat_dau > CONVERT(DATE, GETDATE())) OR 
+			(? = %d AND ngay_ket_thuc < CONVERT(DATE, GETDATE()))
 		    )
 		)
         """, TABLE_NAME, TrangThaiPhieuGiamGiaConstant.DANG_DIEN_RA, TrangThaiPhieuGiamGiaConstant.SAP_DIEN_RA, TrangThaiPhieuGiamGiaConstant.DA_DIEN_RA);
 
+	
 	Object[] args = new Object[] {
 	    filter.getKeyword(),
             String.format("%%%s%%", filter.getKeyword()),
@@ -330,7 +331,6 @@ public class InuhaPhieuGiamGiaRepository implements IDAOinterface<InuhaPhieuGiam
 	    filter.getTrangThai().getValue(),
 	    filter.getTrangThai().getValue()
         };
-		
         try {
             totalRows = (int) JbdcHelper.value(query, args);
             totalPages = (int) Math.ceil((double) totalRows / request.getSize());
@@ -350,7 +350,7 @@ public class InuhaPhieuGiamGiaRepository implements IDAOinterface<InuhaPhieuGiam
             FROM %s 
             WHERE 
                 ma LIKE ? AND
-                trang_thai_xoa = 0
+                trang_thai_xoa != 1
         """, TABLE_NAME);
 
         try {

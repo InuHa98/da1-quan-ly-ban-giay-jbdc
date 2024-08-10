@@ -2,10 +2,14 @@ package com.app.core.inuha.repositories;
 
 
 import com.app.common.helper.JbdcHelper;
+import com.app.common.infrastructure.constants.TrangThaiHoaDonConstant;
 import com.app.common.infrastructure.interfaces.IDAOinterface;
-import com.app.common.infrastructure.request.FillterRequest;
+import com.app.common.infrastructure.request.FilterRequest;
 import com.app.core.inuha.models.InuhaTaiKhoanModel;
-import com.app.core.inuha.request.InuhaFillterTaiKhoanRequest;
+import com.app.core.inuha.models.InuhaTaiKhoanModel;
+import com.app.core.inuha.request.InuhaFilterTaiKhoanRequest;
+import com.app.utils.TimeUtils;
+import java.math.BigDecimal;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,6 +22,8 @@ import java.util.Optional;
  */
 public class InuhaTaiKhoanRepository implements IDAOinterface<InuhaTaiKhoanModel, Integer> {
 
+    private final static String TABLE_NAME = "TaiKhoan";
+    
     private static InuhaTaiKhoanRepository instance = null;
     
     public static InuhaTaiKhoanRepository getInstance() { 
@@ -34,10 +40,10 @@ public class InuhaTaiKhoanRepository implements IDAOinterface<InuhaTaiKhoanModel
     @Override
     public int insert(InuhaTaiKhoanModel model) throws SQLException {
         int result = 0;
-        String query = """
-            INSERT INTO TaiKhoan(tai_khoan, mat_khau, email, ho_ten, sdt, gioi_tinh, dia_chi, hinh_anh, otp, trang_thai, adm, ngay_tao)
+        String query = String.format("""
+            INSERT INTO %s(tai_khoan, mat_khau, email, ho_ten, sdt, gioi_tinh, dia_chi, hinh_anh, otp, trang_thai, adm, ngay_tao)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """;
+        """, TABLE_NAME);
         try {
             Object[] args = new Object[] {
                 model.getUsername(),
@@ -51,8 +57,8 @@ public class InuhaTaiKhoanRepository implements IDAOinterface<InuhaTaiKhoanModel
                 model.getOtp(),
                 model.isTrangThai(),
                 model.isAdmin(),
-                model.getNgayTao()
-            };
+                TimeUtils.currentDate()
+	    };
             result = JbdcHelper.updateAndFlush(query, args);
         } catch(Exception e) {
             e.printStackTrace();
@@ -65,8 +71,8 @@ public class InuhaTaiKhoanRepository implements IDAOinterface<InuhaTaiKhoanModel
     @Override
     public int update(InuhaTaiKhoanModel model) throws SQLException {
         int result = 0;
-        String query = """
-            UPDATE TaiKhoan SET
+        String query = String.format("""
+            UPDATE %s SET
                 tai_khoan = ?,
                 mat_khau = ?,
                 email = ?,
@@ -77,10 +83,9 @@ public class InuhaTaiKhoanRepository implements IDAOinterface<InuhaTaiKhoanModel
                 hinh_anh = ?,
                 otp = ?,
                 trang_thai = ?,
-                adm = ?,
-                ngay_tao = ?
+                adm = ?
             WHERE id = ?
-        """;
+        """, TABLE_NAME);
         try {
             Object[] args = new Object[] {
                 model.getUsername(),
@@ -94,7 +99,6 @@ public class InuhaTaiKhoanRepository implements IDAOinterface<InuhaTaiKhoanModel
                 model.getOtp(),
                 model.isTrangThai(),
                 model.isAdmin(),
-                model.getNgayTao(),
                 model.getId()
             };
             result = JbdcHelper.updateAndFlush(query, args);
@@ -109,9 +113,12 @@ public class InuhaTaiKhoanRepository implements IDAOinterface<InuhaTaiKhoanModel
     @Override
     public int delete(Integer id) throws SQLException {
         int result = 0;
-        String query = "DELETE FROM TaiKhoan WHERE id = ?";
+        String query = String.format("""
+            DELETE FROM HoaDon WHERE id_tai_khoan = ? AND trang_thai = ?;
+            DELETE FROM %s WHERE id = ?
+        """, TABLE_NAME);
         try {
-            result = JbdcHelper.updateAndFlush(query, id);
+            result = JbdcHelper.updateAndFlush(query, id, TrangThaiHoaDonConstant.STATUS_CHO_THANH_TOAN, id);
         } catch(Exception e) {
             e.printStackTrace();
             throw new SQLException(e.getMessage());
@@ -121,7 +128,7 @@ public class InuhaTaiKhoanRepository implements IDAOinterface<InuhaTaiKhoanModel
 
     @Override
     public boolean has(Integer id) throws SQLException {
-        String query = "SELECT TOP(1) 1 FROM TaiKhoan WHERE id = ? AND trang_thai_xoa = 0";
+        String query = String.format("SELECT TOP(1) 1 FROM %s WHERE id = ? AND trang_thai_xoa != 1", TABLE_NAME);
         try {
             return JbdcHelper.value(query, id) != null;
         } catch (Exception e) {
@@ -130,17 +137,126 @@ public class InuhaTaiKhoanRepository implements IDAOinterface<InuhaTaiKhoanModel
         }
     }
 
+    public boolean hasUse(Integer id) throws SQLException {
+        String query = "SELECT TOP(1) 1 FROM HoaDon WHERE id_tai_khoan = ?";
+        try {
+            return JbdcHelper.value(query, id) != null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new SQLException(e.getMessage());
+        }
+    }
+    
+    public boolean hasUsername(String username) throws SQLException {
+        String query = String.format("""
+            SELECT TOP(1) 1
+            FROM %s
+            WHERE
+                tai_khoan LIKE ? AND
+                trang_thai_xoa != 1
+        """, TABLE_NAME);
+        try {
+            return JbdcHelper.value(query, username) != null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new SQLException(e.getMessage());
+        }
+    }
+    
+    public boolean hasEmail(String email) throws SQLException {
+        String query = String.format("""
+            SELECT TOP(1) 1
+            FROM %s
+            WHERE
+                email LIKE ? AND
+                trang_thai_xoa != 1
+        """, TABLE_NAME);
+        try {
+            return JbdcHelper.value(query, email) != null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new SQLException(e.getMessage());
+        }
+    }
+	
+    public boolean hasSdt(String sdt) throws SQLException {
+        String query = String.format("""
+            SELECT TOP(1) 1
+            FROM %s
+            WHERE
+                sdt LIKE ? AND
+                trang_thai_xoa != 1
+        """, TABLE_NAME);
+        try {
+            return JbdcHelper.value(query, sdt) != null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new SQLException(e.getMessage());
+        }
+    }
+    
+    public boolean hasUsername(InuhaTaiKhoanModel model) throws SQLException {
+        String query = String.format("""
+            SELECT TOP(1) 1
+            FROM %s
+            WHERE
+                tai_khoan LIKE ? AND
+                id != ? AND
+                trang_thai_xoa != 1
+        """, TABLE_NAME);
+        try {
+            return JbdcHelper.value(query, model.getUsername(), model.getId()) != null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new SQLException(e.getMessage());
+        }
+    }
+    
+    public boolean hasEmail(InuhaTaiKhoanModel model) throws SQLException {
+        String query = String.format("""
+            SELECT TOP(1) 1
+            FROM %s
+            WHERE
+                email LIKE ? AND
+                id != ? AND
+                trang_thai_xoa != 1
+        """, TABLE_NAME);
+        try {
+            return JbdcHelper.value(query, model.getEmail(), model.getId()) != null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new SQLException(e.getMessage());
+        }
+    }
+	
+    public boolean hasSdt(InuhaTaiKhoanModel model) throws SQLException {
+        String query = String.format("""
+            SELECT TOP(1) 1
+            FROM %s
+            WHERE
+                sdt LIKE ? AND
+                id != ? AND
+                trang_thai_xoa != 1
+        """, TABLE_NAME);
+        try {
+            return JbdcHelper.value(query, model.getSdt(), model.getId()) != null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new SQLException(e.getMessage());
+        }
+    }
+	
     @Override
     public Optional<InuhaTaiKhoanModel> getById(Integer id) throws SQLException {
         ResultSet resultSet = null;
         InuhaTaiKhoanModel TaiKhoan = null;
 
-        String query = "SELECT * FROM TaiKhoan WHERE id = ? AND trang_thai_xoa = 0";
+        String query = String.format("SELECT * FROM %s WHERE id = ? AND trang_thai_xoa != 1", TABLE_NAME);
 
         try {
             resultSet = JbdcHelper.query(query, id);
             while(resultSet.next()) {
-                TaiKhoan = buildTaiKhoan(resultSet);
+                TaiKhoan = buildData(resultSet);
             }
         } catch(Exception e) {
             e.printStackTrace();
@@ -158,16 +274,17 @@ public class InuhaTaiKhoanRepository implements IDAOinterface<InuhaTaiKhoanModel
         List<InuhaTaiKhoanModel> list = new ArrayList<>();
         ResultSet resultSet = null;
 
-        String query = """
-            SELECT *
-            FROM TaiKhoan
-            WHERE trang_thai_xoa = 0
-        """;
+        String query = String.format("""
+            SELECT *, ROW_NUMBER() OVER (ORDER BY id DESC) AS stt
+            FROM %s
+            WHERE trang_thai_xoa != 1
+            ORDER BY id DESC
+        """, TABLE_NAME);
 
         try {
             resultSet = JbdcHelper.query(query);
             while(resultSet.next()) {
-                InuhaTaiKhoanModel taiKhoan = buildTaiKhoan(resultSet);
+                InuhaTaiKhoanModel taiKhoan = buildData(resultSet, true);
                 list.add(taiKhoan);
             }
         } catch(Exception e) {
@@ -182,27 +299,46 @@ public class InuhaTaiKhoanRepository implements IDAOinterface<InuhaTaiKhoanModel
     }
 
     @Override
-    public List<InuhaTaiKhoanModel> selectPage(FillterRequest request) throws SQLException {
+    public List<InuhaTaiKhoanModel> selectPage(FilterRequest request) throws SQLException {
+	InuhaFilterTaiKhoanRequest filter = (InuhaFilterTaiKhoanRequest) request;
         List<InuhaTaiKhoanModel> list = new ArrayList<>();
         ResultSet resultSet = null;
 
-        String query = """
-            WITH TaiKhoanCTE AS (
+        String query = String.format("""
+            WITH TableCTE AS (
                 SELECT
                     *,
-                    ROW_NUMBER() OVER (ORDER BY id) AS stt
-                FROM TaiKhoan
+                    ROW_NUMBER() OVER (ORDER BY id DESC) AS stt
+                FROM %s
+                WHERE 
+                    trang_thai_xoa != 1 AND
+		    (
+			(? IS NULL OR tai_khoan LIKE ? OR ho_ten LIKE ? OR email LIKE ?) AND
+			(COALESCE(?, -1) < 0 OR adm = ?) AND
+			(COALESCE(?, -1) < 0 OR gioi_tinh = ?) AND
+                        (COALESCE(?, -1) < 0 OR trang_thai = ?)
+		    )
             )
             SELECT *
-            FROM TaiKhoanCTE
-            WHERE trang_thai_xoa = 0 AND (stt BETWEEN ? AND ?)
-        """;
+            FROM TableCTE
+            WHERE stt BETWEEN ? AND ?
+        """, TABLE_NAME);
 
-        int[] offset = FillterRequest.getOffset(request.getPage(), request.getSize());
+        int[] offset = FilterRequest.getOffset(request.getPage(), request.getSize());
         int start = offset[0];
         int limit = offset[1];
 
         Object[] args = new Object[] {
+	    filter.getKeyword(),
+            String.format("%%%s%%", filter.getKeyword()),
+            String.format("%%%s%%", filter.getKeyword()),
+	    String.format("%%%s%%", filter.getKeyword()),
+	    filter.getChucVu().getValue(),
+	    filter.getChucVu().getValue(),
+	    filter.getGioiTinh().getValue(),
+	    filter.getGioiTinh().getValue(),
+	    filter.getTrangThai().getValue(),
+	    filter.getTrangThai().getValue(),
             start,
             limit
         };
@@ -210,7 +346,7 @@ public class InuhaTaiKhoanRepository implements IDAOinterface<InuhaTaiKhoanModel
         try {
             resultSet = JbdcHelper.query(query, args);
             while(resultSet.next()) {
-                InuhaTaiKhoanModel taiKhoan = buildTaiKhoan(resultSet);
+                InuhaTaiKhoanModel taiKhoan = buildData(resultSet, true);
                 list.add(taiKhoan);
             }
         } catch(Exception e) {
@@ -225,15 +361,35 @@ public class InuhaTaiKhoanRepository implements IDAOinterface<InuhaTaiKhoanModel
     }
 
     @Override
-    public int count(FillterRequest request) throws SQLException {
-        InuhaFillterTaiKhoanRequest filter = (InuhaFillterTaiKhoanRequest) request;
+    public int count(FilterRequest request) throws SQLException {
+        InuhaFilterTaiKhoanRequest filter = (InuhaFilterTaiKhoanRequest) request;
         int totalPages = 0;
         int totalRows = 0;
 
-        String query = "SELECT COUNT(*) FROM TaiKhoan WHERE ho_ten LIKE ?";
+        String query = String.format("""
+            SELECT COUNT(*)
+            FROM %s 
+            WHERE 
+                trang_thai_xoa != 1 AND
+		(
+		    (? IS NULL OR tai_khoan LIKE ? OR ho_ten LIKE ? OR email LIKE ?) AND
+		    (COALESCE(?, -1) < 0 OR adm = ?) AND
+		    (COALESCE(?, -1) < 0 OR gioi_tinh = ?) AND
+		    (COALESCE(?, -1) < 0 OR trang_thai = ?)
+		)
+        """, TABLE_NAME);
 
         Object[] args = new Object[] {
-            "%" + filter.getKeyword() + "%"
+	    filter.getKeyword(),
+            String.format("%%%s%%", filter.getKeyword()),
+            String.format("%%%s%%", filter.getKeyword()),
+	    String.format("%%%s%%", filter.getKeyword()),
+	    filter.getChucVu().getValue(),
+	    filter.getChucVu().getValue(),
+	    filter.getGioiTinh().getValue(),
+	    filter.getGioiTinh().getValue(),
+	    filter.getTrangThai().getValue(),
+	    filter.getTrangThai().getValue()
         };
 
         try {
@@ -246,9 +402,14 @@ public class InuhaTaiKhoanRepository implements IDAOinterface<InuhaTaiKhoanModel
         return totalPages;
     }
 
-    private InuhaTaiKhoanModel buildTaiKhoan(ResultSet resultSet) throws SQLException {
+    private InuhaTaiKhoanModel buildData(ResultSet resultSet) throws SQLException {
+	return buildData(resultSet, false);
+    }
+    
+    private InuhaTaiKhoanModel buildData(ResultSet resultSet, boolean addSTT) throws SQLException {
         return InuhaTaiKhoanModel.builder()
             .id(resultSet.getInt("id"))
+	    .stt(addSTT ? resultSet.getInt("stt") : -1)
             .username(resultSet.getString("tai_khoan"))
             .password(resultSet.getString("mat_khau"))
             .email(resultSet.getString("email"))
@@ -261,20 +422,21 @@ public class InuhaTaiKhoanRepository implements IDAOinterface<InuhaTaiKhoanModel
             .trangThai(resultSet.getBoolean("trang_thai"))
             .isAdmin(resultSet.getBoolean("adm"))
             .ngayTao(resultSet.getString("ngay_tao"))
-            .build();
+	    .trangThaiXoa(resultSet.getBoolean("trang_thai_xoa"))            
+	    .build();
     }
 
     public Optional<InuhaTaiKhoanModel> findByEmail(String email) throws SQLException {
         ResultSet resultSet = null;
         InuhaTaiKhoanModel taiKhoan = null;
 
-        String query = "SELECT * FROM TaiKhoan WHERE email LIKE ? AND trang_thai_xoa = 0";
+        String query = String.format("SELECT * FROM %s WHERE email LIKE ? AND trang_thai_xoa != 1", TABLE_NAME);
 
         try {
 
             resultSet = JbdcHelper.query(query, email);
             while(resultSet.next()) {
-                    taiKhoan = buildTaiKhoan(resultSet);
+                    taiKhoan = buildData(resultSet);
             }
         } catch(Exception e) {
             e.printStackTrace();
@@ -291,12 +453,12 @@ public class InuhaTaiKhoanRepository implements IDAOinterface<InuhaTaiKhoanModel
         ResultSet resultSet = null;
         InuhaTaiKhoanModel taiKhoan = null;
 
-        String query = "SELECT * FROM TaiKhoan WHERE tai_khoan LIKE ? AND trang_thai_xoa = 0";
+        String query = String.format("SELECT * FROM %s WHERE tai_khoan LIKE ? AND trang_thai_xoa != 1", TABLE_NAME);
 
         try {
             resultSet = JbdcHelper.query(query, username);
             while(resultSet.next()) {
-                taiKhoan = buildTaiKhoan(resultSet);
+                taiKhoan = buildData(resultSet);
             }
         } catch(Exception e) {
             e.printStackTrace();
@@ -312,7 +474,7 @@ public class InuhaTaiKhoanRepository implements IDAOinterface<InuhaTaiKhoanModel
     public Integer updateOTPById(int id, String otp) throws SQLException {
         int row = 0;
 
-        String query = "UPDATE TaiKhoan SET otp = ? WHERE id = ? AND trang_thai_xoa = 0";
+        String query = String.format("UPDATE %s SET otp = ? WHERE id = ? AND trang_thai_xoa != 1", TABLE_NAME);
 
         Object[] args = new Object[] {
             otp,
@@ -330,7 +492,7 @@ public class InuhaTaiKhoanRepository implements IDAOinterface<InuhaTaiKhoanModel
     }
 
     public boolean checkOtp(String email, String otp) throws SQLException {
-        String query = "SELECT TOP(1) 1 FROM TaiKhoan WHERE email LIKE ? AND otp = ? AND trang_thai_xoa = 0";
+        String query = String.format("SELECT TOP(1) 1 FROM %s WHERE email LIKE ? AND otp = ? AND trang_thai_xoa != 1", TABLE_NAME);
 
         Object[] args = new Object[] {
             email,
@@ -348,11 +510,11 @@ public class InuhaTaiKhoanRepository implements IDAOinterface<InuhaTaiKhoanModel
     public Integer updateForgotPassword(String password, String email, String otp) throws SQLException {
         int row = 0;
 
-        String query = """
-            UPDATE TaiKhoan
+        String query = String.format("""
+            UPDATE %s
             SET mat_khau = ?, otp = NULL
-            WHERE email LIKE ? AND otp = ? AND trang_thai_xoa = 0
-        """;
+            WHERE email LIKE ? AND otp = ? AND trang_thai_xoa != 1
+        """, TABLE_NAME);
 
         Object[] args = new Object[] {
             password,
@@ -373,7 +535,7 @@ public class InuhaTaiKhoanRepository implements IDAOinterface<InuhaTaiKhoanModel
     public Integer updateAvatar(int id, String avatar) throws SQLException {
         int row = 0;
 
-        String query = "UPDATE TaiKhoan SET hinh_anh = ? WHERE id = ? AND trang_thai_xoa = 0";
+        String query = String.format("UPDATE %s SET hinh_anh = ? WHERE id = ? AND trang_thai_xoa != 1", TABLE_NAME);
 
         Object[] args = new Object[] {
             avatar,
@@ -393,7 +555,7 @@ public class InuhaTaiKhoanRepository implements IDAOinterface<InuhaTaiKhoanModel
     public Integer updatePassword(int id, String oldPassword, String newPassword) throws SQLException {
         int row = 0;
 
-        String query = "UPDATE TaiKhoan SET mat_khau = ? WHERE id = ? AND mat_khau = ? AND trang_thai_xoa = 0";
+        String query = String.format("UPDATE %s SET mat_khau = ? WHERE id = ? AND mat_khau = ? AND trang_thai_xoa != 1", TABLE_NAME);
 
         Object[] args = new Object[] {
             newPassword,
@@ -411,4 +573,14 @@ public class InuhaTaiKhoanRepository implements IDAOinterface<InuhaTaiKhoanModel
         return row;
     }
 
+    public int getLastId() throws SQLException {
+        String query = String.format("SELECT IDENT_CURRENT('%s') AS NextId", TABLE_NAME);
+        try {
+	    BigDecimal id = (BigDecimal) JbdcHelper.value(query);
+            return id.intValue();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new SQLException(e.getMessage());
+        }
+    }
 }

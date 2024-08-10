@@ -4,7 +4,7 @@ import com.app.common.helper.JbdcHelper;
 import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.constants.TrangThaiXoaConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
-import com.app.common.infrastructure.request.FillterRequest;
+import com.app.common.infrastructure.request.FilterRequest;
 import com.app.core.inuha.models.InuhaKhachHangModel;
 import com.app.core.inuha.repositories.InuhaKhachHangRepository;
 import com.app.core.inuha.services.impl.IInuhaKhachHangServiceInterface;
@@ -120,7 +120,7 @@ public class InuhaKhachHangService implements IInuhaKhachHangServiceInterface {
     }
 
     @Override
-    public List<InuhaKhachHangModel> getPage(FillterRequest request) {
+    public List<InuhaKhachHangModel> getPage(FilterRequest request) {
         try {
             return repository.selectPage(request);
         } catch (SQLException ex) {
@@ -130,7 +130,7 @@ public class InuhaKhachHangService implements IInuhaKhachHangServiceInterface {
     }
 
     @Override
-    public Integer getTotalPage(FillterRequest request) {
+    public Integer getTotalPage(FilterRequest request) {
         try {
             return repository.count(request);
         } catch (SQLException ex) {

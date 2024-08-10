@@ -3,7 +3,7 @@ package com.app.core.inuha.services;
 import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.constants.TrangThaiXoaConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
-import com.app.common.infrastructure.request.FillterRequest;
+import com.app.common.infrastructure.request.FilterRequest;
 import com.app.core.inuha.models.InuhaHoaDonModel;
 import com.app.core.inuha.models.InuhaPhieuGiamGiaModel;
 import com.app.core.inuha.repositories.InuhaHoaDonRepository;
@@ -151,7 +151,7 @@ public class InuhaHoaDonService implements IInuhaHoaDonServiceInterface {
     }
 
     @Override
-    public List<InuhaHoaDonModel> getPage(FillterRequest request) {
+    public List<InuhaHoaDonModel> getPage(FilterRequest request) {
         try {
             return repository.selectPage(request);
         } catch (SQLException ex) {
@@ -161,7 +161,7 @@ public class InuhaHoaDonService implements IInuhaHoaDonServiceInterface {
     }
 
     @Override
-    public Integer getTotalPage(FillterRequest request) {
+    public Integer getTotalPage(FilterRequest request) {
         try {
             return repository.count(request);
         } catch (SQLException ex) {
@@ -171,13 +171,22 @@ public class InuhaHoaDonService implements IInuhaHoaDonServiceInterface {
     }
 
     @Override
-    public String getLastCode() {
+    public String getLastId() {
         try {
-            return repository.getLastCode();
+            return repository.getLastId();
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
         return null;
+    }
+    
+    public int count(FilterRequest request) {
+        try {
+            return repository.count(request);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return 0;
     }
     
 }

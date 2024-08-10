@@ -5,7 +5,7 @@ import com.app.common.infrastructure.constants.PhuongThucThanhToanConstant;
 import com.app.common.infrastructure.constants.TrangThaiHoaDonConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
 import com.app.common.infrastructure.interfaces.IDAOinterface;
-import com.app.common.infrastructure.request.FillterRequest;
+import com.app.common.infrastructure.request.FilterRequest;
 import com.app.common.infrastructure.session.SessionLogin;
 import com.app.core.inuha.models.InuhaHoaDonChiTietModel;
 import com.app.core.inuha.models.InuhaHoaDonModel;
@@ -16,6 +16,7 @@ import com.app.core.inuha.models.InuhaTaiKhoanModel;
 import com.app.core.inuha.models.sanpham.InuhaKichCoModel;
 import com.app.core.inuha.request.InuhaFilterHoaDonChiTietRequest;
 import com.app.utils.TimeUtils;
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -174,8 +175,8 @@ public class InuhaHoaDonChiTietRepository implements IDAOinterface<InuhaHoaDonCh
                 JOIN SanPham AS sp ON sp.id = spct.id_san_pham
             WHERE 
                 hdct.id_hoa_don = ? AND
-                sp.trang_thai_xoa = 0 AND
-                spct.trang_thai_xoa = 0
+                sp.trang_thai_xoa != 1 AND
+                spct.trang_thai_xoa != 1
 	    ORDER BY hdct.id DESC 
         """, TABLE_NAME);
 
@@ -245,7 +246,7 @@ public class InuhaHoaDonChiTietRepository implements IDAOinterface<InuhaHoaDonCh
 
         String query = String.format("""
             SELECT 
-                hdct.id
+                hdct.*
             FROM %s AS hdct
 		JOIN HoaDon AS hd ON hd.id = hdct.id_hoa_don
 		JOIN SanPhamChiTiet AS spct ON spct.id = hdct.id_san_pham_chi_tiet
@@ -274,7 +275,7 @@ public class InuhaHoaDonChiTietRepository implements IDAOinterface<InuhaHoaDonCh
     }
 	
     @Override
-    public List<InuhaHoaDonChiTietModel> selectPage(FillterRequest request) throws SQLException {
+    public List<InuhaHoaDonChiTietModel> selectPage(FilterRequest request) throws SQLException {
 	InuhaFilterHoaDonChiTietRequest filter = (InuhaFilterHoaDonChiTietRequest) request;
         List<InuhaHoaDonChiTietModel> list = new ArrayList<>();
         ResultSet resultSet = null;
@@ -292,7 +293,7 @@ public class InuhaHoaDonChiTietRepository implements IDAOinterface<InuhaHoaDonCh
             WHERE stt BETWEEN ? AND ?
         """, TABLE_NAME);
 
-        int[] offset = FillterRequest.getOffset(filter.getPage(), filter.getSize());
+        int[] offset = FilterRequest.getOffset(filter.getPage(), filter.getSize());
         int start = offset[0];
         int limit = offset[1];
 
@@ -329,7 +330,7 @@ public class InuhaHoaDonChiTietRepository implements IDAOinterface<InuhaHoaDonCh
     }
 
     @Override
-    public int count(FillterRequest request) throws SQLException {
+    public int count(FilterRequest request) throws SQLException {
 	InuhaFilterHoaDonChiTietRequest filter = (InuhaFilterHoaDonChiTietRequest) request;
         int totalPages = 0;
         int totalRows = 0;
@@ -349,6 +350,20 @@ public class InuhaHoaDonChiTietRepository implements IDAOinterface<InuhaHoaDonCh
         }
         return totalPages;
     }
+    
+    public int count() throws SQLException {
+        String query = String.format("""
+            SELECT COUNT(*) 
+            FROM %s
+        """, TABLE_NAME);
+        try {
+            return (int) JbdcHelper.value(query);
+        } catch(Exception e) {
+            e.printStackTrace();
+            throw new SQLException(e.getMessage());
+        }
+    }
+    
 	
     public Optional<InuhaHoaDonChiTietModel> getDuplicate(InuhaHoaDonChiTietModel hoaDonChiTiet) throws SQLException {
         ResultSet resultSet = null;
@@ -392,10 +407,11 @@ public class InuhaHoaDonChiTietRepository implements IDAOinterface<InuhaHoaDonCh
             .build();
     }
     
-    public String getLastCode() throws SQLException {
-        String query = String.format("SELECT TOP(1) id FROM %s ORDER BY id DESC", TABLE_NAME);
+    public String getLastId() throws SQLException {
+        String query = String.format("SELECT IDENT_CURRENT('%s') AS NextId", TABLE_NAME);
         try {
-            return String.valueOf(JbdcHelper.value(query));
+	    BigDecimal id = (BigDecimal) JbdcHelper.value(query);
+            return String.valueOf(id.intValue());
         } catch (Exception e) {
             e.printStackTrace();
             throw new SQLException(e.getMessage());

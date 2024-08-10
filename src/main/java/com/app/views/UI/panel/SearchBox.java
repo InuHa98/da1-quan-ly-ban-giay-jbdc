@@ -20,10 +20,10 @@ public class SearchBox extends RoundPanel {
     public SearchBox() {
 	initComponents();
 	setBackground(ColorUtils.INPUT_PRIMARY);
-	setBorder(new FlatLineBorder(new Insets(2, 5, 2, 5), ColorUtils.BACKGROUND_HOVER, 1, 10));
+	setBorder(new FlatLineBorder(new Insets(2, 5, 2, 5), ColorUtils.BORDER, 1, 20));
 	txtKeyword.setBorder(new EmptyBorder(0, 0, 0, 0));
         txtKeyword.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Nhập từ khoá...");
-	txtKeyword.setBackground(ColorUtils.INPUT_PRIMARY);
+	txtKeyword.setOpaque(false);
 	lblIcon.setIcon(ResourceUtils.getSVG("/svg/search.svg", new Dimension(24, 24)));
        
     }

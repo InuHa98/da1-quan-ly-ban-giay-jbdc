@@ -10,7 +10,7 @@ import java.awt.*;
  *
  * @author InuHa
  */
-public class SidebarMenuContent extends RoundPanel {
+public class SidebarMenuContent extends JPanel {
 
     public SidebarMenuContent() {
         initComponents();
@@ -19,8 +19,6 @@ public class SidebarMenuContent extends RoundPanel {
     private void initComponents() {
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 10));
-        this.setBackground(ColorUtils.BACKGROUND_PRIMARY);
-        setOpaque(false);
     }
 
 }

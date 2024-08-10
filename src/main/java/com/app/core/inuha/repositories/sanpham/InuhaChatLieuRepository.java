@@ -2,7 +2,7 @@ package com.app.core.inuha.repositories.sanpham;
 
 import com.app.common.helper.JbdcHelper;
 import com.app.common.infrastructure.interfaces.IDAOinterface;
-import com.app.common.infrastructure.request.FillterRequest;
+import com.app.common.infrastructure.request.FilterRequest;
 import com.app.core.inuha.models.sanpham.InuhaChatLieuModel;
 import com.app.core.inuha.repositories.InuhaHoaDonChiTietRepository;
 import com.app.utils.TimeUtils;
@@ -95,7 +95,7 @@ public class InuhaChatLieuRepository implements IDAOinterface<InuhaChatLieuModel
 
     @Override
     public boolean has(Integer id) throws SQLException {
-        String query = String.format("SELECT TOP(1) 1 FROM %s WHERE id = ? AND trang_thai_xoa = 0", TABLE_NAME);
+        String query = String.format("SELECT TOP(1) 1 FROM %s WHERE id = ? AND trang_thai_xoa != 1", TABLE_NAME);
         try {
             return JbdcHelper.value(query, id) != null;
         } catch (Exception e) {
@@ -105,7 +105,7 @@ public class InuhaChatLieuRepository implements IDAOinterface<InuhaChatLieuModel
     }
 
     public boolean has(String name) throws SQLException {
-        String query = String.format("SELECT TOP(1) 1 FROM %s WHERE ten LIKE ? AND trang_thai_xoa = 0", TABLE_NAME);
+        String query = String.format("SELECT TOP(1) 1 FROM %s WHERE ten LIKE ? AND trang_thai_xoa != 1", TABLE_NAME);
         try {
             return JbdcHelper.value(query, name) != null;
         } catch (Exception e) {
@@ -131,7 +131,7 @@ public class InuhaChatLieuRepository implements IDAOinterface<InuhaChatLieuModel
             WHERE
                 ten LIKE ? AND
                 id != ? AND
-                trang_thai_xoa = 0
+                trang_thai_xoa != 1
         """, TABLE_NAME);
         try {
             return JbdcHelper.value(query, model.getTen(), model.getId()) != null;
@@ -146,7 +146,7 @@ public class InuhaChatLieuRepository implements IDAOinterface<InuhaChatLieuModel
         ResultSet resultSet = null;
         InuhaChatLieuModel model = null;
 
-        String query = String.format("SELECT * FROM %s WHERE id = ? AND trang_thai_xoa = 0", TABLE_NAME);
+        String query = String.format("SELECT * FROM %s WHERE id = ? AND trang_thai_xoa != 1", TABLE_NAME);
 
         try {
             resultSet = JbdcHelper.query(query, id);
@@ -174,7 +174,7 @@ public class InuhaChatLieuRepository implements IDAOinterface<InuhaChatLieuModel
                 *,
                 ROW_NUMBER() OVER (ORDER BY id DESC) AS stt
             FROM %s
-            WHERE trang_thai_xoa = 0
+            WHERE trang_thai_xoa != 1
             ORDER BY id DESC 
         """, TABLE_NAME);
 
@@ -196,7 +196,7 @@ public class InuhaChatLieuRepository implements IDAOinterface<InuhaChatLieuModel
     }
 
     @Override
-    public List<InuhaChatLieuModel> selectPage(FillterRequest request) throws SQLException {
+    public List<InuhaChatLieuModel> selectPage(FilterRequest request) throws SQLException {
         List<InuhaChatLieuModel> list = new ArrayList<>();
         ResultSet resultSet = null;
 
@@ -206,14 +206,14 @@ public class InuhaChatLieuRepository implements IDAOinterface<InuhaChatLieuModel
                     *,
                     ROW_NUMBER() OVER (ORDER BY id DESC) AS stt
                 FROM %s
-                WHERE trang_thai_xoa = 0
+                WHERE trang_thai_xoa != 1
             )
             SELECT *
             FROM TableCTE
             WHERE stt BETWEEN ? AND ?
         """, TABLE_NAME);
 
-        int[] offset = FillterRequest.getOffset(request.getPage(), request.getSize());
+        int[] offset = FilterRequest.getOffset(request.getPage(), request.getSize());
         int start = offset[0];
         int limit = offset[1];
 
@@ -240,11 +240,11 @@ public class InuhaChatLieuRepository implements IDAOinterface<InuhaChatLieuModel
     }
 
     @Override
-    public int count(FillterRequest request) throws SQLException {
+    public int count(FilterRequest request) throws SQLException {
         int totalPages = 0;
         int totalRows = 0;
 
-        String query = String.format("SELECT COUNT(*) FROM %s WHERE trang_thai_xoa = 0", TABLE_NAME);
+        String query = String.format("SELECT COUNT(*) FROM %s WHERE trang_thai_xoa != 1", TABLE_NAME);
 
         try {
             totalRows = (int) JbdcHelper.value(query);
@@ -260,7 +260,7 @@ public class InuhaChatLieuRepository implements IDAOinterface<InuhaChatLieuModel
         ResultSet resultSet = null;
         InuhaChatLieuModel model = null;
 
-        String query = String.format("SELECT * FROM %s WHERE ten LIKE ? AND trang_thai_xoa = 0", TABLE_NAME);
+        String query = String.format("SELECT * FROM %s WHERE ten LIKE ? AND trang_thai_xoa != 1", TABLE_NAME);
 
         try {
             resultSet = JbdcHelper.query(query, name);

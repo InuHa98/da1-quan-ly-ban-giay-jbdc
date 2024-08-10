@@ -1,6 +1,8 @@
 package com.app.views.UI.sidebarmenu;
 
 import com.app.utils.ColorUtils;
+import static com.app.utils.ColorUtils.TEXT_GRAY;
+import com.app.utils.ThemeUtils;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -25,10 +27,11 @@ public class SidebarMenuButton extends JButton {
         this.index = index;
         this.callback = callback;
         setContentAreaFilled(false);
-        setForeground(ColorUtils.PRIMARY_TEXT);
+        setForeground(ColorUtils.TEXT_GRAY);
+
         setCursor(new Cursor(Cursor.HAND_CURSOR));
         setHorizontalAlignment(SwingConstants.LEFT);
-        setBackground(ColorUtils.BACKGROUND_HOVER);
+        setBackground(ColorUtils.SIDEBAR_HOVER);
         setBorder(new EmptyBorder(8, 30, 8, 15));
     }
 
