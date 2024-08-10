@@ -1014,9 +1014,7 @@ public class InuhaThongKeView extends javax.swing.JPanel {
 		for(InuhaThongKeSanPhamModel item: items) { 
 		    rows.add(item.toDataRow());
 		}
-		
-		loading.dispose();
-		
+				
 		ExcelHelper.writeFile(fileName, headers, rows);
 	    } catch (ServiceResponseException e) {
 		e.printStackTrace();
