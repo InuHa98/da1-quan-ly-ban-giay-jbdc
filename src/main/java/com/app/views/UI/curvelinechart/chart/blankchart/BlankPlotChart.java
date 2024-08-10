@@ -151,13 +151,13 @@ public class BlankPlotChart extends JComponent {
             double textWidth = getMaxValuesTextWidth(g2);
 	    if (isManys) {
 		double textHeight = getMaxValuesTextWidth(g2) / 2;
-		paddingText += (int) textHeight + 10;
+		paddingText += (int) textHeight;
 	    }
             double spaceText = 5;
             double width = getWidth() - insets.left - insets.right - textWidth - spaceText;
             double space = width / labelCount;
             double locationX = insets.left + textWidth + spaceText;
-            double locationText = getHeight() - insets.bottom + 5;
+            double locationText = getHeight() - insets.bottom + 10;
             FontMetrics ft = g2.getFontMetrics();
 	    AffineTransform originalTransform = g2.getTransform();
 	    double angle = Math.toRadians(-45);
