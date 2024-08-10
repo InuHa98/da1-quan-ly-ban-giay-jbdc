@@ -67,9 +67,28 @@ public class InuhaSanPhamModel {
             ten,
             danhMuc.getTen(),
             thuongHieu.getTen(),
-            CurrencyUtils.parseString(soLuong),
+            CurrencyUtils.parseNumber(soLuong),
             CurrencyUtils.parseString(giaBan),
             trangThai
         };
     }
+    
+    public Object[] toDataRowBanHang() { 
+        return new Object[] { 
+            stt,
+            ma,
+            ProductUtils.getImage(hinhAnh),
+            ten,
+            CurrencyUtils.parseString(giaBan),
+            CurrencyUtils.parseNumber(soLuong),
+            danhMuc.getTen(),
+            thuongHieu.getTen(),
+	    xuatXu.getTen(),
+	    kieuDang.getTen(),
+	    chatLieu.getTen(),
+	    deGiay.getTen(),
+	    moTa
+        };
+    }
+    
 }

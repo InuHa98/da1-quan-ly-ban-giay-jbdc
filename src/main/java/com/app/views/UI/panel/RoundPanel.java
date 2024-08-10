@@ -27,7 +27,6 @@ public class RoundPanel extends JPanel {
     private int roundBottomRight = 20;
 
     public RoundPanel() {
-	setBackground(ColorUtils.BACKGROUND_GRAY);
         setOpaque(false);
     }
 
@@ -72,6 +71,14 @@ public class RoundPanel extends JPanel {
     public void setRoundBottomRight(int roundBottomRight) {
         this.roundBottomRight = roundBottomRight;
         repaint();
+    }
+    
+    public void setRound(int roundTopLeft, int roundTopRight, int roundBottomLeft, int roundBottomRight) { 
+	this.roundTopLeft = roundTopLeft;
+	this.roundTopRight = roundTopRight;
+	this.roundBottomLeft = roundBottomLeft;
+	this.roundBottomRight = roundBottomRight;
+	repaint();
     }
 
     @Override

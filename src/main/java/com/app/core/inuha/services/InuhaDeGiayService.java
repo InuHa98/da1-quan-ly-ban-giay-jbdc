@@ -4,9 +4,7 @@ import com.app.common.helper.JbdcHelper;
 import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.constants.TrangThaiXoaConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
-import com.app.common.infrastructure.request.FillterRequest;
-import com.app.core.inuha.models.sanpham.InuhaChatLieuModel;
-import com.app.core.inuha.models.sanpham.InuhaDanhMucModel;
+import com.app.common.infrastructure.request.FilterRequest;
 import com.app.core.inuha.models.sanpham.InuhaDeGiayModel;
 import com.app.core.inuha.repositories.sanpham.InuhaDeGiayRepository;
 import com.app.core.inuha.services.impl.IInuhaDeGiayServiceInterface;
@@ -21,7 +19,20 @@ import java.util.Optional;
  */
 public class InuhaDeGiayService implements IInuhaDeGiayServiceInterface {
 
-    private final InuhaDeGiayRepository repository = new InuhaDeGiayRepository();
+    private final InuhaDeGiayRepository repository = InuhaDeGiayRepository.getInstance();
+    
+    private static InuhaDeGiayService instance = null;
+    
+    public static InuhaDeGiayService getInstance() { 
+	if (instance == null) { 
+	    instance = new InuhaDeGiayService();
+	}
+	return instance;
+    }
+    
+    private InuhaDeGiayService() { 
+	
+    }
     
     @Override
     public InuhaDeGiayModel getById(Integer id) {
@@ -69,7 +80,7 @@ public class InuhaDeGiayService implements IInuhaDeGiayServiceInterface {
             repository.update(model);
         } catch (SQLException ex) {
             ex.printStackTrace();
-            throw new ServiceResponseException("Không thể xoá đế giày này");
+            throw new ServiceResponseException("Không thể cập nhật đế giày này");
         }
     }
 
@@ -109,7 +120,7 @@ public class InuhaDeGiayService implements IInuhaDeGiayServiceInterface {
     }
 
     @Override
-    public List<InuhaDeGiayModel> getPage(FillterRequest request) {
+    public List<InuhaDeGiayModel> getPage(FilterRequest request) {
         try {
             return repository.selectPage(request);
         } catch (SQLException ex) {
@@ -119,7 +130,7 @@ public class InuhaDeGiayService implements IInuhaDeGiayServiceInterface {
     }
 
     @Override
-    public Integer getTotalPage(FillterRequest request) {
+    public Integer getTotalPage(FilterRequest request) {
         try {
             return repository.count(request);
         } catch (SQLException ex) {

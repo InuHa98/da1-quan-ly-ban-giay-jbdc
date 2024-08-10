@@ -13,8 +13,10 @@ import com.app.core.inuha.services.InuhaTaiKhoanService;
 import com.app.utils.ColorUtils;
 import com.app.utils.ComponentUtils;
 import com.app.utils.ResourceUtils;
+import com.app.utils.ThemeUtils;
 import com.app.views.UI.dialog.LoadingDialog;
 import com.formdev.flatlaf.FlatClientProperties;
+import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -36,7 +38,7 @@ import net.miginfocom.swing.MigLayout;
 
 public class ForgotPasswordView extends javax.swing.JPanel {
 
-    private final InuhaTaiKhoanService nhanVienService = new InuhaTaiKhoanService();
+    private final InuhaTaiKhoanService nhanVienService = InuhaTaiKhoanService.getInstance();
 
     private String currentEmail = null;
 
@@ -48,13 +50,10 @@ public class ForgotPasswordView extends javax.swing.JPanel {
         instance = this;
         initComponents();
         setLayout(new MigLayout("fill, insets 20", "[center]", "[center]"));
-        pnlForgotPassword.setBackground(ColorUtils.BACKGROUND_PRIMARY);
+	lblTitle.setForeground(ColorUtils.PRIMARY_COLOR);
         lbLogin.setForeground(ColorUtils.PRIMARY_COLOR);
 
         txtEmail.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Vui lòng nhập email đã đăng ký tài khoản");
-
-
-        lbEmail.setForeground(ColorUtils.PRIMARY_TEXT);
 
         currentEmail = lbEmail.getText();
 
@@ -69,6 +68,9 @@ public class ForgotPasswordView extends javax.swing.JPanel {
 
         txtEmail.addKeyListener(keyEnter);
         txtEmail.requestFocus();
+        
+        lblTheme.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        lblTheme.setIcon(ComponentUtils.resizeImageByWidth(ResourceUtils.getImageAssets("/sidemenu/theme.png"), 20));
     }
 
     /**
@@ -81,28 +83,26 @@ public class ForgotPasswordView extends javax.swing.JPanel {
     private void initComponents() {
 
         pnlForgotPassword = new com.app.views.UI.panel.RoundPanel();
-        jLabel1 = new javax.swing.JLabel();
+        lblTitle = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         lbEmail = new javax.swing.JLabel();
         txtEmail = new javax.swing.JTextField();
         btnSubmit = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
         lbLogin = new javax.swing.JLabel();
+        lblTheme = new javax.swing.JLabel();
 
-        pnlForgotPassword.setBackground(new java.awt.Color(51, 51, 51));
-
-        jLabel1.setFont(jLabel1.getFont().deriveFont(jLabel1.getFont().getStyle() | java.awt.Font.BOLD, jLabel1.getFont().getSize()+10));
-        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabel1.setText("Quên mật khẩu!");
+        lblTitle.setFont(lblTitle.getFont().deriveFont(lblTitle.getFont().getStyle() | java.awt.Font.BOLD, lblTitle.getFont().getSize()+10));
+        lblTitle.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lblTitle.setText("Quên mật khẩu!");
 
         jLabel2.setFont(jLabel2.getFont().deriveFont(jLabel2.getFont().getSize()+1f));
-        jLabel2.setForeground(new java.awt.Color(204, 204, 204));
         jLabel2.setText("Vui lòng kiểm tra thư mục spam nếu không nhận được email");
 
         lbEmail.setFont(lbEmail.getFont().deriveFont(lbEmail.getFont().getStyle() | java.awt.Font.BOLD, lbEmail.getFont().getSize()+2));
-        lbEmail.setForeground(new java.awt.Color(204, 204, 204));
         lbEmail.setText("Email");
+
+        txtEmail.setMaximumSize(new java.awt.Dimension(400, 35));
 
         btnSubmit.setText("Gửi mã");
         btnSubmit.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -113,7 +113,6 @@ public class ForgotPasswordView extends javax.swing.JPanel {
         });
 
         jLabel5.setFont(jLabel5.getFont().deriveFont(jLabel5.getFont().getSize()+1f));
-        jLabel5.setForeground(new java.awt.Color(204, 204, 204));
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel5.setText("Đã có tài khoản?");
 
@@ -124,6 +123,12 @@ public class ForgotPasswordView extends javax.swing.JPanel {
         lbLogin.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 lbLoginMouseClicked(evt);
+            }
+        });
+
+        lblTheme.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblThemeMouseClicked(evt);
             }
         });
 
@@ -138,18 +143,22 @@ public class ForgotPasswordView extends javax.swing.JPanel {
                         .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(lbLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(txtEmail)
                     .addComponent(btnSubmit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lbEmail, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(lbEmail, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 405, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(42, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlForgotPasswordLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(lblTheme, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(20, 20, 20))
         );
         pnlForgotPasswordLayout.setVerticalGroup(
             pnlForgotPasswordLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlForgotPasswordLayout.createSequentialGroup()
                 .addGap(42, 42, 42)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -162,7 +171,9 @@ public class ForgotPasswordView extends javax.swing.JPanel {
                 .addGroup(pnlForgotPasswordLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(lbLogin, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
                     .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(42, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblTheme, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(14, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -189,13 +200,21 @@ public class ForgotPasswordView extends javax.swing.JPanel {
         redirectLogin(evt);
     }//GEN-LAST:event_lbLoginMouseClicked
 
+    private void lblThemeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblThemeMouseClicked
+        // TODO add your handling code here:
+        if (SwingUtilities.isLeftMouseButton(evt)) { 
+            ThemeUtils.switchTheme();
+        }
+    }//GEN-LAST:event_lblThemeMouseClicked
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnSubmit;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel lbEmail;
     private javax.swing.JLabel lbLogin;
+    private javax.swing.JLabel lblTheme;
+    private javax.swing.JLabel lblTitle;
     private com.app.views.UI.panel.RoundPanel pnlForgotPassword;
     private javax.swing.JTextField txtEmail;
     // End of variables declaration//GEN-END:variables

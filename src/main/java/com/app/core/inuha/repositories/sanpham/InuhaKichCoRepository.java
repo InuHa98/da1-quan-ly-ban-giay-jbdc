@@ -2,7 +2,7 @@ package com.app.core.inuha.repositories.sanpham;
 
 import com.app.common.helper.JbdcHelper;
 import com.app.common.infrastructure.interfaces.IDAOinterface;
-import com.app.common.infrastructure.request.FillterRequest;
+import com.app.common.infrastructure.request.FilterRequest;
 import com.app.core.inuha.models.sanpham.InuhaDeGiayModel;
 import com.app.core.inuha.models.sanpham.InuhaKichCoModel;
 import com.app.utils.TimeUtils;
@@ -19,6 +19,19 @@ import java.util.Optional;
 public class InuhaKichCoRepository implements IDAOinterface<InuhaKichCoModel, Integer> {
     
     private final static String TABLE_NAME = "KichCo";
+
+    private static InuhaKichCoRepository instance = null;
+    
+    public static InuhaKichCoRepository getInstance() { 
+	if (instance == null) { 
+	    instance = new InuhaKichCoRepository();
+	}
+	return instance;
+    }
+    
+    private InuhaKichCoRepository() { 
+	
+    }
     
     @Override
     public int insert(InuhaKichCoModel model) throws SQLException {
@@ -82,7 +95,7 @@ public class InuhaKichCoRepository implements IDAOinterface<InuhaKichCoModel, In
 
     @Override
     public boolean has(Integer id) throws SQLException {
-        String query = String.format("SELECT TOP(1) 1 FROM %s WHERE id = ? AND trang_thai_xoa = 0", TABLE_NAME);
+        String query = String.format("SELECT TOP(1) 1 FROM %s WHERE id = ? AND trang_thai_xoa != 1", TABLE_NAME);
         try {
             return JbdcHelper.value(query, id) != null;
         } catch (Exception e) {
@@ -92,7 +105,7 @@ public class InuhaKichCoRepository implements IDAOinterface<InuhaKichCoModel, In
     }
 
     public boolean has(String name) throws SQLException {
-        String query = String.format("SELECT TOP(1) 1 FROM %s WHERE ten LIKE ? AND trang_thai_xoa = 0", TABLE_NAME);
+        String query = String.format("SELECT TOP(1) 1 FROM %s WHERE ten LIKE ? AND trang_thai_xoa != 1", TABLE_NAME);
         try {
             return JbdcHelper.value(query, name) != null;
         } catch (Exception e) {
@@ -118,7 +131,7 @@ public class InuhaKichCoRepository implements IDAOinterface<InuhaKichCoModel, In
             WHERE
                 ten LIKE ? AND
                 id != ? AND
-                trang_thai_xoa = 0
+                trang_thai_xoa != 1
         """, TABLE_NAME);
         try {
             return JbdcHelper.value(query, model.getTen(), model.getId()) != null;
@@ -133,7 +146,7 @@ public class InuhaKichCoRepository implements IDAOinterface<InuhaKichCoModel, In
         ResultSet resultSet = null;
         InuhaKichCoModel model = null;
 
-        String query = String.format("SELECT * FROM %s WHERE id = ? AND trang_thai_xoa = 0", TABLE_NAME);
+        String query = String.format("SELECT * FROM %s WHERE id = ? AND trang_thai_xoa != 1", TABLE_NAME);
 
         try {
             resultSet = JbdcHelper.query(query, id);
@@ -161,7 +174,7 @@ public class InuhaKichCoRepository implements IDAOinterface<InuhaKichCoModel, In
                 *,
                 ROW_NUMBER() OVER (ORDER BY id DESC) AS stt
             FROM %s
-            WHERE trang_thai_xoa = 0
+            WHERE trang_thai_xoa != 1
             ORDER BY id DESC 
         """, TABLE_NAME);
 
@@ -183,7 +196,7 @@ public class InuhaKichCoRepository implements IDAOinterface<InuhaKichCoModel, In
     }
 
     @Override
-    public List<InuhaKichCoModel> selectPage(FillterRequest request) throws SQLException {
+    public List<InuhaKichCoModel> selectPage(FilterRequest request) throws SQLException {
         List<InuhaKichCoModel> list = new ArrayList<>();
         ResultSet resultSet = null;
 
@@ -193,14 +206,14 @@ public class InuhaKichCoRepository implements IDAOinterface<InuhaKichCoModel, In
                     *,
                     ROW_NUMBER() OVER (ORDER BY id DESC) AS stt
                 FROM %s
-                WHERE trang_thai_xoa = 0
+                WHERE trang_thai_xoa != 1
             )
             SELECT *
             FROM TableCTE
             WHERE stt BETWEEN ? AND ?
         """, TABLE_NAME);
 
-        int[] offset = FillterRequest.getOffset(request.getPage(), request.getSize());
+        int[] offset = FilterRequest.getOffset(request.getPage(), request.getSize());
         int start = offset[0];
         int limit = offset[1];
 
@@ -227,11 +240,11 @@ public class InuhaKichCoRepository implements IDAOinterface<InuhaKichCoModel, In
     }
 
     @Override
-    public int count(FillterRequest request) throws SQLException {
+    public int count(FilterRequest request) throws SQLException {
         int totalPages = 0;
         int totalRows = 0;
 
-        String query = String.format("SELECT COUNT(*) FROM %s WHERE trang_thai_xoa = 0", TABLE_NAME);
+        String query = String.format("SELECT COUNT(*) FROM %s WHERE trang_thai_xoa != 1", TABLE_NAME);
 
         try {
             totalRows = (int) JbdcHelper.value(query);
@@ -247,10 +260,10 @@ public class InuhaKichCoRepository implements IDAOinterface<InuhaKichCoModel, In
         ResultSet resultSet = null;
         InuhaKichCoModel model = null;
 
-        String query = String.format("SELECT * FROM %s WHERE ten LIKE ? AND trang_thai_xoa = 0", TABLE_NAME);
+        String query = String.format("SELECT * FROM %s WHERE ten LIKE ? AND trang_thai_xoa != 1", TABLE_NAME);
 
         try {
-            resultSet = JbdcHelper.query(query, String.format("%%%s%%", name));
+            resultSet = JbdcHelper.query(query, name);
             while(resultSet.next()) {
                 model = buildData(resultSet, false);
             }

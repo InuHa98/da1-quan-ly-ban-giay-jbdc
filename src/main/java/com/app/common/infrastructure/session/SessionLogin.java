@@ -8,12 +8,16 @@ import com.app.core.inuha.models.InuhaTaiKhoanModel;
 import com.app.core.inuha.services.InuhaTaiKhoanService;
 import com.app.core.inuha.views.all.InuhaChangePasswordView;
 import com.app.core.inuha.views.guest.LoginView;
+import com.app.utils.QrCodeUtils;
 import com.app.views.UI.dialog.LoadingDialog;
+import java.util.concurrent.ExecutionException;
 import lombok.Getter;
 
 import javax.swing.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import raven.modal.ModalDialog;
 import raven.modal.component.SimpleModalBorder;
 
@@ -25,7 +29,7 @@ public class SessionLogin {
 
     private static SessionLogin instance;
 
-    private final InuhaTaiKhoanService nhanVienService = new InuhaTaiKhoanService();
+    private final InuhaTaiKhoanService nhanVienService = InuhaTaiKhoanService.getInstance();
 
     private String username = null;
 
@@ -58,9 +62,8 @@ public class SessionLogin {
         } catch (ServiceResponseException e) {
             clear();
             MessageModal.closeAll();
-            if (MessageModal.confirmError("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại")) {
-                ApplicationController.getInstance().show(new LoginView());
-            }
+            MessageModal.warning("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại");
+            ApplicationController.getInstance().show(new LoginView());
         }
         return this;
     }
@@ -78,22 +81,41 @@ public class SessionLogin {
     }
 
     public void logout() {
-	LoadingDialog loading = new LoadingDialog();
-        ExecutorService executorService = Executors.newFixedThreadPool(2);
-        executorService.submit(() -> {
-            if (MessageModal.confirmInfo("Bạn thực sự muốn đăng xuất?")) {
-		executorService.submit(() -> {
-		    clear();
-		    ApplicationController.getInstance().show(new LoginView());
-		    loading.dispose();
-		});
-		loading.setVisible(true);
-		executorService.shutdown();
-            }
-        });
+	SwingWorker<Boolean, Void> worker = new SwingWorker<>() {
+	    @Override
+	    protected Boolean doInBackground() {
+		return MessageModal.confirmInfo("Bạn thực sự muốn đăng xuất?");
+	    }
+
+	    @Override
+	    protected void done() {
+		try {
+		    if (get()) {
+			LoadingDialog loading = new LoadingDialog();
+			ExecutorService executorService = Executors.newSingleThreadExecutor();
+			executorService.submit(() -> {
+			    clear();
+			    ApplicationController.getInstance().show(new LoginView());
+			    loading.dispose();
+			    executorService.shutdown();
+			});
+			loading.setVisible(true);
+		    }
+		} catch (InterruptedException ex) {
+		} catch (ExecutionException ex) {
+		}
+	    }
+	};
+	worker.execute();
+		
+
+
     }
 
     public void changePassword() {
-        ModalDialog.showModal(Application.app, new SimpleModalBorder(new InuhaChangePasswordView(), "Thay đổi mật khẩu"));
+        if (ModalDialog.isIdExist("THAY_DOI_MAT_KHAU")) {
+            return;
+        }
+        ModalDialog.showModal(Application.app, new SimpleModalBorder(new InuhaChangePasswordView(), "Thay đổi mật khẩu"), "THAY_DOI_MAT_KHAU");
     }
 }

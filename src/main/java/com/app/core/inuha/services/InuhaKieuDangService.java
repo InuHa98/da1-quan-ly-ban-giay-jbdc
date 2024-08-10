@@ -4,9 +4,7 @@ import com.app.common.helper.JbdcHelper;
 import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.constants.TrangThaiXoaConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
-import com.app.common.infrastructure.request.FillterRequest;
-import com.app.core.inuha.models.sanpham.InuhaDanhMucModel;
-import com.app.core.inuha.models.sanpham.InuhaKichCoModel;
+import com.app.common.infrastructure.request.FilterRequest;
 import com.app.core.inuha.models.sanpham.InuhaKieuDangModel;
 import com.app.core.inuha.repositories.sanpham.InuhaKieuDangRepository;
 import com.app.core.inuha.services.impl.IInuhaKieuDangServiceInterface;
@@ -21,7 +19,20 @@ import java.util.Optional;
  */
 public class InuhaKieuDangService implements IInuhaKieuDangServiceInterface {
 
-    private final InuhaKieuDangRepository repository = new InuhaKieuDangRepository();
+    private final InuhaKieuDangRepository repository = InuhaKieuDangRepository.getInstance();
+    
+    private static InuhaKieuDangService instance = null;
+    
+    public static InuhaKieuDangService getInstance() { 
+	if (instance == null) { 
+	    instance = new InuhaKieuDangService();
+	}
+	return instance;
+    }
+    
+    private InuhaKieuDangService() { 
+	
+    }
     
     @Override
     public InuhaKieuDangModel getById(Integer id) {
@@ -69,7 +80,7 @@ public class InuhaKieuDangService implements IInuhaKieuDangServiceInterface {
             repository.update(model);
         } catch (SQLException ex) {
             ex.printStackTrace();
-            throw new ServiceResponseException("Không thể xoá kiểu dáng này");
+            throw new ServiceResponseException("Không thể cập nhật kiểu dáng này");
         }
     }
 
@@ -109,7 +120,7 @@ public class InuhaKieuDangService implements IInuhaKieuDangServiceInterface {
     }
 
     @Override
-    public List<InuhaKieuDangModel> getPage(FillterRequest request) {
+    public List<InuhaKieuDangModel> getPage(FilterRequest request) {
         try {
             return repository.selectPage(request);
         } catch (SQLException ex) {
@@ -119,7 +130,7 @@ public class InuhaKieuDangService implements IInuhaKieuDangServiceInterface {
     }
 
     @Override
-    public Integer getTotalPage(FillterRequest request) {
+    public Integer getTotalPage(FilterRequest request) {
         try {
             return repository.count(request);
         } catch (SQLException ex) {

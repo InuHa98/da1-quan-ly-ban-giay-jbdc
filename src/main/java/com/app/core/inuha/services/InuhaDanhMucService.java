@@ -4,7 +4,7 @@ import com.app.common.helper.JbdcHelper;
 import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.constants.TrangThaiXoaConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
-import com.app.common.infrastructure.request.FillterRequest;
+import com.app.common.infrastructure.request.FilterRequest;
 import com.app.core.inuha.models.sanpham.InuhaDanhMucModel;
 import com.app.core.inuha.repositories.sanpham.InuhaDanhMucRepository;
 import com.app.core.inuha.services.impl.IInuhaDanhMucServiceInterface;
@@ -19,7 +19,20 @@ import java.util.Optional;
  */
 public class InuhaDanhMucService implements IInuhaDanhMucServiceInterface {
 
-    private final InuhaDanhMucRepository repository = new InuhaDanhMucRepository();
+    private final InuhaDanhMucRepository repository = InuhaDanhMucRepository.getInstance();
+    
+    private static InuhaDanhMucService instance = null;
+    
+    public static InuhaDanhMucService getInstance() { 
+	if (instance == null) { 
+	    instance = new InuhaDanhMucService();
+	}
+	return instance;
+    }
+    
+    private InuhaDanhMucService() { 
+	
+    }
     
     @Override
     public InuhaDanhMucModel getById(Integer id) {
@@ -67,7 +80,7 @@ public class InuhaDanhMucService implements IInuhaDanhMucServiceInterface {
             repository.update(model);
         } catch (SQLException ex) {
             ex.printStackTrace();
-            throw new ServiceResponseException("Không thể xoá danh mục này");
+            throw new ServiceResponseException("Không thể cập nhật danh mục này");
         }
     }
 
@@ -107,7 +120,7 @@ public class InuhaDanhMucService implements IInuhaDanhMucServiceInterface {
     }
 
     @Override
-    public List<InuhaDanhMucModel> getPage(FillterRequest request) {
+    public List<InuhaDanhMucModel> getPage(FilterRequest request) {
         try {
             return repository.selectPage(request);
         } catch (SQLException ex) {
@@ -117,7 +130,7 @@ public class InuhaDanhMucService implements IInuhaDanhMucServiceInterface {
     }
 
     @Override
-    public Integer getTotalPage(FillterRequest request) {
+    public Integer getTotalPage(FilterRequest request) {
         try {
             return repository.count(request);
         } catch (SQLException ex) {

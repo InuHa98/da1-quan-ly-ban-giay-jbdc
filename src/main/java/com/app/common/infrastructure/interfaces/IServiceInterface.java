@@ -5,7 +5,7 @@
 
 package com.app.common.infrastructure.interfaces;
 
-import com.app.common.infrastructure.request.FillterRequest;
+import com.app.common.infrastructure.request.FilterRequest;
 
 import java.util.List;
 import java.util.Set;
@@ -30,8 +30,8 @@ public interface IServiceInterface<T, K> {
 
     List<T> getAll();
 
-    List<T> getPage(FillterRequest request);
+    List<T> getPage(FilterRequest request);
 
-    Integer getTotalPage(FillterRequest request);
+    Integer getTotalPage(FilterRequest request);
 
 }

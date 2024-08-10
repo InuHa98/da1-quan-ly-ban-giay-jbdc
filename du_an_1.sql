@@ -8,12 +8,12 @@ CREATE TABLE TaiKhoan (
 	id INT IDENTITY(1, 1) PRIMARY KEY,
 	tai_khoan VARCHAR(25) NOT NULL,
 	mat_khau NVARCHAR(50) NOT NULL,
-	email NVARCHAR(250) NOT NULL,
+	email VARCHAR(250) NOT NULL,
 	ho_ten NVARCHAR(250),
 	sdt VARCHAR(13) NOT NULL,
 	gioi_tinh BIT,
 	dia_chi NVARCHAR(2000),
-	hinh_anh NVARCHAR(250),
+	hinh_anh VARCHAR(250),
 	otp VARCHAR(6),
 	adm BIT DEFAULT 0,
 	trang_thai BIT DEFAULT 0,
@@ -26,16 +26,11 @@ CREATE TABLE KhachHang (
 	ho_ten NVARCHAR(250) NOT NULL,
 	sdt VARCHAR(13) NOT NULL,
 	gioi_tinh BIT,
+	dia_chi NVARCHAR(2000),
+	ngay_tao DATETIME NOT NULL DEFAULT GETDATE(),
 	trang_thai_xoa BIT DEFAULT 0
 );
 
-CREATE TABLE DiaChi (
-	id INT IDENTITY(1, 1) PRIMARY KEY,
-	id_khach_hang INT NOT NULL,
-	dia_chi NVARCHAR(2000),
-	trang_thai_xoa BIT DEFAULT 0,
-	FOREIGN KEY(id_khach_hang) REFERENCES dbo.KhachHang(id)
-)
 
 CREATE TABLE DanhMuc (
 	id INT IDENTITY(1, 1) PRIMARY KEY,
@@ -110,11 +105,12 @@ CREATE TABLE SanPham (
 	id_kieu_dang INT NOT NULL,
 	id_chat_lieu INT NOT NULL,
 	id_de_giay INT NOT NULL,
-	ma VARCHAR(50) NOT NULL,
+	ma VARCHAR(50) NOT NULL UNIQUE,
 	ten NVARCHAR(250) NOT NULL,
 	mo_ta NVARCHAR(2000),
+	gia_nhap MONEY NOT NULL,
 	gia_ban MONEY NOT NULL,
-	hinh_anh VARCHAR(250),
+	hinh_anh VARCHAR(250) NOT NULL,
 	trang_thai BIT NOT NULL,
 	ngay_tao DATE NOT NULL DEFAULT GETDATE(),
 	ngay_cap_nhat DATE DEFAULT GETDATE(),
@@ -132,8 +128,8 @@ CREATE TABLE SanPhamChiTiet (
 	id_san_pham INT NOT NULL,
 	id_kich_co INT NOT NULL,
 	id_mau_sac INT NOT NULL,
-	ma VARCHAR(50) NOT NULL,
-	so_luong INT DEFAULT 0,
+	ma VARCHAR(50) NOT NULL UNIQUE,
+	so_luong INT NOT NULL DEFAULT 0,
 	trang_thai BIT NOT NULL DEFAULT 1,
 	ngay_tao DATE NOT NULL DEFAULT GETDATE(),
 	ngay_cap_nhat DATE DEFAULT GETDATE(),
@@ -155,30 +151,8 @@ CREATE TABLE PhieuGiamGia (
 	don_toi_thieu MONEY NOT NULL DEFAULT 0,
 	giam_toi_da MONEY NOT NULL DEFAULT 0,
 	ngay_tao DATE NOT NULL DEFAULT GETDATE(),
-	ngay_cap_nhat DATE NOT NULL DEFAULT GETDATE(),
-	trang_thai BIT NOT NULL,
+	ngay_cap_nhat DATE DEFAULT GETDATE(),
 	trang_thai_xoa BIT DEFAULT 0
-)
-
-CREATE TABLE DotGiamGia (
-	id INT IDENTITY(1, 1) PRIMARY KEY,
-	ten NVARCHAR(250) NOT NULL,
-	thoi_gian_bat_dau DATE NOT NULL,
-	thoi_gian_ket_thuc DATE NOT NULL,
-	ngay_tao DATE NOT NULL DEFAULT GETDATE(),
-	ngay_cap_nhat DATE NOT NULL DEFAULT GETDATE(),
-	trang_thai BIT NOT NULL,
-	trang_thai_xoa BIT DEFAULT 0
-)
-
-CREATE TABLE DotGiamGiaSanPham (
-	id INT IDENTITY(1, 1) PRIMARY KEY,
-	id_dot_giam_gia INT NOT NULL,
-	id_san_pham INT NOT NULL,
-	phan_tram_giam FLOAT DEFAULT 0,
-	giam_toi_da MONEY DEFAULT 0,
-	FOREIGN KEY(id_dot_giam_gia) REFERENCES dbo.DotGiamGia(id),
-	FOREIGN KEY(id_san_pham) REFERENCES dbo.SanPham(id)
 )
 
 CREATE TABLE HoaDon (
@@ -186,15 +160,14 @@ CREATE TABLE HoaDon (
 	id_tai_khoan INT NOT NULL,
 	id_khach_hang INT,
 	id_phieu_giam_gia INT,
-	tien_giam MONEY NOT NULL DEFAULT 0,
+	tien_giam MONEY DEFAULT 0,
 	tien_mat MONEY NOT NULL DEFAULT 0,
 	tien_chuyen_khoan MONEY NOT NULL DEFAULT 0,
-	ma VARCHAR(10) NOT NULL,
-	phuong_thuc_thanh_toan BIT NOT NULL,
-	ghi_chu NVARCHAR(2000),
-	trang_thai INT NOT NULL,
-	ngay_tao DATE NOT NULL DEFAULT GETDATE(),
-	ngay_cap_nhat DATE NOT NULL DEFAULT GETDATE(),
+	ma VARCHAR(50) NOT NULL UNIQUE,
+	phuong_thuc_thanh_toan TINYINT NOT NULL,
+	trang_thai TINYINT NOT NULL,
+	ngay_tao DATETIME NOT NULL DEFAULT GETDATE(),
+	ngay_cap_nhat DATE DEFAULT GETDATE(),
 	trang_thai_xoa BIT DEFAULT 0,
 	FOREIGN KEY(id_tai_khoan) REFERENCES dbo.TaiKhoan(id),
 	FOREIGN KEY(id_khach_hang) REFERENCES dbo.KhachHang(id),
@@ -205,9 +178,9 @@ CREATE TABLE HoaDonChiTiet (
 	id INT IDENTITY(1, 1) PRIMARY KEY,
 	id_san_pham_chi_tiet INT NOT NULL,
 	id_hoa_don INT NOT NULL,
+	ma VARCHAR(50) NOT NULL UNIQUE,
 	gia_nhap MONEY NOT NULL DEFAULT 0,
 	gia_ban MONEY NOT NULL DEFAULT 0,
-	gia_giam MONEY NOT NULL DEFAULT 0,
 	so_luong INT NOT NULL DEFAULT 0,
 	FOREIGN KEY(id_san_pham_chi_tiet) REFERENCES dbo.SanPhamChiTiet(id),
 	FOREIGN KEY(id_hoa_don) REFERENCES dbo.HoaDon(id)
@@ -246,3 +219,155 @@ VALUES
     GETDATE(), -- ngay_tao - date
 	0 -- trang_thai_xoa - bit
 )
+
+INSERT INTO dbo.DanhMuc
+(
+    ten,
+    trang_thai_xoa,
+    ngay_tao,
+    ngay_cap_nhat
+)
+VALUES
+(   N'Giày thể thao',       -- ten - nvarchar(250)
+    0,      -- trang_thai_xoa - bit
+    GETDATE(), -- ngay_tao - date
+    GETDATE()  -- ngay_cap_nhat - date
+),
+(   N'Giày thời trang',       -- ten - nvarchar(250)
+    0,      -- trang_thai_xoa - bit
+    GETDATE(), -- ngay_tao - date
+    GETDATE()  -- ngay_cap_nhat - date
+)
+
+INSERT INTO dbo.ThuongHieu
+(
+    ten,
+    trang_thai_xoa,
+    ngay_tao,
+    ngay_cap_nhat
+)
+VALUES
+(   N'Adidas',       -- ten - nvarchar(250)
+    0,      -- trang_thai_xoa - bit
+    GETDATE(), -- ngay_tao - date
+    GETDATE()  -- ngay_cap_nhat - date
+    )
+,(   N'Puma',       -- ten - nvarchar(250)
+    0,      -- trang_thai_xoa - bit
+    GETDATE(), -- ngay_tao - date
+    GETDATE()  -- ngay_cap_nhat - date
+    )
+
+INSERT INTO dbo.XuatXu
+(
+    ten,
+    trang_thai_xoa,
+    ngay_tao,
+    ngay_cap_nhat
+)
+VALUES
+(   N'Nhật bản',       -- ten - nvarchar(250)
+    0,      -- trang_thai_xoa - bit
+    GETDATE(), -- ngay_tao - date
+    GETDATE()  -- ngay_cap_nhat - date
+    ),
+	(   N'Việt nam',       -- ten - nvarchar(250)
+    0,      -- trang_thai_xoa - bit
+    GETDATE(), -- ngay_tao - date
+    GETDATE()  -- ngay_cap_nhat - date
+    )
+
+INSERT INTO dbo.KieuDang
+(
+    ten,
+    trang_thai_xoa,
+    ngay_tao,
+    ngay_cap_nhat
+)
+VALUES
+(   N'Nam',       -- ten - nvarchar(250)
+    0,      -- trang_thai_xoa - bit
+    GETDATE(), -- ngay_tao - date
+    GETDATE()  -- ngay_cap_nhat - date
+    ),
+	(   N'Nữ',       -- ten - nvarchar(250)
+    0,      -- trang_thai_xoa - bit
+    GETDATE(), -- ngay_tao - date
+    GETDATE()  -- ngay_cap_nhat - date
+    )
+
+INSERT INTO dbo.ChatLieu
+(
+    ten,
+    trang_thai_xoa,
+    ngay_tao,
+    ngay_cap_nhat
+)
+VALUES
+(   N'Cao cấp',       -- ten - nvarchar(250)
+    0,      -- trang_thai_xoa - bit
+    GETDATE(), -- ngay_tao - date
+    GETDATE()  -- ngay_cap_nhat - date
+    ),
+(   N'Real 1:1',       -- ten - nvarchar(250)
+    0,      -- trang_thai_xoa - bit
+    GETDATE(), -- ngay_tao - date
+    GETDATE()  -- ngay_cap_nhat - date
+    )
+
+INSERT INTO dbo.DeGiay
+(
+    ten,
+    trang_thai_xoa,
+    ngay_tao,
+    ngay_cap_nhat
+)
+VALUES
+(   N'Cao',       -- ten - nvarchar(250)
+    0,      -- trang_thai_xoa - bit
+    GETDATE(), -- ngay_tao - date
+    GETDATE()  -- ngay_cap_nhat - date
+    ),
+	(   N'Thấp',       -- ten - nvarchar(250)
+    0,      -- trang_thai_xoa - bit
+    GETDATE(), -- ngay_tao - date
+    GETDATE()  -- ngay_cap_nhat - date
+    )
+
+INSERT INTO dbo.KichCo
+(
+    ten,
+    trang_thai_xoa,
+    ngay_tao,
+    ngay_cap_nhat
+)
+VALUES
+(   N'L',       -- ten - nvarchar(250)
+    0,      -- trang_thai_xoa - bit
+    GETDATE(), -- ngay_tao - date
+    GETDATE()  -- ngay_cap_nhat - date
+    ),
+	(   N'XL',       -- ten - nvarchar(250)
+    0,      -- trang_thai_xoa - bit
+    GETDATE(), -- ngay_tao - date
+    GETDATE()  -- ngay_cap_nhat - date
+    )
+
+INSERT INTO dbo.MauSac
+(
+    ten,
+    trang_thai_xoa,
+    ngay_tao,
+    ngay_cap_nhat
+)
+VALUES
+(   N'Đen',       -- ten - nvarchar(250)
+    0,      -- trang_thai_xoa - bit
+    GETDATE(), -- ngay_tao - date
+    GETDATE()  -- ngay_cap_nhat - date
+    ),
+	(   N'Trắng',       -- ten - nvarchar(250)
+    0,      -- trang_thai_xoa - bit
+    GETDATE(), -- ngay_tao - date
+    GETDATE()  -- ngay_cap_nhat - date
+    )

@@ -18,22 +18,29 @@ public class CurrencyUtils {
     }
     
     public static String parseString(long price) {
-        return new DecimalFormat("#,###").format(price).replace(",", ".") + "đ";
+        return "đ" + (new DecimalFormat("#,###")).format(price).replace(",", ".");
     }
     
-    public static String parseString(int price) {
+    public static String parseTextField(double price) {
+        return new DecimalFormat("#,###").format(price).replace(",", ".");
+    }
+    
+    public static String parseNumber(int price) {
         return new DecimalFormat("#,###").format(price).replace(",", ".");
     }
 
-    public static String parseTextField(double price) {
+    public static String parseNumber(double price) {
         return new DecimalFormat("#,###").format(price).replace(",", ".");
     }
         
     public static long parseNumber(String price) {
-        return Long.parseLong(price.replace(".", "").replace("đ", ""));
+	if (price == null || price.isEmpty()) {
+	    return 0;
+	}
+        return Long.parseLong(price.replace(".", "").replace("đ", "").replace("-", ""));
     }
 
-    public static DefaultFormatterFactory getDefaultFormatVND() {
+    public static DefaultFormatterFactory getDefaultFormat() {
         DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.getDefault());
         symbols.setGroupingSeparator('.');
         symbols.setDecimalSeparator(',');
@@ -41,10 +48,14 @@ public class CurrencyUtils {
         DecimalFormat decimalFormat = new DecimalFormat("#,###", symbols);
 
         NumberFormatter formatter = new NumberFormatter() {
+	    
             @Override
             public Object stringToValue(String text) throws ParseException {
                 if (text.isEmpty()) {
                     return null;
+                }
+		if (text.contains("-")) {
+                    text = text.replace("-", "");
                 }
                 return super.stringToValue(text);
             }

@@ -1,13 +1,13 @@
 package com.app.core.inuha.services;
 
-import com.app.common.helper.JbdcHelper;
 import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.constants.TrangThaiXoaConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
-import com.app.common.infrastructure.request.FillterRequest;
+import com.app.common.infrastructure.request.FilterRequest;
 import com.app.core.inuha.models.InuhaSanPhamChiTietModel;
 import com.app.core.inuha.models.InuhaSanPhamModel;
 import com.app.core.inuha.models.sanpham.InuhaKichCoModel;
+import com.app.core.inuha.models.sanpham.InuhaMauSacModel;
 import com.app.core.inuha.repositories.InuhaSanPhamChiTietRepository;
 import com.app.core.inuha.repositories.InuhaSanPhamRepository;
 import com.app.core.inuha.services.impl.IInuhaSanPhamChiTietServiceInterface;
@@ -16,7 +16,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import org.apache.logging.log4j.util.ProcessIdUtil;
 
 /**
  *
@@ -24,7 +23,21 @@ import org.apache.logging.log4j.util.ProcessIdUtil;
  */
 public class InuhaSanPhamChiTietService implements IInuhaSanPhamChiTietServiceInterface {
 
-    private final InuhaSanPhamChiTietRepository repository = new InuhaSanPhamChiTietRepository();
+    private final InuhaSanPhamChiTietRepository repository = InuhaSanPhamChiTietRepository.getInstance();
+    
+    private static InuhaSanPhamChiTietService instance = null;
+    
+    public static InuhaSanPhamChiTietService getInstance() { 
+	if (instance == null) { 
+	    instance = new InuhaSanPhamChiTietService();
+	}
+	return instance;
+    }
+    
+    private InuhaSanPhamChiTietService() { 
+	
+    }
+    
     
     @Override
     public InuhaSanPhamChiTietModel getById(Integer id) {
@@ -80,7 +93,7 @@ public class InuhaSanPhamChiTietService implements IInuhaSanPhamChiTietServiceIn
             repository.update(model);
         } catch (SQLException ex) {
             ex.printStackTrace();
-            throw new ServiceResponseException("Không thể xoá sản phẩm chi tiết này");
+            throw new ServiceResponseException("Không thể cập nhật sản phẩm chi tiết này");
         }
     }
 
@@ -142,7 +155,7 @@ public class InuhaSanPhamChiTietService implements IInuhaSanPhamChiTietServiceIn
     }
 
     @Override
-    public List<InuhaSanPhamChiTietModel> getPage(FillterRequest request) {
+    public List<InuhaSanPhamChiTietModel> getPage(FilterRequest request) {
         try {
             return repository.selectPage(request);
         } catch (SQLException ex) {
@@ -152,7 +165,7 @@ public class InuhaSanPhamChiTietService implements IInuhaSanPhamChiTietServiceIn
     }
 
     @Override
-    public Integer getTotalPage(FillterRequest request) {
+    public Integer getTotalPage(FilterRequest request) {
         try {
             return repository.count(request);
         } catch (SQLException ex) {
@@ -162,9 +175,9 @@ public class InuhaSanPhamChiTietService implements IInuhaSanPhamChiTietServiceIn
     }
 
     @Override
-    public String getLastCode() {
+    public String getLastId() {
         try {
-            return repository.getLastCode();
+            return repository.getNextId();
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
@@ -184,8 +197,7 @@ public class InuhaSanPhamChiTietService implements IInuhaSanPhamChiTietServiceIn
 		return true;
 	    }
 	    
-	    InuhaSanPhamRepository sanPhamRepository = new InuhaSanPhamRepository();
-	    Optional<InuhaSanPhamModel> findSanPham = sanPhamRepository.getByCode(model.getSanPham().getMa());
+	    Optional<InuhaSanPhamModel> findSanPham = InuhaSanPhamRepository.getInstance().getByCode(model.getSanPham().getMa());
 	    if (findSanPham.isEmpty()) {
 		throw new IllegalArgumentException();
 	    }
@@ -196,5 +208,34 @@ public class InuhaSanPhamChiTietService implements IInuhaSanPhamChiTietServiceIn
         } catch (Exception ex) {
 	    throw new ServiceResponseException("Không thể thêm dữ liệu");
         }
+    }
+    
+            
+    public List<InuhaKichCoModel> getAllKichCo(int idSanPham) { 
+        try {
+            return repository.getAllKichCo(idSanPham);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            throw new ServiceResponseException("Không thể lấy danh sách kích cỡ");
+        }
+    }
+    
+    public List<InuhaSanPhamChiTietModel> getAllByKichCo(int idSanPham, int idKichCo) { 
+        try {
+            return repository.getAllByKichCo(idSanPham, idKichCo);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            throw new ServiceResponseException("Không thể lấy danh sách sản phẩm chi tiết");
+        }
+    }
+    
+    
+    public int count(FilterRequest request) {
+        try {
+            return repository.count(request);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return 0;
     }
 }

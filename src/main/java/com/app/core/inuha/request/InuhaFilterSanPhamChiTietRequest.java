@@ -1,6 +1,7 @@
 package com.app.core.inuha.request;
 
-import com.app.common.infrastructure.request.FillterRequest;
+import com.app.common.infrastructure.request.FilterRequest;
+import com.app.views.UI.combobox.ComboBoxItem;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,28 +11,30 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class InuhaFilterSanPhamChiTietRequest extends FillterRequest {
+public class InuhaFilterSanPhamChiTietRequest extends FilterRequest {
     
     private String keyword;
     
-    private int idSanPham;
+    private int idSanPham = -1;
     
-    private int idDanhMuc;
+    private ComboBoxItem<Integer> danhMuc = new ComboBoxItem<>();
     
-    private int idThuongHieu;
+    private ComboBoxItem<Integer> thuongHieu = new ComboBoxItem<>();
     
-    private int idXuatXu;
+    private ComboBoxItem<Integer> xuatXu = new ComboBoxItem<>();
     
-    private int idKieuDang;
+    private ComboBoxItem<Integer> kieuDang = new ComboBoxItem<>();
     
-    private int idChatLieu;
+    private ComboBoxItem<Integer> chatLieu = new ComboBoxItem<>();
     
-    private int idDeGiay;
+    private ComboBoxItem<Integer> deGiay = new ComboBoxItem<>();
     
-    private int idKichCo;
+    private ComboBoxItem<Integer> kichCo = new ComboBoxItem<>();
     
-    private int idMauSac;
+    private ComboBoxItem<Integer> mauSac = new ComboBoxItem<>();
     
-    private int trangThai;
+    private ComboBoxItem<Integer> soLuong = new ComboBoxItem<>();
+    
+    private ComboBoxItem<Integer> trangThai = new ComboBoxItem<>();
 
 }

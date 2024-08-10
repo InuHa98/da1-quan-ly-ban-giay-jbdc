@@ -4,7 +4,7 @@ import com.app.common.helper.JbdcHelper;
 import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.constants.TrangThaiXoaConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
-import com.app.common.infrastructure.request.FillterRequest;
+import com.app.common.infrastructure.request.FilterRequest;
 import com.app.core.inuha.models.sanpham.InuhaDanhMucModel;
 import com.app.core.inuha.models.sanpham.InuhaThuongHieuModel;
 import com.app.core.inuha.models.sanpham.InuhaXuatXuModel;
@@ -21,7 +21,20 @@ import java.util.Optional;
  */
 public class InuhaXuatXuService implements IInuhaXuatXuServiceInterface {
 
-    private final InuhaXuatXuRepository repository = new InuhaXuatXuRepository();
+    private final InuhaXuatXuRepository repository = InuhaXuatXuRepository.getInstance();
+    
+    private static InuhaXuatXuService instance = null;
+    
+    public static InuhaXuatXuService getInstance() { 
+	if (instance == null) { 
+	    instance = new InuhaXuatXuService();
+	}
+	return instance;
+    }
+    
+    private InuhaXuatXuService() { 
+	
+    }
     
     @Override
     public InuhaXuatXuModel getById(Integer id) {
@@ -69,7 +82,7 @@ public class InuhaXuatXuService implements IInuhaXuatXuServiceInterface {
             repository.update(model);
         } catch (SQLException ex) {
             ex.printStackTrace();
-            throw new ServiceResponseException("Không thể xoá xuất xứ này");
+            throw new ServiceResponseException("Không thể cập nhật xuất xứ này");
         }
     }
 
@@ -109,7 +122,7 @@ public class InuhaXuatXuService implements IInuhaXuatXuServiceInterface {
     }
 
     @Override
-    public List<InuhaXuatXuModel> getPage(FillterRequest request) {
+    public List<InuhaXuatXuModel> getPage(FilterRequest request) {
         try {
             return repository.selectPage(request);
         } catch (SQLException ex) {
@@ -119,7 +132,7 @@ public class InuhaXuatXuService implements IInuhaXuatXuServiceInterface {
     }
 
     @Override
-    public Integer getTotalPage(FillterRequest request) {
+    public Integer getTotalPage(FilterRequest request) {
         try {
             return repository.count(request);
         } catch (SQLException ex) {

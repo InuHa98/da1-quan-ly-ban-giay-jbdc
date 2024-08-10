@@ -11,68 +11,52 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Random;
+import lombok.Builder;
 
 /**
  *
  * @author WIN
  */
+@Builder
 public class DatHoaDonModel {
-    private int stt;
-    private int ID;
-    private String MaHD;
-    private Date NgayTao;
-    private Date NgayTT;
-    private double TongTien;
-    private String MaNV;
-    private String TenKH;
-    private String SDT;
-    private int TrangThai;
-    private String DiaChi;
-    private int IDNhanVien;
-    private boolean HTTT;
-    private double soTienGiam;
-    private int tongSP;
-    private double GiamGia;
-
-    public DatHoaDonModel(int stt, int ID, String MaHD, Date NgayTao, Date NgayTT, double TongTien, String MaNV, String TenKH, String SDT, int TrangThai, String DiaChi, int IDNhanVien, boolean HTTT, double soTienGiam, int tongSP, double GiamGia) {
-        this.stt = stt;
-        this.ID = ID;
-        this.MaHD = MaHD;
-        this.NgayTao = NgayTao;
-        this.NgayTT = NgayTT;
-        this.TongTien = TongTien;
-        this.MaNV = MaNV;
-        this.TenKH = TenKH;
-        this.SDT = SDT;
-        this.TrangThai = TrangThai;
-        this.DiaChi = DiaChi;
-        this.IDNhanVien = IDNhanVien;
-        this.HTTT = HTTT;
-        this.soTienGiam = soTienGiam;
-        this.tongSP = tongSP;
-        this.GiamGia = GiamGia;
-    }
-    
+   
+        private int id;
+        private int stt;
+        private int id_tai_khoan;
+        private int id_khach_hang;
+        private int id_phieu_giam_gia;
+        private String maHd;
+        private int tienGiam;
+        private boolean phuong_thuc_thanh_toan;
+        private int trangThai;
+        private String ngayTao;
+        private String ngayCapnhat;
+        private boolean trangThaixoa;
 
     public DatHoaDonModel() {
     }
 
-    public DatHoaDonModel(int stt, int ID, String MaHD, Date NgayTao, Date NgayTT, double TongTien, String MaNV, String TenKH, String SDT, int TrangThai, String DiaChi, int IDNhanVien, boolean HTTT, double soTienGiam, int tongSP) {
+    public DatHoaDonModel(int id, int stt, int id_tai_khoan, int id_khach_hang, int id_phieu_giam_gia, String maHd, int tienGiam, boolean phuong_thuc_thanh_toan, int trangThai, String ngayTao, String ngayCapnhat, boolean trangThaixoa) {
+        this.id = id;
         this.stt = stt;
-        this.ID = ID;
-        this.MaHD = MaHD;
-        this.NgayTao = NgayTao;
-        this.NgayTT = NgayTT;
-        this.TongTien = TongTien;
-        this.MaNV = MaNV;
-        this.TenKH = TenKH;
-        this.SDT = SDT;
-        this.TrangThai = TrangThai;
-        this.DiaChi = DiaChi;
-        this.IDNhanVien = IDNhanVien;
-        this.HTTT = HTTT;
-        this.soTienGiam = soTienGiam;
-        this.tongSP = tongSP;
+        this.id_tai_khoan = id_tai_khoan;
+        this.id_khach_hang = id_khach_hang;
+        this.id_phieu_giam_gia = id_phieu_giam_gia;
+        this.maHd = maHd;
+        this.tienGiam = tienGiam;
+        this.phuong_thuc_thanh_toan = phuong_thuc_thanh_toan;
+        this.trangThai = trangThai;
+        this.ngayTao = ngayTao;
+        this.ngayCapnhat = ngayCapnhat;
+        this.trangThaixoa = trangThaixoa;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public int getStt() {
@@ -83,254 +67,89 @@ public class DatHoaDonModel {
         this.stt = stt;
     }
 
-    public DatHoaDonModel(int ID, String MaHD, Date NgayTao, String MaNV, int tongSP, double TongTien, int TrangThai, Date NgayTT) {
-        this.ID = ID;
-        this.MaHD = MaHD;
-        this.NgayTao = NgayTao;
-        this.MaNV = MaNV;
-        this.tongSP = tongSP;
-        this.TongTien = TongTien;
-        this.TrangThai = TrangThai;
-        this.NgayTT = NgayTT;
+    public int getId_tai_khoan() {
+        return id_tai_khoan;
     }
 
-    public DatHoaDonModel(int ID, String MaHD, Date NgayTao, Date NgayTT, double TongTien, String MaNV, String TenKH, String SDT, int TrangThai, String DiaChi, int IDNhanVien) {
-        this.ID = ID;
-        this.MaHD = MaHD;
-        this.NgayTao = NgayTao;
-        this.NgayTT = NgayTT;
-        this.TongTien = TongTien;
-        this.MaNV = MaNV;
-        this.TenKH = TenKH;
-        this.SDT = SDT;
-        this.TrangThai = TrangThai;
-        this.DiaChi = DiaChi;
-        this.IDNhanVien = IDNhanVien;
+    public void setId_tai_khoan(int id_tai_khoan) {
+        this.id_tai_khoan = id_tai_khoan;
     }
 
-    public double getGiamGia() {
-        return GiamGia;
+    public int getId_khach_hang() {
+        return id_khach_hang;
     }
 
-    public void setGiamGia(double GiamGia) {
-        this.GiamGia = GiamGia;
-    }
-    
-
-    public int getTongSP() {
-        return tongSP;
+    public void setId_khach_hang(int id_khach_hang) {
+        this.id_khach_hang = id_khach_hang;
     }
 
-    public void setTongSP(int tongSP) {
-        this.tongSP = tongSP;
+    public int getId_phieu_giam_gia() {
+        return id_phieu_giam_gia;
     }
 
-    public boolean isHTTT() {
-        return HTTT;
+    public void setId_phieu_giam_gia(int id_phieu_giam_gia) {
+        this.id_phieu_giam_gia = id_phieu_giam_gia;
     }
 
-    public void setHTTT(boolean HTTT) {
-        this.HTTT = HTTT;
+    public String getMaHd() {
+        return maHd;
     }
 
-    public double getSoTienGiam() {
-        return soTienGiam;
+    public void setMaHd(String maHd) {
+        this.maHd = maHd;
     }
 
-    public void setSoTienGiam(double soTienGiam) {
-        this.soTienGiam = soTienGiam;
+    public int getTienGiam() {
+        return tienGiam;
     }
 
-    public int getID() {
-        return ID;
+    public void setTienGiam(int tienGiam) {
+        this.tienGiam = tienGiam;
     }
 
-    public void setID(int ID) {
-        this.ID = ID;
+    public boolean isPhuong_thuc_thanh_toan() {
+        return phuong_thuc_thanh_toan;
     }
 
-    public String getMaHD() {
-        return MaHD;
+    public void setPhuong_thuc_thanh_toan(boolean phuong_thuc_thanh_toan) {
+        this.phuong_thuc_thanh_toan = phuong_thuc_thanh_toan;
     }
 
-    public void setMaHD(String MaHD) {
-        this.MaHD = MaHD;
-    }
-
-    public Date getNgayTao() {
-        return NgayTao;
-    }
-
-    public void setNgayTao(Date NgayTao) {
-        this.NgayTao = NgayTao;
-    }
-
-    public Date getNgayTT() {
-        return NgayTT;
-    }
-
-    public void setNgayTT(Date NgayTT) {
-        this.NgayTT = NgayTT;
-    }
-
-    public double getTongTien() {
-        return TongTien;
-    }
-
-    public void setTongTien(double TongTien) {
-        this.TongTien = TongTien;
-    }
-
-    public String getMaNV() {
-        return MaNV;
-    }
-
-    public void setMaNV(String MaNV) {
-        this.MaNV = MaNV;
-    }
-
-    public String getTenKH() {
-        return TenKH;
-    }
-
-    public void setTenKH(String TenKH) {
-        this.TenKH = TenKH;
-    }
-
-    public String getSDT() {
-        return SDT;
-    }
-
-    public void setSDT(String SDT) {
-        this.SDT = SDT;
-    }
+   
 
     public int getTrangThai() {
-        return TrangThai;
+        return trangThai;
     }
 
-    public void setTrangThai(int TrangThai) {
-        this.TrangThai = TrangThai;
+    public void setTrangThai(int trangThai) {
+        this.trangThai = trangThai;
     }
 
-    public String getDiaChi() {
-        return DiaChi;
+    public String getNgayTao() {
+        return ngayTao;
     }
 
-    public void setDiaChi(String DiaChi) {
-        this.DiaChi = DiaChi;
+    public void setNgayTao(String ngayTao) {
+        this.ngayTao = ngayTao;
     }
 
-    public int getIDNhanVien() {
-        return IDNhanVien;
+    public String getNgayCapnhat() {
+        return ngayCapnhat;
     }
 
-    public void setIDNhanVien(int IDNhanVien) {
-        this.IDNhanVien = IDNhanVien;
+    public void setNgayCapnhat(String ngayCapnhat) {
+        this.ngayCapnhat = ngayCapnhat;
     }
 
-    public String getMax() {
-        if (MaNV == getMaNV()) {
-            return "MANV" + getMaNV();
-        } else {
-            return "MANV" + getMaNV();
-        }
-
+    public boolean isTrangThaixoa() {
+        return trangThaixoa;
     }
 
-    public String getIDHoaDon() {
-        if (MaNV == getMaNV()) {
-            return "HD" + getID();
-        } else {
-            return "HD" + getID();
-        }
-
+    public void setTrangThaixoa(boolean trangThaixoa) {
+        this.trangThaixoa = trangThaixoa;
     }
 
-    public String getFormattedTongTien() {
-        // Convert double to BigDecimal for precise currency handling
-        BigDecimal tongTienBigDecimal = BigDecimal.valueOf(TongTien);
-
-        // Set the locale to the desired one, e.g., Locale.US for US dollars
-        Locale locale = new Locale("vi", "VN");
-        NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(locale);
-
-        // Format the TongTien as currency
-        return currencyFormatter.format(tongTienBigDecimal);
-    }
-    public String getFormattedGiamGia() {
-        // Convert double to BigDecimal for precise currency handling
-        BigDecimal tongTienBigDecimal = BigDecimal.valueOf(GiamGia);
-
-        // Set the locale to the desired one, e.g., Locale.US for US dollars
-        Locale locale = new Locale("vi", "VN");
-        NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(locale);
-
-        // Format the TongTien as currency
-        return currencyFormatter.format(tongTienBigDecimal);
-    }
-
-    public String getTrangThaiA() {
-        switch (getTrangThai()) {
-            case 0:
-                return "Đã thanh toán";
-            case 1:
-                return "Chưa thanh toán";
-            case 2:
-                return "Đã hủy thanh toán";
-            default:
-                return null;
-        }
-    }
-
-    public String getFormattedTao() {
-        if (NgayTao != null) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-            return dateFormat.format(NgayTao);
-        } else {
-            return null;
-        }
-    }
-
-    public String getFormattedTT() {
-        if (NgayTT != null) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-            return dateFormat.format(NgayTao);
-        } else {
-            return null;
-        }
-    }
-
-    public String getNgayTTAsString() {
-        if (NgayTT != null) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            return dateFormat.format(NgayTT);
-        } else {
-            return null; // or an empty string based on your requirements
-        }
-    }
-
-    public String getNgayTaoString() {
-        if (NgayTao != null) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            return dateFormat.format(NgayTao);
-        } else {
-            return null; // or an empty string based on your requirements
-        }
-    }
-
-    public static String generateCode() {
-        Random random = new SecureRandom();
-        StringBuilder code = new StringBuilder(CODE_LENGTH);
-
-        for (int i = 0; i < CODE_LENGTH; i++) {
-            int randomIndex = random.nextInt(CHARACTERS.length());
-            code.append(CHARACTERS.charAt(randomIndex));
-        }
-
-        return "HD-" + code.toString();
-    }
-    private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    private static final int CODE_LENGTH = 5;
     
+        
+        
 }

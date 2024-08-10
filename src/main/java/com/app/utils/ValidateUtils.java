@@ -1,5 +1,6 @@
 package com.app.utils;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -65,5 +66,38 @@ public class ValidateUtils {
                 .matcher(str)
                 .matches();
     }
+    
+    /**
+     * Kiểm tra chuỗi có phải họ tên hay không
+     * @param str chuỗi muốn kiểm tra
+     * @return trả về true nếu đúng và false nếu sai
+     */
+    public static boolean isFullName(String str) {
+        String regex = "^[\\p{L} ]+$";
+        
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(str);
+        return matcher.matches();
+    }
+    
+    /**
+     * Kiểm tra chuỗi có chứa ký tự đặc biệt hay không (trừ &, -, _)
+     * @param str chuỗi muốn kiểm tra
+     * @return trả về true nếu chuỗi chứ ký tự đặc biệt và false không chứa ký tự đặc biệt
+     */
+    public static boolean isSpecialCharacters(String str) {
+        String regex = "^[\\p{L}\\p{N} _&-]+$";
+        
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(str);
+        return !matcher.matches();
+    }
 
+    public static boolean isCodeVoucher(String str) {
+        String regex = "^[a-zA-Z0-9_-]+$";
+        
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(str);
+        return matcher.matches();
+    }
 }

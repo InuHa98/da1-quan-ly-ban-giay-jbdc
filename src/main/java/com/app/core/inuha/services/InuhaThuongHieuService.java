@@ -4,7 +4,7 @@ import com.app.common.helper.JbdcHelper;
 import com.app.common.infrastructure.constants.ErrorConstant;
 import com.app.common.infrastructure.constants.TrangThaiXoaConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
-import com.app.common.infrastructure.request.FillterRequest;
+import com.app.common.infrastructure.request.FilterRequest;
 import com.app.core.inuha.models.sanpham.InuhaDanhMucModel;
 import com.app.core.inuha.models.sanpham.InuhaMauSacModel;
 import com.app.core.inuha.models.sanpham.InuhaThuongHieuModel;
@@ -21,7 +21,20 @@ import java.util.Optional;
  */
 public class InuhaThuongHieuService implements IInuhaThuongHieuServiceInterface {
 
-    private final InuhaThuongHieuRepository repository = new InuhaThuongHieuRepository();
+    private final InuhaThuongHieuRepository repository = InuhaThuongHieuRepository.getInstance();
+    
+    private static InuhaThuongHieuService instance = null;
+    
+    public static InuhaThuongHieuService getInstance() { 
+	if (instance == null) { 
+	    instance = new InuhaThuongHieuService();
+	}
+	return instance;
+    }
+    
+    private InuhaThuongHieuService() { 
+	
+    }
     
     @Override
     public InuhaThuongHieuModel getById(Integer id) {
@@ -69,7 +82,7 @@ public class InuhaThuongHieuService implements IInuhaThuongHieuServiceInterface 
             repository.update(model);
         } catch (SQLException ex) {
             ex.printStackTrace();
-            throw new ServiceResponseException("Không thể xoá thương hiệu này");
+            throw new ServiceResponseException("Không thể cập nhật thương hiệu này");
         }
     }
 
@@ -109,7 +122,7 @@ public class InuhaThuongHieuService implements IInuhaThuongHieuServiceInterface 
     }
 
     @Override
-    public List<InuhaThuongHieuModel> getPage(FillterRequest request) {
+    public List<InuhaThuongHieuModel> getPage(FilterRequest request) {
         try {
             return repository.selectPage(request);
         } catch (SQLException ex) {
@@ -119,7 +132,7 @@ public class InuhaThuongHieuService implements IInuhaThuongHieuServiceInterface 
     }
 
     @Override
-    public Integer getTotalPage(FillterRequest request) {
+    public Integer getTotalPage(FilterRequest request) {
         try {
             return repository.count(request);
         } catch (SQLException ex) {

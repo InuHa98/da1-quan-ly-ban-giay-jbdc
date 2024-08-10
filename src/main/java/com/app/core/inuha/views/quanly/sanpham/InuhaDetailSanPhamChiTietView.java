@@ -1,8 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
-
 package com.app.core.inuha.views.quanly.sanpham;
 
 import com.app.common.helper.QrCodeHelper;
@@ -11,9 +6,11 @@ import static com.app.core.inuha.views.quanly.sanpham.InuhaDetailSanPhamView.get
 import com.app.utils.CurrencyUtils;
 import com.app.utils.ProductUtils;
 import com.app.utils.QrCodeUtils;
+import com.app.utils.ResourceUtils;
 import com.app.views.UI.picturebox.DefaultPictureBoxRender;
 import com.app.views.UI.picturebox.PictureBox;
 import com.app.views.UI.picturebox.SuperEllipse2D;
+import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import raven.modal.ModalDialog;
@@ -49,6 +46,9 @@ public class InuhaDetailSanPhamChiTietView extends javax.swing.JPanel {
 	if (sanPhamChiTiet == null) { 
 	    return;
 	}
+	
+	btnEdit.setIcon(ResourceUtils.getSVG("/svg/edit.svg", new Dimension(20, 20)));
+	btnSaveQR.setIcon(ResourceUtils.getSVG("/svg/save.svg", new Dimension(20, 20)));
 		
 	txtTen.setText(sanPhamChiTiet.getSanPham().getMa() + " - " + sanPhamChiTiet.getSanPham().getTen());
 	txtGiaNhap.setText(CurrencyUtils.parseString(sanPhamChiTiet.getSanPham().getGiaNhap()));
@@ -426,6 +426,9 @@ public class InuhaDetailSanPhamChiTietView extends javax.swing.JPanel {
     }
     
     private void handleClickButtonEdit() {
+        if (ModalDialog.isIdExist(InuhaDetailSanPhamView.ID_MODAL_ADD)) {
+            return;
+        }
 	ModalDialog.showModal(this, new SimpleModalBorder(new InuhaAddSanPhamChiTietView(sanPhamChiTiet.getSanPham(), sanPhamChiTiet), "Chỉnh sửa chi tiết sản phẩm"), InuhaDetailSanPhamView.ID_MODAL_ADD);
     }
 
