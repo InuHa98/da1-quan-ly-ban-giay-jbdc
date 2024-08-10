@@ -1687,8 +1687,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
     }
 	
     private void handleSelectBill(int i) {
-        
-        updateTienThanhToan();
+        clearVoucher();
         
 	if (i < 0) {
 	    handleClear();
@@ -1917,6 +1916,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 	if (phieuGiamGia == null) {
 	    return;
 	}
+        
 	double tongGiamGia = VoucherUtils.getTienGiam(chiTietThanhToan.getTongTienHang(), phieuGiamGia);
 	lblTongVoucherGiamGia.setText("-" + CurrencyUtils.parseString(tongGiamGia));
 	currentPhieuGiamGia = phieuGiamGia;
@@ -1925,6 +1925,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 	lblTongThanhToan.setText(CurrencyUtils.parseString(chiTietThanhToan.getTongThanhToan()));
         
 	btnSelectVoucher.setEnabled(true);
+        updateTienTraLai();
     }
 	
     private void handleClickButtonScanQr() {
@@ -2269,7 +2270,9 @@ public class InuhaBanHangView extends javax.swing.JPanel {
   
             };
             worker.execute();
+            return;
 	}
+        
 	showSelectVoucher();
     }
     
@@ -2292,6 +2295,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 	chiTietThanhToan.setTongGiamGia(0);
 	lblTongVoucherGiamGia.setText("đ0");
 	lblTongThanhToan.setText(CurrencyUtils.parseString(chiTietThanhToan.getTongThanhToan()));
+        updateTienTraLai();
     }
 
     public void updateTienThanhToan() {

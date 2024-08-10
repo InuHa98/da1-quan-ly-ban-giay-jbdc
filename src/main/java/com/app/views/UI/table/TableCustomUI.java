@@ -79,14 +79,13 @@ public class TableCustomUI {
                 super.paintComponent(g);
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setColor(ColorUtils.BORDER);
-                g2.setStroke(new BasicStroke(1));
+                g2.setStroke(new BasicStroke(4));
                 //g2.drawLine(getWidth() - 1, 0, getWidth() - 1, getHeight());
                 g2.drawLine(0, getHeight() - 1, getWidth() - 1, getHeight() - 1);
                 g2.dispose();
             }
         };
         
-        panel.setOpaque(false);
         panel.setBackground(ColorUtils.BACKGROUND_TABLE);
         scroll.setCorner(JScrollPane.UPPER_RIGHT_CORNER, panel);
         scroll.setOpaque(false);

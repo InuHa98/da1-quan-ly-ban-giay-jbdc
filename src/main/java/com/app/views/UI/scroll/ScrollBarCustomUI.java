@@ -24,8 +24,6 @@ public class ScrollBarCustomUI extends BasicScrollBarUI {
 
     private final static Color COLOR_DRAG = COLOR_PRIMARY;
 
-    private static final Color TRACK_COLOR = new Color(50, 50, 50, 100);
-
     public static void apply(JScrollPane scroll) { 
         scroll.setViewportBorder(null);
         scroll.setBorder(null);
@@ -61,18 +59,18 @@ public class ScrollBarCustomUI extends BasicScrollBarUI {
         });
     }
 
-    @Override
-    protected void paintTrack(Graphics g, JComponent jc, Rectangle rctngl) {
-        Graphics2D g2 = (Graphics2D) g;
-        g2.setColor(new Color(50, 50, 50));
-        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.0f));
-        int x = rctngl.x;
-        int y = rctngl.y;
-        int width = rctngl.width;
-        int height = rctngl.height;
-        g2.fillRoundRect(x, y, width, height, 1, 1);
-        g2.setComposite(AlphaComposite.SrcOver);
-    }
+//    @Override
+//    protected void paintTrack(Graphics g, JComponent jc, Rectangle rctngl) {
+//        Graphics2D g2 = (Graphics2D) g;
+//        g2.setColor(jc.getBackground());
+//        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+//        int x = rctngl.x;
+//        int y = rctngl.y;
+//        int width = rctngl.width;
+//        int height = rctngl.height;
+//        g2.fillRoundRect(x, y, width, height, 1, 1);
+//        g2.setComposite(AlphaComposite.SrcOver);
+//    }
 
     @Override
     protected void paintThumb(Graphics grphcs, JComponent jc, Rectangle rctngl) {
