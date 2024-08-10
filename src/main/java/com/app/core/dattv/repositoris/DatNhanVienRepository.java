@@ -19,7 +19,7 @@ import java.util.ArrayList;
 public class DatNhanVienRepository {
        public ArrayList<DatNhanvienModel> getAll() {
         String sql = """
-                 select Taikhoan.id,TaiKhoan.ho_ten from TaiKhoan
+                 select Taikhoan.id,TaiKhoan.tai_khoan from TaiKhoan
                      """;
         ArrayList<DatNhanvienModel> lists = new ArrayList<>();
         try (Connection con = DBConnect.getInstance().getConnect();

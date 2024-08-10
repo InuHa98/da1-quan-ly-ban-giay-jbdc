@@ -29,14 +29,14 @@ public class DatHoaDonModel {
         private int tienGiam;
         private boolean phuong_thuc_thanh_toan;
         private int trangThai;
-        private Date ngayTao;
-        private Date ngayCapnhat;
+        private String ngayTao;
+        private String ngayCapnhat;
         private boolean trangThaixoa;
 
     public DatHoaDonModel() {
     }
 
-    public DatHoaDonModel(int id, int stt, int id_tai_khoan, int id_khach_hang, int id_phieu_giam_gia, String maHd, int tienGiam, boolean phuong_thuc_thanh_toan, int trangThai, Date ngayTao, Date ngayCapnhat, boolean trangThaixoa) {
+    public DatHoaDonModel(int id, int stt, int id_tai_khoan, int id_khach_hang, int id_phieu_giam_gia, String maHd, int tienGiam, boolean phuong_thuc_thanh_toan, int trangThai, String ngayTao, String ngayCapnhat, boolean trangThaixoa) {
         this.id = id;
         this.stt = stt;
         this.id_tai_khoan = id_tai_khoan;
@@ -125,19 +125,19 @@ public class DatHoaDonModel {
         this.trangThai = trangThai;
     }
 
-    public Date getNgayTao() {
+    public String getNgayTao() {
         return ngayTao;
     }
 
-    public void setNgayTao(Date ngayTao) {
+    public void setNgayTao(String ngayTao) {
         this.ngayTao = ngayTao;
     }
 
-    public Date getNgayCapnhat() {
+    public String getNgayCapnhat() {
         return ngayCapnhat;
     }
 
-    public void setNgayCapnhat(Date ngayCapnhat) {
+    public void setNgayCapnhat(String ngayCapnhat) {
         this.ngayCapnhat = ngayCapnhat;
     }
 
