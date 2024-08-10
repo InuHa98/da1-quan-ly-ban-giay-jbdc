@@ -1,6 +1,7 @@
 package com.app.utils;
 
 import com.app.common.helper.TestConnection;
+import com.app.common.infrastructure.constants.PhuongThucThanhToanConstant;
 import com.app.common.infrastructure.constants.TrangThaiHoaDonConstant;
 import com.app.common.infrastructure.request.FilterRequest;
 import com.app.core.inuha.request.InuhaFilterHoaDonChiTietRequest;
@@ -51,4 +52,13 @@ public class BillUtils {
 	};
     }
 
+    public static String getPhuongThucThanhToan(int phuongThuc) { 
+	return switch (phuongThuc) {
+	    case PhuongThucThanhToanConstant.TIEN_MAT -> "Tiền mặt";
+	    case PhuongThucThanhToanConstant.CHUYEN_KHOAN -> "Chuyển khoản";
+	    case PhuongThucThanhToanConstant.KET_HOP -> "Tiền mặt và chuyển khoản";
+	    default -> "Không xác định";
+	};
+    }
+    
 }
