@@ -110,7 +110,7 @@ public class InuhaChangePasswordView extends javax.swing.JPanel {
         pnlLogin.setOpaque(true);
 
         lbDesc.setFont(lbDesc.getFont().deriveFont(lbDesc.getFont().getSize()+1f));
-        lbDesc.setText("Mật khẩu phải có từ %d đến %d ký tự");
+        lbDesc.setText("Mật khẩu phải có từ %d đến %d kí tự");
 
         lbNewPassword.setFont(lbNewPassword.getFont().deriveFont(lbNewPassword.getFont().getStyle() | java.awt.Font.BOLD, lbNewPassword.getFont().getSize()+2));
         lbNewPassword.setText("New Password");
@@ -136,14 +136,14 @@ public class InuhaChangePasswordView extends javax.swing.JPanel {
             .addGroup(pnlLoginLayout.createSequentialGroup()
                 .addGap(42, 42, 42)
                 .addGroup(pnlLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(txtNewPassword)
-                    .addComponent(txtConfirmPassword)
+                    .addComponent(txtNewPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 472, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtConfirmPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 472, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnSubmit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(lbConfirmPassword, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(lbNewPassword, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lbDesc, javax.swing.GroupLayout.DEFAULT_SIZE, 472, Short.MAX_VALUE)
-                    .addComponent(txtOldPassword)
-                    .addComponent(lbOldPassword, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(lbDesc, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lbOldPassword, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(txtOldPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 472, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(42, Short.MAX_VALUE))
         );
         pnlLoginLayout.setVerticalGroup(

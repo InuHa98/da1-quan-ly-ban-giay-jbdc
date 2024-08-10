@@ -330,6 +330,12 @@ public class InuhaAddPhieuGiamGiaView extends javax.swing.JPanel {
             MessageToast.error("Mã phiếu không được vượt quá 50 ký tự");
             return;
         }
+        
+        if (!ValidateUtils.isCodeVoucher(ma)) { 
+            MessageToast.error("Mã phiếu không hợp lệ");
+            return;
+        }
+        
         lblMa.setForeground(currentColor);
 	
         lblTen.setForeground(ColorUtils.DANGER_COLOR);

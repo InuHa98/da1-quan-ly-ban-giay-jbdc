@@ -93,4 +93,11 @@ public class ValidateUtils {
         return !matcher.matches();
     }
 
+    public static boolean isCodeVoucher(String str) {
+        String regex = "^[a-zA-Z0-9_-]+$";
+        
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(str);
+        return matcher.matches();
+    }
 }

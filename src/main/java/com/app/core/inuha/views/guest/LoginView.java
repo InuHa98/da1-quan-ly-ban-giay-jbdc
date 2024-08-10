@@ -20,6 +20,7 @@ import com.app.views.UI.dialog.LoadingDialog;
 import com.app.views.DashboardView;
 import com.formdev.flatlaf.FlatClientProperties;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -64,8 +65,6 @@ public class LoginView extends javax.swing.JPanel {
         txtUsername.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Vui lòng nhập email hoặc tên người dùng");
         txtPassword.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Vui lòng nhập mật khẩu");
 
-        txtUsername.setText("admin");
-        txtPassword.setText("123");
 
         currentUsername = lbUsername.getText();
         currentPassword = lbPassword.getText();
@@ -81,7 +80,7 @@ public class LoginView extends javax.swing.JPanel {
 
         txtUsername.addKeyListener(keyEnter);
         txtPassword.addKeyListener(keyEnter);
-
+        
         txtUsername.requestFocus();
         
         lblTheme.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -109,6 +108,8 @@ public class LoginView extends javax.swing.JPanel {
         lbForgotPassword = new javax.swing.JLabel();
         lblTheme = new javax.swing.JLabel();
 
+        pnlLogin.setMaximumSize(new java.awt.Dimension(429, 396));
+
         lblTitle.setFont(lblTitle.getFont().deriveFont(lblTitle.getFont().getStyle() | java.awt.Font.BOLD, lblTitle.getFont().getSize()+10));
         lblTitle.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         lblTitle.setText("I-SHOES");
@@ -119,8 +120,12 @@ public class LoginView extends javax.swing.JPanel {
         lbUsername.setFont(lbUsername.getFont().deriveFont(lbUsername.getFont().getStyle() | java.awt.Font.BOLD, lbUsername.getFont().getSize()+2));
         lbUsername.setText("Username");
 
+        txtUsername.setMaximumSize(new java.awt.Dimension(345, 35));
+
         lbPassword.setFont(lbPassword.getFont().deriveFont(lbPassword.getFont().getStyle() | java.awt.Font.BOLD, lbPassword.getFont().getSize()+2));
         lbPassword.setText("Password");
+
+        txtPassword.setMaximumSize(new java.awt.Dimension(345, 35));
 
         btnSubmit.setText("Đăng nhập");
         btnSubmit.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -165,15 +170,15 @@ public class LoginView extends javax.swing.JPanel {
                     .addComponent(lblTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(lbUsername, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(txtUsername)
                     .addComponent(lbPassword, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(txtPassword)
+                    .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 345, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnSubmit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(pnlLoginLayout.createSequentialGroup()
                         .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(lbForgotPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(42, Short.MAX_VALUE))
+                        .addComponent(lbForgotPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtUsername, javax.swing.GroupLayout.PREFERRED_SIZE, 345, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(42, 42, 42))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlLoginLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(lblTheme, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -209,7 +214,7 @@ public class LoginView extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(pnlLogin, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(pnlLogin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -278,6 +283,16 @@ public class LoginView extends javax.swing.JPanel {
         ComponentUtils.setErrorLabel(lbPassword, isErrorPassword, (txtErrorPassword != null ? txtErrorPassword : currentPassword));
 
         if (isErrorUsername || isErrorPassword) {
+            return;
+        }
+        
+        if (username.length() > 250) { 
+            MessageModal.error("Username vượt quá dữ liệu cho phép!");
+            return;
+        }
+        
+        if (password.length() > 50) { 
+            MessageModal.error("Password vượt quá dữ liệu cho phép!");
             return;
         }
 
