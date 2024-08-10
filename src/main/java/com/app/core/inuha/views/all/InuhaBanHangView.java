@@ -2014,6 +2014,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 		MessageToast.success("Cập nhật giỏ hàng thành công!");
 		currentHoaDonChiTiet = null;
                 updateTienTraLai();
+                updateVoucher();
 		btnRemoveSanPham.setEnabled(false);
 	    } catch (ServiceResponseException e) {
 		e.printStackTrace();
@@ -2061,6 +2062,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 		MessageToast.success("Xoá thành công sản phẩm khỏi giỏ hàng!");
 		currentHoaDonChiTiet = null;
                 updateTienTraLai();
+                updateVoucher();
 		btnRemoveSanPham.setEnabled(false);
 	    } catch (ServiceResponseException e) {
 		e.printStackTrace();
@@ -2346,6 +2348,17 @@ public class InuhaBanHangView extends javax.swing.JPanel {
                 loading.setVisible(true);
             }
             
+        }
+    }
+
+    private void updateVoucher() {
+        if (currentPhieuGiamGia == null) { 
+            return;
+        }
+        
+        if (currentPhieuGiamGia.getDonToiThieu() > chiTietThanhToan.getTongTienHang()) {
+            clearVoucher();
+            MessageModal.warning("Giá trị đơn hàng không đủ để áp dụng phiếu giảm giá hiện tại!!!");
         }
     }
     
