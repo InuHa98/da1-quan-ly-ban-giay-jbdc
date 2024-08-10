@@ -25,8 +25,8 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
                       <Component id="pnlHoaDon" max="32767" attributes="0"/>
-                      <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Component id="pnlGioHang" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
+                      <Component id="pnlGioHang" max="32767" attributes="0"/>
                   </Group>
                   <Component id="pnlSanPham" max="32767" attributes="0"/>
               </Group>
@@ -1233,7 +1233,7 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="scrDanhSachGioHang" alignment="0" pref="534" max="32767" attributes="0"/>
+                  <Component id="scrDanhSachGioHang" alignment="0" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">

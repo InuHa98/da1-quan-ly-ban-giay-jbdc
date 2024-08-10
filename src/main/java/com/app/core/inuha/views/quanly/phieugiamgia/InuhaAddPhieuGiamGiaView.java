@@ -66,8 +66,8 @@ public class InuhaAddPhieuGiamGiaView extends javax.swing.JPanel {
 	
 	currentColor = lblMa.getForeground();
 	
-	txtMa.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Tối đa 50 kí tự");
-	txtTen.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Tối đa 250 kí tự");
+	txtMa.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Tối đa 50 ký tự");
+	txtTen.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Tối đa 250 ký tự");
 	txtSoLuong.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Tối đa " + MAX);
 	txtHoaDonToiThieu.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "0");
 	txtGiamToiDa.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "0");

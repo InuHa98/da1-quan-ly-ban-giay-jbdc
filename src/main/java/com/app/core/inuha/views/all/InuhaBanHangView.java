@@ -204,8 +204,6 @@ public class InuhaBanHangView extends javax.swing.JPanel {
             
             btnReset.setBackground(ColorUtils.BUTTON_PRIMARY);
             
-            txtTienMat.putClientProperty(FlatClientProperties.STYLE, "background: #fff");
-            txtTienChuyenKhoan.putClientProperty(FlatClientProperties.STYLE, "background: #fff");            
         } else  {
             btnAddBill.setIcon(ResourceUtils.getSVG("/svg/plus.svg", new Dimension(20, 20)));
         }
@@ -217,7 +215,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 
         
 	pnlDanhSachSanPham.setRound(0, 0, 0, 0);
-	pnlThongTinHoaDon.setBackground(ColorUtils.BACKGROUND_GRAY);
+//	pnlThongTinHoaDon.setBackground(ColorUtils.BACKGROUND_GRAY);
         
 	txtTuKhoa.addKeyListener(new KeyAdapter() {
             @Override
@@ -394,7 +392,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
             keyword = keyword.replaceAll("\\s+", " ");
 	    
 	    if (keyword.length() > 250) {
-		MessageToast.warning("Từ khoá tìm kiếm chỉ được chứa tối đa 250 kí tự");
+		MessageToast.warning("Từ khoá tìm kiếm chỉ được chứa tối đa 250 ký tự");
 		return;
 	    }
 	    
@@ -1342,7 +1340,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
         pnlDanhSachGioHang.setLayout(pnlDanhSachGioHangLayout);
         pnlDanhSachGioHangLayout.setHorizontalGroup(
             pnlDanhSachGioHangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scrDanhSachGioHang, javax.swing.GroupLayout.DEFAULT_SIZE, 534, Short.MAX_VALUE)
+            .addComponent(scrDanhSachGioHang)
         );
         pnlDanhSachGioHangLayout.setVerticalGroup(
             pnlDanhSachGioHangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1394,7 +1392,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(pnlHoaDon, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
-                        .addComponent(pnlGioHang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(pnlGioHang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addComponent(pnlSanPham, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addComponent(pnlThongTinHoaDon, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)

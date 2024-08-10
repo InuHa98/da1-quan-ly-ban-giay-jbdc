@@ -119,9 +119,8 @@ public class InuhaListPhieuGiamGiaView extends javax.swing.JPanel {
             InuhaFilterPhieuGiamGiaRequest request = new InuhaFilterPhieuGiamGiaRequest();
 	    request.setTrangThai(new ComboBoxItem<Integer>("Đang diễn ra", TrangThaiPhieuGiamGiaConstant.DANG_DIEN_RA));
             request.setSize(sizePage);
-	    JbdcHelper.setDebug(true);
+            
             int totalPages = phieuGiamGiaService.getTotalPage(request);
-            System.out.println(totalPages);
             if (totalPages < page) { 
                 page = totalPages;
             }
