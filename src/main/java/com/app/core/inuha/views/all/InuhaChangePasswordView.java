@@ -136,14 +136,14 @@ public class InuhaChangePasswordView extends javax.swing.JPanel {
             .addGroup(pnlLoginLayout.createSequentialGroup()
                 .addGap(42, 42, 42)
                 .addGroup(pnlLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(txtNewPassword)
-                    .addComponent(txtConfirmPassword)
+                    .addComponent(txtNewPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 472, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtConfirmPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 472, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnSubmit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(lbConfirmPassword, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(lbNewPassword, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lbDesc, javax.swing.GroupLayout.DEFAULT_SIZE, 472, Short.MAX_VALUE)
-                    .addComponent(txtOldPassword)
-                    .addComponent(lbOldPassword, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(lbDesc, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lbOldPassword, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(txtOldPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 472, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(42, Short.MAX_VALUE))
         );
         pnlLoginLayout.setVerticalGroup(
@@ -215,11 +215,11 @@ public class InuhaChangePasswordView extends javax.swing.JPanel {
 
         if (txtErrorNewPassword == null) {
             if (lenPassword < ValidateUtils.MIN_LENGTH_PASSWORD) {
-                txtErrorNewPassword = currentNewPassword + " - Phải có ít nhất " + ValidateUtils.MIN_LENGTH_PASSWORD + " kí tự";
+                txtErrorNewPassword = currentNewPassword + " - Phải có ít nhất " + ValidateUtils.MIN_LENGTH_PASSWORD + " ký tự";
             }
 
             if (lenPassword > ValidateUtils.MAX_LENGTH_PASSWORD) {
-                txtErrorNewPassword = currentNewPassword + " - Nhiều nhất " + ValidateUtils.MAX_LENGTH_PASSWORD + " kí tự";
+                txtErrorNewPassword = currentNewPassword + " - Nhiều nhất " + ValidateUtils.MAX_LENGTH_PASSWORD + " ký tự";
             }
         }
 

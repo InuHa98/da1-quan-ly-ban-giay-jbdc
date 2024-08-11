@@ -204,8 +204,6 @@ public class InuhaBanHangView extends javax.swing.JPanel {
             
             btnReset.setBackground(ColorUtils.BUTTON_PRIMARY);
             
-            txtTienMat.putClientProperty(FlatClientProperties.STYLE, "background: #fff");
-            txtTienChuyenKhoan.putClientProperty(FlatClientProperties.STYLE, "background: #fff");            
         } else  {
             btnAddBill.setIcon(ResourceUtils.getSVG("/svg/plus.svg", new Dimension(20, 20)));
         }
@@ -217,7 +215,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 
         
 	pnlDanhSachSanPham.setRound(0, 0, 0, 0);
-	pnlThongTinHoaDon.setBackground(ColorUtils.BACKGROUND_GRAY);
+	pnlThongTinHoaDon.setMinimumSize(new Dimension(310, pnlThongTinHoaDon.getPreferredSize().height));
         
 	txtTuKhoa.addKeyListener(new KeyAdapter() {
             @Override
@@ -394,7 +392,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
             keyword = keyword.replaceAll("\\s+", " ");
 	    
 	    if (keyword.length() > 250) {
-		MessageToast.warning("Từ khoá tìm kiếm chỉ được chứa tối đa 250 kí tự");
+		MessageToast.warning("Từ khoá tìm kiếm chỉ được chứa tối đa 250 ký tự");
 		return;
 	    }
 	    
@@ -629,6 +627,9 @@ public class InuhaBanHangView extends javax.swing.JPanel {
         tblDanhSachGioHang = new javax.swing.JTable();
         btnRemoveSanPham = new javax.swing.JButton();
 
+        pnlThongTinHoaDon.setMaximumSize(new java.awt.Dimension(310, 32767));
+        pnlThongTinHoaDon.setMinimumSize(new java.awt.Dimension(310, 0));
+
         javax.swing.GroupLayout splitLine1Layout = new javax.swing.GroupLayout(splitLine1);
         splitLine1.setLayout(splitLine1Layout);
         splitLine1Layout.setHorizontalGroup(
@@ -859,9 +860,9 @@ public class InuhaBanHangView extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(lblTongThanhToan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, pnlThongTinHoaDonLayout.createSequentialGroup()
-                        .addComponent(jLabel21, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel21, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lblTongVoucherGiamGia, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(lblTongVoucherGiamGia, javax.swing.GroupLayout.DEFAULT_SIZE, 132, Short.MAX_VALUE))
                     .addGroup(pnlThongTinHoaDonLayout.createSequentialGroup()
                         .addComponent(btnCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
@@ -873,7 +874,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, pnlThongTinHoaDonLayout.createSequentialGroup()
                         .addComponent(txtTenKhachHang, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(btnClearKhachHang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(btnClearKhachHang, javax.swing.GroupLayout.DEFAULT_SIZE, 77, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, pnlThongTinHoaDonLayout.createSequentialGroup()
                         .addComponent(jLabel14)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -956,7 +957,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
                 .addGroup(pnlThongTinHoaDonLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtTienChuyenKhoan, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel25, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlThongTinHoaDonLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel23, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblTienTraLai))
@@ -1342,7 +1343,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
         pnlDanhSachGioHang.setLayout(pnlDanhSachGioHangLayout);
         pnlDanhSachGioHangLayout.setHorizontalGroup(
             pnlDanhSachGioHangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scrDanhSachGioHang, javax.swing.GroupLayout.DEFAULT_SIZE, 534, Short.MAX_VALUE)
+            .addComponent(scrDanhSachGioHang)
         );
         pnlDanhSachGioHangLayout.setVerticalGroup(
             pnlDanhSachGioHangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1394,10 +1395,10 @@ public class InuhaBanHangView extends javax.swing.JPanel {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(pnlHoaDon, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
-                        .addComponent(pnlGioHang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(pnlGioHang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addComponent(pnlSanPham, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
-                .addComponent(pnlThongTinHoaDon, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(pnlThongTinHoaDon, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -1687,8 +1688,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
     }
 	
     private void handleSelectBill(int i) {
-        
-        updateTienThanhToan();
+        clearVoucher();
         
 	if (i < 0) {
 	    handleClear();
@@ -1917,6 +1917,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 	if (phieuGiamGia == null) {
 	    return;
 	}
+        
 	double tongGiamGia = VoucherUtils.getTienGiam(chiTietThanhToan.getTongTienHang(), phieuGiamGia);
 	lblTongVoucherGiamGia.setText("-" + CurrencyUtils.parseString(tongGiamGia));
 	currentPhieuGiamGia = phieuGiamGia;
@@ -1925,6 +1926,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 	lblTongThanhToan.setText(CurrencyUtils.parseString(chiTietThanhToan.getTongThanhToan()));
         
 	btnSelectVoucher.setEnabled(true);
+        updateTienTraLai();
     }
 	
     private void handleClickButtonScanQr() {
@@ -2012,6 +2014,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 		MessageToast.success("Cập nhật giỏ hàng thành công!");
 		currentHoaDonChiTiet = null;
                 updateTienTraLai();
+                updateVoucher();
 		btnRemoveSanPham.setEnabled(false);
 	    } catch (ServiceResponseException e) {
 		e.printStackTrace();
@@ -2059,6 +2062,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 		MessageToast.success("Xoá thành công sản phẩm khỏi giỏ hàng!");
 		currentHoaDonChiTiet = null;
                 updateTienTraLai();
+                updateVoucher();
 		btnRemoveSanPham.setEnabled(false);
 	    } catch (ServiceResponseException e) {
 		e.printStackTrace();
@@ -2269,7 +2273,9 @@ public class InuhaBanHangView extends javax.swing.JPanel {
   
             };
             worker.execute();
+            return;
 	}
+        
 	showSelectVoucher();
     }
     
@@ -2292,6 +2298,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 	chiTietThanhToan.setTongGiamGia(0);
 	lblTongVoucherGiamGia.setText("đ0");
 	lblTongThanhToan.setText(CurrencyUtils.parseString(chiTietThanhToan.getTongThanhToan()));
+        updateTienTraLai();
     }
 
     public void updateTienThanhToan() {
@@ -2341,6 +2348,17 @@ public class InuhaBanHangView extends javax.swing.JPanel {
                 loading.setVisible(true);
             }
             
+        }
+    }
+
+    private void updateVoucher() {
+        if (currentPhieuGiamGia == null) { 
+            return;
+        }
+        
+        if (currentPhieuGiamGia.getDonToiThieu() > chiTietThanhToan.getTongTienHang()) {
+            clearVoucher();
+            MessageModal.warning("Giá trị đơn hàng không đủ để áp dụng phiếu giảm giá hiện tại!!!");
         }
     }
     

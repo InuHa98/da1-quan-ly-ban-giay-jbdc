@@ -22,7 +22,7 @@ public class QrCodeUtils {
     
     public final static String MODAL_SCAN_ID = "modal-webcam-scan";
     
-    public final static String PREFIX_CODE = "INUSHOES";
+    public final static String PREFIX_CODE = "I-SHOES";
         
     public final static String SEPERATOR = "|";
     

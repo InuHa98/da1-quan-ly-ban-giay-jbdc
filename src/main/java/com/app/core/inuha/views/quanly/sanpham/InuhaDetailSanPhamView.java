@@ -953,19 +953,17 @@ public class InuhaDetailSanPhamView extends JPanel {
 			ProductUtils.getTrangThai(item.getTrangThai())
 		    });
 		}
-		
-		loading.dispose();
-		
+				
 		ExcelHelper.writeFile(fileName, headers, rows);
 	    } catch (ServiceResponseException e) {
 		e.printStackTrace();
-		loading.dispose();
 		MessageModal.error(e.getMessage());
 	    } catch (Exception e) {
 		e.printStackTrace();
-		loading.dispose();
 		MessageModal.error(ErrorConstant.DEFAULT_ERROR);
-	    }
+	    } finally {
+                loading.dispose();
+            }
 	});
 	loading.setVisible(true);
     }

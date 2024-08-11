@@ -152,7 +152,7 @@ public final class LamKhachHangView extends javax.swing.JPanel {
         timKiem = timKiem.replaceAll("\\s+", " ");
 	    
         if (timKiem.length() > 250) {
-            MessageToast.warning("Từ khoá tìm kiếm chỉ được chứa tối đa 250 kí tự");
+            MessageToast.warning("Từ khoá tìm kiếm chỉ được chứa tối đa 250 ký tự");
             return;
         }
         
@@ -265,9 +265,6 @@ public final class LamKhachHangView extends javax.swing.JPanel {
         lblDanhSachKhachHang.setIcon(ResourceUtils.getSVG("/svg/list.svg", new Dimension(20, 20)));
         lblDonHangDaMua.setIcon(ResourceUtils.getSVG("/svg/list.svg", new Dimension(20, 20)));
                 
-        roundPanel1.setBackground(ColorUtils.BACKGROUND_DASHBOARD);
-        roundPanel2.setBackground(ColorUtils.BACKGROUND_DASHBOARD);
-        roundPanel3.setBackground(ColorUtils.BACKGROUND_DASHBOARD);
                 
         TableCustomUI.apply(scrKhachHang, TableCustomUI.TableType.DEFAULT);
         TableCustomUI.apply(scrLichSuMuaHang, TableCustomUI.TableType.DEFAULT);
@@ -351,7 +348,7 @@ public final class LamKhachHangView extends javax.swing.JPanel {
 
         jPanel3.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
 
-        roundPanel1.setBackground(new java.awt.Color(102, 0, 102));
+        roundPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         btnSearch.setText("Tìm");
         btnSearch.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -427,11 +424,9 @@ public final class LamKhachHangView extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnSearch)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnLamMoi)
-                        .addGap(20, 20, 20))
-                    .addGroup(roundPanel1Layout.createSequentialGroup()
-                        .addComponent(pnlPhanTrang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(20, 20, 20))))
+                        .addComponent(btnLamMoi))
+                    .addComponent(pnlPhanTrang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(20, 20, 20))
         );
         roundPanel1Layout.setVerticalGroup(
             roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -445,11 +440,10 @@ public final class LamKhachHangView extends javax.swing.JPanel {
                 .addGap(15, 15, 15)
                 .addComponent(scrKhachHang, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(pnlPhanTrang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0))
+                .addComponent(pnlPhanTrang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
-        roundPanel2.setBackground(new java.awt.Color(102, 0, 102));
+        roundPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         tblLichSuMuaHang.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -502,12 +496,11 @@ public final class LamKhachHangView extends javax.swing.JPanel {
             .addGroup(roundPanel2Layout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addGroup(roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(roundPanel2Layout.createSequentialGroup()
-                        .addComponent(pnlPhanTrangLs, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(20, 20, 20))
+                    .addComponent(pnlPhanTrangLs, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(roundPanel2Layout.createSequentialGroup()
                         .addComponent(lblDonHangDaMua, javax.swing.GroupLayout.PREFERRED_SIZE, 272, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(20, 518, Short.MAX_VALUE))))
+                        .addGap(0, 490, Short.MAX_VALUE)))
+                .addGap(20, 20, 20))
         );
         roundPanel2Layout.setVerticalGroup(
             roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -515,11 +508,13 @@ public final class LamKhachHangView extends javax.swing.JPanel {
                 .addGap(15, 15, 15)
                 .addComponent(lblDonHangDaMua)
                 .addGap(15, 15, 15)
-                .addComponent(scrLichSuMuaHang, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
+                .addComponent(scrLichSuMuaHang, javax.swing.GroupLayout.DEFAULT_SIZE, 232, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pnlPhanTrangLs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0))
         );
+
+        roundPanel3.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         btnThem.setText("Thêm");
         btnThem.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -662,7 +657,7 @@ public final class LamKhachHangView extends javax.swing.JPanel {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(roundPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(127, Short.MAX_VALUE))
+                        .addContainerGap(123, Short.MAX_VALUE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(roundPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGap(18, 18, 18)

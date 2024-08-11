@@ -15,51 +15,50 @@ import java.util.Date;
 
 public class DatHoaDonRequest {
 
-   
+    private int stt;
     private int id;
     private String maHd;
-    private Date thoiGian;
+    private String thoiGian;
     private String khachHang;
     private double tongTienhang;
     private double giamGia;
     private double thanhTien;
+    private double tienMat;
+    private double tienChuyenKhoan;
     private int trangThai;
     private int phuongThucTT;
     private boolean trangThaixoa;
     private String tenNv;
+    private String sdt;
 
     public DatHoaDonRequest() {
     }
 
-    public DatHoaDonRequest(String maHd, Date thoiGian, String khachHang, double tongTienhang, double giamGia, double thanhTien, int trangThai, int phuongThucTT) {
+    public DatHoaDonRequest(int stt, int id, String maHd, String thoiGian, String khachHang, double tongTienhang, double giamGia, double thanhTien, double tienMat, double tienChuyenKhoan, int trangThai, int phuongThucTT, boolean trangThaixoa, String tenNv, String sdt) {
+        this.stt = stt;
+        this.id = id;
         this.maHd = maHd;
         this.thoiGian = thoiGian;
         this.khachHang = khachHang;
         this.tongTienhang = tongTienhang;
         this.giamGia = giamGia;
         this.thanhTien = thanhTien;
+        this.tienMat = tienMat;
+        this.tienChuyenKhoan = tienChuyenKhoan;
         this.trangThai = trangThai;
         this.phuongThucTT = phuongThucTT;
-        
-    }
-
-    public DatHoaDonRequest(String tenNv) {
+        this.trangThaixoa = trangThaixoa;
         this.tenNv = tenNv;
-    }
-    
-
-    public DatHoaDonRequest(int id) {
-        this.id = id;
+        this.sdt = sdt;
     }
 
-    public String getTenNv() {
-        return tenNv;
+    public int getStt() {
+        return stt;
     }
 
-    public void setTenNv(String tenNv) {
-        this.tenNv = tenNv;
+    public void setStt(int stt) {
+        this.stt = stt;
     }
-    
 
     public int getId() {
         return id;
@@ -68,7 +67,7 @@ public class DatHoaDonRequest {
     public void setId(int id) {
         this.id = id;
     }
-    
+
     public String getMaHd() {
         return maHd;
     }
@@ -77,11 +76,11 @@ public class DatHoaDonRequest {
         this.maHd = maHd;
     }
 
-    public Date getThoiGian() {
+    public String getThoiGian() {
         return thoiGian;
     }
 
-    public void setThoiGian(Date thoiGian) {
+    public void setThoiGian(String thoiGian) {
         this.thoiGian = thoiGian;
     }
 
@@ -117,6 +116,22 @@ public class DatHoaDonRequest {
         this.thanhTien = thanhTien;
     }
 
+    public double getTienMat() {
+        return tienMat;
+    }
+
+    public void setTienMat(double tienMat) {
+        this.tienMat = tienMat;
+    }
+
+    public double getTienChuyenKhoan() {
+        return tienChuyenKhoan;
+    }
+
+    public void setTienChuyenKhoan(double tienChuyenKhoan) {
+        this.tienChuyenKhoan = tienChuyenKhoan;
+    }
+
     public int getTrangThai() {
         return trangThai;
     }
@@ -133,7 +148,6 @@ public class DatHoaDonRequest {
         this.phuongThucTT = phuongThucTT;
     }
 
-   
     public boolean isTrangThaixoa() {
         return trangThaixoa;
     }
@@ -142,22 +156,22 @@ public class DatHoaDonRequest {
         this.trangThaixoa = trangThaixoa;
     }
 
-    
-    
-
-    
-
-    @Override
-    public String toString() {
-        return "DatHoaDonRequest{" + "trangThaixoa=" + trangThaixoa + ", maHd=" + maHd + ", thoiGian=" + thoiGian + ", khachHang=" + khachHang + ", tongTien=" + tongTienhang + ", giamGia=" + giamGia + ", thanhTien=" + thanhTien + ", trangThai=" + trangThai +", phuongThucthanhtoan= "+ phuongThucTT + '}';
+    public String getTenNv() {
+        return tenNv;
     }
 
-    
+    public void setTenNv(String tenNv) {
+        this.tenNv = tenNv;
+    }
 
-    
-    
-    
+    public String getSdt() {
+        return sdt;
+    }
 
-    
+    public void setSdt(String sdt) {
+        this.sdt = sdt;
+    }
+
+   
     
 }

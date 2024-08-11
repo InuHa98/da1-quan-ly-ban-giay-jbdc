@@ -384,7 +384,7 @@ public class InuhaSanPhamView extends RoundPanel {
             keyword = keyword.replaceAll("\\s+", " ");
 	    
 	    if (keyword.length() > 250) {
-		MessageToast.warning("Từ khoá tìm kiếm chỉ được chứa tối đa 250 kí tự");
+		MessageToast.warning("Từ khoá tìm kiếm chỉ được chứa tối đa 250 ký tự");
 		return;
 	    }
 	    
@@ -435,7 +435,7 @@ public class InuhaSanPhamView extends RoundPanel {
             keyword = keyword.replaceAll("\\s+", " ");
         
 	    if (keyword.length() > 250) {
-		MessageToast.warning("Từ khoá tìm kiếm chỉ được chứa tối đa 250 kí tự");
+		MessageToast.warning("Từ khoá tìm kiếm chỉ được chứa tối đa 250 ký tự");
 		return;
 	    }
 	    
@@ -1804,19 +1804,18 @@ public class InuhaSanPhamView extends RoundPanel {
 			InuhaSanPhamChiTietModel sanPhamChiTietModel = sanPhamChiTietService.getById(id);
 			sanPhamModel = sanPhamChiTietModel.getSanPham();
                     } else { 
-                        loading.dispose();
+                        
                         MessageToast.error("QRCode không hợp lệ!!!");
                         return;
                     }
-                    loading.dispose();
                     showEditSanPham(sanPhamModel);                
                 } catch (ServiceResponseException e) {
-                    loading.dispose();
                     MessageModal.error(e.getMessage());
                 } catch (Exception e) {
                     e.printStackTrace();
-                    loading.dispose();
                     MessageModal.error(ErrorConstant.DEFAULT_ERROR);
+                } finally {
+                    loading.dispose();
                 }
             });
             loading.setVisible(true);
@@ -1934,19 +1933,17 @@ public class InuhaSanPhamView extends RoundPanel {
 			ProductUtils.getTrangThai(item.getTrangThai())
 		    });
 		}
-		
-		loading.dispose();
-		
+				
 		ExcelHelper.writeFile(fileName, headers, rows);
 	    } catch (ServiceResponseException e) {
 		e.printStackTrace();
-		loading.dispose();
 		MessageModal.error(e.getMessage());
 	    } catch (Exception e) {
 		e.printStackTrace();
-		loading.dispose();
 		MessageModal.error(ErrorConstant.DEFAULT_ERROR);
-	    }
+	    } finally {
+                loading.dispose();
+            }
 	});
 	loading.setVisible(true);
     }
