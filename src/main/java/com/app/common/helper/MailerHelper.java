@@ -37,9 +37,6 @@ public class MailerHelper {
         MailjetRequest request;
         MailjetResponse response;
 
-
-
-
         ClientOptions options = ClientOptions.builder()
                 .apiKey(System.getProperty("MJ_APIKEY_PUBLIC"))
                 .apiSecretKey(System.getProperty("MJ_APIKEY_PRIVATE"))
@@ -61,6 +58,7 @@ public class MailerHelper {
         try {
             response = client.post(request);
             this.data = response.getData();
+            
             return response.getStatus() == 200;
         } catch (MailjetException e) {
             e.printStackTrace();
