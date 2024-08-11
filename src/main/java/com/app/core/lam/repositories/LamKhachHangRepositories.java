@@ -32,7 +32,7 @@ public class LamKhachHangRepositories {
         String sql = """
                         SELECT COUNT(*)
                         FROM [dbo].[KhachHang]
-                        WHERE (? IS NULL OR [ho_ten] LIKE ? OR [sdt] LIKE ?) AND trang_thai_xoa != 1 
+                        WHERE ? IS NULL OR [ho_ten] LIKE ? OR [sdt] LIKE ?
                      """;
         
         try (Connection con = DBConnect.getInstance().getConnect();
@@ -67,7 +67,7 @@ public class LamKhachHangRepositories {
                            ,(SELECT COUNT(*) FROM [dbo].[HoaDon] WHERE [id_khach_hang] = [dbo].[KhachHang].[id] AND [trang_thai] = ?) AS luot_mua
                            ,ROW_NUMBER() OVER (ORDER BY [dbo].[KhachHang].[id] DESC) AS stt
                         FROM [dbo].[KhachHang]
-                        WHERE ( ? IS NULL OR [ho_ten] LIKE ? OR [sdt] LIKE ? ) AND [trang_thai_xoa] != 1 
+                        WHERE ? IS NULL OR [ho_ten] LIKE ? OR [sdt] LIKE ?
                      )
                      SELECT 
                         id,
