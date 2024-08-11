@@ -5,49 +5,32 @@
 package com.app.core.dattv.views;
 
 import com.app.Application;
-import com.app.common.configs.DBConnect;
 import com.app.common.helper.ExcelHelper;
 import com.app.common.helper.MessageModal;
 import com.app.common.helper.PdfHelper;
 import com.app.common.infrastructure.constants.ErrorConstant;
+import com.app.common.infrastructure.constants.TrangThaiHoaDonConstant;
 import com.app.common.infrastructure.exceptions.ServiceResponseException;
 import com.app.core.common.models.invoice.InvoiceDataModel;
 import com.app.core.common.models.invoice.InvoiceProduct;
 import com.app.core.dattv.models.DatHoaDonChiTietModel;
-import com.app.core.dattv.models.DatHoaDonModel;
 import com.app.core.dattv.repositoris.DatHoaDonChiTietRepository;
 import com.app.core.dattv.request.DatHoaDonRequest;
-import com.app.core.inuha.models.InuhaHoaDonChiTietModel;
 import com.app.core.inuha.models.InuhaSanPhamChiTietModel;
-import com.app.core.inuha.models.InuhaSanPhamModel;
-import com.app.core.inuha.models.thongke.InuhaThongKeSanPhamModel;
 import com.app.core.inuha.services.InuhaSanPhamChiTietService;
 import com.app.core.inuha.views.quanly.sanpham.InuhaDetailSanPhamChiTietView;
-import com.app.core.inuha.views.quanly.sanpham.InuhaDetailSanPhamView;
 import com.app.utils.BillUtils;
 import com.app.utils.ColorUtils;
 import com.app.utils.CurrencyUtils;
 import com.app.utils.TimeUtils;
 import com.app.views.UI.dialog.LoadingDialog;
-import com.app.views.UI.table.ITableActionEvent;
 import com.app.views.UI.table.TableCustomUI;
-import com.app.views.UI.table.celll.TableActionCellEditor;
-import com.app.views.UI.table.celll.TableActionCellRender;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.SwingWorker;
 import javax.swing.table.DefaultTableModel;
@@ -78,6 +61,13 @@ public class DatHoaDonChiTietView extends javax.swing.JPanel {
         list=datHoaDonChiTietRepository.loadDatHoaDonChiTietTable(datHoaDonRequest.getId());
         loadData(list);
 
+        lblMaHd.setForeground(ColorUtils.PRIMARY_COLOR);
+        switch (datHoaDonRequest.getTrangThai()) {
+            case TrangThaiHoaDonConstant.STATUS_CHO_THANH_TOAN -> lblTrangThai.setForeground(ColorUtils.WARNING_COLOR);
+            case TrangThaiHoaDonConstant.STATUS_DA_THANH_TOAN -> lblTrangThai.setForeground(ColorUtils.SUCCESS_COLOR);
+            case TrangThaiHoaDonConstant.STATUS_DA_HUY -> lblTrangThai.setForeground(ColorUtils.DANGER_COLOR);
+        }
+        
         btnInHoaDon.setBackground(ColorUtils.BUTTON_PRIMARY);
         setupTable(tblHoadonchitiet);
 
@@ -92,7 +82,7 @@ public class DatHoaDonChiTietView extends javax.swing.JPanel {
         }
 
         lblMaHd.setText(datHoaDonRequest.getMaHd());
-        lblNgayTao.setText(String.valueOf(datHoaDonRequest.getThoiGian()));
+        lblNgayTao.setText(TimeUtils.date("dd-MM-yyyy HH:mm", datHoaDonRequest.getThoiGian()));
         lblTenkhachhang.setText(khachHang);
         lblTrangThai.setText(BillUtils.getTrangThai(datHoaDonRequest.getTrangThai()));
         lblPhuongThucThanhToan.setText(BillUtils.getPhuongThucThanhToan(datHoaDonRequest.getPhuongThucTT()));
@@ -291,7 +281,27 @@ public class DatHoaDonChiTietView extends javax.swing.JPanel {
         lblThanhtoan.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblThanhtoan.setText("jLabel11");
 
+        lblGiamgia.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        lblGiamgia.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblGiamgia.setText("jLabel11");
+
+        jLabel11.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel11.setText("Tiền mặt khách trả:");
+
+        lblTienMat.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        lblTienMat.setText("jLabel11");
+
+        jLabel12.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jLabel12.setText("Tiền khách chuyển khoản:");
+
+        lblTienChuyenKhoan.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        lblTienChuyenKhoan.setText("jLabel11");
+
+        jLabel13.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jLabel13.setText("Tiền trả lại khách:");
+
+        lblTienThua.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        lblTienThua.setText("jLabel11");
 
         javax.swing.GroupLayout roundPanel4Layout = new javax.swing.GroupLayout(roundPanel4);
         roundPanel4.setLayout(roundPanel4Layout);
@@ -313,7 +323,7 @@ public class DatHoaDonChiTietView extends javax.swing.JPanel {
                                 .addComponent(jLabel11)
                                 .addGap(18, 18, 18)
                                 .addComponent(lblTienMat, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(roundPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(roundPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
