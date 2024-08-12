@@ -167,7 +167,7 @@ CREATE TABLE HoaDon (
 	phuong_thuc_thanh_toan TINYINT NOT NULL,
 	trang_thai TINYINT NOT NULL,
 	ngay_tao DATETIME NOT NULL DEFAULT GETDATE(),
-	ngay_cap_nhat DATE DEFAULT GETDATE(),
+	ngay_cap_nhat DATETIME NOT NULL DEFAULT GETDATE(),
 	trang_thai_xoa BIT DEFAULT 0,
 	FOREIGN KEY(id_tai_khoan) REFERENCES dbo.TaiKhoan(id),
 	FOREIGN KEY(id_khach_hang) REFERENCES dbo.KhachHang(id),

@@ -52,8 +52,8 @@ public class InuhaHoaDonRepository implements IDAOinterface<InuhaHoaDonModel, In
     public int insert(InuhaHoaDonModel model) throws SQLException {
         int result = 0;
         String query = String.format("""
-            INSERT INTO %s(id_tai_khoan, ma, phuong_thuc_thanh_toan, trang_thai, ngay_tao)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO %s(id_tai_khoan, ma, phuong_thuc_thanh_toan, trang_thai, ngay_tao, ngay_cap_nhat)
+            VALUES (?, ?, ?, ?, ?, ?)
         """, TABLE_NAME);
         try {
             Object[] args = new Object[] {
@@ -61,6 +61,7 @@ public class InuhaHoaDonRepository implements IDAOinterface<InuhaHoaDonModel, In
 		model.getMa(),
 		PhuongThucThanhToanConstant.TIEN_MAT,
 		TrangThaiHoaDonConstant.STATUS_CHO_THANH_TOAN,
+		TimeUtils.currentDateTime(),
 		TimeUtils.currentDateTime()
             };
             result = JbdcHelper.updateAndFlush(query, args);
@@ -97,7 +98,7 @@ public class InuhaHoaDonRepository implements IDAOinterface<InuhaHoaDonModel, In
 		model.getTienChuyenKhoan(),
 		model.getPhuongThucThanhToan(),
 		model.getTrangThai(),
-                TimeUtils.currentDate(),
+                TimeUtils.currentDateTime(),
 		model.isTrangThaiXoa(),
                 model.getId()
             };
