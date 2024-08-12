@@ -9,6 +9,7 @@ import com.app.common.infrastructure.exceptions.ServiceResponseException;
 import com.app.common.infrastructure.request.FilterRequest;
 import com.app.core.inuha.models.sanpham.InuhaMauSacModel;
 import com.app.core.inuha.services.InuhaMauSacService;
+import com.app.core.inuha.views.quanly.InuhaSanPhamView;
 import com.app.core.inuha.views.quanly.sanpham.InuhaAddSanPhamView;
 import com.app.core.inuha.views.quanly.sanpham.InuhaDetailSanPhamView;
 import com.app.core.inuha.views.quanly.components.table.thuoctinhsanpham.InuhaThuocTinhTableActionCellEditor;
@@ -120,6 +121,8 @@ public class InuhaListMauSacView extends javax.swing.JPanel {
                                 executorService.submit(() -> {
                                     try {
                                         mauSacService.delete(item.getId());
+                                        InuhaSanPhamView.getInstance().loadDataMauSac();
+                                        InuhaSanPhamView.getInstance().handleClickButtonSearch();
                                         InuhaAddSanPhamChiTietView.getInstance().loadDataMauSac(true);
                                         InuhaDetailSanPhamView.getInstance().loadDataMauSac();
                                         loadDataPage();

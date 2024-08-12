@@ -186,7 +186,7 @@ public class InuhaAddSanPhamChiTietView extends javax.swing.JPanel {
             cboKichCo.addItem(new ComboBoxItem<>(m.getTen(), m.getId()));
         }
         
-        if (checkDelete) { 
+        if (checkDelete && sanPhamChiTiet != null) { 
             checkDataExists(cboKichCo, new ComboBoxItem<>(sanPhamChiTiet.getKichCo().getTen(), sanPhamChiTiet.getKichCo().getId()));
         }
     }
@@ -210,7 +210,7 @@ public class InuhaAddSanPhamChiTietView extends javax.swing.JPanel {
             cboMauSac.addItem(new ComboBoxItem<>(m.getTen(), m.getId()));
         }
         
-        if (checkDelete) {
+        if (checkDelete && sanPhamChiTiet != null) {
             checkDataExists(cboMauSac, new ComboBoxItem<>(sanPhamChiTiet.getMauSac().getTen(), sanPhamChiTiet.getMauSac().getId()));
         }
     }

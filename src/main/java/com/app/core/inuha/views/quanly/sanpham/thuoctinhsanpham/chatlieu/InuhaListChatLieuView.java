@@ -9,6 +9,7 @@ import com.app.common.infrastructure.exceptions.ServiceResponseException;
 import com.app.common.infrastructure.request.FilterRequest;
 import com.app.core.inuha.models.sanpham.InuhaChatLieuModel;
 import com.app.core.inuha.services.InuhaChatLieuService;
+import com.app.core.inuha.views.quanly.InuhaSanPhamView;
 import com.app.core.inuha.views.quanly.sanpham.InuhaAddSanPhamView;
 import com.app.core.inuha.views.quanly.components.table.thuoctinhsanpham.InuhaThuocTinhTableActionCellEditor;
 import com.app.core.inuha.views.quanly.components.table.thuoctinhsanpham.InuhaThuocTinhTableActionCellRender;
@@ -120,6 +121,8 @@ public class InuhaListChatLieuView extends javax.swing.JPanel {
                                 executorService.submit(() -> {
                                     try {
                                         chatLieuService.delete(item.getId());
+                                        InuhaSanPhamView.getInstance().loadDataChatLieu();
+                                        InuhaSanPhamView.getInstance().handleClickButtonSearch();
                                         InuhaAddSanPhamView.getInstance().loadDataChatLieu(true);
                                         loadDataPage();
                                         MessageToast.success("Xoá thành công chất liệu: " + item.getTen());

@@ -254,7 +254,7 @@ public class InuhaAddSanPhamView extends javax.swing.JPanel {
             cboDanhMuc.addItem(new ComboBoxItem<>(m.getTen(), m.getId()));
         }
         
-        if (checkDelete) { 
+        if (checkDelete && sanPham != null) { 
             checkDataExists(cboDanhMuc, new ComboBoxItem<>(sanPham.getDanhMuc().getTen(), sanPham.getDanhMuc().getId()));
         }
     }
@@ -278,7 +278,7 @@ public class InuhaAddSanPhamView extends javax.swing.JPanel {
             cboThuongHieu.addItem(new ComboBoxItem<>(m.getTen(), m.getId()));
         }
         
-        if (checkDelete) { 
+        if (checkDelete && sanPham != null) { 
             checkDataExists(cboThuongHieu, new ComboBoxItem<>(sanPham.getThuongHieu().getTen(), sanPham.getThuongHieu().getId()));
         }
     }
@@ -302,7 +302,7 @@ public class InuhaAddSanPhamView extends javax.swing.JPanel {
             cboXuatXu.addItem(new ComboBoxItem<>(m.getTen(), m.getId()));
         }
         
-        if (checkDelete) { 
+        if (checkDelete && sanPham != null) { 
             checkDataExists(cboXuatXu, new ComboBoxItem<>(sanPham.getXuatXu().getTen(), sanPham.getXuatXu().getId()));
         }
     }
@@ -326,7 +326,7 @@ public class InuhaAddSanPhamView extends javax.swing.JPanel {
             cboKieuDang.addItem(new ComboBoxItem<>(m.getTen(), m.getId()));
         }
         
-        if (checkDelete) { 
+        if (checkDelete && sanPham != null) { 
             checkDataExists(cboKieuDang, new ComboBoxItem<>(sanPham.getKieuDang().getTen(), sanPham.getKieuDang().getId()));
         }
     }
@@ -350,7 +350,7 @@ public class InuhaAddSanPhamView extends javax.swing.JPanel {
             cboChatLieu.addItem(new ComboBoxItem<>(m.getTen(), m.getId()));
         }
         
-        if (checkDelete) { 
+        if (checkDelete && sanPham != null) { 
             checkDataExists(cboChatLieu, new ComboBoxItem<>(sanPham.getChatLieu().getTen(), sanPham.getChatLieu().getId()));
         }
     }
@@ -374,7 +374,7 @@ public class InuhaAddSanPhamView extends javax.swing.JPanel {
             cboDeGiay.addItem(new ComboBoxItem<>(m.getTen(), m.getId()));
         }
         
-        if (checkDelete) {
+        if (checkDelete && sanPham != null) {
             checkDataExists(cboDeGiay, new ComboBoxItem<>(sanPham.getDeGiay().getTen(), sanPham.getDeGiay().getId()));
         }
     }

@@ -11,6 +11,7 @@ import com.app.common.infrastructure.request.FilterRequest;
 import com.app.core.inuha.models.sanpham.InuhaDanhMucModel;
 import com.app.core.inuha.services.InuhaDanhMucService;
 import com.app.core.inuha.views.guest.LoginView;
+import com.app.core.inuha.views.quanly.InuhaSanPhamView;
 import com.app.core.inuha.views.quanly.sanpham.InuhaAddSanPhamView;
 import com.app.core.inuha.views.quanly.components.table.thuoctinhsanpham.InuhaThuocTinhTableActionCellEditor;
 import com.app.core.inuha.views.quanly.components.table.thuoctinhsanpham.InuhaThuocTinhTableActionCellRender;
@@ -122,6 +123,8 @@ public class InuhaListDanhMucView extends javax.swing.JPanel {
                                 executorService.submit(() -> {
                                     try {
                                         danhMucService.delete(item.getId());
+                                        InuhaSanPhamView.getInstance().loadDataDanhMuc();
+                                        InuhaSanPhamView.getInstance().handleClickButtonSearch();
                                         InuhaAddSanPhamView.getInstance().loadDataDanhMuc(true);
                                         loadDataPage();
                                         MessageToast.success("Xoá thành công danh mục: " + item.getTen());

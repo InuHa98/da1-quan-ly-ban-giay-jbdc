@@ -9,6 +9,7 @@ import com.app.common.infrastructure.exceptions.ServiceResponseException;
 import com.app.common.infrastructure.request.FilterRequest;
 import com.app.core.inuha.models.sanpham.InuhaThuongHieuModel;
 import com.app.core.inuha.services.InuhaThuongHieuService;
+import com.app.core.inuha.views.quanly.InuhaSanPhamView;
 import com.app.core.inuha.views.quanly.sanpham.InuhaAddSanPhamView;
 import com.app.core.inuha.views.quanly.components.table.thuoctinhsanpham.InuhaThuocTinhTableActionCellEditor;
 import com.app.core.inuha.views.quanly.components.table.thuoctinhsanpham.InuhaThuocTinhTableActionCellRender;
@@ -118,6 +119,8 @@ public class InuhaListThuongHieuView extends javax.swing.JPanel {
                                 executorService.submit(() -> {
                                     try {
                                         thuongHieuService.delete(item.getId());
+                                        InuhaSanPhamView.getInstance().loadDataThuongHieu();
+                                        InuhaSanPhamView.getInstance().handleClickButtonSearch();
                                         InuhaAddSanPhamView.getInstance().loadDataThuongHieu(true);
                                         loadDataPage();
                                         MessageToast.success("Xoá thành công thương hiệu: " + item.getTen());
