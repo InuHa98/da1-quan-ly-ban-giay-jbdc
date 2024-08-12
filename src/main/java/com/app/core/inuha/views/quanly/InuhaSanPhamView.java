@@ -1759,6 +1759,7 @@ public class InuhaSanPhamView extends RoundPanel {
 
     private void handleClickButtonClearChiTiet() {
         executorService.submit(() -> {
+            firstLoad = true;
             txtTuKhoa2.setText(null);
             cboDanhMuc2.setSelectedIndex(0);
             cboThuongHieu2.setSelectedIndex(0);
@@ -1770,6 +1771,7 @@ public class InuhaSanPhamView extends RoundPanel {
 	    cboKichCo.setSelectedIndex(0);
 	    cboMauSac.setSelectedIndex(0);
 	    cboSoLuong2.setSelectedIndex(0);
+            firstLoad = false;
             loadDataPageSPCT();
             loading.dispose();
         });
@@ -1778,11 +1780,13 @@ public class InuhaSanPhamView extends RoundPanel {
     
     private void handleClickButtonClear() {
         executorService.submit(() -> {
+            firstLoad = true;
             txtTuKhoa.setText(null);
             cboDanhMuc.setSelectedIndex(0);
             cboThuongHieu.setSelectedIndex(0);
             cboTrangThai.setSelectedIndex(0);
 	    cboSoLuong.setSelectedIndex(0);
+            firstLoad = false;
             loadDataPage();
             loading.dispose();
         });
