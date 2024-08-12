@@ -77,7 +77,7 @@ public class DatHoaDonRepository {
                             hd.tien_chuyen_khoan,
                             tk.tai_khoan
                           ORDER BY 
-                              hd.id DESC;
+                              hd.ngay_cap_nhat DESC;
                      """;
         ArrayList<DatHoaDonRequest> lists = new ArrayList<>();
         try (Connection con = DBConnect.getInstance().getConnect();
@@ -202,7 +202,7 @@ public class DatHoaDonRepository {
                          hd.phuong_thuc_thanh_toan,
                          hd.id,
                          tk.tai_khoan as tennv,
-                         ROW_NUMBER() OVER (ORDER BY hd.ngay_tao DESC) AS stt,
+                         ROW_NUMBER() OVER (ORDER BY hd.ngay_cap_nhat DESC) AS stt,
                          hd.tien_mat,
                          hd.tien_chuyen_khoan,
                         ISNULL(kh.sdt, '') AS sdt
@@ -225,6 +225,7 @@ public class DatHoaDonRepository {
                      GROUP BY 
                          hd.ma,
                          hd.ngay_tao,
+                         hd.ngay_cap_nhat,
                          kh.ho_ten,
                          kh.sdt,
                          hd.tien_giam,
