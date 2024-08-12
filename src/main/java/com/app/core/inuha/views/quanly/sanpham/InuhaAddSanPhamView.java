@@ -1042,7 +1042,7 @@ public class InuhaAddSanPhamView extends javax.swing.JPanel {
 		return;
 	    }
             
-            if (CurrencyUtils.parseNumber(giaBan) < CurrencyUtils.parseNumber(giaNhap)) { 
+            if (CurrencyUtils.parseNumber(giaBan) <= CurrencyUtils.parseNumber(giaNhap)) { 
 		MessageToast.error("Giá bán phải lớn hơn giá nhập");
 		txtGiaBan.requestFocus();
 		return;
