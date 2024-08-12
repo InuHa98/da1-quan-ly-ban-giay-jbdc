@@ -1718,7 +1718,7 @@ public class InuhaSanPhamView extends RoundPanel {
                         });
                         loading.setVisible(true);
                     }
-                } catch (InterruptedException | ExecutionException ex) {
+                } catch (Exception e) {
                 }
             }
             

@@ -510,6 +510,10 @@ public class DatHoaDonChiTietView extends javax.swing.JPanel {
                 try {
                     DatHoaDonChiTietModel hoaDonChiTiet = list.get(tblHoadonchitiet.getSelectedRow());
                     InuhaSanPhamChiTietModel sanPhamChiTiet = InuhaSanPhamChiTietService.getInstance().getById(hoaDonChiTiet.getIdSanPhamChiTiet());
+		    if (sanPhamChiTiet == null || sanPhamChiTiet.getSanPham() == null) { 
+			MessageModal.error("Sản phẩm không tồn tại hoặc đã bị xoá!");
+			return;
+		    }
                     showDetailSanPham(sanPhamChiTiet);
                 } catch (ServiceResponseException e) {
                     MessageModal.error(e.getMessage());
