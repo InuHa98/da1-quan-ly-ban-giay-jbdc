@@ -118,7 +118,7 @@ public class InuhaListXuatXuView extends javax.swing.JPanel {
                                 executorService.submit(() -> {
                                     try {
                                         xuatXuService.delete(item.getId());
-                                        InuhaAddSanPhamView.getInstance().loadDataXuatXu();
+                                        InuhaAddSanPhamView.getInstance().loadDataXuatXu(true);
                                         loadDataPage();
                                         MessageToast.success("Xoá thành công xuất xứ: " + item.getTen());
                                     } catch (ServiceResponseException e) {

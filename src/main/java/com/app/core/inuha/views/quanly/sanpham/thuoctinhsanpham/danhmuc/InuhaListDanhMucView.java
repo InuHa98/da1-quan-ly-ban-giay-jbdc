@@ -16,6 +16,7 @@ import com.app.core.inuha.views.quanly.components.table.thuoctinhsanpham.InuhaTh
 import com.app.core.inuha.views.quanly.components.table.thuoctinhsanpham.InuhaThuocTinhTableActionCellRender;
 import com.app.utils.ColorUtils;
 import com.app.utils.ResourceUtils;
+import com.app.views.UI.combobox.ComboBoxItem;
 import com.app.views.UI.dialog.LoadingDialog;
 import com.app.views.UI.table.TableCustomUI;
 import java.awt.Dimension;
@@ -121,7 +122,7 @@ public class InuhaListDanhMucView extends javax.swing.JPanel {
                                 executorService.submit(() -> {
                                     try {
                                         danhMucService.delete(item.getId());
-                                        InuhaAddSanPhamView.getInstance().loadDataDanhMuc();
+                                        InuhaAddSanPhamView.getInstance().loadDataDanhMuc(true);
                                         loadDataPage();
                                         MessageToast.success("Xoá thành công danh mục: " + item.getTen());
                                     } catch (ServiceResponseException e) {

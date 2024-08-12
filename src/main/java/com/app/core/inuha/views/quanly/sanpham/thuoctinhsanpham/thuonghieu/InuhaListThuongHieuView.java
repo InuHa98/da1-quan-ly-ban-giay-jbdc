@@ -118,7 +118,7 @@ public class InuhaListThuongHieuView extends javax.swing.JPanel {
                                 executorService.submit(() -> {
                                     try {
                                         thuongHieuService.delete(item.getId());
-                                        InuhaAddSanPhamView.getInstance().loadDataThuongHieu();
+                                        InuhaAddSanPhamView.getInstance().loadDataThuongHieu(true);
                                         loadDataPage();
                                         MessageToast.success("Xoá thành công thương hiệu: " + item.getTen());
                                     } catch (ServiceResponseException e) {

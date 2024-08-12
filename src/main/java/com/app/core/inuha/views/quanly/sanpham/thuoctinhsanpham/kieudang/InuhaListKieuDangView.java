@@ -118,7 +118,7 @@ public class InuhaListKieuDangView extends javax.swing.JPanel {
                                 executorService.submit(() -> {
                                     try {
                                         kieuDangService.delete(item.getId());
-                                        InuhaAddSanPhamView.getInstance().loadDataKieuDang();
+                                        InuhaAddSanPhamView.getInstance().loadDataKieuDang(true);
                                         loadDataPage();
                                         MessageToast.success("Xoá thành công kiểu dáng: " + item.getTen());
                                     } catch (ServiceResponseException e) {

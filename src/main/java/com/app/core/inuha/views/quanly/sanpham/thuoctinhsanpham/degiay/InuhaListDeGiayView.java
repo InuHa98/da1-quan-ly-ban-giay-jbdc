@@ -119,7 +119,7 @@ public class InuhaListDeGiayView extends javax.swing.JPanel {
                                     try {
                                         deGiayService.delete(item.getId());
 
-                                        InuhaAddSanPhamView.getInstance().loadDataDeGiay();
+                                        InuhaAddSanPhamView.getInstance().loadDataDeGiay(true);
                                         loadDataPage();
                                         MessageToast.success("Xoá thành công đế giày: " + item.getTen());
                                     } catch (ServiceResponseException e) {

@@ -38,9 +38,10 @@ public class InuhaDeGiayRepository implements IDAOinterface<InuhaDeGiayModel, In
     public int insert(InuhaDeGiayModel model) throws SQLException {
         int result = 0;
         String query = String.format("""
+            DELETE FROM %s WHERE trang_thai_xoa = 1 AND id NOT IN (SELECT DISTINCT id_de_giay FROM SanPham);
             INSERT INTO %s(ten, ngay_tao)
             VALUES (?, ?)
-        """, TABLE_NAME);
+        """, TABLE_NAME, TABLE_NAME);
         try {
             Object[] args = new Object[] {
                 model.getTen(),
@@ -59,12 +60,13 @@ public class InuhaDeGiayRepository implements IDAOinterface<InuhaDeGiayModel, In
     public int update(InuhaDeGiayModel model) throws SQLException {
         int result = 0;
         String query = String.format("""
+            DELETE FROM %s WHERE trang_thai_xoa = 1 AND id NOT IN (SELECT DISTINCT id_de_giay FROM SanPham);
             UPDATE %s SET
                 ten = ?,
                 trang_thai_xoa = ?,
                 ngay_cap_nhat = ?
             WHERE id = ?
-        """, TABLE_NAME);
+        """, TABLE_NAME, TABLE_NAME);
         try {
             Object[] args = new Object[] {
                 model.getTen(),
@@ -84,7 +86,10 @@ public class InuhaDeGiayRepository implements IDAOinterface<InuhaDeGiayModel, In
     @Override
     public int delete(Integer id) throws SQLException {
         int result = 0;
-        String query = String.format("DELETE FROM %s WHERE id = ?", TABLE_NAME);
+        String query = String.format("""
+            DELETE FROM %s WHERE trang_thai_xoa = 1 AND id NOT IN (SELECT DISTINCT id_de_giay FROM SanPham);
+            DELETE FROM %s WHERE id = ?
+        """, TABLE_NAME, TABLE_NAME);
         try {
             result = JbdcHelper.updateAndFlush(query, id);
         } catch(Exception e) {

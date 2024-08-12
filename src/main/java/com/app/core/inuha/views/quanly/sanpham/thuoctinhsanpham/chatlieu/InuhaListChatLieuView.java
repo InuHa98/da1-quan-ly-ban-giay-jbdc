@@ -120,7 +120,7 @@ public class InuhaListChatLieuView extends javax.swing.JPanel {
                                 executorService.submit(() -> {
                                     try {
                                         chatLieuService.delete(item.getId());
-                                        InuhaAddSanPhamView.getInstance().loadDataChatLieu();
+                                        InuhaAddSanPhamView.getInstance().loadDataChatLieu(true);
                                         loadDataPage();
                                         MessageToast.success("Xoá thành công chất liệu: " + item.getTen());
                                     } catch (ServiceResponseException e) {
