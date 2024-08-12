@@ -279,6 +279,10 @@ public class InuhaDetailSanPhamView extends JPanel {
     }
     
     public void loadDataPage(int page) { 
+        if (this.sanPham == null) {
+            return;
+        }
+        
         try {
             DefaultTableModel model = (DefaultTableModel) tblDanhSach.getModel();
             if (tblDanhSach.isEditing()) {
@@ -287,10 +291,19 @@ public class InuhaDetailSanPhamView extends JPanel {
             
             model.setRowCount(0);
             
-            ComboBoxItem<Integer> kichCo = (ComboBoxItem<Integer>) cboKichCo.getSelectedItem();
-            ComboBoxItem<Integer> mauSac = (ComboBoxItem<Integer>) cboMauSac.getSelectedItem();
-            ComboBoxItem<Integer> trangThai = (ComboBoxItem<Integer>) cboTrangThai.getSelectedItem();
-	    ComboBoxItem<Integer> soLuong = (ComboBoxItem<Integer>) cboSoLuong.getSelectedItem();
+            ComboBoxItem<Integer> kichCo = new ComboBoxItem<>();
+            ComboBoxItem<Integer> mauSac = new ComboBoxItem<>();
+            ComboBoxItem<Integer> trangThai = new ComboBoxItem<>();
+	    ComboBoxItem<Integer> soLuong = new ComboBoxItem<>();
+            
+            try {
+                kichCo = (ComboBoxItem<Integer>) cboKichCo.getSelectedItem();
+                mauSac = (ComboBoxItem<Integer>) cboMauSac.getSelectedItem();
+                trangThai = (ComboBoxItem<Integer>) cboTrangThai.getSelectedItem();
+                soLuong = (ComboBoxItem<Integer>) cboSoLuong.getSelectedItem(); 
+            } catch (Exception e) {
+                
+            }
 
             InuhaFilterSanPhamChiTietRequest request = new InuhaFilterSanPhamChiTietRequest();
 	    request.setIdSanPham(this.sanPham.getId());

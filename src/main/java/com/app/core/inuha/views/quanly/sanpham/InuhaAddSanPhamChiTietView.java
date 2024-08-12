@@ -98,8 +98,8 @@ public class InuhaAddSanPhamChiTietView extends javax.swing.JPanel {
         rdoDangBan.setSelected(sanPhamChiTiet.isTrangThai());
         rdoNgungBan.setSelected(!sanPhamChiTiet.isTrangThai());
         
-        checkDataExists(cboKichCo, new ComboBoxItem<>(sanPhamChiTiet.getKichCo().getTen(), sanPhamChiTiet.getKichCo().getId()), btnCmdKichCo);
-        checkDataExists(cboMauSac, new ComboBoxItem<>(sanPhamChiTiet.getMauSac().getTen(), sanPhamChiTiet.getMauSac().getId()), btnCmdMauSac);
+        checkDataExists(cboKichCo, new ComboBoxItem<>(sanPhamChiTiet.getKichCo().getTen(), sanPhamChiTiet.getKichCo().getId()));
+        checkDataExists(cboMauSac, new ComboBoxItem<>(sanPhamChiTiet.getMauSac().getTen(), sanPhamChiTiet.getMauSac().getId()));
                 
         btnSubmit.setText("Lưu lại");
     }
@@ -149,7 +149,7 @@ public class InuhaAddSanPhamChiTietView extends javax.swing.JPanel {
         loading.setVisible(true);
     }
     
-    private void checkDataExists(JComboBox comboBox, ComboBoxItem<Integer> item, JButton btn) { 
+    private void checkDataExists(JComboBox comboBox, ComboBoxItem<Integer> item) { 
         boolean exists = false;
         for (int i = 0; i < comboBox.getItemCount(); i++) {
             if (comboBox.getItemAt(i).equals(item)) {
@@ -168,7 +168,10 @@ public class InuhaAddSanPhamChiTietView extends javax.swing.JPanel {
         comboBox.setSelectedItem(item);
     }
     
-    public void loadDataKichCo() { 
+    public void loadDataKichCo() {
+        loadDataKichCo(false);
+    }
+    public void loadDataKichCo(boolean  checkDelete) { 
         dataKichCo = kichCoService.getAll();
         cboKichCo.removeAllItems();
        
@@ -182,9 +185,16 @@ public class InuhaAddSanPhamChiTietView extends javax.swing.JPanel {
         for(InuhaKichCoModel m: dataKichCo) { 
             cboKichCo.addItem(new ComboBoxItem<>(m.getTen(), m.getId()));
         }
+        
+        if (checkDelete && sanPhamChiTiet != null) { 
+            checkDataExists(cboKichCo, new ComboBoxItem<>(sanPhamChiTiet.getKichCo().getTen(), sanPhamChiTiet.getKichCo().getId()));
+        }
     }
 
     public void loadDataMauSac() { 
+        loadDataMauSac(false);
+    }
+    public void loadDataMauSac(boolean checkDelete) { 
         dataMauSac = mauSacService.getAll();
         cboMauSac.removeAllItems();
         
@@ -198,6 +208,10 @@ public class InuhaAddSanPhamChiTietView extends javax.swing.JPanel {
         
         for(InuhaMauSacModel m: dataMauSac) { 
             cboMauSac.addItem(new ComboBoxItem<>(m.getTen(), m.getId()));
+        }
+        
+        if (checkDelete && sanPhamChiTiet != null) {
+            checkDataExists(cboMauSac, new ComboBoxItem<>(sanPhamChiTiet.getMauSac().getTen(), sanPhamChiTiet.getMauSac().getId()));
         }
     }
             

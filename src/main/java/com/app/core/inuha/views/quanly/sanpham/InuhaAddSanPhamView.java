@@ -129,12 +129,12 @@ public class InuhaAddSanPhamView extends javax.swing.JPanel {
         rdoNgungBan.setSelected(!sanPham.isTrangThai());
         txtMoTa.setText(sanPham.getMoTa());
         
-        checkDataExists(cboDanhMuc, new ComboBoxItem<>(sanPham.getDanhMuc().getTen(), sanPham.getDanhMuc().getId()), btnCmdDanhMuc);
-        checkDataExists(cboThuongHieu, new ComboBoxItem<>(sanPham.getThuongHieu().getTen(), sanPham.getThuongHieu().getId()), btnCmdThuongHieu);
-        checkDataExists(cboXuatXu, new ComboBoxItem<>(sanPham.getXuatXu().getTen(), sanPham.getXuatXu().getId()), btnCmdXuatXu);
-        checkDataExists(cboKieuDang, new ComboBoxItem<>(sanPham.getKieuDang().getTen(), sanPham.getKieuDang().getId()), btnCmdKieuDang);
-        checkDataExists(cboChatLieu, new ComboBoxItem<>(sanPham.getChatLieu().getTen(), sanPham.getChatLieu().getId()), btnCmdChatLieu);
-        checkDataExists(cboDeGiay, new ComboBoxItem<>(sanPham.getDeGiay().getTen(), sanPham.getDeGiay().getId()), btnCmdDeGiay);
+        checkDataExists(cboDanhMuc, new ComboBoxItem<>(sanPham.getDanhMuc().getTen(), sanPham.getDanhMuc().getId()));
+        checkDataExists(cboThuongHieu, new ComboBoxItem<>(sanPham.getThuongHieu().getTen(), sanPham.getThuongHieu().getId()));
+        checkDataExists(cboXuatXu, new ComboBoxItem<>(sanPham.getXuatXu().getTen(), sanPham.getXuatXu().getId()));
+        checkDataExists(cboKieuDang, new ComboBoxItem<>(sanPham.getKieuDang().getTen(), sanPham.getKieuDang().getId()));
+        checkDataExists(cboChatLieu, new ComboBoxItem<>(sanPham.getChatLieu().getTen(), sanPham.getChatLieu().getId()));
+        checkDataExists(cboDeGiay, new ComboBoxItem<>(sanPham.getDeGiay().getTen(), sanPham.getDeGiay().getId()));
         
         pictureBox.setImage(ProductUtils.getImage(sanPham.getHinhAnh()));
         pictureBox.putClientProperty("path-image", ProductUtils.getUrlImageProduct(sanPham.getHinhAnh()));
@@ -219,7 +219,7 @@ public class InuhaAddSanPhamView extends javax.swing.JPanel {
         loading.setVisible(true);
     }
     
-    private void checkDataExists(JComboBox comboBox, ComboBoxItem<Integer> item, JButton btn) { 
+    private void checkDataExists(JComboBox comboBox, ComboBoxItem<Integer> item) { 
         boolean exists = false;
         for (int i = 0; i < comboBox.getItemCount(); i++) {
             if (comboBox.getItemAt(i).equals(item)) {
@@ -236,7 +236,10 @@ public class InuhaAddSanPhamView extends javax.swing.JPanel {
         comboBox.setSelectedItem(item);
     }
     
-    public void loadDataDanhMuc() { 
+    public void loadDataDanhMuc() {
+        loadDataDanhMuc(false);
+    }
+    public void loadDataDanhMuc(boolean checkDelete) { 
         dataDanhMuc = danhMucService.getAll();
         cboDanhMuc.removeAllItems();
        
@@ -250,9 +253,16 @@ public class InuhaAddSanPhamView extends javax.swing.JPanel {
         for(InuhaDanhMucModel m: dataDanhMuc) { 
             cboDanhMuc.addItem(new ComboBoxItem<>(m.getTen(), m.getId()));
         }
+        
+        if (checkDelete && sanPham != null) { 
+            checkDataExists(cboDanhMuc, new ComboBoxItem<>(sanPham.getDanhMuc().getTen(), sanPham.getDanhMuc().getId()));
+        }
     }
 
-    public void loadDataThuongHieu() { 
+    public void loadDataThuongHieu() {
+        loadDataThuongHieu(false);
+    }
+    public void loadDataThuongHieu(boolean checkDelete) { 
         dataThuongHieu = thuongHieuService.getAll();
         cboThuongHieu.removeAllItems();
         
@@ -267,9 +277,16 @@ public class InuhaAddSanPhamView extends javax.swing.JPanel {
         for(InuhaThuongHieuModel m: dataThuongHieu) { 
             cboThuongHieu.addItem(new ComboBoxItem<>(m.getTen(), m.getId()));
         }
+        
+        if (checkDelete && sanPham != null) { 
+            checkDataExists(cboThuongHieu, new ComboBoxItem<>(sanPham.getThuongHieu().getTen(), sanPham.getThuongHieu().getId()));
+        }
     }
     
-    public void loadDataXuatXu() { 
+    public void loadDataXuatXu() {
+        loadDataXuatXu(false);
+    }
+    public void loadDataXuatXu(boolean checkDelete) { 
         dataXuatXu = xuatXuService.getAll();
         cboXuatXu.removeAllItems();
         
@@ -284,9 +301,16 @@ public class InuhaAddSanPhamView extends javax.swing.JPanel {
         for(InuhaXuatXuModel m: dataXuatXu) { 
             cboXuatXu.addItem(new ComboBoxItem<>(m.getTen(), m.getId()));
         }
+        
+        if (checkDelete && sanPham != null) { 
+            checkDataExists(cboXuatXu, new ComboBoxItem<>(sanPham.getXuatXu().getTen(), sanPham.getXuatXu().getId()));
+        }
     }
     
-    public void loadDataKieuDang() { 
+    public void loadDataKieuDang() {
+        loadDataKieuDang(false);
+    }
+    public void loadDataKieuDang(boolean checkDelete) { 
         dataKieuDang = kieuDangervice.getAll();
         cboKieuDang.removeAllItems();
         
@@ -301,9 +325,16 @@ public class InuhaAddSanPhamView extends javax.swing.JPanel {
         for(InuhaKieuDangModel m: dataKieuDang) { 
             cboKieuDang.addItem(new ComboBoxItem<>(m.getTen(), m.getId()));
         }
+        
+        if (checkDelete && sanPham != null) { 
+            checkDataExists(cboKieuDang, new ComboBoxItem<>(sanPham.getKieuDang().getTen(), sanPham.getKieuDang().getId()));
+        }
     }
     
-    public void loadDataChatLieu() { 
+    public void loadDataChatLieu() {
+        loadDataChatLieu(false);
+    }
+    public void loadDataChatLieu(boolean checkDelete) { 
         dataChatLieu = chatLieuService.getAll();
         cboChatLieu.removeAllItems();
         
@@ -318,9 +349,16 @@ public class InuhaAddSanPhamView extends javax.swing.JPanel {
         for(InuhaChatLieuModel m: dataChatLieu) { 
             cboChatLieu.addItem(new ComboBoxItem<>(m.getTen(), m.getId()));
         }
+        
+        if (checkDelete && sanPham != null) { 
+            checkDataExists(cboChatLieu, new ComboBoxItem<>(sanPham.getChatLieu().getTen(), sanPham.getChatLieu().getId()));
+        }
     }
     
-    public void loadDataDeGiay() { 
+    public void loadDataDeGiay() {
+        loadDataDeGiay(false);
+    }
+    public void loadDataDeGiay(boolean checkDelete) { 
         dataDeGiay = deGiayService.getAll();
         cboDeGiay.removeAllItems();
         
@@ -334,6 +372,10 @@ public class InuhaAddSanPhamView extends javax.swing.JPanel {
         
         for(InuhaDeGiayModel m: dataDeGiay) { 
             cboDeGiay.addItem(new ComboBoxItem<>(m.getTen(), m.getId()));
+        }
+        
+        if (checkDelete && sanPham != null) {
+            checkDataExists(cboDeGiay, new ComboBoxItem<>(sanPham.getDeGiay().getTen(), sanPham.getDeGiay().getId()));
         }
     }
         

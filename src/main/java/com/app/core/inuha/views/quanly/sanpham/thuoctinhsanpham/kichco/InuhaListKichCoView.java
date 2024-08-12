@@ -9,10 +9,12 @@ import com.app.common.infrastructure.exceptions.ServiceResponseException;
 import com.app.common.infrastructure.request.FilterRequest;
 import com.app.core.inuha.models.sanpham.InuhaKichCoModel;
 import com.app.core.inuha.services.InuhaKichCoService;
+import com.app.core.inuha.views.quanly.InuhaSanPhamView;
 import com.app.core.inuha.views.quanly.sanpham.InuhaAddSanPhamView;
 import com.app.core.inuha.views.quanly.sanpham.InuhaDetailSanPhamView;
 import com.app.core.inuha.views.quanly.components.table.thuoctinhsanpham.InuhaThuocTinhTableActionCellEditor;
 import com.app.core.inuha.views.quanly.components.table.thuoctinhsanpham.InuhaThuocTinhTableActionCellRender;
+import com.app.core.inuha.views.quanly.sanpham.InuhaAddSanPhamChiTietView;
 import com.app.utils.ColorUtils;
 import com.app.utils.ResourceUtils;
 import com.app.views.UI.dialog.LoadingDialog;
@@ -119,6 +121,9 @@ public class InuhaListKichCoView extends javax.swing.JPanel {
                                 executorService.submit(() -> {
                                     try {
                                         kichCoService.delete(item.getId());
+                                        InuhaSanPhamView.getInstance().loadDataKichCo();
+                                        InuhaSanPhamView.getInstance().handleClickButtonSearch();
+                                        InuhaAddSanPhamChiTietView.getInstance().loadDataKichCo(true);
                                         InuhaDetailSanPhamView.getInstance().loadDataKichCo();
                                         loadDataPage();
                                         MessageToast.success("Xoá thành công kích cỡ: " + item.getTen());

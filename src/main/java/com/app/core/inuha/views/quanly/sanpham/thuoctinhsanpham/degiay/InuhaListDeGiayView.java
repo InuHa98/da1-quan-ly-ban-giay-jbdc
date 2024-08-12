@@ -9,6 +9,7 @@ import com.app.common.infrastructure.exceptions.ServiceResponseException;
 import com.app.common.infrastructure.request.FilterRequest;
 import com.app.core.inuha.models.sanpham.InuhaDeGiayModel;
 import com.app.core.inuha.services.InuhaDeGiayService;
+import com.app.core.inuha.views.quanly.InuhaSanPhamView;
 import com.app.core.inuha.views.quanly.sanpham.InuhaAddSanPhamView;
 import com.app.core.inuha.views.quanly.components.table.thuoctinhsanpham.InuhaThuocTinhTableActionCellEditor;
 import com.app.core.inuha.views.quanly.components.table.thuoctinhsanpham.InuhaThuocTinhTableActionCellRender;
@@ -118,8 +119,9 @@ public class InuhaListDeGiayView extends javax.swing.JPanel {
                                 executorService.submit(() -> {
                                     try {
                                         deGiayService.delete(item.getId());
-
-                                        InuhaAddSanPhamView.getInstance().loadDataDeGiay();
+                                        InuhaSanPhamView.getInstance().loadDataDeGiay();
+                                        InuhaSanPhamView.getInstance().handleClickButtonSearch();
+                                        InuhaAddSanPhamView.getInstance().loadDataDeGiay(true);
                                         loadDataPage();
                                         MessageToast.success("Xoá thành công đế giày: " + item.getTen());
                                     } catch (ServiceResponseException e) {

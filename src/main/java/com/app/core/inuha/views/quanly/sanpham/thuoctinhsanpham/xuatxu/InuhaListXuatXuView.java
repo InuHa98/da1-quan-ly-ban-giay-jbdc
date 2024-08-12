@@ -9,6 +9,7 @@ import com.app.common.infrastructure.exceptions.ServiceResponseException;
 import com.app.common.infrastructure.request.FilterRequest;
 import com.app.core.inuha.models.sanpham.InuhaXuatXuModel;
 import com.app.core.inuha.services.InuhaXuatXuService;
+import com.app.core.inuha.views.quanly.InuhaSanPhamView;
 import com.app.core.inuha.views.quanly.sanpham.InuhaAddSanPhamView;
 import com.app.core.inuha.views.quanly.components.table.thuoctinhsanpham.InuhaThuocTinhTableActionCellEditor;
 import com.app.core.inuha.views.quanly.components.table.thuoctinhsanpham.InuhaThuocTinhTableActionCellRender;
@@ -118,7 +119,9 @@ public class InuhaListXuatXuView extends javax.swing.JPanel {
                                 executorService.submit(() -> {
                                     try {
                                         xuatXuService.delete(item.getId());
-                                        InuhaAddSanPhamView.getInstance().loadDataXuatXu();
+                                        InuhaSanPhamView.getInstance().loadDataXuatXu();
+                                        InuhaSanPhamView.getInstance().handleClickButtonSearch();
+                                        InuhaAddSanPhamView.getInstance().loadDataXuatXu(true);
                                         loadDataPage();
                                         MessageToast.success("Xoá thành công xuất xứ: " + item.getTen());
                                     } catch (ServiceResponseException e) {

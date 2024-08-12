@@ -614,10 +614,12 @@ public class InuhaNhanVienView extends javax.swing.JPanel {
 
     private void handleClickButtonClear() {
         executorService.submit(() -> {
+            firstLoad = true;
             txtTuKhoa.setText(null);
             cboTrangThai.setSelectedIndex(0);
 	    cboGioiTinh.setSelectedIndex(0);
 	    cboChucVu.setSelectedIndex(0);
+            firstLoad = false;
             loadDataPage();
             loading.dispose();
         });
