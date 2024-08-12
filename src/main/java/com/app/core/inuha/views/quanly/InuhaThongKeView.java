@@ -915,8 +915,10 @@ public class InuhaThongKeView extends javax.swing.JPanel {
     private void btnClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearActionPerformed
         // TODO add your handling code here:
         executorService.submit(() -> {
+            firstLoad = true;
             cboSanPham.setSelectedIndex(0);
             cboThoiGian.setSelectedIndex(0);
+            firstLoad = false;
             loadDataChart();
             loading.dispose();
         });

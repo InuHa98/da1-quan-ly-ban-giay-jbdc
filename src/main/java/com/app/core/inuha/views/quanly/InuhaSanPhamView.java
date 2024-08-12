@@ -546,6 +546,7 @@ public class InuhaSanPhamView extends RoundPanel {
     }
     
     public void loadDataDanhMuc() { 
+        firstLoad = true;
         dataDanhMuc = danhMucService.getAll();
         cboDanhMuc.removeAllItems();
         cboDanhMuc2.removeAllItems();
@@ -556,9 +557,11 @@ public class InuhaSanPhamView extends RoundPanel {
             cboDanhMuc.addItem(new ComboBoxItem<>(m.getTen(), m.getId()));
 	    cboDanhMuc2.addItem(new ComboBoxItem<>(m.getTen(), m.getId()));
         }
+        firstLoad = false;
     }
 
     public void loadDataThuongHieu() { 
+        firstLoad = true;
         dataThuongHieu = thuongHieuService.getAll();
         cboThuongHieu.removeAllItems();
         cboThuongHieu2.removeAllItems();
@@ -569,9 +572,11 @@ public class InuhaSanPhamView extends RoundPanel {
             cboThuongHieu.addItem(new ComboBoxItem<>(m.getTen(), m.getId()));
 	    cboThuongHieu2.addItem(new ComboBoxItem<>(m.getTen(), m.getId()));
         }
+        firstLoad = false;
     }
 
-    public void loadDataXuatXu() { 
+    public void loadDataXuatXu() {
+        firstLoad = true;
         dataXuatXu = xuatXuService.getAll();
         cboXuatXu.removeAllItems();
 	
@@ -579,9 +584,11 @@ public class InuhaSanPhamView extends RoundPanel {
         for(InuhaXuatXuModel m: dataXuatXu) { 
             cboXuatXu.addItem(new ComboBoxItem<>(m.getTen(), m.getId()));
         }
+        firstLoad = false;
     }
 
     public void loadDataKieuDang() { 
+        firstLoad = true;
         dataKieuDang = kieuDangService.getAll();
         cboKieuDang.removeAllItems();
 	
@@ -589,9 +596,11 @@ public class InuhaSanPhamView extends RoundPanel {
         for(InuhaKieuDangModel m: dataKieuDang) { 
             cboKieuDang.addItem(new ComboBoxItem<>(m.getTen(), m.getId()));
         }
+        firstLoad = false;
     }
 	
     public void loadDataChatLieu() { 
+        firstLoad = true;
         dataChatLieu = chatLieuService.getAll();
         cboChatLieu.removeAllItems();
 	
@@ -599,9 +608,11 @@ public class InuhaSanPhamView extends RoundPanel {
         for(InuhaChatLieuModel m: dataChatLieu) { 
             cboChatLieu.addItem(new ComboBoxItem<>(m.getTen(), m.getId()));
         }
+        firstLoad = false;
     }
 	    
     public void loadDataDeGiay() { 
+        firstLoad = true;
         dataDeGiay = deGiayService.getAll();
         cboDeGiay.removeAllItems();
 	
@@ -609,9 +620,11 @@ public class InuhaSanPhamView extends RoundPanel {
         for(InuhaDeGiayModel m: dataDeGiay) { 
             cboDeGiay.addItem(new ComboBoxItem<>(m.getTen(), m.getId()));
         }
+        firstLoad = false;
     }
 		
     public void loadDataKichCo() { 
+        firstLoad = true;
         dataKichCo = kichCoService.getAll();
         cboKichCo.removeAllItems();
 	
@@ -619,9 +632,11 @@ public class InuhaSanPhamView extends RoundPanel {
         for(InuhaKichCoModel m: dataKichCo) { 
             cboKichCo.addItem(new ComboBoxItem<>(m.getTen(), m.getId()));
         }
+        firstLoad = false;
     }
 		    
     public void loadDataMauSac() { 
+        firstLoad = true;
         dataMauSac = mauSacService.getAll();
         cboMauSac.removeAllItems();
 	
@@ -629,6 +644,7 @@ public class InuhaSanPhamView extends RoundPanel {
         for(InuhaMauSacModel m: dataMauSac) { 
             cboMauSac.addItem(new ComboBoxItem<>(m.getTen(), m.getId()));
         }
+        firstLoad = false;
     }
 			
     /**
@@ -1741,7 +1757,7 @@ public class InuhaSanPhamView extends RoundPanel {
         ModalDialog.showModal(this, new SimpleModalBorder(new InuhaAddSanPhamView(), "Thêm sản phẩm"), "handleClickButtonAdd");
     }
 
-    private void handleClickButtonSearch() {
+    public void handleClickButtonSearch() {
         executorService.submit(() -> {
             loadDataPage();
             loading.dispose();
@@ -1759,6 +1775,7 @@ public class InuhaSanPhamView extends RoundPanel {
 
     private void handleClickButtonClearChiTiet() {
         executorService.submit(() -> {
+            firstLoad = true;
             txtTuKhoa2.setText(null);
             cboDanhMuc2.setSelectedIndex(0);
             cboThuongHieu2.setSelectedIndex(0);
@@ -1770,19 +1787,22 @@ public class InuhaSanPhamView extends RoundPanel {
 	    cboKichCo.setSelectedIndex(0);
 	    cboMauSac.setSelectedIndex(0);
 	    cboSoLuong2.setSelectedIndex(0);
+            firstLoad = false;
             loadDataPageSPCT();
             loading.dispose();
         });
         loading.setVisible(true);
     }
     
-    private void handleClickButtonClear() {
+    public void handleClickButtonClear() {
         executorService.submit(() -> {
+            firstLoad = true;
             txtTuKhoa.setText(null);
             cboDanhMuc.setSelectedIndex(0);
             cboThuongHieu.setSelectedIndex(0);
             cboTrangThai.setSelectedIndex(0);
 	    cboSoLuong.setSelectedIndex(0);
+            firstLoad = false;
             loadDataPage();
             loading.dispose();
         });

@@ -1619,6 +1619,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 
     private void handleClickButtonReset() {
         executorService.submit(() -> {
+            reLoad = true;
             txtTuKhoa.setText(null);
             cboDanhMuc.setSelectedIndex(0);
             cboThuongHieu.setSelectedIndex(0);
@@ -1626,6 +1627,7 @@ public class InuhaBanHangView extends javax.swing.JPanel {
 	    cboKieuDang.setSelectedIndex(0);
 	    cboChatLieu.setSelectedIndex(0);
 	    cboDeGiay.setSelectedIndex(0);
+            reLoad = false;
             loadDataPageSanPham();
             loading.dispose();
         });
