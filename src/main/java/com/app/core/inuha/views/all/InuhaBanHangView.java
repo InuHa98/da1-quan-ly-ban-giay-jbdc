@@ -2155,9 +2155,11 @@ public class InuhaBanHangView extends javax.swing.JPanel {
                 try {
                     String tienMat = txtTienMat.getText().trim();
                     String tienChuyenKhoan = txtTienChuyenKhoan.getText().trim();
-
+		    ComboBoxItem<Integer> hinhThucThanhToan = (ComboBoxItem<Integer>) cboHinhThucThanhToan.getSelectedItem();
+		    
                     currentHoaDon.setTrangThai(TrangThaiHoaDonConstant.STATUS_DA_THANH_TOAN);
                     currentHoaDon.setPhieuGiamGia(currentPhieuGiamGia);
+		    currentHoaDon.setPhuongThucThanhToan(hinhThucThanhToan.getValue());
                     currentHoaDon.setTienGiam(chiTietThanhToan.getTongGiamGia());
                     currentHoaDon.setTienMat(CurrencyUtils.parseNumber(tienMat));
                     currentHoaDon.setTienChuyenKhoan(CurrencyUtils.parseNumber(tienChuyenKhoan));

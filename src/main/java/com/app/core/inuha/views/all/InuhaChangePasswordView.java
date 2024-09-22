@@ -23,8 +23,11 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import raven.modal.ModalDialog;
 
 /**
@@ -239,22 +242,38 @@ public class InuhaChangePasswordView extends javax.swing.JPanel {
             return;
         }
 
-        executorService.submit(() -> {
-            try {
-                nhanVienService.changePassword(oldPassword, newPassword, confirmPassword);
-                loadingDialog.dispose();
-                MessageModal.success("Thay đổi mật khẩu thành công.");
-		ModalDialog.closeAllModal();
-            } catch(ServiceResponseException e) {
-                loadingDialog.dispose();
-                MessageModal.error(e.getMessage());
-            } catch(Exception e) {
-                loadingDialog.dispose();
-                MessageModal.error(ErrorConstant.DEFAULT_ERROR);
-            }
-        });
+	SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
+	    @Override
+	    protected Boolean doInBackground() throws Exception {
+		return MessageModal.confirmInfo("Thay đổi mật khẩu đã chọn?");
+	    }
 
-        loadingDialog.setVisible(true);
+	    @Override
+	    protected void done() {
+		try {
+		    if (get()) {
+			executorService.submit(() -> {
+			    try {
+				nhanVienService.changePassword(oldPassword, newPassword, confirmPassword);
+				MessageModal.success("Thay đổi mật khẩu thành công.");
+				ModalDialog.closeAllModal();
+			    } catch(ServiceResponseException e) {
+				MessageModal.error(e.getMessage());
+			    } catch(Exception e) {
+				MessageModal.error(ErrorConstant.DEFAULT_ERROR);
+			    } finally { 
+				loadingDialog.dispose();
+			    }
+			});
+			loadingDialog.setVisible(true);
+		    }
+		} catch (Exception ex) {
+		}
+	    }
+	    
+	};
+	worker.execute();
+        
     }
 
     private void redirectLogin(MouseEvent e) {
