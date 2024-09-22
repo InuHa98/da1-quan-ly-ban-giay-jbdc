@@ -86,7 +86,7 @@ public class ValidateUtils {
      * @return trả về true nếu chuỗi chứ ký tự đặc biệt và false không chứa ký tự đặc biệt
      */
     public static boolean isSpecialCharacters(String str) {
-        String regex = "^[\\p{L}\\p{N} _&-]+$";
+        String regex = "^[\\p{L}\\p{N} _&-:]+$";
         
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(str);

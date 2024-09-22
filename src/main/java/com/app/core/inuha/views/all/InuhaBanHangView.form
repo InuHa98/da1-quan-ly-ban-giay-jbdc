@@ -143,7 +143,7 @@
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="jLabel21" max="32767" attributes="0"/>
                           <EmptySpace min="-2" max="-2" attributes="0"/>
-                          <Component id="lblTongVoucherGiamGia" pref="132" max="32767" attributes="0"/>
+                          <Component id="lblTongVoucherGiamGia" max="32767" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="1" attributes="0">
                           <Component id="btnCancel" min="-2" pref="98" max="-2" attributes="0"/>
@@ -158,7 +158,7 @@
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="txtTenKhachHang" min="-2" pref="175" max="-2" attributes="0"/>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Component id="btnClearKhachHang" pref="77" max="32767" attributes="0"/>
+                          <Component id="btnClearKhachHang" max="32767" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="jLabel14" min="-2" max="-2" attributes="0"/>
