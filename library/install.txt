@@ -1,0 +1,6 @@
+mvn install:install-file -Dfile=swing-glasspane-popup-1.5.1.jar -DgroupId=raven.popup -DartifactId=swing-glasspane-popup -Dversion=1.5.1 -Dpackaging=jar
+mvn install:install-file -Dfile=swing-toast-notifications-1.0.3.jar -DgroupId=raven.toast -DartifactId=swing-toast-notifications -Dversion=1.0.3 -Dpackaging=jar
+mvn install:install-file -Dfile=modal-dialog-1.0.5.jar -DgroupId=raven.modaldialog -DartifactId=modal-dialog -Dversion=1.0.5 -Dpackaging=jar
+mvn install:install-file -Dfile=swing-datetime-picker-1.2.3.jar -DgroupId=raven.datetime -DartifactId=swing-datetime-picker -Dversion=1.2.3 -Dpackaging=jar
+mvn install:install-file -Dfile=swing-jnafilechooser-1.0.0.jar -DgroupId=jnafilechooser -DartifactId=jnafilechooser-api -Dversion=1.0.0 -Dpackaging=jar
+mvn install:install-file -Dfile=TimingFramework-0.55.jar -DgroupId=raven.jdesktop -DartifactId=timingFramework -Dversion=1.0.0 -Dpackaging=jar
